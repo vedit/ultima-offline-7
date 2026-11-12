@@ -1,0 +1,162 @@
+"""Compare structured regenerations with original Black Gate function records."""
+
+import argparse
+from collections import Counter
+import difflib
+import hashlib
+import json
+import re
+import subprocess
+import tempfile
+from pathlib import Path
+
+from u7uo.u7 import usecode_inventory
+from u7uo.uo import PROFILES
+from u7uo.usecode import BRANCHES, TERMINALS, _decode, load_tables
+
+
+def body(record, raw):
+    return raw[record["offset"]:record["code_offset"]+record["code_length"]]
+
+
+def instructions(fn, *, resolve_references=False):
+    result = {}
+    rows = fn["instructions"]
+    for i,(pc,op,args) in enumerate(rows):
+        successors = []
+        if op not in TERMINALS and op != 0x06:
+            successors.append(rows[i+1][0] if i+1<len(rows) else fn["code_length"])
+        if op in BRANCHES:
+            successors.append(fn["branches"][pc])
+        operands = tuple(args[:-1] if op in BRANCHES else args)
+        if resolve_references and op in (0x1C,0x1D):
+            operands = (fn["strings_referenced"][args[0]]["sha256"],)
+        elif resolve_references and op==0x24:
+            operands = (fn["externs"][args[0]],)
+        result[pc] = ((op,operands),successors)
+    return result
+
+
+def skip_jumps(graph, pc):
+    visited = set()
+    while pc in graph and graph[pc][0][0] == 0x06:
+        if pc in visited:
+            raise ValueError("Unconditional jump cycle needs a separate comparison")
+        visited.add(pc)
+        pc = graph[pc][1][0]
+    if pc not in graph:
+        raise ValueError("Reachable branch or fallthrough outside the function")
+    return pc
+
+
+def compare_graph(first, second):
+    a,b = instructions(first,resolve_references=True),instructions(second,resolve_references=True)
+    queue = [(0,0)]
+    visited = set()
+    while queue:
+        x,y = queue.pop()
+        x,y = skip_jumps(a,x),skip_jumps(b,y)
+        if (x,y) in visited:
+            continue
+        visited.add((x,y))
+        if a[x][0]!=b[y][0] or len(a[x][1])!=len(b[y][1]):
+            return {"status":"different","source_pc":x,"generated_pc":y,
+                    "source_instruction":a[x][0],"generated_instruction":b[y][0]}
+        # Pair fallthrough with fallthrough, and taken branch with taken branch.
+        queue.extend(zip(a[x][1],b[y][1],strict=True))
+    return {"status":"matched","reachable_instruction_pairs":len(visited)}
+
+
+def compare(source, generated, tables, generator_report):
+    raw, other = source.read_bytes(), generated.read_bytes()
+    a,b = (usecode_inventory(blob)["records"] for blob in (raw,other))
+    if [r["id"] for r in a]!=[r["id"] for r in b]:
+        raise ValueError("Regenerated function inventory or ordering differs")
+    schema,_ = load_tables(tables)
+    changed = {}
+    for original,rebuild in zip(a,b,strict=True):
+        left,right = body(original,raw),body(rebuild,other)
+        if left == right:
+            continue
+        first,second = _decode(raw,original,schema),_decode(other,rebuild,schema)
+        preambles_match = (left[4:-original["code_length"]]==right[4:-rebuild["code_length"]])
+        source_strings = left[6:6+original["data_length"]].split(b"\0")
+        generated_strings = right[6:6+rebuild["data_length"]].split(b"\0")
+        equivalent_tables = (Counter(source_strings)==Counter(generated_strings) and
+                             first["arguments"]==second["arguments"] and first["locals"]==second["locals"] and
+                             Counter(first["externs"])==Counter(second["externs"]))
+        graphs = compare_graph(first,second)
+        edits = []
+        left_graph,right_graph = instructions(first),instructions(second)
+        left_pcs,right_pcs = [*left_graph,first["code_length"]],[*right_graph,second["code_length"]]
+        diff = difflib.SequenceMatcher(None,[v[0] for v in left_graph.values()],
+                                      [v[0] for v in right_graph.values()],autojunk=False)
+        for tag,i,j,k,l in diff.get_opcodes():
+            if tag!="equal":
+                edits.append({"kind":tag,"source_pc_range":[left_pcs[i],left_pcs[j]],
+                              "generated_pc_range":[right_pcs[k],right_pcs[l]],
+                              "source_ops":[left_graph[p][0][0] for p in left_pcs[i:j]],
+                              "generated_ops":[right_graph[p][0][0] for p in right_pcs[k:l]]})
+        changed[f"{original['id']:04X}"] = {
+            "source_code_offset":original["code_offset"], "original_size":len(left),"generated_size":len(right),
+            "source_record_sha256":hashlib.sha256(left).hexdigest(),
+            "generated_record_sha256":hashlib.sha256(right).hexdigest(),"data_and_header_fields_match":preambles_match,
+            "same_strings_arity_locals_and_externals":equivalent_tables,
+            "ordered_control_flow":graphs,"instruction_edits_ignoring_branch_displacements":edits}
+    log = generator_report.read_bytes()
+    diagnostic = log.decode("utf-8-sig")
+    summary = re.search(r"whole records regenerated byte for byte: (\d+).*?wrong length: (\d+), "
+                        r"right length but different: (\d+), refused: (\d+)",diagnostic,re.S)
+    detailed = set(re.findall(r"^\s*([0-9A-F]{4}) (?:produced |differs first )",diagnostic,re.M))
+    different_size = sum(r["original_size"]!=r["generated_size"] for r in changed.values())
+    if (not summary or tuple(map(int,summary.groups()))!=(len(a)-len(changed),different_size,
+            len(changed)-different_size,0) or set(changed)!=detailed):
+        raise ValueError("Generator diagnostics and exported records disagree; check for original-record copyback")
+    return {"source_sha256":hashlib.sha256(raw).hexdigest(),"regenerated_sha256":hashlib.sha256(other).hexdigest(),
+            "generator_report_sha256":hashlib.sha256(log).hexdigest(),
+            "records":len(a),"byte_exact":len(a)-len(changed),"changed":changed,
+            "reachable_graphs_and_data_match":all(r["same_strings_arity_locals_and_externals"] and
+                         r["ordered_control_flow"]["status"]=="matched" for r in changed.values()),
+            "dos_runtime_comparison":"not_run"}
+
+
+def qualify_installation(source, installation):
+    pin = PROFILES["tools"]["Kitrinx verifier"]
+    upstream = (installation/pin["file"]).parent.parent
+    original = (upstream/"tools/u7ucround.c").read_bytes()
+    fallback = b"fwrite(function->data - 6U, 1U, function->record_size, rebuilt);"
+    if original.count(fallback)!=1 or hashlib.sha256(original).hexdigest()!="357e5d357cd7011705800cc5728b28f86cb5bdb5356c7f4e48e7a964dc646e31":
+        raise ValueError("Unrecognized Kitrinx regeneration driver")
+    # Upstream intentionally copies the original when a record differs. Export
+    # its already-computed scratch bytes for analysis, leaving its generator,
+    # structure recovery, and installed sources untouched.
+    instrumented = original.replace(fallback,b"if (result != U7_OK || fwrite(scratch, 1U, report.code_size, rebuilt) != report.code_size) return 2;")
+    lib = upstream/"build/libu7usecode.a"
+    with tempfile.TemporaryDirectory(dir=installation/"Cache/Temp",prefix="round-") as scratch:
+        d = Path(scratch)
+        (d/"observe.c").write_bytes(instrumented)
+        subprocess.run([installation/"Tools/w64devkit/bin/gcc.exe","-O2","-I"+str(upstream/"include"),
+                        d/"observe.c",lib,"-o",d/"observe.exe"],check=True)
+        generated = d/"generated.usecode"
+        run = subprocess.run([d/"observe.exe","--generate","--detail","--write="+str(generated),source],
+                             stdout=subprocess.PIPE,check=False)
+        if run.returncode not in (0,1):
+            raise ValueError(f"Structured generation failed ({run.returncode})")
+        log = d/"round.txt"
+        log.write_bytes(run.stdout)
+        report = compare(source,generated,installation/"Tools/ExultTools/data",log)
+    report["generator"] = {"revision":pin["revision"],"driver_sha256":hashlib.sha256(original).hexdigest(),
+                           "diagnostic_driver_sha256":hashlib.sha256(instrumented).hexdigest(),
+                           "library_sha256":hashlib.sha256(lib.read_bytes()).hexdigest(),
+                           "exit_code":run.returncode,"copied_back_records":0}
+    return report
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("source",type=Path)
+    parser.add_argument("--installation",type=Path,required=True,help="Provisioned Ultima Offline root")
+    args = parser.parse_args()
+    report = qualify_installation(args.source.resolve(),args.installation.resolve())
+    print(json.dumps(report,indent=2))
+    raise SystemExit(0 if report["reachable_graphs_and_data_match"] else 1)

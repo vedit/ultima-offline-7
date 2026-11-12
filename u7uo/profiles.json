@@ -1,0 +1,31 @@
+{
+  "uo_version": "7.0.118.46",
+  "uo_files": {
+    "AnimationFrame1.uop": "a9545e66a28e6c3b316a5be3ce2aa0da4820a2b87e307cab04315b596f3a9ad2",
+    "Cliloc.enu": "92578229b5706d2bb5b4135927ad5aade73c7df846f3e6838d03eb5a8acc545d",
+    "MainMisc.uop": "759f81e26ec278d80d54fd0a309249faf2e84cbdd31a97577e7783c9c72638a4",
+    "artLegacyMUL.uop": "11ea1bcee355ca0893042ddd2406db85f664cc75f2c551b456ccff9274f962ec",
+    "client.exe": "3e5a0193cd8af909c00ed3642475854ba360b9cd1f3fa0dfaa325afc9824f41e",
+    "gumpartLegacyMUL.uop": "2af89af0f87d467bf997cc844ae110ca22b0a0bcbb83feb013ee6cf31b4a1f5d",
+    "map0LegacyMUL.uop": "e6dba16a138d49459978b265357f312ce87341a907e8f9131b37329935a88516",
+    "staidx0.mul": "209319aeff26e01c7ea7ec86b8f01e3d598e4d82411431c43cb6e9b6ccc69de7",
+    "statics0.mul": "aac798ae8786d97eb893d5338e27113f3ace606221c4a7f80c24e57bd4a19976",
+    "tiledata.mul": "53f657c1a506a2794394a6516ff56814c2ec9f44a35a216d30b2db147e3ea6e6"
+  },
+  "tools": {
+    "Lua": {"revision":"1c55579828a0e1c1c18902dac2aee412b15f3cf8","version":"5.4.7","file":"Tools/Lua-5.4.7/lua.exe","sha256":"f9c9ba281b987d8211b234bce6c307da784f4055cef312a2561e5e2d02ec1bb7","source":"https://github.com/ViridianGames/U7Revisited/tree/1c55579828a0e1c1c18902dac2aee412b15f3cf8/ThirdParty/lua"},
+    "ModernUO": {"revision":"1c63a13b23ef53cab18032d19d870d13b2a85f4a","version":"0.15.6.269","file":"Builds/ModernUO/ModernUO.dll","sha256":"0dc07fd051d231be5df4b90002829874ff150d90e85e8383c79ac20238252e5a","source":"https://github.com/modernuo/ModernUO"},
+    "ClassicUO": {"revision":"ee79d7ebc1cc0e53ff84fe6cae17d389e2737f93","version":"1.1.0.347","file":"Tools/ClassicUO/ClassicUO.exe","sha256":"1d2faec6351bbf40e385788894ee3189912337726fab3e3db05509e7a55e3145","source":"https://github.com/ClassicUO/ClassicUO"},
+    "Exult": {"version":"1.12.1","file":"Tools/Exult/Exult.exe","sha256":"267ae92e56910925af60d06cf3e0b6cfe1f54922f3a008ca39de843be9467ef8","source":"https://exult.info/download.html"},
+    "ucxt": {"version":"1.12.1","file":"Tools/ExultTools/ucxt.exe","sha256":"df180aa93e70f773d2f5d069ff345bda2af52f91d1638efcdbdf3712a27d3909","source":"https://exult.info/download.html"},
+    "Kitrinx verifier": {"revision":"872a613c718abf3a40cf94533887171bec8cfb24","file":"Tools/Ultima7_Decomp-872a613c718abf3a40cf94533887171bec8cfb24/ultima7-usecode/build/u7ucverify.exe","sha256":"8016f239ba3b8e99ebd553830263c5c8485e438549bc40b3151931c8c58c49ef","source":"https://github.com/Kitrinx/Ultima7_Decomp"}
+  },
+  "readback_assemblies": {
+    "modernuo_loader": "150cbc6a37a0bb57edfb7fb9196d41e2f0dd5b248de05300bd13677efbd752d1",
+    "classicuo_loader": "0a3149db5a57a31577551f68096cfd691b191fb8e7908f44a17e192a024ae1c6"
+  },
+  "comparison_sources": {
+    "U7Revisited": "https://github.com/ViridianGames/U7Revisited/tree/1c55579828a0e1c1c18902dac2aee412b15f3cf8",
+    "required_modernuo_sdk": "11.0.100"
+  }
+}

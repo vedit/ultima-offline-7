@@ -1,0 +1,31 @@
+name: Black Gate data-free fixtures
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  windows-fixtures:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Run authored fixtures
+        shell: pwsh
+        run: python -B -m unittest discover -s tests -v
+      - name: Check retail diagnostics on the empty worker
+        shell: pwsh
+        run: |
+          $missing = Join-Path $env:RUNNER_TEMP 'absent-game'
+          $raw = python -B -m u7uo inspect --u7 $missing --uo $missing
+          $result = $raw | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 1 -or $result.u7.status -ne 'missing' -or $result.uo.status -ne 'missing' -or $result.u7.vanilla_gameplay_qualification -ne 'not_run') {
+              throw 'Missing installation diagnostics are incorrect'
+          }
+          $output = Join-Path $env:RUNNER_TEMP 'campaign'
+          $raw = python -B -m u7uo build --stage trinsic --u7 $missing --uo $missing --out $output
+          if ($LASTEXITCODE -ne 1 -or ($raw | ConvertFrom-Json).status -ne 'failed' -or (Test-Path $output)) {
+              throw 'Requested retail build accepted missing input or published output'
+          }
+          'Retail execution: not_run. Missing-input build rejection: passed.' >> $env:GITHUB_STEP_SUMMARY
+          exit 0

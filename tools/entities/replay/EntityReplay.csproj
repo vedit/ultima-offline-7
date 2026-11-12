@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net11.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Server" HintPath="$(ModernUODir)/Server.dll" Private="false" />
+    <Reference Include="U7EntitiesHost" HintPath="$(EntityDir)/U7EntitiesHost.dll" Private="false" />
+  </ItemGroup>
+</Project>
