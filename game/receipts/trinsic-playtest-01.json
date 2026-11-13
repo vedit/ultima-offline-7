@@ -1,0 +1,255 @@
+{
+  "edition": "Steam Black Gate with Forge of Virtue, Windows",
+  "date": "2026-11-13",
+  "source_tag": "playtest/trinsic-01",
+  "private_build": "Builds/UltimaOffline7/Trinsic-playtest-01",
+  "launcher": "Play Trinsic.cmd",
+  "player_slot": "player-trinsic-opening",
+  "build": {
+    "manifest": "build-sha256.json",
+    "sha256": "4d34f6c652cad2c8ee9bd061a54a8fb40117024d9b9cd5e238cd74d5b9bf6bbf",
+    "files_verified": 4279,
+    "native_host_sha256": "80f17aaf1c040a9571e1bd9c1f576cee525ba925de2ac6c8cfb1bb0999f27cb7",
+    "classicuo_sha256": "a66af0b83d2cae8045c4dd99ab22e1ef32d76c7bc184b8d66fb2aa7c17827b13"
+  },
+  "renderer": {
+    "atlas_receipt_equal": true,
+    "generated_files": 3365,
+    "installed_files": 3365,
+    "identical_generated_files": 3365,
+    "unused_extra_files": [],
+    "checks": {
+      "placements_examined": 54427,
+      "source_frames_placed": 1786,
+      "wall_joins": 426,
+      "placed_stair_rows": 49,
+      "connected_fence_posts": 72,
+      "roof_cells": 2312,
+      "preserved_approved_art": 28,
+      "mapped_object_frames": 3915
+    }
+  },
+  "atlas": {
+    "keys": 7141,
+    "witnessed_records": 54643,
+    "terrain_cells": 52224,
+    "decoded_images": 6749
+  },
+  "native_route": {
+    "slot": "qualify-opening-to-gate",
+    "start": "Black Gate INITGAME, original arrival and commission",
+    "milestones": [
+      {
+        "event": "opening commission",
+        "xyz": [
+          1076,
+          2214,
+          0
+        ]
+      },
+      {
+        "event": "stables and key",
+        "xyz": [
+          1069,
+          2197,
+          0
+        ]
+      },
+      {
+        "event": "key reported",
+        "xyz": [
+          1076,
+          2227,
+          0
+        ]
+      },
+      {
+        "event": "estate unlocked",
+        "xyz": [
+          971,
+          2133,
+          6
+        ]
+      },
+      {
+        "event": "Spark witness",
+        "xyz": [
+          973,
+          2125,
+          0
+        ]
+      },
+      {
+        "event": "Gilberto witness",
+        "xyz": [
+          951,
+          2255,
+          0
+        ]
+      },
+      {
+        "event": "password earned",
+        "xyz": [
+          985,
+          2205,
+          0
+        ]
+      },
+      {
+        "event": "outside east gate",
+        "xyz": [
+          1107,
+          2214,
+          0
+        ]
+      }
+    ],
+    "geography_answers": 3,
+    "events": "investigation.jsonl",
+    "sha256": "2bd526eff47c576727c5330512eadfd2a99be00005c775d26a578103bb06e753"
+  },
+  "reopened_exit": {
+    "avatar": [
+      1107,
+      2214,
+      0
+    ],
+    "flags": {
+      "100": 0,
+      "20": 1,
+      "59": 1,
+      "60": 1,
+      "61": 1,
+      "64": 1,
+      "67": 1,
+      "72": 1,
+      "76": 1,
+      "87": 1,
+      "89": 0,
+      "90": 1,
+      "92": 1,
+      "94": 1,
+      "95": 1,
+      "96": 1,
+      "97": 1,
+      "98": 1,
+      "99": 1
+    },
+    "gate": [
+      1102,
+      2217,
+      4
+    ],
+    "key": 10584,
+    "key_parents": [
+      88,
+      56
+    ],
+    "save_sha256": "17cdbe2275601f7b7d77ebdb8614845f27bedbc7af98ecbdf4fd6109938e77f3",
+    "dos_receipt_sha256": "d4ddd27a1779c724d5782768f301f107968f7e4e5518c06a8e6d909643a0c074"
+  },
+  "closed_gate": {
+    "source": "c9f3b340d2c46aa4d585c31b7872c48f51e862000b37264f7ed575575ee391dc",
+    "start": [
+      1107,
+      2214
+    ],
+    "lift": 0,
+    "west_steps": [
+      [
+        "ok",
+        [
+          1106,
+          2214
+        ]
+      ],
+      [
+        "ok",
+        [
+          1105,
+          2214
+        ]
+      ],
+      [
+        "ok",
+        [
+          1104,
+          2214
+        ]
+      ],
+      [
+        "ok",
+        [
+          1103,
+          2214
+        ]
+      ],
+      [
+        "blocked",
+        [
+          1103,
+          2214
+        ]
+      ],
+      [
+        "blocked",
+        [
+          1103,
+          2214
+        ]
+      ],
+      [
+        "blocked",
+        [
+          1103,
+          2214
+        ]
+      ]
+    ]
+  },
+  "classicuo": {
+    "receipt_root": "PoCs/ClassicUO-U7-Local/runs",
+    "receipts_sha256": {
+      "npc-opening-barks/client-overhead.json": "b5d98ccd4478f81327beff71acca778547aea0d2f8538ec95255d0621b3890e2",
+      "verify-item-click-labels/client-item-label.json": "401b47edc09f699e97bab0a862f595b909ff42e42e18c7d56baec1c94b848248",
+      "player-panels-proof/client-panels.json": "afcea1b8ca4224811f8951e964abe9e79cd9ac76dab983d722199d4d852084b8",
+      "player-panels-proof/client-restart.json": "0909b72d384908ba391b3667d87dcc48b7e56aaa963c25dc304dd51a547f5d44",
+      "inventory-interaction-proof/client-drag.json": "65589f93de87436e4d88a73e64826734a208dd21b2fd87b501a0ca4aaca18099",
+      "inventory-interaction-proof/client-restart.json": "853a776cfc742cf8fc335ed20c1367260045f5c56a80524c28b8a547d1c21ea3",
+      "feedback-room/client-transfer.json": "9e0393069990e146856566e276ee9b9902f737acb4a524ffacecd6e59ae13522",
+      "feedback-room/client-reopened.json": "0fcd8b59091eb9d2550e2252657bb11d3b5d5d1d345e0e3849a95ba555ba2819",
+      "qualify-stable/client-playtest.json": "32cf698e6027bf29bcb16f90f51bbd173565d297ff3563af0822a5bd8415c219",
+      "qualify-bucket/client-playtest.json": "73746f3e743e7060efbafb78f48346541030a036242486375d82e9e676d1ef21",
+      "qualify-inamo/client-playtest.json": "d628efe518b41684e8f8c72e40c060d9ee9da015a660ed1cd595ee380d5eab86",
+      "qualify-horse/client-playtest.json": "e9e56b0af39382b3dc14dea15a1f793e4b7dbcdef4402bd8bdf2482a99325b37",
+      "qualify-equipment/client-playtest.json": "94d84d95d16bbd2393651dc757afd0d2d7af13421b36330b0e81bf59fa241263",
+      "qualify-estate/client-playtest.json": "c8758d1c138588a7174f4ff4bcab365b6b0853e5bf241892bda136f9c3392780",
+      "qualify-report/client-playtest.json": "d2c2046aebb871403be1a81da2f9bfa5a4c10ed6ac4ac0fa570b6e1199bfc0a5",
+      "qualify-east/client-playtest.json": "e9e41d00cd49f7de348c3746f4852f3fed83092e7d91e04d4599817527dfc9e3",
+      "qualify-north/client-playtest.json": "f9872d8f1274505ec2573d6c0d6b34a9a671a331b57180880cd11d5681d306a4",
+      "qualify-west/client-playtest.json": "adc331e767748043463c8854c8a28fab1d17fddc5d531d16d2e912dcf2d38422",
+      "qualify-opening-to-gate/client-gate.json": "056e1df9e1dc37b32a74ebcace7d011efcf916649fed7c4b46dfa9b1c97631b8"
+    },
+    "open_gate_native_x": [
+      1099,
+      1107
+    ],
+    "tested": [
+      "Opening speech and reconnect",
+      "Stable door click and swing, item labels and stack counts, bucket pickup, Inamo hit test and horse animation",
+      "Map, paperdoll, backpack and status, equip and unequip, stack split and merge, war/peace, chest transfer and movement closure",
+      "Actual estate key targeting, chest and scroll gumps, mayor geography input, gate crossing and right-mouse edge running",
+      "East and north gate decks and west wall turn captured and inspected"
+    ]
+  },
+  "repository_tests": {
+    "run": 107,
+    "passed": 98,
+    "skipped": 9
+  },
+  "outstanding": [
+    "Human sign-off on control feel, readability and occlusion.",
+    "Full ordered-topic and dialogue timing comparison, base Black Gate edition and clean-machine installation.",
+    "The native host suppresses its music and sound output in the current headless launcher. ClassicUO sound and music playback were not listening-tested."
+  ]
+}
