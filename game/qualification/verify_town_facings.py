@@ -223,6 +223,36 @@ def verify(output=COMPACT):
         assert sum((output/'Art/Statics'/f'{g}.art').read_bytes()==encode_sprite(expected)
                    for g in top if g>=0xbd00)==1
     door_art=output/'Art/Statics'
+    profiles={}
+    for line in (output/'art-depth.tsv').read_text().splitlines():
+        graphic,cut,left,right=map(int,line.split())
+        profiles[graphic]=(cut,left,right)
+    victim_graphic=placed[867,0,1072,2199,0]
+    assert profiles[victim_graphic]==(0,-2,-2)
+    open_graphics=set()
+    for (shape,frame),g in frames.items():
+        if shape not in (270,376) or frame%4!=1:continue
+        open_graphics.add(g)
+        width,depth=map(int,rows[shape,frame]['footprint'].split('\u00d7'))
+        cut,left,right=profiles[g]
+        assert (left,right)==((0,-2) if width>depth else (-2,0))
+        # Read the encoded art. The cut must separate opaque leaves without
+        # slicing through a painted column on any scan line.
+        raw=(door_art/f'{g}.art').read_bytes()
+        _,w,h=struct.unpack_from('<IHH',raw)
+        cols=set()
+        for start in struct.unpack_from(f'<{h}H',raw,8):
+            offset=8+2*(h+start)
+            x=0
+            while True:
+                skip,n=struct.unpack_from('<HH',raw,offset)
+                if not n:break
+                x+=skip
+                cols.update(range(x,x+n))
+                x+=n
+                offset+=4+2*n
+        assert 0<min(cols)<cut<max(cols)<w and cut-1 not in cols and cut not in cols
+    assert set(profiles)==open_graphics|{victim_graphic}
     for family,base_frame in ((0x675,16),(0x6a5,8),(0x6d5,0)):
         # Compare the shipped closed doors pixel for pixel with the two stock leaves.
         for shape,closed_parts,opened in (

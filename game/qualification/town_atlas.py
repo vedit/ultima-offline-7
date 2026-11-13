@@ -151,6 +151,9 @@ def build(output=OUT,compact=False):
     land=ground_art(by_key,BASE,output,tiledata)
     carried={}
     open_doors={}
+    # Sort displaced art at its painted ground contact. A split is measured in
+    # sprite columns, so both the renderer and pixel picker can use the same cut.
+    depth_profiles={}
     def private_art(sig,template,name,height,parts=(),pixels=None,digest=None):
         if sig not in private:
             graphic=next(spare)
@@ -401,9 +404,27 @@ def build(output=OUT,compact=False):
             pose=stable_victim_sprite(source.convert('RGBA'))
         graphic=private_art(('stable victim',key),catalog[key],row['name'],row['native_height'],pixels=pose)
         placements.append((*key,*anchor,graphic))
+        depth_profiles[graphic]=(0,-2,-2)  # 44 pixels north = two isometric depth rows.
     for key,(signature,template,pixels) in open_doors.items():
         row=by_key[key]
         catalog[key]=private_art(signature,template,row['name'],row['native_height'],pixels=pixels)
+        width,depth=map(int,row['footprint'].split('\u00d7'))
+        if max(width,depth)==4:
+            # Open leaves occupy separate jambs two UO cells apart. Split in
+            # the empty columns between their silhouettes, including reflected frames.
+            alpha=pixels.getchannel('A')
+            runs=[]
+            for x in range(pixels.width):
+                if alpha.crop((x,0,x+1,pixels.height)).getbbox():
+                    if runs and runs[-1][1]==x:runs[-1][1]=x+1
+                    else:runs.append([x,x+1])
+            if len(runs)!=2:raise ValueError(('open door silhouettes',key,runs))
+            split=(runs[0][1]+runs[1][0])//2
+            depth_profiles[catalog[key]]=(split,0,-2) if width>depth else (split,-2,0)
+    if compact:
+        (output/'art-depth.tsv').write_text(''.join(
+            f'{g}\t{cut}\t{left}\t{right}\n' for g,(cut,left,right) in sorted(depth_profiles.items())),
+            encoding='ascii')
     for (x,y,z),graphic in gate_deck.items():
         mask=channels.get((x,y,z),0)
         if mask:

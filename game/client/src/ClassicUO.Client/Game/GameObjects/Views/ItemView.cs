@@ -134,6 +134,9 @@ namespace ClassicUO.Game.GameObjects
 
             hueVec = ShaderHueTranslator.GetHueVector(hue, partial, alpha);
 
+            if (NativePosition.HasValue && DrawDoorLeaves(batcher,posX,posY,hueVec,depth))
+                return true;
+
             if (!IsMulti && !IsCoin && Amount > 1 && ItemData.IsStackable)
             {
                 DrawStaticAnimated(batcher, graphic, posX - 5, posY - 5, hueVec, false, depth);

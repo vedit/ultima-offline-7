@@ -451,6 +451,8 @@ namespace ClassicUO.Game
                 else
                 {
                     Item item=world.GetOrCreateItem(serial); entity=item;
+                    item.FittedFaceDepth = parent==0 && TrinsicTown.Compact
+                        ? TrinsicTown.ShutterDepth(shape,x,y,r[5]) : 0;
                     if(parent!=0) { item.NativePosition=null; item.Offset=Vector3.Zero; }
                     item.Graphic=TrinsicTown.Enabled ? townGraphic : Art(shape,r[2]); item.Amount=TrinsicTown.Enabled && (r[11]&8)==0 ? (ushort)1 : (ushort)Math.Max(1,r[9]);
                     if(TrinsicTown.Enabled) {

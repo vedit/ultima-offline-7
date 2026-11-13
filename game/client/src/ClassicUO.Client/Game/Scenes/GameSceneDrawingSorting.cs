@@ -714,7 +714,9 @@ namespace ClassicUO.Game.Scenes
         {
             if(TrinsicTown.Compact && (obj is Land)!=(previous is Land))
                 return previous is Land;
-            return obj.CalculateDepthZ()>=previous.CalculateDepthZ();
+            int LeafAtCursor(GameObject target) => target is Item item && item.NativePosition.HasValue
+                ? item.DoorDepthAt(SelectedObject.TranslatedMousePositionByViewport.X) : 0;
+            return obj.CalculateDepthZ()+LeafAtCursor(obj)>=previous.CalculateDepthZ()+LeafAtCursor(previous);
         }
 
         private void PushToRenderQueue(

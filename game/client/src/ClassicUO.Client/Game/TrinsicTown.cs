@@ -10,6 +10,8 @@ namespace ClassicUO.Game
     {
         internal static readonly string Folder = Environment.GetEnvironmentVariable("TRINSIC_TOWN");
         private static readonly Dictionary<(int,int),ushort> graphics = new();
+        private static readonly Dictionary<ushort,(int cut,int left,int right)> artDepth = new();
+        internal static (int cut,int left,int right) ArtDepth(ushort graphic) => artDepth.GetValueOrDefault(graphic);
         private static readonly Dictionary<(int,int),ushort> carriedGraphics = new();
         private static readonly Dictionary<(int,int,int,int,int),ushort> placedGraphics = new();
         private static readonly Dictionary<int,string> names = new();
@@ -22,6 +24,15 @@ namespace ClassicUO.Game
         private static readonly Dictionary<(int,int,int),(ushort open,ushort closed)> windowFittings=new();
         internal static bool IsFittedShutter(int shape,int x,int y,int lift)
             => (shape is 290 or 291 or 322 or 372) && windowFittings.ContainsKey((x,y,lift));
+        internal static float ShutterDepth(int shape,int x,int y,int lift)
+        {
+            if (!(shape is 290 or 291 or 322 or 372) || !windowFittings.TryGetValue((x,y,lift),out var fit))
+                return 0;
+            // A full wall replaces the native shutter. Its outward face may
+            // share a compact cell with furniture one native step inside.
+            int across = fit.open is 14 or 0x22 ? y : x;
+            return (across & 1) != 0 ? 0.25f : -0.25f;
+        }
         internal static bool Compact { get; private set; }
 
         // The two native positions on either axis are a quarter-tile to either
@@ -64,6 +75,12 @@ namespace ClassicUO.Game
             string roofFile=Path.Combine(Folder,"fixed-roofs.tsv");
             Compact=File.Exists(Path.Combine(Folder,"baked-world.tsv"));
             if(Compact) {
+                string depthFile=Path.Combine(Folder,"art-depth.tsv");
+                if(File.Exists(depthFile))
+                    foreach(string line in File.ReadLines(depthFile)) {
+                        var v=Array.ConvertAll(line.Split('\t'),int.Parse);
+                        artDepth[(ushort)v[0]]=(v[1],v[2],v[3]);
+                    }
                 roofFile=Path.Combine(Folder,"baked-world.tsv");
                 foreach(string line in File.ReadLines(Path.Combine(Folder,"grid-frames.tsv"))) {
                     var v=Array.ConvertAll(line.Split('\t'),int.Parse);

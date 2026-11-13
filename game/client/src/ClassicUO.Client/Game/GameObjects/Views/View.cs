@@ -42,7 +42,12 @@ namespace ClassicUO.Game.GameObjects
             {
                 // Within a UO cell use subtile Y to break ties at the same height.
                 // A higher surface or an overhead object must retain its depth rank.
-                return x+y+(127+z)*0.01f+Math.Clamp(Offset.Y/44f,-0.49f,0.49f)*0.009f;
+                float depth=x+y+(127+z)*0.01f+Math.Clamp(Offset.Y/44f,-0.49f,0.49f)*0.009f;
+                if (this is Item item) {
+                    var profile=TrinsicTown.ArtDepth(item.DisplayedGraphic);
+                    depth+=item.FittedFaceDepth+(profile.cut==0 ? profile.left : 0);
+                }
+                return depth;
             }
 
             // Offsets are in SCREEN coordinates
