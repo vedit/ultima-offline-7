@@ -743,6 +743,7 @@ namespace ClassicUO.Game.GameObjects
                 float t=Math.Min(1f,(Time.Ticks-nativeStepTime)/(float)nativeStepDuration);
                 Offset=Vector3.Lerp(nativeStepStart,nativeStepEnd,t);
                 if(t>=1f)nativeStepTime=0;
+                UpdateTextCoordsV();
                 return;
             }
             if (Steps.Count != 0 && !IsDestroyed)

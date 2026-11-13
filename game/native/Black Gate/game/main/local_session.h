@@ -7,6 +7,7 @@ void LocalBeforeStep();
 void LocalPartyObservation();
 void LocalFreed(short handle);
 void LocalSpeak(const char *text, int face);
+void LocalBark(short speaker, const char *text);
 void LocalPrompt(bool answers);
 bool LocalAnswered(bool answers);
 void LocalOpened(short object);

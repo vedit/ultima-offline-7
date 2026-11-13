@@ -88,6 +88,29 @@ namespace ClassicUO.Game
             if(Environment.TickCount64<due) return;
             actions??=new Queue<string>(File.ReadAllLines(path));
             if(actions.Count==0) return;
+            if (actions.Peek().StartsWith("WAITBARK ", StringComparison.Ordinal))
+            {
+                string[] expected = actions.Peek().Split(' ', 3);
+                foreach (var speaker in world.Mobiles.Values)
+                {
+                    if (speaker.Name != expected[1] || speaker.Distance > world.ClientViewRange) continue;
+                    TextObject found = null;
+                    for (var line = speaker.TextContainer?.Items as TextObject; line != null; line = line.Next as TextObject)
+                    {
+                        if (line.Owner != speaker || line.Time <= Time.Ticks ||
+                            line.RenderedText?.HasContent != true || line.RenderedText.Text != expected[2] ||
+                            line.RealScreenPosition == Point.Zero) continue;
+                        if (found != null) throw new InvalidOperationException("NPC reaction appeared twice");
+                        found = line;
+                    }
+                    if (found == null) continue;
+                    File.AppendAllText(path+".log", $"NPC overhead {speaker.Name} ({speaker.Serial}) at {found.RealScreenPosition}: {found.RenderedText.Text}\n");
+                    actions.Dequeue();
+                    Client.Game.TakeScreenshot();
+                    return;
+                }
+                return;
+            }
             if((actions.Peek().StartsWith("STEP ") || actions.Peek().StartsWith("CONFLICT ")) && !TrinsicSession.WalkReady) return;
             string command=actions.Dequeue();
             string[] a=command.Split(' ');

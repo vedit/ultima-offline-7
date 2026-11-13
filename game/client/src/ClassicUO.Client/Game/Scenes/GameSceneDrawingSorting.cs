@@ -1029,6 +1029,7 @@ namespace ClassicUO.Game.Scenes
 
                     case Mobile mobile:
                         {
+                            if (mobile == _world.Player && TrinsicSession.CameraOnly) continue;
                             UpdateObjectHandles(mobile, useObjectHandles);
 
                             maxObjectZ += Constants.DEFAULT_CHARACTER_HEIGHT;

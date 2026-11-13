@@ -5,7 +5,7 @@ from reference import ROOT, SOURCE, stage, members
 BIN = ROOT/'client/bin/Release-Trinsic-Avatar-Sheet/net10.0'
 RELEASE = SOURCE/'Builds/BritanniaChairRouteFacet/releases/50f99d0c53594314f443902201e3a2312aa43764c7d35fede5f252da601ec4f1'
 @contextlib.contextmanager
-def session(name,fixture,reset=False,extra=None):
+def session(name,fixture,reset=False,extra=None,*,original_opening=False):
     folder=ROOT/'runs'/name
     if not folder.exists(): stage(name)
     if folder.resolve().parent != (ROOT/'runs').resolve(): raise ValueError(name)
@@ -27,7 +27,11 @@ def session(name,fixture,reset=False,extra=None):
             if not (folder_data/'graphics.tsv').exists(): raise RuntimeError("Build the Trinsic town atlas before launching")
             env['TRINSIC_TOWN']=str(folder_data)
             args_file=folder/'gameargs.dat'
-            if args_file.exists(): args_file.unlink()
+            if original_opening:
+                # Black Gate consumes these character-creation arguments and loads INITGAME.DAT.
+                args_file.write_bytes(b'\x00' + b'Avatar'.ljust(15,b'\x00'))
+                env['TRINSIC_READY']='1'
+            elif args_file.exists(): args_file.unlink()
         if fixture.startswith('Iolo-') and not extra: env['TRINSIC_READY']='1'
         if extra: env.update(extra)
         with (folder/'host.log').open('w') as log:

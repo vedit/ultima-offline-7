@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <deque>
 #include <map>
 #include <algorithm>
 #include "u7port.h"
@@ -91,6 +92,19 @@ static std::string hexText(const std::string &s) {
     return v;
 }
 
+// Polls and command replies can both observe the same short-lived line.
+// Preserve its identity even if the engine reuses the speaker's item handle.
+struct Bark { uint64_t sequence, expires; int speaker; std::string text; };
+static std::deque<Bark> recentBarks;
+static uint64_t barkSequence;
+
+void LocalBark(short speaker, const char *text) {
+    if (!LocalEnabled() || !speaker || !text || !*text || !objref(speaker).isNpc()) return;
+    if (recentBarks.size() == 32) recentBarks.pop_front();
+    recentBarks.push_back({++barkSequence, GetTickCount64() + 3000,
+                           wireId((uint16_t)speaker), hexText(text)});
+}
+
 static void reply(const std::string &s) {
     DWORD sent;
     if (!WriteFile(channel,s.data(),static_cast<DWORD>(s.size()),&sent,nullptr)) {
@@ -147,7 +161,13 @@ static std::vector<Row> inspect() {
     for(int n=0;n<actorCount;++n) {
         if(!town() && n!=0 && n!=1 && n!=2 && n!=12) continue;
         objref ref; GetNpcIbo(&ref,n);
-        if(!ref.valid() || !IsOnMap(&ref)) continue;
+        if(!ref.valid()) continue;
+        if(!IsOnMap(&ref)) {
+            // The opening plays before the Avatar steps out of the moongate.
+            if(n==0) rows.push_back({(uint16_t)ref.off,ref.type(),ref.ptr()->typeFrame>>10,
+                gCamera.getCenterX(),gCamera.getCenterY(),0,0,n,GetNpcBufferForIbo(&ref)->facing()});
+            continue;
+        }
         // The stable egg allocates its horse from the extra creature slots.
         if(n>=NpcRecordCount && ref.type()!=727) continue;
         if(town() && (abs(Item_getX(ref).value-Item_getX(AvatarRef).value)>36 || abs(Item_getY(ref).value-Item_getY(AvatarRef).value)>36)) continue;
@@ -224,6 +244,11 @@ static std::string snapshot(int seq,const std::string &outcome) {
         if(mode==3) s<<"D "<<numberLow<<" "<<numberHigh<<" "<<numberStep<<"\n";
     }
     s<<"T "<<hexText(words)<<"\n";
+    if (!IsOnMap(&AvatarRef)) s<<"CAMERA_ONLY\n";
+    const auto now = GetTickCount64();
+    while (!recentBarks.empty() && recentBarks.front().expires <= now) recentBarks.pop_front();
+    for (const auto &bark : recentBarks)
+        s<<"B "<<bark.sequence<<" "<<bark.speaker<<" "<<bark.text<<"\n";
     for(auto &choice:choices) s<<"A "<<hexText(choice)<<"\n";
     return s.str();
 }
@@ -501,7 +526,7 @@ static void poll(uint8_t *steps) {
     else if(op=="LOAD") {
         char title[80]={}; SaveGameFiles.getSaveTitle(0,title);
         if(!*title) outcome="empty";
-        else {SaveGameFiles.restoreGame(0);++generation;memset(retired,0,sizeof(retired));memset(lifetimes,0,sizeof lifetimes);history.clear();lastSeq=0;opened=0;words.clear();}
+        else {SaveGameFiles.restoreGame(0);++generation;memset(retired,0,sizeof(retired));memset(lifetimes,0,sizeof lifetimes);history.clear();recentBarks.clear();lastSeq=0;opened=0;words.clear();}
     } else if(op=="CLOSE") opened=0;
     else if(op=="QUIT") {reply(snapshot(seq,"bye"));plat_exit(0);return;}
     else outcome="invalid";

@@ -2,6 +2,8 @@
 
 Run `Play Ultima Offline 7.cmd` at the repository root. It resumes `runs/player-investigation/GAME00.U7` in the existing private installation, or starts with Finnigan's commission at the stables. Use the arrow keys or right mouse button to move, double-click objects and people to use them, and drag items between the world, containers and paperdoll. F2 opens the paperdoll, F3 the backpack, F4 the map and F5 saves. Close the client window to end that session.
 
+Short NPC reactions appear over the speaker using ClassicUO's overhead speech. Black Gate supplies the words and decides when each character speaks.
+
 The default installation is `E:\UltimaOffline`. Set `ULTIMA_OFFLINE_HOME` to use another installation with the same layout. The historical folder name `PoCs\ClassicUO-U7-Local` identifies the private runtime and its save slots. Use a separate slot to try a new investigation.
 
 ```powershell
@@ -13,7 +15,7 @@ The default installation is `E:\UltimaOffline`. Set `ULTIMA_OFFLINE_HOME` to use
 | Repository files | Origin and use |
 |---|---|
 | `game/client/src` | Editable source overlay for ClassicUO at `ee79d7ebc1cc0e53ff84fe6cae17d389e2737f93`. The first checkpoint includes 21 changed tracked files and three new files. The base commit pins FNA, FileEmbed and MP3Sharp. Keep the upstream source tree, its recursive submodules and notices. [ClassicUO license](client/LICENSE.md) |
-| `game/native/Black Gate` | Eight changed files and two new local-session files relative to the portable Black Gate engine in Kitrinx/Ultima7_Decomp at `872a613c718abf3a40cf94533887171bec8cfb24`. The local `Downloads/Kitrinx-872a613c.zip` has SHA-256 `f0ce7336158e7a3ca86390576f4f63599495849b785b37c0264590e46321bcb4`. [Upstream notice](native/LICENSE) |
+| `game/native/Black Gate` | Editable source overlay for the portable Black Gate engine in Kitrinx/Ultima7_Decomp at `872a613c718abf3a40cf94533887171bec8cfb24`. The first checkpoint includes eight changed files and two new local-session files. The local `Downloads/Kitrinx-872a613c.zip` has SHA-256 `f0ce7336158e7a3ca86390576f4f63599495849b785b37c0264590e46321bcb4`. [Upstream notice](native/LICENSE) |
 | `game/atlas` | Source readers, reviewed mappings and stock-art recipes. The review covers 18 revised matches and all ten rake frames. The source census and generated file hashes are in the [atlas receipt](receipts/trinsic-atlas.json). |
 | `game/qualification` | Windows build scripts, launcher, atlas-to-ClassicUO conversion, renderer checks and input replays. The [investigation receipt](receipts/trinsic-investigation.json) records the original town playthrough. The [facing receipt](receipts/trinsic-facing.json) describes an earlier facing pass at its recorded revision. |
 
@@ -52,7 +54,8 @@ py -3 -B game/atlas/complete-town/verify_town.py
 py -3 -B game/atlas/complete-town/verify_town.py --world-terrain
 py -3 -B game/qualification/verify_town_facings.py
 py -3 -B game/qualification/investigation.py --run verify-investigation
+py -3 -B game/qualification/verify_overhead.py
 py -3 -B -m unittest discover -s tests -q
 ```
 
-The first check compares the atlas with source records and reviewed output hashes. The second compares exact atlas keys with terrain placements across the original world. The third reads the installed map, statics, art and tile flags. The fourth starts a separate native host, sends actions through the local input protocol and saves at each investigation milestone. It starts the named verification slot from the original checkpoint. For player-facing visual or mouse interaction changes, also exercise the ClassicUO client. The last command runs the repository's existing compiler and source-reader tests.
+The first check compares the atlas with source records and reviewed output hashes. The second compares exact atlas keys with terrain placements across the original world. The third reads the installed map, statics, art and tile flags. The fourth starts a separate native host, sends actions through the local input protocol and saves at each investigation milestone. It starts the named verification slot from the original checkpoint. The overhead speech replay starts the original opening in its own slot, checks Iolo and Petre in ClassicUO and captures their reactions. The last command runs the repository's existing compiler and source-reader tests.

@@ -25,6 +25,8 @@ namespace ClassicUO.Game
         public static bool Enabled => !string.IsNullOrEmpty(pipeName);
         private static NamedPipeClientStream pipe;
         private static int generation, last, chest, prompt;
+        private static ulong lastBark;
+        private static readonly Encoding barkEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437);
         private static long nextPoll, nextWalk;
         private static string previousWords="";
         private static readonly HashSet<uint> draggable = new();
@@ -86,6 +88,7 @@ namespace ClassicUO.Game
             return false;
         }
         internal static int CameraX,CameraY;
+        internal static bool CameraOnly { get; private set; }
         internal static int IoloX,IoloY;
         private static World world;
         private static ContainerGump chestWindow;
@@ -138,11 +141,14 @@ namespace ClassicUO.Game
             pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
             pipe.Connect(world?.Player == null ? 120000 : 50);
             pipe.ReadMode = PipeTransmissionMode.Message;
-            return Read("0 0 SYNC");
+            string frame = Read("0 0 SYNC");
+            if (world?.Player != null) TrinsicReplay.Record("RECONNECTED", frame);
+            return frame;
         }
         public static void Start(World target)
         {
             world = target;
+            lastBark = 0;
             TrinsicTown.Load();
             string data = Connect();
             ProfileManager.Load("Trinsic", "Local", "Avatar");
@@ -176,6 +182,7 @@ namespace ClassicUO.Game
             world.MapIndex = 0;
             Apply(data);
             Client.Game.SetScene(new GameScene(world));
+            ShowBarks(data.Split('\n'));
             ShowMap(); ShowPaperdoll(); ShowBackpack();
             if(Environment.GetEnvironmentVariable("TRINSIC_READY")!=null && !TrinsicReplay.Active) { Overlay=true; GameActions.Print(world,"Iolo is ready. Ctrl+wheel changes zoom. Press F6 to begin."); }
         }
@@ -329,6 +336,23 @@ namespace ClassicUO.Game
             270 => 0x0675, 376 => 0x0676, 432 => 0x0679, 433 => 0x067a,
             _ => 0x0e76
         };
+        private static void ShowBarks(string[] lines)
+        {
+            foreach (string line in lines)
+            {
+                if (!line.StartsWith("B ", StringComparison.Ordinal)) continue;
+                string[] fields = line.Split(' ');
+                ulong sequence = ulong.Parse(fields[1]);
+                if (sequence <= lastBark) continue;
+                lastBark = sequence;
+                uint serial = uint.Parse(fields[2]);
+                if (!visible.Contains(serial) || world.Mobiles.Get(serial) is not Mobile speaker) continue;
+                string text = barkEncoding.GetString(Convert.FromHexString(fields[3])).Replace('@', '"');
+                var profile = ProfileManager.CurrentProfile;
+                GameActions.Print(world, speaker, text, profile.SpeechHue, font: profile.ChatFont);
+            }
+        }
+
         private static void Apply(string frame,bool run=false)
         {
             string[] lines = frame.Split('\n');
@@ -336,8 +360,14 @@ namespace ClassicUO.Game
             string[] s=lines[0].Split(' ');
             int gen=int.Parse(s[2]);
             bool reset=gen!=generation;
+            if (reset)
+            {
+                lastBark = 0;
+                foreach (uint serial in visible) world.Mobiles.Get(serial)?.TextContainer?.Clear();
+            }
             if (reset) { heldArrows=0; targetPrompt=0; placements.Clear(); inventoryWindow?.Dispose(); inventoryWindow=null; chestWindow?.Dispose(); chestWindow=null; dialog?.Dispose(); chest=prompt=0; Client.Game.UO.GameCursor.ItemHold.Clear(); }
             generation=gen; last=int.Parse(s[4]); CameraX=int.Parse(s[6]); CameraY=int.Parse(s[7]);
+            CameraOnly=Array.IndexOf(lines,"CAMERA_ONLY")>=0;
             int[][] rows=Rows(frame).ToArray();
             int[] avatar=rows.First(r=>r[7]==0);
             var iolo=rows.FirstOrDefault(r=>r[7]==1);
@@ -489,6 +519,7 @@ namespace ClassicUO.Game
             foreach(uint id in visible.Except(keep))
                 if((id&ItemBase)!=0) world.RemoveItem(id,true); else world.RemoveMobile(id,true);
             visible=keep;
+            if (Client.Game.Scene is GameScene) ShowBarks(lines);
             if(oldBackpack!=0 && oldBackpack!=backpack) {
                 UIManager.GetGump<ContainerGump>(oldBackpack)?.Dispose();
                 if(backpack!=0) ShowBackpack();

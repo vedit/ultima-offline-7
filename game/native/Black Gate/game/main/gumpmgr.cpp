@@ -872,6 +872,7 @@ void AddBarkCaption(objref obj, char *text)
 					ReportOutOfNearMemory();
 				BarkTexts[i]->paint(&Viewport);
 				CopyFrameBuffer();
+				LocalBark(obj.off, text);
 				break;
 			}
 		}
