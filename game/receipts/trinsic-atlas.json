@@ -1,0 +1,78 @@
+{
+  "edition": "Steam FORGE initial state",
+  "bounds": {
+    "x_min": 928,
+    "x_max": 1119,
+    "y_min": 2080,
+    "y_max": 2351
+  },
+  "cells": 52224,
+  "shape_count": 306,
+  "frame_keys": {
+    "Town records": 1874,
+    "Other frame": 5262,
+    "Door transition": 5
+  },
+  "references": {
+    "Terrain": 52224,
+    "Fixed": 1037,
+    "World object": 1166,
+    "Shop frame": 8,
+    "Contained": 121,
+    "Actor inventory": 42,
+    "Shop shape (frame unspecified)": 21,
+    "Spawner target": 7,
+    "Actor": 17
+  },
+  "town_decisions": {
+    "Stock assembly": 298,
+    "Stock candidate": 1512,
+    "Stock equipment": 30,
+    "No visible art": 19,
+    "Stock outfit": 15
+  },
+  "total_rows": 7141,
+  "unique_png": 6747,
+  "input_sha256": {
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\SHAPES.VGA": "193df5e56326adb5b695f0781b760fa81bf6c2f17af761cac95d4e449dcb5fd4",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\TEXT.FLX": "bd6786162075866e6dbf3a4454a3319cec94ea24e372c7998c678caa84e367d9",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\PALETTES.FLX": "dca14111bee5b38145d422afba3db60671f01c2da93fd51871d6ab6962d3556f",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\U7MAP": "3266419b2123cc57b18ad5a3bb70a056cffe31a6e64ec6b0844b51d93e15fe89",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\U7CHUNKS": "4159dc33246e6ea4f6540c156cb28618745ec3362a27afda32b3afee3b0771a0",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\TFA.DAT": "300143ff7790bbffa8002727dd9c354dba11e22bfaee7c530b7d05095b51d39b",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\INITGAME.DAT": "c1299e499aa1cd7c6bb9d7f14044ec21dc1f98aa45eaac1f6f1a2c473223491a",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\SCHEDULE.DAT": "40852e7ce1438b215ecaa92b50dde17dfacf402dae2fa78042c2e81e43c58bcf",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\U7IFIX63": "e2b622ad5ff1532caf67c92fed1e7a6782faedcf81cd94edeed75f526b28a121",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\U7IFIX64": "c311ec7be428994bf54af83ed9c394cc0a03136c9cc311dde0d9bfa3965594cf",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\U7IFIX6F": "adcf01cfb1f8f39f39a98c0232d01f3bf7a1382d9bd5928f8ba88e06226de9a3",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\U7IFIX70": "d7683ea79dc5d0ba0377b3936377da6357584b6d51a1618f1cf27173979e0d48",
+    "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\USECODE": "49a3fcaf8a763972d0a6006571e8d8eef11eb1602f88898808b520523d0a8576",
+    "E:\\UltimaOffline\\Assets\\UO-Classic\\artLegacyMUL.uop": "11ea1bcee355ca0893042ddd2406db85f664cc75f2c551b456ccff9274f962ec",
+    "E:\\UltimaOffline\\Assets\\UO-Classic\\tiledata.mul": "53f657c1a506a2794394a6516ff56814c2ec9f44a35a216d30b2db147e3ea6e6",
+    "E:\\UltimaOffline\\Assets\\UO-Classic\\anim.idx": "64adf0ba0fb47019ec5d0a233819605c8fb15a156bc5c19db790c13a22adfbed",
+    "E:\\UltimaOffline\\Assets\\UO-Classic\\anim.mul": "2d890d6b79dc9f05398f192ef07c3aabc4cf42b680ea2dc966a0a270da683d9a",
+    "E:\\UltimaOffline\\Assets\\UO-Classic\\hues.mul": "37e50418e65af6cf3ac30af70c32238578b321a11b6af90583fca600aeefa268",
+    "E:\\UltimaOffline\\Assets\\UO-Classic\\Equipconv.def": "ee650d81d88205745958cc6b6adf0c1f656f294dd0e97d58716e95142a2243ff",
+    "E:\\UltimaOffline\\Tools\\Exult-Source-v1.12.1\\data\\bg\\shape_info.txt": "a4ae405b09a9dbf71fb8384c595b169b40c04334a594d6104c732ec04b134cb5",
+    "E:\\UltimaOffline\\Tools\\Exult-Source-v1.12.1\\data\\bg\\paperdol_info.txt": "c0e1f98f33aee8dbe7e8d6cd5ead751be8579aedd9011cad74fbca265e634165",
+    "E:\\UltimaOffline\\Tools\\Exult-Source-v1.12.1\\data\\bg\\bodies.txt": "5ab2c21e2a2b977641b550249c1ac5a0f51007d4688de67f65bd5846cbaa612a"
+  },
+  "output_sha256": {
+    "mapping.csv": "2f825990953d48f65d665f928e749f290d07aec495eff7a0f7d8f98acb451667",
+    "custom-art.csv": "16a5c6a548900f477acbdb76b581fcb7a1a30bc3e687c4188005fbae835b8d70",
+    "references.csv": "0b3d3ae305845e431d6047fc868d4de8744768e18aaeb9ab59ea61efb1673e88",
+    "catalog.js": "1c6ef9ae8bac56a7880d3e84dbd8e03c2d3612084f5d45cd9fb589ff43321f6d",
+    "revised-matches.html": "a678b59d28088c0f89e28b880e4167ab84609a1401b1d9e8ef3e7cbfa29834d1",
+    "revised-lights.png": "b0f79a6f63190931acc31617a21c1850c7e7cfd95c28b9a3a60d0de4fd5479fa",
+    "revised-dishes.png": "b08444b28495d95b492c99536d4176a5d770a8aec4cdd25b163d9429cf357487",
+    "revised-items.png": "d0a2a14074decb30c1617dfa809228325f0a0b64681bc6bcab135818607685b6",
+    "rake.png": "d67a2733062220d461fbed3fbcf958357b44a0c25c2686026af9a87cece16adf",
+    "equipment.csv": "4db814baaec83f64d92f3357ca18a0c954f0820fd0fb5e884eed896590983136",
+    "stock-study.html": "42a9bc8698d08d1494aac5a3b70b84e3679ecfe5dc611d966faa66ac1bec4f4d",
+    "stock-sources.json": "abfc3b44b2d178ce57b3f676d327aff6ac82c97c3a2a9c2a20b3d968e194a41a",
+    "outfits.csv": "393334a5d35e96fc2ab2cfe473a57f9fef9407e17eb735a134ca45eff8b328ad",
+    "preview.png": "c4506af7d69e6793b18371bee2ee0aecdfefa925b2749966c518ec5b8a464b76",
+    "extent.png": "d5bec0bff06f9deda801c0feeb1b726070421b1eb6cdf06e605e8f8ed950aaf6",
+    "index.html": "439551374e65b874dc23b83d2705ebab3ea399f5396d0f4afb236a071ec200fb"
+  }
+}

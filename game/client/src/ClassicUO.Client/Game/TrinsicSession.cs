@@ -1,0 +1,578 @@
+// SPDX-License-Identifier: BSD-2-Clause
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Pipes;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using ClassicUO.Configuration;
+using ClassicUO.Game.Data;
+using ClassicUO.Game.GameObjects;
+using ClassicUO.Game.Managers;
+using ClassicUO.Game.Scenes;
+using ClassicUO.Game.UI.Controls;
+using ClassicUO.Game.UI.Gumps;
+using Microsoft.Xna.Framework;
+using SDL3;
+
+namespace ClassicUO.Game
+{
+    internal static class TrinsicSession
+    {
+        private static readonly string pipeName = Environment.GetEnvironmentVariable("TRINSIC_PIPE");
+        public static bool Enabled => !string.IsNullOrEmpty(pipeName);
+        private static NamedPipeClientStream pipe;
+        private static int generation, last, chest, prompt;
+        private static long nextPoll, nextWalk;
+        private static string previousWords="";
+        private static readonly HashSet<uint> draggable = new();
+        private static HashSet<uint> visible = new();
+        internal static bool Overlay;
+        internal static string Header { get; private set; }
+        internal static string LastCommand { get; private set; }
+        internal static void Close() { pipe?.Dispose(); pipe=null; observation=null; walkingCommand=null; heldArrows=0; pending.Clear(); }
+        internal static void Reconnect() { if(FinishObservation()) Apply(Connect()); }
+        internal static void Duplicate() { Apply(Read(LastCommand)); }
+        internal static void Stale() { Apply(Read("1 0 USE 824")); }
+        internal static bool InventoryVisible => UIManager.GetGump<PaperDollGump>(world.Player.Serial)!=null;
+        private static uint backpack;
+        private static int targetPrompt;
+        private static readonly HashSet<uint> usable = new();
+        private static readonly Dictionary<uint,(uint owner,Point position)> placements=new();
+        internal static bool ActivateItem(uint serial)
+        {
+            var item=world.Items.Get(serial);
+            if(item==null) return false;
+            if(usable.Contains(serial)){Send("USE",(int)(serial & 0x1fffffff));return true;}
+            if(!CanDrag(serial)) return false;
+            if(item.Graphic==0x14eb) ShowMap();
+            else if(item.ItemData.IsWearable && item.Container!=world.Player.Serial)
+                Send("EQUIP",(int)(serial & 0x1fffffff),(int)world.Player.Serial);
+            else Send("LOOK",(int)(serial & 0x1fffffff));
+            return true;
+        }
+        internal static void ShowPaperdoll()
+        {
+            uint serial=world.Player.Serial;
+            var sheet=UIManager.GetGump<PaperDollGump>(serial);
+            if(sheet==null) {
+                sheet=new PaperDollGump(world,serial,false){X=Math.Max(0,Client.Game.ClientBounds.Width-267),Y=12};
+                UIManager.Add(sheet);
+                sheet.RequestUpdateContents();
+            } else { sheet.IsMinimized=false; UIManager.MakeTopMostGump(sheet); }
+        }
+        internal static void ShowBackpack()
+        {
+            if(backpack==0) return;
+            var pack=UIManager.GetGump<ContainerGump>(backpack);
+            if(pack==null) {
+                pack=new ContainerGump(world,backpack,0x3c,false){X=Math.Max(0,Client.Game.ClientBounds.Width-258),Y=350};
+                UIManager.Add(pack); pack.RequestUpdateContents();
+            } else { pack.IsMinimized=false; UIManager.MakeTopMostGump(pack); }
+        }
+        internal static void ShowMap()
+        {
+            var map=UIManager.GetGump<MiniMapGump>();
+            if(map==null) UIManager.Add(new MiniMapGump(world){X=16,Y=16});
+            else UIManager.MakeTopMostGump(map);
+        }
+        internal static bool OpenPlayerWindow(uint serial)
+        {
+            if(targetPrompt!=0) {Send("TARGET",targetPrompt,(int)(serial & 0x1fffffff));return true;}
+            if(serial==world.Player.Serial) { ShowPaperdoll(); return true; }
+            if(backpack!=0 && serial==backpack) { ShowBackpack(); return true; }
+            return false;
+        }
+        internal static int CameraX,CameraY;
+        internal static int IoloX,IoloY;
+        private static World world;
+        private static ContainerGump chestWindow;
+        private static Gump inventoryWindow;
+        private static Task<string> observation;
+        private static string walkingCommand;
+        private static bool runningCommand;
+        private static int heldArrows;
+        private static int Arrow(SDL.SDL_Keycode key) => key switch {
+            SDL.SDL_Keycode.SDLK_UP=>1, SDL.SDL_Keycode.SDLK_RIGHT=>2,
+            SDL.SDL_Keycode.SDLK_DOWN=>4, SDL.SDL_Keycode.SDLK_LEFT=>8, _=>0 };
+        internal static void ReleaseArrow(SDL.SDL_Keycode key)
+        {
+            heldArrows &= ~Arrow(key);
+        }
+        private static void WalkHeld()
+        {
+            int x=((heldArrows>>1)&1)-((heldArrows>>3)&1);
+            int y=((heldArrows>>2)&1)-(heldArrows&1);
+            if(x!=0 || y!=0) Walk((Direction)(y<0 ? (x<0?7:x>0?1:0) : y>0 ? (x<0?5:x>0?3:4) : x>0?2:6));
+        }
+        private static readonly Queue<(string op,int a,int b,string extra,int gen)> pending=new();
+        private static Gump dialog;
+        private static bool capture = Environment.GetEnvironmentVariable("TRINSIC_CAPTURE") != null;
+        private static int updates;
+        private const uint ItemBase = 0x40000000;
+
+        private static async Task<string> Exchange(string command, CancellationToken cancel)
+        {
+            var stream=pipe;
+            await stream.WriteAsync(Encoding.ASCII.GetBytes(command),cancel).ConfigureAwait(false);
+            using var message=new MemoryStream();
+            byte[] buffer=new byte[65536];
+            do
+            {
+                int count=await stream.ReadAsync(buffer.AsMemory(),cancel).ConfigureAwait(false);
+                if(count==0) throw new EndOfStreamException();
+                message.Write(buffer,0,count);
+            } while(!stream.IsMessageComplete);
+            return Encoding.ASCII.GetString(message.ToArray());
+        }
+        private static string Read(string command)
+        {
+            using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(2));
+            return Exchange(command,timeout.Token).GetAwaiter().GetResult();
+        }
+        private static string Connect()
+        {
+            pipe?.Dispose();
+            pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
+            pipe.Connect(world?.Player == null ? 120000 : 50);
+            pipe.ReadMode = PipeTransmissionMode.Message;
+            return Read("0 0 SYNC");
+        }
+        public static void Start(World target)
+        {
+            world = target;
+            TrinsicTown.Load();
+            string data = Connect();
+            ProfileManager.Load("Trinsic", "Local", "Avatar");
+            var profile = ProfileManager.CurrentProfile;
+            if(TrinsicTown.Enabled && !profile.TrinsicTransparencyInitialized) {
+                profile.UseCircleOfTransparency=true;
+                profile.CircleOfTransparencyType=1;
+                profile.TrinsicTransparencyInitialized=true;
+            }
+            profile.GameWindowSize = new Point(920, 640);
+            if(TrinsicTown.Enabled && Settings.GlobalSettings.WindowSize is Point requested) {
+                var handle=Client.Game.Window.Handle;
+                if(SDL.SDL_GetDisplayUsableBounds(SDL.SDL_GetDisplayForWindow(handle),out var work)) {
+                    SDL.SDL_GetWindowBordersSize(handle,out int top,out int left,out int bottom,out int right);
+                    requested.X=Math.Min(requested.X,work.w-left-right);
+                    requested.Y=Math.Min(requested.Y,work.h-top-bottom);
+                }
+                Settings.GlobalSettings.WindowSize=requested;
+                float dpi=Client.Game.DpiScale;
+                profile.GameWindowPosition=new Point(8,8);
+                profile.GameWindowSize=new Point(Math.Max(640,(int)(requested.X/dpi)-284),
+                                                 Math.Max(480,(int)(requested.Y/dpi)-24));
+            }
+            profile.TopbarGumpIsDisabled = true;
+            profile.HideScreenshotStoredInMessage = true;
+            if(TrinsicTown.Enabled) profile.DoubleClickToLootInsideContainers=false;
+            profile.EnableMousewheelScaleZoom = true;
+            profile.DefaultScale = float.TryParse(Environment.GetEnvironmentVariable("TRINSIC_ZOOM"), System.Globalization.CultureInfo.InvariantCulture, out float zoom) ? zoom : 1f;
+            int[] avatar = Rows(data).First(r => r[7] == 0);
+            world.CreatePlayer((uint)avatar[0]);
+            world.MapIndex = 0;
+            Apply(data);
+            Client.Game.SetScene(new GameScene(world));
+            ShowMap(); ShowPaperdoll(); ShowBackpack();
+            if(Environment.GetEnvironmentVariable("TRINSIC_READY")!=null && !TrinsicReplay.Active) { Overlay=true; GameActions.Print(world,"Iolo is ready. Ctrl+wheel changes zoom. Press F6 to begin."); }
+        }
+        private static IEnumerable<int[]> Rows(string frame)
+        {
+            foreach (string line in frame.Split('\n'))
+                if (line.StartsWith("E ")) yield return Array.ConvertAll(line.Substring(2).Split(' '), int.Parse);
+        }
+        public static void Update(World target)
+        {
+            if(TrinsicReplay.Active) TrinsicReplay.ObserveWalk(target.Player);
+            if(!Client.Game.IsActive && !TrinsicReplay.Active) heldArrows=0;
+            try
+            {
+                if(observation!=null)
+                {
+                    if(!FinishObservation()) return;
+                    if (chest!=0 && (chestWindow?.IsDisposed==true || inventoryWindow?.IsDisposed==true)) Send("CLOSE");
+                    if(pending.TryDequeue(out var intent) && intent.gen==generation) Send(intent.op,intent.a,intent.b,intent.extra);
+                    if (TrinsicReplay.Active) TrinsicReplay.Next(world,chestWindow,dialog);
+                    if (capture && ++updates==14) { Client.Game.TakeScreenshot(); capture=false; }
+                }
+                if(TrinsicTown.Compact && heldArrows!=0 && prompt==0) WalkHeld();
+                if(observation!=null || Environment.TickCount64<nextPoll) return;
+                nextPoll=Environment.TickCount64+110;
+                if(pipe==null) Apply(Connect());
+                observation=Exchange("0 0 SYNC",CancellationToken.None);
+            }
+            catch (Exception ex) when (ex is IOException || ex is TimeoutException || ex is OperationCanceledException)
+            { Close(); nextPoll=Environment.TickCount64+1000; }
+        }
+        private static bool FinishObservation()
+        {
+            if(observation==null) return true;
+            if(!observation.IsCompleted) return false;
+            var result=observation;
+            observation=null;
+            string frame=result.GetAwaiter().GetResult();
+            bool run=walkingCommand!=null && runningCommand;
+            if(walkingCommand!=null) {
+                LastCommand=walkingCommand;
+                TrinsicReplay.Record(walkingCommand,frame);
+                walkingCommand=null;
+            }
+            Apply(frame,run);
+            return true;
+        }
+        private static readonly HashSet<uint> nativeContainers=new();
+        private static readonly HashSet<uint> stacks=new();
+        internal static bool IsStack(uint serial) => stacks.Contains(serial);
+        internal static bool MergeTarget(uint source,uint target)
+            => source!=target && IsStack(source) && IsStack(target);
+        internal static int[] AvatarStats { get; private set; }
+        internal static bool IsContainer(Item item) => TrinsicTown.Enabled ? nativeContainers.Contains(item.Serial) : item.ItemData.IsContainer;
+        public static bool CanDrag(uint serial) => draggable.Contains(serial);
+        public static void Send(string op, int a=0, int b=0, string extra="")
+        {
+            if (pipe == null) return;
+            try
+            {
+                if(!FinishObservation()) {
+                    if(pending.Count<8 && (op!="STEP" || pending.Count==0)) pending.Enqueue((op,a,b,extra,generation));
+                    return;
+                }
+                string command=$"{last+1} {generation} {op} {a} {b}{extra}";
+                if(op=="STEP" && TrinsicTown.Compact) {
+                    walkingCommand=command;
+                    runningCommand=b!=0;
+                    observation=Exchange(command,CancellationToken.None);
+                    return;
+                }
+                string frame = Read(command);
+                LastCommand=command; TrinsicReplay.Record(command,frame);
+                string outcome=frame.Split(' ')[5];
+                if(op=="MOVE" && (outcome=="ok" || outcome=="same" || outcome.StartsWith("split-"))) {
+                    int moved=outcome.StartsWith("split-")?int.Parse(outcome.Substring(6)):a;
+                    string[] xy=extra.Trim().Split(' ');
+                    if(xy.Length>=2 && int.TryParse(xy[0],out int px) && int.TryParse(xy[1],out int py) && px>=0 && py>=0)
+                        placements[ItemBase|(uint)moved]=(ItemBase|(uint)b,new Point(px,py));
+                }
+                Apply(frame);
+                if(op=="TURN" && outcome=="ok" && TrinsicTown.Compact) world.Player.Direction=(Direction)(a&7);
+                if(outcome=="locked" || outcome=="refused3") GameActions.Print(world,"The metal chest is locked.");
+                else if(outcome=="unreachable") GameActions.Print(world,"Move closer to the item.");
+                else if(outcome=="occupied") GameActions.Print(world,"That equipment slot is occupied.");
+                else if(outcome=="notwearable") GameActions.Print(world,"You cannot wear that item.");
+                else if(outcome=="refused1") GameActions.Print(world,"That is too heavy to carry.");
+                else if(outcome=="refused4" || outcome=="cannotstore") GameActions.Print(world,"That item will not fit in this container.");
+                else if(outcome.StartsWith("name-")) {
+                    string name=Encoding.Latin1.GetString(Convert.FromHexString(outcome.Substring(5))).Trim();
+                    var item=world.Items.Get(ItemBase|(uint)a);
+                    if(!TrinsicTown.Enabled) {var parts=name.Split('/');name=parts.Length>1?parts[1]:parts[0];}
+                    GameActions.Print(world,item,name);
+                }
+                else if(outcome=="stackfull") GameActions.Print(world,"That stack is full.");
+                else if (op=="SAVE" || op=="LOAD" || ((op=="MOVE" || op=="GROUND") && outcome!="ok" && outcome!="same" && outcome!="merged" && !outcome.StartsWith("split-"))) GameActions.Print(world,op+" "+outcome);
+            }
+            catch (Exception ex) when (ex is IOException || ex is OperationCanceledException) { Close(); pending.Clear(); }
+        }
+        internal static bool WalkReady => Environment.TickCount64>=nextWalk && world.Player.Steps.Count<=1;
+        public static bool Walk(Direction dir,bool run=false)
+        {
+            if (!WalkReady || (TrinsicTown.Compact && prompt!=0)) return false;
+            if(TrinsicTown.Compact && chest!=0) Send("CLOSE");
+            run=TrinsicTown.Compact && (run || ProfileManager.CurrentProfile.AlwaysRun);
+            nextWalk=Environment.TickCount64+Mobile.NativeStepDuration(run);
+            Send("STEP",(int)dir&7,run?1:0);
+            return true;
+        }
+        public static bool Key(SDL.SDL_KeyboardEvent e)
+        {
+            var key=(SDL.SDL_Keycode)e.key;
+            switch(key)
+            {
+                case SDL.SDL_Keycode.SDLK_ESCAPE when targetPrompt!=0: Send("TARGET",targetPrompt,0);return true;
+                case SDL.SDL_Keycode.SDLK_F2: ShowPaperdoll();return true;
+                case SDL.SDL_Keycode.SDLK_F3: ShowBackpack();return true;
+                case SDL.SDL_Keycode.SDLK_F4: ShowMap();return true;
+                case SDL.SDL_Keycode.SDLK_F6: if(Environment.GetEnvironmentVariable("TRINSIC_READY")!=null) Send("BEGIN"); return true;
+                case SDL.SDL_Keycode.SDLK_F7 when TrinsicTown.Enabled:
+                    if(!e.repeat) {
+                        var profile=ProfileManager.CurrentProfile;
+                        profile.TrinsicHalfResolution=!profile.TrinsicHalfResolution;
+                        GameActions.Print(world,profile.TrinsicHalfResolution ? "World resolution: half (2x pixels)." : "World resolution: native.");
+                    }
+                    return true;
+                case SDL.SDL_Keycode.SDLK_F8: Overlay=!Overlay; return true;
+                case SDL.SDL_Keycode.SDLK_F5: Send("SAVE"); return true;
+                case SDL.SDL_Keycode.SDLK_F9: Send("LOAD"); return true;
+                case SDL.SDL_Keycode.SDLK_UP: case SDL.SDL_Keycode.SDLK_RIGHT:
+                case SDL.SDL_Keycode.SDLK_DOWN: case SDL.SDL_Keycode.SDLK_LEFT:
+                    int d = key==SDL.SDL_Keycode.SDLK_UP ? 0 : key==SDL.SDL_Keycode.SDLK_RIGHT ? 2 : key==SDL.SDL_Keycode.SDLK_DOWN ? 4 : 6;
+                    if ((e.mod & SDL.SDL_Keymod.SDL_KMOD_SHIFT)!=0) {
+                        heldArrows=0;
+                        if(!e.repeat) Send("TURN",d);
+                    } else if(TrinsicTown.Compact) {
+                        if(!e.repeat && prompt==0) {
+                            heldArrows |= Arrow(key);
+                            WalkHeld();
+                        }
+                    } else Walk((Direction)d);
+                    return true;
+                default: return false;
+            }
+        }
+        private static ushort Art(int shape,int frame) => shape switch
+        {
+            594 => 0x0f52, 569 => 0x13cc, 574 => 0x13cb, 587 => 0x170b, 801 => 0x0e75,
+            178 => 0x14eb, 627 => 0x14fc, 595 => 0x0f6b, 701 => 0x0a12, 628 => 0x0995, 616 => 0x099f,
+            377 => 0x097b, 641 => 0x100e, 644 => 0x0eed, 599 => 0x0f61, 873 => (ushort)(0x0b2c+(frame&3)), 994 => 0x0fbb, 800 => 0x0e43, 522 => 0x0e40,
+            270 => 0x0675, 376 => 0x0676, 432 => 0x0679, 433 => 0x067a,
+            _ => 0x0e76
+        };
+        private static void Apply(string frame,bool run=false)
+        {
+            string[] lines = frame.Split('\n');
+            Header=lines[0];
+            string[] s=lines[0].Split(' ');
+            int gen=int.Parse(s[2]);
+            bool reset=gen!=generation;
+            if (reset) { heldArrows=0; targetPrompt=0; placements.Clear(); inventoryWindow?.Dispose(); inventoryWindow=null; chestWindow?.Dispose(); chestWindow=null; dialog?.Dispose(); chest=prompt=0; Client.Game.UO.GameCursor.ItemHold.Clear(); }
+            generation=gen; last=int.Parse(s[4]); CameraX=int.Parse(s[6]); CameraY=int.Parse(s[7]);
+            int[][] rows=Rows(frame).ToArray();
+            int[] avatar=rows.First(r=>r[7]==0);
+            var iolo=rows.FirstOrDefault(r=>r[7]==1);
+            if(iolo!=null){IoloX=iolo[3]; IoloY=iolo[4];}
+            var keep=new HashSet<uint>();
+            string avatarName=Encoding.Latin1.GetString(Convert.FromHexString(lines.First(l=>l.StartsWith("N ")).Substring(2)));
+            if(string.IsNullOrWhiteSpace(avatarName)) avatarName="Avatar";
+            world.Player.Title=TrinsicTown.Enabled ? $"{avatarName}, Avatar of Legend" : avatarName;
+            var stats=Array.ConvertAll(lines.First(l=>l.StartsWith("V ")).Substring(2).Split(' '),ushort.Parse);
+            world.Player.Strength=stats[0]; world.Player.Dexterity=stats[1]; world.Player.Intelligence=stats[2];
+            world.Player.Hits=stats[3]; world.Player.HitsMax=stats[0]; world.Player.Mana=stats[4]; world.Player.ManaMax=stats[5];
+            uint oldBackpack=backpack;
+            backpack=0;
+            if(TrinsicTown.Enabled) {
+                AvatarStats=Array.ConvertAll(lines.First(l=>l.StartsWith("P ")).Substring(2).Split(' '),int.Parse);
+                world.Player.Hits=(ushort)Math.Max(0,AvatarStats[0]);
+                world.Player.Weight=(ushort)AvatarStats[5]; world.Player.WeightMax=(ushort)AvatarStats[6];
+                world.Player.Gold=(uint)AvatarStats[7]; world.Player.InWarMode=AvatarStats[8]!=0;
+            }
+            var parents=new HashSet<int>{avatar[0]};
+            var slots=new Dictionary<int,int>();
+            draggable.Clear(); usable.Clear(); nativeContainers.Clear(); stacks.Clear();
+            foreach (int[] r in rows)
+            {
+                int id=r[0], shape=r[1], x=r[3], y=r[4], z=r[5]*4, parent=r[6], npc=r[7];
+                if (parent==0 && npc!=0 && Math.Max(Math.Abs(x-avatar[3]),Math.Abs(y-avatar[4]))>36) continue;
+                if (parent!=0 && !parents.Contains(parent)) continue;
+                uint serial=(uint)id | (npc<0?ItemBase:0u);
+                ushort townGraphic = 0;
+                if(TrinsicTown.Enabled && npc<0) {
+                    townGraphic=TrinsicTown.Graphic(shape,r[2],x,y,r[5],parent==0);
+                    if(townGraphic==0) continue;
+                    // The complete street-sign sprite includes its ground-level support.
+                    if(parent==0 && shape==361) z=0;
+                    if(parent==0 && TrinsicTown.IsFittedShutter(shape,x,y,r[5])) z-=8;
+                }
+                keep.Add(serial);
+                Entity entity;
+                if (npc>=0)
+                {
+                    Mobile mob=npc==0 ? world.Player : world.GetOrCreateMobile(serial);
+                    mob.Graphic=0x0190; mob.Hue=(ushort)(npc==0?1002:npc==12?1021:1008);
+                    mob.Name=npc switch {0=>avatarName,1=>"Iolo",2=>"Spark",12=>"Finnigan",_=>"Companion"};
+                    if(TrinsicTown.Enabled && shape==727) {
+                        mob.Graphic=0x00C8;
+                        mob.Hue=0;
+                        mob.Name="Horse";
+                    } else if(TrinsicTown.Enabled && npc!=0) {
+                        mob.Name=TrinsicTown.Name(npc);
+                        TrinsicTown.Dress(world,mob,shape);
+                    }
+                    if(TrinsicTown.Enabled && npc==0) {
+                        mob.IsFemale=AvatarStats[9]!=0;
+                        mob.Graphic=(ushort)(mob.IsFemale?0x191:0x190);
+                        mob.Hue=0x041c;
+                        TrinsicTown.AvatarHair(world,mob);
+                    }
+                    mob.CheckGraphicChange();
+                    Direction facing=(Direction)(r[8]&7);
+                    if(TrinsicTown.Compact) {
+                        mob.SetNativePosition(x,y,(sbyte)z,facing,reset || !visible.Contains(serial),npc==0 && run);
+                        continue;
+                    }
+                    mob.GetEndPosition(out int endX,out int endY,out sbyte endZ,out Direction endDir);
+                    int distance=Math.Max(Math.Abs(endX-x),Math.Abs(endY-y));
+                    if(reset || !visible.Contains(serial) || distance>1 || (distance==0 && endZ!=z))
+                    {
+                        mob.ClearSteps(); mob.SetInWorldTile((ushort)x,(ushort)y,(sbyte)z); mob.Direction=facing;
+                    }
+                    else if(distance!=0 || endDir!=facing)
+                    {
+                        if(!mob.EnqueueStep(x,y,(sbyte)z,facing,false)) { mob.ClearSteps(); mob.SetInWorldTile((ushort)x,(ushort)y,(sbyte)z); mob.Direction=facing; }
+                    }
+                    continue;
+                }
+                else
+                {
+                    Item item=world.GetOrCreateItem(serial); entity=item;
+                    if(parent!=0) { item.NativePosition=null; item.Offset=Vector3.Zero; }
+                    item.Graphic=TrinsicTown.Enabled ? townGraphic : Art(shape,r[2]); item.Amount=TrinsicTown.Enabled && (r[11]&8)==0 ? (ushort)1 : (ushort)Math.Max(1,r[9]);
+                    if(TrinsicTown.Enabled) {
+                        int capabilities=r[11];
+                        if((capabilities&8)!=0) stacks.Add(serial);
+                        if((capabilities&1)!=0) draggable.Add(serial);
+                        if((capabilities&2)!=0) nativeContainers.Add(serial);
+                        if((capabilities&6)!=0) usable.Add(serial);
+                    } else if(shape is 178 or 377 or 569 or 574 or 587 or 594 or 595 or 599 or 616 or 627 or 628 or 641 or 644 or 701 or 994) draggable.Add(serial);
+                    if(shape==994) item.Name="Tongs";
+                    if(placements.TryGetValue(serial,out var placed) && (parent==0 || placed.owner!=(ItemBase|(uint)parent))) placements.Remove(serial);
+                    if(shape==800 || shape==522 || shape==801 || nativeContainers.Contains(serial)) parents.Add(id);
+                    if(parent==avatar[0]) {
+                        // U7 chooses the occupied hand. Clothing draws on the layer of its stock UO artwork.
+                        Layer wornLayer = shape == 801 ? Layer.Backpack : r[10] switch
+                        {
+                            1 => Layer.OneHanded,
+                            2 => Layer.TwoHanded,
+                            >= 0 when item.ItemData.IsWearable => (Layer)item.ItemData.Layer,
+                            _ => Layer.Invalid
+                        };
+                        bool changedOwner = item.Container != world.Player.Serial;
+                        if (changedOwner)
+                        {
+                            world.RemoveItemFromContainer(item);
+                            world.Player.PushToBack(item);
+                            item.Container = world.Player.Serial;
+                        }
+                        if (changedOwner || item.Layer != wornLayer)
+                        {
+                            item.Layer = wornLayer;
+                            UIManager.GetGump<PaperDollGump>(world.Player.Serial)?.RequestUpdateContents();
+                        }
+                        if(shape==801) backpack=serial;
+                        continue;
+                    }
+                    item.Layer=Layer.Invalid;
+                    if(parent!=0)
+                    {
+                        uint owner=ItemBase|(uint)parent;
+                        slots.TryGetValue(parent,out int slot); slots[parent]=slot+1;
+                        bool inPack=owner==backpack;
+                        ushort gx=(ushort)(inPack?46+slot%4*23:23+slot%3*46);
+                        ushort gy=(ushort)(inPack?62+slot/4*21:112+slot/3%2*32);
+                        if(placements.TryGetValue(serial,out var placement)) {
+                            gx=(ushort)placement.position.X; gy=(ushort)placement.position.Y;
+                        }
+                        bool moved=item.X!=gx || item.Y!=gy;
+                        if(item.Container!=owner)
+                        {
+                            item.RemoveFromTile(); world.RemoveItemFromContainer(item);
+                            world.Items.Get(owner).PushToBack(item); item.Container=owner;
+                            moved=true;
+                        }
+                        if(moved) { item.X=gx; item.Y=gy; UIManager.GetGump<ContainerGump>(owner)?.RequestUpdateContents(); }
+                        continue;
+                    }
+                    if(TrinsicTown.Compact) {
+                        item.NativePosition=new Point(x,y);
+                        var sub=TrinsicTown.Subtile(x,y);
+                        // Buildings and fitted furniture use the baked cell anchor.
+                        if(TrinsicTown.FitsGrid(shape,r[2]) || TrinsicTown.IsFittedShutter(shape,x,y,r[5]))sub=Point.Zero;
+                        item.Offset=new Vector3(sub.X,sub.Y,0);
+                        x/=2; y/=2;
+                    }
+                    if(!item.OnGround) { world.RemoveItemFromContainer(item); item.Container=0xffffffff; item.SetInWorldTile((ushort)x,(ushort)y,(sbyte)z); }
+                }
+                if(!visible.Contains(serial) || entity.X!=x || entity.Y!=y || entity.Z!=z)
+                    entity.SetInWorldTile((ushort)x,(ushort)y,(sbyte)z);
+            }
+            foreach(uint id in visible.Except(keep))
+                if((id&ItemBase)!=0) world.RemoveItem(id,true); else world.RemoveMobile(id,true);
+            visible=keep;
+            if(oldBackpack!=0 && oldBackpack!=backpack) {
+                UIManager.GetGump<ContainerGump>(oldBackpack)?.Dispose();
+                if(backpack!=0) ShowBackpack();
+            }
+            int scale=TrinsicTown.Compact?2:1;
+            world.RangeSize.X=avatar[3]/scale; world.RangeSize.Y=avatar[4]/scale;
+            int open=int.Parse(s[8]);
+            if(open!=0 || int.Parse(s[9])!=0) heldArrows=0;
+            if(open!=chest)
+            {
+                chestWindow?.Dispose(); inventoryWindow?.Dispose(); chestWindow=null; inventoryWindow=null; chest=open;
+                if(open!=0 && world.Mobiles.TryGetValue((uint)open,out var owner))
+                {
+                    var contents=lines.Where(l=>l.StartsWith("I ")).Select(l=>{
+                        var fields=l.Split(' ');
+                        var name=Encoding.Latin1.GetString(Convert.FromHexString(fields[3])).Split('/');
+                        return name.Length>1?name[1]:name[0];
+                    });
+                    inventoryWindow=new MessageBoxGump(world,360,260,owner.Name+" inventory\n\n"+string.Join("\n",contents),_=>Send("CLOSE"));
+                    UIManager.Add(inventoryWindow);
+                }
+                else if(open!=0) {
+                    chestWindow=new ContainerGump(world,ItemBase|(uint)open,0x49,false){X=200,Y=110};
+                    UIManager.Add(chestWindow); chestWindow.RequestUpdateContents();
+                }
+            }
+            int mode=int.Parse(s[9]), wanted=mode!=0?int.Parse(s[10]):0;
+            if(wanted!=prompt)
+            {
+                dialog?.Dispose(); prompt=wanted;
+                targetPrompt=mode==4?wanted:0;
+                if(mode==4) GameActions.Print(world,"Double-click the object to use the item on. Escape cancels.");
+                else if(mode!=0)
+                {
+                    string Decode(string line)=>Encoding.Latin1.GetString(Convert.FromHexString(line.Substring(2))).Replace('~',' ');
+                    string text=Decode(lines.First(l=>l.StartsWith("T ")));
+                    if (text.Length==0) text=previousWords; else previousWords=text;
+                    string[] options=mode==1?new[]{"Continue"}:lines.Where(l=>l.StartsWith("A ")).Select(Decode).ToArray();
+                    var range=mode==3 ? lines.First(l=>l.StartsWith("D ")).Substring(2).Split(' ') : null;
+                    dialog=new TrinsicDialogue(world,prompt,int.Parse(s[11]),text,options,range);
+                    UIManager.Add(dialog);
+                }
+            }
+        }
+        private sealed class TrinsicDialogue : Gump
+        {
+            private readonly int token;
+            private readonly StbTextBox number;
+            private readonly int minimum, maximum, increment;
+            public TrinsicDialogue(World w,int id,int face,string text,string[] options,string[] range) : base(w,0,0)
+            {
+                bool numeric=range!=null;
+                token=id; X=70; Y=35; CanMove=true; IsModal=true;
+                CanCloseWithRightClick=false; CanCloseWithEsc=false;
+                var label=new Label(text,false,0x386,398,1){X=85,Y=20};
+                int top=Math.Max(90,32+label.Height);
+                Add(new ResizePic(0x0a28){Width=510,Height=top+(numeric?65:((options.Length+1)/2)*27+20)});
+                if(face==12 || face==-12) Add(new GumpPic(24,20,64012,0));
+                Add(label);
+                if(numeric) {
+                    minimum=int.Parse(range[0]); maximum=int.Parse(range[1]); increment=int.Parse(range[2]);
+                    Add(new Label($"Enter {minimum} to {maximum} in steps of {increment}.",false,0x386){X=85,Y=top+30});
+                    Add(new ResizePic(0xbb8){X=85,Y=top,Width=120,Height=27});
+                    number=new StbTextBox(1,5,104){X=91,Y=top+4,Width=104,Height=22,NumbersOnly=true};
+                    Add(number);
+                    Add(new Button(0,0x481,0x482,0x483){X=216,Y=top,ButtonAction=ButtonAction.Activate});
+                    UIManager.KeyboardFocusControl=number;
+                    number.SetKeyboardFocus();
+                }
+                else for(int i=0;i<options.Length;i++)
+                {
+                    int x=25+(i%2)*237, y=top+(i/2)*27;
+                    Add(new Button(i,0x837,0x838,0x837){X=x,Y=y,ButtonAction=ButtonAction.Activate});
+                    Add(new Label(options[i],false,0x386){X=x+23,Y=y});
+                }
+            }
+            public override void OnKeyboardReturn(int textID,string text) {
+                if(number!=null) OnButtonClick(0);
+            }
+            public override void OnButtonClick(int id) {
+                if(number==null) Send("ANSWER",token,id);
+                else if(int.TryParse(number.Text,out int value) && value>=minimum && value<=maximum && (value-minimum)%increment==0)
+                    Send("NUMBER",token,value);
+            }
+        }
+    }
+}
