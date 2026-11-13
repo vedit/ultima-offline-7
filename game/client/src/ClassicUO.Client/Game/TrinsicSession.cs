@@ -184,7 +184,10 @@ namespace ClassicUO.Game
             Client.Game.SetScene(new GameScene(world));
             ShowBarks(data.Split('\n'));
             ShowMap(); ShowPaperdoll(); ShowBackpack();
-            if(Environment.GetEnvironmentVariable("TRINSIC_READY")!=null && !TrinsicReplay.Active) { Overlay=true; GameActions.Print(world,"Iolo is ready. Ctrl+wheel changes zoom. Press F6 to begin."); }
+            if(Environment.GetEnvironmentVariable("TRINSIC_READY")!=null && !TrinsicReplay.Active) {
+                if(TrinsicTown.Enabled) Send("BEGIN");
+                else { Overlay=true; GameActions.Print(world,"Iolo is ready. Ctrl+wheel changes zoom. Press F6 to begin."); }
+            }
         }
         private static IEnumerable<int[]> Rows(string frame)
         {
@@ -556,7 +559,7 @@ namespace ClassicUO.Game
                 if(mode==4) GameActions.Print(world,"Double-click the object to use the item on. Escape cancels.");
                 else if(mode!=0)
                 {
-                    string Decode(string line)=>Encoding.Latin1.GetString(Convert.FromHexString(line.Substring(2))).Replace('~',' ');
+                    string Decode(string line)=>gameTextEncoding.GetString(Convert.FromHexString(line.Substring(2))).Replace('@','"').Replace('~',' ');
                     string text=Decode(lines.First(l=>l.StartsWith("T ")));
                     if (text.Length==0) text=previousWords; else previousWords=text;
                     string[] options=mode==1?new[]{"Continue"}:lines.Where(l=>l.StartsWith("A ")).Select(Decode).ToArray();

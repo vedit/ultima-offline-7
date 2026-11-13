@@ -8,6 +8,9 @@ from play import Pipe, RELEASE, ROOT, session
 DIRECTIONS=((0,-1),(1,-1),(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1))
 DOORS=(270,376,432,433)
 FLAGS=(60,61,62,64,66,67,72,90)
+# Ground landing, individual native treads, then the upper landing.
+ESTATE_STAIRS = [(971,2139), *((x,2139) for x in range(970,964,-1)),
+                 (965,2138),(965,2137),(965,2136),(971,2136)]
 def distance(a,b): return max(abs(a[0]-b[0]),abs(a[1]-b[1]))
 
 class Walkthrough:
@@ -74,7 +77,13 @@ class Walkthrough:
         if not started:
             actor=self.actor(n)
             if not actor:raise ValueError(('missing NPC',n,self.xy()))
-            self.go(actor[3:5],2,npc=n)
+            for _ in range(3):
+                self.go(actor[3:5],2,npc=n)
+                actor=self.actor(n)
+                if abs(actor[5]-self.actor(0)[5])<=3: break
+                if n!=2 or not (963<=actor[3]<=976 and 2129<=actor[4]<=2141): break
+                # Spark's schedule can put him over the Avatar at the same X/Y.
+                self.estate_floor(actor[5])
             actor=self.actor(n)
             if abs(actor[5]-self.actor(0)[5])>3:
                 raise RuntimeError(('speaker on another floor',n,actor[3:6],self.actor(0)[3:6]))
@@ -108,6 +117,38 @@ class Walkthrough:
     def check(self,milestone):
         self.record(milestone)
         assert self.p.send('SAVE')=='ok'
+    def opening(self):
+        """Let the original arrival run, accept the case, and tell Finnigan the stables are unsearched."""
+        assert 'CAMERA_ONLY' in self.p.frame and not self.flags()[90]
+        assert self.p.send('BEGIN')=='ok'
+        previous=''
+        accepted=unsearched=False
+        deadline=time.monotonic()+120
+        while time.monotonic()<deadline:
+            self.p.sync()
+            mode,token=map(int,self.p.head[9:11])
+            if mode==1:
+                previous=self.words()
+                assert self.p.send('ANSWER',token,0)=='ok'
+            elif mode==2:
+                assert self.p.choices==['Yes','No'],(previous,self.p.choices)
+                if 'Dost thou accept?' in previous:
+                    answer=0; accepted=True
+                elif 'searched the stables?' in previous:
+                    answer=1; unsearched=True
+                else: raise ValueError(previous)
+                self.record('opening choice',previous,self.p.choices,self.p.choices[answer])
+                assert self.p.send('ANSWER',token,answer)=='ok'
+            elif accepted and unsearched and self.flags()[90]:
+                self.check('opening commission')
+                return
+            time.sleep(.05)
+        raise TimeoutError(('opening commission',previous,self.p.head))
+    def estate_floor(self,lift):
+        current=self.actor(0)[5]
+        if current==lift: return
+        for xy in (ESTATE_STAIRS if lift>current else reversed(ESTATE_STAIRS)):
+            self.go(xy)
     def run(self,stage):
         if stage<=0:
             self.go((1070,2208))
@@ -130,9 +171,8 @@ class Walkthrough:
             if door[2]==0:
                 self.p.send('USE',door[0]); self.p.sync()
             self.go((974,2136))
-            self.go((971,2139))
-            for x in range(970,964,-1):self.go((x,2139))
-            for xy in ((965,2138),(965,2137),(965,2136),(971,2136),(971,2133)):self.go(xy)
+            self.estate_floor(6)
+            self.go((971,2133))
             chest=next(r for r in self.p.rows if r[1]==522 and r[3:5]==[972,2132])
             key=next(r for r in self.p.rows if r[1]==641 and r[6])
             self.p.send('USE',key[0]);self.p.sync()
@@ -152,8 +192,7 @@ class Walkthrough:
             self.p.send('CLOSE');self.p.sync()
             self.check('estate unlocked')
         if stage<=3:
-            if self.actor(0)[5]>0:
-                for xy in ((971,2136),(965,2136),(965,2137),(965,2138),(965,2139),(971,2139),(974,2136)):self.go(xy)
+            self.estate_floor(self.actor(2)[5] if self.actor(2) else 0)
             if not self.actor(2):self.go((970,2139))
             self.talk(['Avatar','murder','find','something','man','hook','No','bye'],2)
             assert self.flags()[67]
@@ -163,6 +202,7 @@ class Walkthrough:
             # east door used on entry before planning the long walk to the docks.
             x,y=self.xy()
             if 964<x<975 and 2130<y<2141:
+                self.estate_floor(0)
                 door=next((r for r in self.p.rows if r[1] in DOORS and r[3:5]==[975,2137] and r[5]==0),None)
                 if door and door[2]%4!=1:
                     self.p.send('USE',door[0]);self.p.sync()
@@ -186,7 +226,15 @@ class Walkthrough:
             self.check('outside east gate')
 
 if __name__=='__main__':
-    ap=argparse.ArgumentParser();ap.add_argument('--stage',type=int,default=0);ap.add_argument('--run',default='town-journey-proof');args=ap.parse_args()
-    with session(args.run,'Investigation',not args.stage) as (folder,env,host):
+    ap=argparse.ArgumentParser();ap.add_argument('--stage',type=int,default=0);ap.add_argument('--run',default='town-journey-proof')
+    ap.add_argument('--opening',action='store_true',help='start at the original moongate arrival')
+    args=ap.parse_args()
+    if args.opening and args.stage: ap.error('--opening starts at stage zero')
+    with session(args.run,'Investigation',not args.stage,original_opening=args.opening) as (folder,env,host):
         pipe=Pipe(env['TRINSIC_PIPE'],host)
-        Walkthrough(pipe,folder).run(args.stage)
+        try:
+            walk=Walkthrough(pipe,folder)
+            if args.opening: walk.opening()
+            walk.run(args.stage)
+        finally:
+            pipe.close()

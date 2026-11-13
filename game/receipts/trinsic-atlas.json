@@ -32,7 +32,7 @@
     "Stock outfit": 15
   },
   "total_rows": 7141,
-  "unique_png": 6747,
+  "unique_png": 6749,
   "input_sha256": {
     "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\SHAPES.VGA": "193df5e56326adb5b695f0781b760fa81bf6c2f17af761cac95d4e449dcb5fd4",
     "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\TEXT.FLX": "bd6786162075866e6dbf3a4454a3319cec94ea24e372c7998c678caa84e367d9",
@@ -58,21 +58,24 @@
     "E:\\UltimaOffline\\Tools\\Exult-Source-v1.12.1\\data\\bg\\bodies.txt": "5ab2c21e2a2b977641b550249c1ac5a0f51007d4688de67f65bd5846cbaa612a"
   },
   "output_sha256": {
-    "mapping.csv": "2f825990953d48f65d665f928e749f290d07aec495eff7a0f7d8f98acb451667",
+    "mapping.csv": "64470863883e2ea0344be9f7f6143560713037caa77ba876945e3d0fa36dfbd7",
     "custom-art.csv": "16a5c6a548900f477acbdb76b581fcb7a1a30bc3e687c4188005fbae835b8d70",
     "references.csv": "0b3d3ae305845e431d6047fc868d4de8744768e18aaeb9ab59ea61efb1673e88",
-    "catalog.js": "1c6ef9ae8bac56a7880d3e84dbd8e03c2d3612084f5d45cd9fb589ff43321f6d",
+    "catalog.js": "572338e8299bcd7d8db2db33ab91f48afc7879df58a99c305f028a776bc10d17",
     "revised-matches.html": "a678b59d28088c0f89e28b880e4167ab84609a1401b1d9e8ef3e7cbfa29834d1",
     "revised-lights.png": "b0f79a6f63190931acc31617a21c1850c7e7cfd95c28b9a3a60d0de4fd5479fa",
     "revised-dishes.png": "b08444b28495d95b492c99536d4176a5d770a8aec4cdd25b163d9429cf357487",
     "revised-items.png": "d0a2a14074decb30c1617dfa809228325f0a0b64681bc6bcab135818607685b6",
+    "gargoyles.html": "c0fa7aaf70fff9a68669665c094341dd44a484ff6bdbe940fe003e74c0fa5f81",
+    "inamo.png": "b03aca223b2c382e217dd67f0bb9a61af33313719baecc58e8894acda21335ea",
+    "gargoyle-pairs.png": "ef11367ca27e2d62a88a05f7e424c9b3eec63bda1fb4a6025d25dda6a3abe9ec",
     "rake.png": "d67a2733062220d461fbed3fbcf958357b44a0c25c2686026af9a87cece16adf",
     "equipment.csv": "4db814baaec83f64d92f3357ca18a0c954f0820fd0fb5e884eed896590983136",
-    "stock-study.html": "42a9bc8698d08d1494aac5a3b70b84e3679ecfe5dc611d966faa66ac1bec4f4d",
+    "stock-study.html": "934111057f9f47d020e0075b3ae32c36a9ee80e3b4eb6ace85af03020a5dd7f9",
     "stock-sources.json": "abfc3b44b2d178ce57b3f676d327aff6ac82c97c3a2a9c2a20b3d968e194a41a",
     "outfits.csv": "393334a5d35e96fc2ab2cfe473a57f9fef9407e17eb735a134ca45eff8b328ad",
     "preview.png": "c4506af7d69e6793b18371bee2ee0aecdfefa925b2749966c518ec5b8a464b76",
     "extent.png": "d5bec0bff06f9deda801c0feeb1b726070421b1eb6cdf06e605e8f8ed950aaf6",
-    "index.html": "439551374e65b874dc23b83d2705ebab3ea399f5396d0f4afb236a071ec200fb"
+    "index.html": "ad12ed95d9e6e630479531684e5c91551a1ea7c99031985dc42e2ab71fa7f2bf"
   }
 }

@@ -151,7 +151,7 @@ def simplify(s,f,im,original):
         if k in (4,5):return category,('static',0x1363),'Stock candidate','Stone remains','Use stock rubble for this stone body.'
         if k in (24,25):return category,('static',0x122a),'Review substitute','Scorched outline','Use the stock ground stain as a silhouette reference. Check it against the dark source outline.'
         if k==26:
-            return category,('scene',s,f),'Stock assembly','Corpse parts','Place the stock torso, head, four limbs and blood at one victim anchor. Offsets are sprite-center pixels for the scene renderer. Keep a single inspectable U7 object.'+(' Use a timber support behind the raised body.' if s==414 else '')
+            return category,('scene',s,f),'Stock assembly','Pinned gargoyle','Inamo hangs against the stable wall. A pitchfork pins his upper body above a pool of blood on the floor. The complete pose shares one selectable object at the original stable anchor.'
         return category,spec,'Review substitute','Alternate corpse state','The recorded scene uses loose corpse parts. This alternate source silhouette needs its own pose or body-family check.'
     if s==470:return category,('static',0xa300 if f<32 else 0xa301),'Stock candidate','Complete well','Use the stocked well with stone opening and timber superstructure.'
     if s==740:return category,layout(part(0x141),part(0x14f8,0,0,2)),'Stock assembly','Well fittings','Use a timber beam and rope at the source fitting anchor. Omit duplicate supports if the paired well already supplies them.'

@@ -27,7 +27,7 @@ def session(name,fixture,reset=False,extra=None,*,original_opening=False):
             if not (folder_data/'graphics.tsv').exists(): raise RuntimeError("Build the Trinsic town atlas before launching")
             env['TRINSIC_TOWN']=str(folder_data)
             args_file=folder/'gameargs.dat'
-            if original_opening:
+            if original_opening and not slot.exists():
                 # Black Gate consumes these character-creation arguments and loads INITGAME.DAT.
                 args_file.write_bytes(b'\x00' + b'Avatar'.ljust(15,b'\x00'))
                 env['TRINSIC_READY']='1'
@@ -86,9 +86,12 @@ if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('scenario',nargs='?',default='room',choices=['investigation','room','inside','edge','outside'])
     p.add_argument('--run');p.add_argument('--reset',action='store_true');p.add_argument('--capture',type=int,default=0)
+    p.add_argument('--from-opening',action='store_true',help='start at the moongate in a separate slot, or resume that slot')
     a=p.parse_args()
+    if a.from_opening and a.scenario!='investigation': p.error('--from-opening requires the investigation')
     fixture=('Trinsic-room' if (ROOT/'fixtures/Trinsic-room.U7').exists() else 'Finnigan-before-chair') if a.scenario=='room' else ('Investigation' if a.scenario=='investigation' else 'Iolo-'+a.scenario)
-    with session(a.run or 'player-'+a.scenario,fixture,a.reset) as (folder,env,host):
+    slot=a.run or ('player-trinsic-opening' if a.from_opening else 'player-'+a.scenario)
+    with session(slot,fixture,a.reset,original_opening=a.from_opening) as (folder,env,host):
         if a.capture: env['TRINSIC_CAPTURE']='1'
         sys.exit(client(folder,env,host,a.capture))
 

@@ -4,6 +4,8 @@ Run `Play Ultima Offline 7.cmd` at the repository root. It resumes `runs/player-
 
 Short NPC reactions appear over the speaker using ClassicUO's overhead speech. Black Gate supplies the words and decides when each character speaks.
 
+The frozen Trinsic playtest starts at the original moongate arrival and resumes its own save after F5. On the provisioned machine, run `E:\UltimaOffline\Builds\UltimaOffline7\Trinsic-playtest-01\Play Trinsic.cmd`. To play the same opening in the development build, run `"Play Ultima Offline 7.cmd" --from-opening`. [Playtest coverage and build fingerprint](receipts/trinsic-playtest-01.json)
+
 The default installation is `E:\UltimaOffline`. Set `ULTIMA_OFFLINE_HOME` to use another installation with the same layout. The historical folder name `PoCs\ClassicUO-U7-Local` identifies the private runtime and its save slots. Use a separate slot to try a new investigation.
 
 ```powershell
@@ -54,8 +56,10 @@ py -3 -B game/atlas/complete-town/verify_town.py
 py -3 -B game/atlas/complete-town/verify_town.py --world-terrain
 py -3 -B game/qualification/verify_town_facings.py
 py -3 -B game/qualification/investigation.py --run verify-investigation
+py -3 -B game/qualification/investigation.py --opening --run verify-opening-to-gate
 py -3 -B game/qualification/verify_overhead.py
+py -3 -B game/qualification/verify_item_labels.py
 py -3 -B -m unittest discover -s tests -q
 ```
 
-The first check compares the atlas with source records and reviewed output hashes. The second compares exact atlas keys with terrain placements across the original world. The third reads the installed map, statics, art and tile flags. The fourth starts a separate native host, sends actions through the local input protocol and saves at each investigation milestone. It starts the named verification slot from the original checkpoint. The overhead speech replay starts the original opening in its own slot, checks Iolo and Petre in ClassicUO and captures their reactions. The last command runs the repository's existing compiler and source-reader tests.
+The atlas checks compare source records, reviewed output hashes and world terrain. The facing check reads the installed map, statics, art and tile flags. The investigation replays send player actions to a separate native host and save at each milestone. One starts from the DOS commission checkpoint and the other plays the opening from INITGAME. The two ClassicUO checks exercise overhead speech and single-click item labels. The last command runs the repository's compiler and source-reader tests.

@@ -24,7 +24,9 @@ def verify(output=COMPACT):
     refs=table('references.csv')
     original={tuple(v[:2]):v[2] for v in (list(map(int,line.split())) for line in
               (ROOT/'town-data/graphics.tsv').read_text().splitlines())}
-    assert frames.keys()==original.keys()
+    # The reviewed gargoyle corpses formerly existed only as animation previews.
+    gargoyle_corpses={(414,base+reflection) for base in (1,2,3,14) for reflection in (0,32)}
+    assert frames.keys()==original.keys()|gargoyle_corpses
     # Stock lookup in the installed client tells us the direction the character actually sits.
     chairs={}
     for line in (BIN/'Data/Client/chair.txt').read_text().splitlines():
@@ -92,6 +94,10 @@ def verify(output=COMPACT):
         assert tile(x//2,y//2,z*4,graphic)
     roofs=list(roof_tiles(refs,rows,ROOT.parents[1]/'Assets/UO-Classic',2))
     data=(output/'tiledata.mul').read_bytes()
+    for frame in (26,58):
+        graphic=frames[414,frame]
+        offset=512*964+graphic//32*1316+4+graphic%32*41
+        assert not (struct.unpack_from('<Q',data,offset)[0] & 0x08), ('translucent Inamo', frame)
     def roof_at(x,y,z,graphic):
         if tile(x,y,z,graphic):return True
         start,count,_=struct.unpack_from('<iii',idx,12*((x//8)*512+y//8))
@@ -249,6 +255,9 @@ def verify(output=COMPACT):
         expected=Image.new('RGBA',(turn.width,height))
         expected.alpha_composite(turn)
     assert (output/'Art/Statics'/f'{placed[victim]}.art').read_bytes()==encode_sprite(expected)
+    for key in gargoyle_corpses | {(414,26),(414,58)}:
+        with Image.open(ATLAS/'images'/(rows[key]['target_image']+'.png')) as source:
+            assert (door_art/f'{frames[key]}.art').read_bytes()==encode_sprite(source)
     assert placed[426,0,1007,2110,0]!=placed[426,0,1007,2321,0]
     for key,pos,parts in fences:assert placed[key+pos]==parts[0][0]
     assert len({frames[873,f] for f in range(4)})==4
