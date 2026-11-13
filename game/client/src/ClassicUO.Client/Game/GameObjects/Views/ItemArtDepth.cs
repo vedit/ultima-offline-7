@@ -9,6 +9,34 @@ namespace ClassicUO.Game.GameObjects
     internal partial class Item
     {
         internal float FittedFaceDepth;
+        internal int FurnitureWall;
+
+        // The opaque sprite may span the preceding wall bay. Both drawing and
+        // picking use that bay's depth for the part of the tabletop behind it.
+        private int FurnitureBay(int dx)
+        {
+            int along = FurnitureWall switch { 1 => dx, 2 => -dx-1, _ => System.Math.Min(dx,-dx-1) };
+            return System.Math.Min(0,(int)System.Math.Floor((along+22)/22.0));
+        }
+
+        internal float FurnitureDepth(int dx) => X+Y+FurnitureBay(dx)+(127+Z)*0.01f-0.3f;
+
+        private void DrawFurniture(UltimaBatcher2D batcher,int x,int y,Vector3 hue)
+        {
+            ref readonly var art = ref Client.Game.UO.Arts.GetArt(DisplayedGraphic);
+            if (art.Texture == null) return;
+            int origin = (int)Offset.X-art.UV.Width/2;
+            for (int start=0;start<art.UV.Width;)
+            {
+                int bay=FurnitureBay(origin+start), end=start+1;
+                while (end<art.UV.Width && FurnitureBay(origin+end)==bay) end++;
+                var source=new Rectangle(art.UV.X+start,art.UV.Y,end-start,art.UV.Height);
+                var dest=new Vector2(x+22-art.UV.Width/2+start,y+44-art.UV.Height);
+                batcher.Draw(art.Texture,dest,source,hue,0f,Vector2.Zero,Vector2.One,
+                             SpriteEffects.None,FurnitureDepth(origin+start)+0.5f);
+                start=end;
+            }
+        }
 
         // Picking is already alpha-tested against the complete sprite. Resolve
         // which leaf contributed the pixel using the same cut as the draw call.

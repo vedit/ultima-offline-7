@@ -83,6 +83,23 @@ def verify(output=COMPACT):
     for (x,y,lift,opened),closed in fittings.items():
         assert opened in (14,15,34,35) and (output/'Art/Statics'/f'{closed}.art').is_file()
     wall_cells=verify_house_walls(refs,rows,idx,statics,fittings)
+    contacts=graphic_table(output,'furniture-walls.tsv')
+    wall_x=set()
+    wall_y=set()
+    for r in refs:
+        row=rows[int(r['shape']),int(r['frame'])]
+        if r['layer'] not in ('Fixed','Terrain') or row['source_name']!='wall':continue
+        x,y,lift=(int(r[k]) for k in ('x','y','lift'))
+        w,d=map(int,row['footprint'].split('\u00d7'))
+        points={(x-a,y-b,lift) for a in range(w) for b in range(d)}
+        if w>=d:wall_x.update(points)
+        if d>=w:wall_y.update(points)
+    for r in refs:
+        row=rows[int(r['shape']),int(r['frame'])]
+        if r['layer']!='World object' or row['source_name'] not in ('desk','table'):continue
+        x,y,z=(int(r[k]) for k in ('x','y','lift'))
+        expected=int(y%2==0 and (x,y+1,z) in wall_x) + 2*int(x%2==0 and (x+1,y,z) in wall_y)
+        assert contacts.get((x,y,z),0)==expected, ('furniture wall',x,y,z)
     roofs=list(roof_tiles(refs,rows,ROOT.parents[1]/'Assets/UO-Classic',2))
     data=(output/'tiledata.mul').read_bytes()
     def roof_at(x,y,z,graphic):

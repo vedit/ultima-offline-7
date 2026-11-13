@@ -336,6 +336,20 @@ def build(output=OUT,compact=False):
                 graphics=fit_house_window(graphics,*bay)
             for graphic in graphics:
                 blocks[x//8*HEIGHT_BLOCKS+y//8].extend(struct.pack('<HBBbH',graphic,x%8,y%8,lift*4,0))
+        # Native positions just inside an exterior-facing wall can share the
+        # wall's compact tile. Keep that information for wide furniture sprites.
+        wall_contacts={}
+        for (x,y,lift),row in bases.items():
+            w,d=map(int,row['footprint'].split('\u00d7'))
+            for a in range(w):
+                for b in range(d):
+                    xx,yy=x-a,y-b
+                    for point,arm,inside in (((xx,yy-1,lift),1,w>=d and yy%2),
+                                             ((xx-1,yy,lift),2,d>=w and xx%2)):
+                        if inside:wall_contacts[point]=wall_contacts.get(point,0)|arm
+        with (output/'furniture-walls.tsv').open('w',encoding='ascii') as stream:
+            for (x,y,lift),mask in sorted(wall_contacts.items()):
+                stream.write(f'{x}\t{y}\t{lift}\t{mask}\n')
     roof_base={}
     for r in fixed_roofs:
         row=by_key[int(r['shape']),int(r['frame'])]

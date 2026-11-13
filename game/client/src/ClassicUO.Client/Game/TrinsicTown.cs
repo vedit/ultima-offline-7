@@ -12,6 +12,10 @@ namespace ClassicUO.Game
         private static readonly Dictionary<(int,int),ushort> graphics = new();
         private static readonly Dictionary<ushort,(int cut,int left,int right)> artDepth = new();
         internal static (int cut,int left,int right) ArtDepth(ushort graphic) => artDepth.GetValueOrDefault(graphic);
+        private static readonly Dictionary<(int x,int y,int lift),int> furnitureWalls = new();
+        internal static int FurnitureWall(int shape,int x,int y,int lift)
+            => shape is 407 or 633 or 847 or 890 or 971 or 1000 or 1003 or 1018
+                ? furnitureWalls.GetValueOrDefault((x,y,lift)) : 0;
         private static readonly Dictionary<(int,int),ushort> carriedGraphics = new();
         private static readonly Dictionary<(int,int,int,int,int),ushort> placedGraphics = new();
         private static readonly Dictionary<int,string> names = new();
@@ -75,6 +79,12 @@ namespace ClassicUO.Game
             string roofFile=Path.Combine(Folder,"fixed-roofs.tsv");
             Compact=File.Exists(Path.Combine(Folder,"baked-world.tsv"));
             if(Compact) {
+                string wallFile=Path.Combine(Folder,"furniture-walls.tsv");
+                if(File.Exists(wallFile))
+                    foreach(string line in File.ReadLines(wallFile)) {
+                        var v=Array.ConvertAll(line.Split('\t'),int.Parse);
+                        furnitureWalls[(v[0],v[1],v[2])]=v[3];
+                    }
                 string depthFile=Path.Combine(Folder,"art-depth.tsv");
                 if(File.Exists(depthFile))
                     foreach(string line in File.ReadLines(depthFile)) {

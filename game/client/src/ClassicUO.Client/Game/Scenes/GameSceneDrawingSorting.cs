@@ -714,9 +714,18 @@ namespace ClassicUO.Game.Scenes
         {
             if(TrinsicTown.Compact && (obj is Land)!=(previous is Land))
                 return previous is Land;
-            int LeafAtCursor(GameObject target) => target is Item item && item.NativePosition.HasValue
-                ? item.DoorDepthAt(SelectedObject.TranslatedMousePositionByViewport.X) : 0;
-            return obj.CalculateDepthZ()+LeafAtCursor(obj)>=previous.CalculateDepthZ()+LeafAtCursor(previous);
+            float AtCursor(GameObject target)
+            {
+                if (target is Item item && item.NativePosition.HasValue)
+                {
+                    int x = SelectedObject.TranslatedMousePositionByViewport.X;
+                    int dx = x-item.RealScreenPosition.X-22;
+                    if (item.FurnitureWall!=0) return item.FurnitureDepth(dx);
+                    return item.CalculateDepthZ()+item.DoorDepthAt(x);
+                }
+                return target.CalculateDepthZ();
+            }
+            return AtCursor(obj)>=AtCursor(previous);
         }
 
         private void PushToRenderQueue(

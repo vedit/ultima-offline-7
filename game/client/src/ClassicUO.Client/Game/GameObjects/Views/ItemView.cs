@@ -137,6 +137,12 @@ namespace ClassicUO.Game.GameObjects
             if (NativePosition.HasValue && DrawDoorLeaves(batcher,posX,posY,hueVec,depth))
                 return true;
 
+            if (FurnitureWall != 0 && NativePosition.HasValue)
+            {
+                DrawFurniture(batcher,posX,posY,hueVec);
+                return true;
+            }
+
             if (!IsMulti && !IsCoin && Amount > 1 && ItemData.IsStackable)
             {
                 DrawStaticAnimated(batcher, graphic, posX - 5, posY - 5, hueVec, false, depth);
