@@ -1,11 +1,12 @@
-import csv,json,hashlib,io,math
+import argparse,csv,json,hashlib,io,math
 from collections import Counter
 from pathlib import Path
 from PIL import ImageDraw,ImageFont
 from variants import variants
 from reuse import simplify,draw,describe,WARDROBES
 from family_notes import *
-OUT=BASE/'atlas';OUT.mkdir(exist_ok=True);IMG=OUT/'images';IMG.mkdir(exist_ok=True)
+from install_paths import ATLAS_OUTPUT as OUT
+IMG=OUT/'images'
 def csvfile(name,fields,rows):
     with (OUT/name).open('w',newline='',encoding='utf-8-sig') as h:
         w=csv.writer(h);w.writerow(fields);w.writerows(rows)
@@ -78,6 +79,11 @@ def covermap():
     for a,b,c,d,color in [(928,2080,1119,2351,'#fff0aa'),(944,2112,1111,2271,'#ed7884')]:draw.rectangle(((a-l)*2,(b-t)*2,(c-l)*2,(d-t)*2),outline=color,width=2)
     m.save(OUT/'extent.png')
 if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--out',type=Path,default=OUT,help='private atlas output directory')
+    OUT=parser.parse_args().out.resolve()
+    IMG=OUT/'images'
+    IMG.mkdir(parents=True,exist_ok=True)
     records,inputs=census();rows,receipt=html_data(records,inputs);covermap()
     (OUT/'index.html').write_text((BASE/'viewer.html').read_text('utf-8-sig'),encoding='utf8')
     from stock_study import build

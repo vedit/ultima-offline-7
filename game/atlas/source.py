@@ -3,7 +3,9 @@ from pathlib import Path
 from collections import defaultdict
 from functools import lru_cache
 sys.dont_write_bytecode = True
-sys.path.insert(0, r'C:\Users\veditoid\Documents\ChatGPT\Ultima Offline')
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from install_paths import GAME_SOURCE, INSTALL
+sys.path.insert(0, str(GAME_SOURCE.parent))
 from u7uo.u7 import flex_directory, seed_directory
 from u7uo.terrain import TerrainSource, fixed_inventory
 from u7uo.containers import decode_member
@@ -11,8 +13,8 @@ from u7uo.shore import art_key
 from u7uo.gump_overlay import _directory
 from frames import rle as face_frame
 from PIL import Image
-D = Path('E:/UltimaOffline/Assets/UltimaVII-Steam/STATIC')
-U = Path('E:/UltimaOffline/Assets/UO-Classic')
+D = INSTALL / 'Assets/UltimaVII-Steam/STATIC'
+U = INSTALL / 'Assets/UO-Classic'
 def member(b, i):
     start,size = flex_directory(b)[i]
     return b[start:start+size]

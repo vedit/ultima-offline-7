@@ -6,7 +6,8 @@ from costumes import WARDROBES, clothing, equip, itemname, SKIN, costume, costum
 from reuse import assemble, part
 from town import BASE, U, src, uo, digest, tiledata, tile
 
-WRONG = Path('E:/UltimaOffline/Tools/ModernUO/Distribution/Data/Decoration/Britannia/_wrong.cfg')
+from install_paths import INSTALL
+WRONG = INSTALL/'Tools/ModernUO/Distribution/Data/Decoration/Britannia/_wrong.cfg'
 def witness():
     doors = {}
     group = None

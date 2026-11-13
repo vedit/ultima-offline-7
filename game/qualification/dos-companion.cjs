@@ -2,7 +2,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
-const root = path.resolve(__dirname, "..");
+const root = path.resolve(process.env.ULTIMA_OFFLINE_HOME || "E:/UltimaOffline", "PoCs", "ClassicUO-U7-Local");
 const install = path.resolve(root,"../../Assets/UltimaVII-Steam");
 const pkg = path.resolve(root,"../../Tools/js-dos-8.5.3/package");
 const wait = ms => new Promise(resolve => setTimeout(resolve,ms));

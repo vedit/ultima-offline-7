@@ -14,8 +14,8 @@ from pathlib import Path
 
 from PIL import Image
 from play import ROOT, RELEASE
+from install_paths import ATLAS_OUTPUT as ATLAS, GAME_SOURCE
 
-ATLAS = ROOT.parent/'Trinsic-Asset-Mapping/complete-town/atlas'
 BASE = RELEASE/'assets'
 OUT = ROOT/'town-stables-data'
 HEIGHT_BLOCKS = 512
@@ -108,10 +108,17 @@ def ground_art(rows,base,output,tiledata):
 
 COMPACT=ROOT/'town-battlement-data'
 
+def fitted_window(base):
+    """Four stock wall faces have a reviewed, full-height window replacement."""
+    if base is None:return None
+    match=re.match(r'(?:static|assembly) 0x([0-9a-fA-F]+)\b',base['uo_id'])
+    if match is None:return None
+    return {7:14,8:15,0x1b:0x23,0x1c:0x22}.get(int(match[1],16))
+
 def build(output=OUT,compact=False):
     # Read the same stock archive as the review atlas. Suppress caches in its source folder.
     sys.dont_write_bytecode=True
-    sys.path.insert(0,str(ATLAS.parents[1]))
+    sys.path.insert(0,str(GAME_SOURCE/'atlas'))
     from source import uo, U
     hues=(U/'hues.mul').read_bytes()
     @lru_cache(None)
@@ -293,10 +300,8 @@ def build(output=OUT,compact=False):
             name=row['source_name']
             if name not in ('window','closed shutters','open shutters'):continue
             x,y,lift=(int(r[k]) for k in ('x','y','lift'))
-            base=bases.get((x,y,lift-2))
-            if not base:continue
-            wall=int(re.search(r'0x([0-9A-Fa-f]+)',base['uo_id'])[1],16)
-            window={7:14,8:15,0x1b:0x23,0x1c:0x22}[wall]
+            window=fitted_window(bases.get((x,y,lift-2)))
+            if window is None:continue
             if name=='window':
                 window_bays[x//2,y//2,lift-2]=window
             else:
@@ -307,7 +312,7 @@ def build(output=OUT,compact=False):
                     # The timber stock window supplies a framed shutter insert.
                     # Preserve the stone or timber outline and the window frame.
                     im=stock(window).copy()
-                    right=wall in (8,0x1b)
+                    right=window in (15,0x23)
                     for xx in range(44):
                         col=43-xx if right else xx
                         if not 5<=col<=18:continue
@@ -437,4 +442,8 @@ def build(output=OUT,compact=False):
     (output/'actors.tsv').write_text(''.join(f'{i}\t{name}\n' for i,name in actors),encoding='utf-8')
     print(f'{len(catalog)} object frames, {len(land)} land frames, {len(private)} private sprites; rake 620/0 = {catalog[620,0]:04x}')
 
-if __name__=='__main__': build(COMPACT,compact=True)
+if __name__=='__main__':
+    import argparse
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--out',type=Path,default=COMPACT,help='private compact map output directory')
+    build(parser.parse_args().out.resolve(),compact=True)

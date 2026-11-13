@@ -4,7 +4,7 @@ from pathlib import Path
 from play import ROOT
 from reference import members
 from baseline import actor
-run=runpy.run_path(str(ROOT/'qualification/client-proof.py'))['run']
+run=runpy.run_path(str(Path(__file__).with_name('client-proof.py')))['run']
 for case in ('outside','inside','edge'):
     for name,zoom in [('wide','2.4'),('normal','1')]:
         folder='replay-'+case+'-'+name

@@ -1,0 +1,144 @@
+{
+  "edition": "English Steam Forge",
+  "scenario": "Investigation",
+  "input": "Original DOS checkpoint after the commission",
+  "starter_sha256": "8d772efc424a6d2d74c5da7d4ed2f37fc5be98b9a0849a80925b1b76eb1372dd",
+  "native_host_sha256": "9613e2447246e00efda516b2ba45af752ea7b5ff3b0b216603d2cd63cc5b460f",
+  "client_dll_sha256": "dd7a1f93285205923e3e0acad66040cb5dae08010f94461edb698a4603453914",
+  "execution": "Native player-input protocol, resumed from estate and witness saves; slot decoded after exit",
+  "milestones": [
+    {
+      "event": "stables and key",
+      "position": [
+        1069,
+        2197,
+        0
+      ],
+      "flags": {
+        "60": 1,
+        "61": 0,
+        "62": 0,
+        "64": 0,
+        "66": 0,
+        "67": 0,
+        "72": 0,
+        "90": 1
+      }
+    },
+    {
+      "event": "key reported",
+      "position": [
+        1069,
+        2204,
+        0
+      ],
+      "flags": {
+        "60": 1,
+        "61": 0,
+        "62": 0,
+        "64": 0,
+        "66": 0,
+        "67": 0,
+        "72": 1,
+        "90": 1
+      }
+    },
+    {
+      "event": "estate unlocked",
+      "position": [
+        971,
+        2133,
+        6
+      ],
+      "flags": {
+        "60": 1,
+        "61": 0,
+        "62": 1,
+        "64": 0,
+        "66": 0,
+        "67": 0,
+        "72": 1,
+        "90": 1
+      }
+    },
+    {
+      "event": "Spark witness",
+      "position": [
+        976,
+        2130,
+        0
+      ],
+      "flags": {
+        "60": 1,
+        "61": 0,
+        "62": 1,
+        "64": 0,
+        "66": 0,
+        "67": 1,
+        "72": 1,
+        "90": 1
+      }
+    },
+    {
+      "event": "Gilberto witness",
+      "position": [
+        951,
+        2255,
+        0
+      ],
+      "flags": {
+        "60": 1,
+        "61": 0,
+        "62": 1,
+        "64": 1,
+        "66": 0,
+        "67": 1,
+        "72": 1,
+        "90": 1
+      }
+    },
+    {
+      "event": "password earned",
+      "position": [
+        985,
+        2205,
+        0
+      ],
+      "flags": {
+        "60": 1,
+        "61": 1,
+        "62": 1,
+        "64": 1,
+        "66": 1,
+        "67": 1,
+        "72": 1,
+        "90": 1
+      }
+    },
+    {
+      "event": "outside east gate",
+      "position": [
+        1107,
+        2214,
+        0
+      ],
+      "flags": {
+        "60": 1,
+        "61": 1,
+        "62": 1,
+        "64": 1,
+        "66": 1,
+        "67": 1,
+        "72": 1,
+        "90": 1
+      }
+    }
+  ],
+  "final_save_sha256": "639b6731a12518eca043fef42e9c51aeeda1d460fe51c1dad09c098b39e96b08",
+  "final_save_members": 177,
+  "saved_avatar_xyz": [
+    1107,
+    2214,
+    0
+  ]
+}

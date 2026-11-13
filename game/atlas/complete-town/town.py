@@ -3,7 +3,7 @@ from pathlib import Path
 from collections import defaultdict,Counter
 sys.dont_write_bytecode=True
 BASE=Path(__file__).resolve().parent
-ATLAS=next(p for p in (BASE.parent, Path('E:/UltimaOffline/PoCs/Trinsic-Asset-Mapping')) if (p/'source.py').is_file())
+ATLAS=BASE.parent
 sys.path.insert(0,str(ATLAS))
 from source import D,U,member,flex_directory,seed_directory,decode_member,fixed_inventory,TerrainSource,shapes,palette,uo,tile,tiledata,archive,entries,art_key
 from frames import rle

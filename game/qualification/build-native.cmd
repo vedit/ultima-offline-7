@@ -1,6 +1,7 @@
 @echo off
 setlocal
-cd /d "%~dp0.."
+if not defined ULTIMA_OFFLINE_HOME set "ULTIMA_OFFLINE_HOME=E:\UltimaOffline"
+cd /d "%ULTIMA_OFFLINE_HOME%\PoCs\ClassicUO-U7-Local" || exit /b 1
 set "POC=%CD%"
 set "TEMP=%POC%\build-temp"
 set "TMP=%TEMP%"

@@ -1,6 +1,7 @@
 from town import *
 from variants import variants
 from pathlib import Path
+from install_paths import ATLAS_OUTPUT, EARLIER_ATLAS
 import csv,json
 from PIL import Image
 def verify(root):
@@ -18,7 +19,7 @@ def verify(root):
     assert observed==oracle and len(observed)==len(refs)
     ground={(int(r['x']),int(r['y'])) for r in refs if r['layer']=='Terrain'}
     assert ground=={(x,y) for x in range(928,1120) for y in range(2080,2352)}
-    previous=table_external(ATLAS/'atlas'/'mapping.csv')
+    previous=table_external(EARLIER_ATLAS/'mapping.csv')
     assert {(int(r['shape']),int(r['frame'])) for r in previous}<=set(csvkeys)
     assert all((r['target_image']!='')==(r['status']!='No visible art') for r in rows)
     allpng={r[k] for r in rows for k in ['source_image','target_image'] if r[k]}
@@ -51,6 +52,27 @@ def verify(root):
     return f'PASS · {len(rows)} keys, {len(refs)} witnessed records, {len(ground)} terrain cells, {len(allpng)} decoded PNGs, all prior keys retained'
 def table_external(p):
     with p.open(encoding='utf-8-sig',newline='') as h:return list(csv.DictReader(h))
+
+def world_terrain_coverage(root):
+    """Count source terrain occurrences with an exact row in this atlas."""
+    from u7uo.terrain import CHUNK_BYTES
+    terrain = TerrainSource((D/'U7MAP').read_bytes(), (D/'U7CHUNKS').read_bytes())
+    catalog = {(int(row['shape']), int(row['frame'])) for row in table_external(root/'mapping.csv')}
+    chunk_uses = Counter(index for (index,) in struct.iter_unpack('<H', terrain.world))
+    cells = Counter()
+    for index, occurrences in chunk_uses.items():
+        start = index * CHUNK_BYTES
+        for (word,) in struct.iter_unpack('<H', terrain.chunks[start:start + CHUNK_BYTES]):
+            cells[word & 1023, word >> 10] += occurrences
+    missing = {key: count for key, count in cells.items() if key not in catalog}
+    return dict(source_cells=cells.total(), distinct_keys=len(cells), missing_exact_keys=len(missing),
+                cells_without_exact_key=sum(missing.values()))
+
 if __name__=='__main__':
-    print(verify(Path(sys.argv[1]) if len(sys.argv)>1 else BASE/'atlas'))
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument('atlas',type=Path,nargs='?',default=ATLAS_OUTPUT)
+    parser.add_argument('--world-terrain',action='store_true',help='measure exact atlas coverage of the source world')
+    args=parser.parse_args()
+    print(json.dumps(world_terrain_coverage(args.atlas),indent=2) if args.world_terrain else verify(args.atlas))
 

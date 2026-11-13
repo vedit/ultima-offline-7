@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
-$poc = Split-Path $PSScriptRoot
+$installRoot = if ($env:ULTIMA_OFFLINE_HOME) { $env:ULTIMA_OFFLINE_HOME } else { 'E:\UltimaOffline' }
+$poc = Join-Path $installRoot 'PoCs\ClassicUO-U7-Local'
 $installed = Join-Path (Split-Path (Split-Path $poc)) 'Tools\dotnet'
 $packageMirror = Join-Path (Split-Path (Split-Path $poc)) 'Cache\NuGet'
 $env:DOTNET_CLI_HOME = Join-Path $poc 'cache\dotnet'

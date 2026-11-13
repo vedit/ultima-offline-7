@@ -1,0 +1,32 @@
+[
+  {
+    "original": "build-host/playtest-avatar/Ultima7.exe",
+    "archived": "playtest-avatar/Ultima7.exe",
+    "sha256": "a2d5eeae5083c48263d3bda62f255133787e8d993384e63750f474a5af9e1446"
+  },
+  {
+    "original": "build-host/playtest-avatar/Ultima7.exe.manifest",
+    "archived": "playtest-avatar/Ultima7.exe.manifest",
+    "sha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df"
+  },
+  {
+    "original": "build-host/playtest-stable/Ultima7.exe",
+    "archived": "playtest-stable/Ultima7.exe",
+    "sha256": "81fd01bd4d6a1aaf122a7116bef6c0299642decb7627b99737da7322e55b72a9"
+  },
+  {
+    "original": "build-host/playtest-stable/Ultima7.exe.manifest",
+    "archived": "playtest-stable/Ultima7.exe.manifest",
+    "sha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df"
+  },
+  {
+    "original": "build-host/playtest-town/Ultima7.exe",
+    "archived": "playtest-town/Ultima7.exe",
+    "sha256": "b5e77868b1a7d41c2448a651d5bb5605653f0102ee983f6367be8c74ca6eeaed"
+  },
+  {
+    "original": "build-host/playtest-town/Ultima7.exe.manifest",
+    "archived": "playtest-town/Ultima7.exe.manifest",
+    "sha256": "4bb79dcea0a901f7d9eac5aa05728ae92acb42e0cb22e5dd14134f4421a3d8df"
+  }
+]

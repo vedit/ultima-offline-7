@@ -6,14 +6,17 @@ import json
 import re
 import shutil
 import struct
+import sys
 
-ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT.parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from install_paths import INSTALL as SOURCE, RUNTIME as ROOT
 EVIDENCE = SOURCE / "Evidence"
 GAME = SOURCE / "Assets" / "UltimaVII-Steam"
 CHAIR = EVIDENCE / "forge-chair-route-comparison-01.json"
 DONOR = EVIDENCE / "dos-reference" / "session-30TQF4" / "observer-1-GAME02.U7"
 PIN = "a244c201f3d50284be2d605a9d8926161c697e61397efae435d4681c71f73536"
+INVESTIGATION = EVIDENCE / "dos-reference" / "session-jrKbjq" / "accepted-GAME00.U7"
+INVESTIGATION_PIN = "8d772efc424a6d2d74c5da7d4ed2f37fc5be98b9a0849a80925b1b76eb1372dd"
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -43,6 +46,7 @@ def members(path):
 def freeze():
     native = json.loads(CHAIR.read_text())["native"]
     manifest = {"edition": "Steam FORGE development", "donor": checked(DONOR, PIN), "checkpoints": []}
+    manifest["investigation"] = checked(INVESTIGATION, INVESTIGATION_PIN)
     for label in ("clear", "occupied"):
         row = native[label]
         session = EVIDENCE / "dos-reference" / row["session"]
@@ -59,8 +63,11 @@ def freeze():
     inputs = json.loads((EVIDENCE / "dos-reference" / native["clear"]["session"] / "receipt.json").read_text())["inputs"]
     manifest["installed_inputs"] = {k: checked(GAME / k,v["sha256"]) for k,v in inputs.items()
         if k.startswith("STATIC/") or k == "U7.EXE"}
+    for folder in ("evidence", "fixtures", "runs"):
+        (ROOT / folder).mkdir(parents=True, exist_ok=True)
     (ROOT / "evidence" / "dos-reference.json").write_text(json.dumps(manifest, indent=2) + "\n")
     shutil.copyfile(DONOR, ROOT / "fixtures" / "Finnigan-before-chair.U7")
+    shutil.copyfile(INVESTIGATION, ROOT / "fixtures" / "Investigation.U7")
     print(f"Verified {len(manifest['installed_inputs'])} game files and {len(manifest['checkpoints'])} DOS checkpoints")
 
 def stage(name):

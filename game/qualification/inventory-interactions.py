@@ -1,8 +1,9 @@
 """Play inventory gestures through ClassicUO mouse hit-testing and verify native ownership."""
 import runpy
+from pathlib import Path
 from play import ROOT
 
-run = runpy.run_path(str(ROOT/'qualification/client-proof.py'))['run']
+run = runpy.run_path(str(Path(__file__).with_name('client-proof.py')))['run']
 name = 'inventory-interaction-proof'
 first = ['WAIT 700', 'WORN 80 Pants', 'WORN 176 Shoes', 'CAPTURE',
          'DRAGICON 176 sheet pack 68 86', 'PACKCHECK 176', 'CAPTURE',

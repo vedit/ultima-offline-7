@@ -1,7 +1,8 @@
 """Verify the stock windows and carried item across a process restart."""
+from pathlib import Path
 from play import ROOT
 import runpy
-run=runpy.run_path(str(ROOT/'qualification/client-proof.py'))['run']
+run=runpy.run_path(str(Path(__file__).with_name('client-proof.py')))['run']
 first=['WAIT 700','PANELS','REOPENPANELS','WAIT 400','PANELS','CAPTURE']
 for d in [3,3,3,4,5]: first+=['STEP '+str(d),'WAIT 420']
 first+=['PICK 9968','PACKDROP','WAIT 450','PACKCHECK 9968','SAVE','EXIT']

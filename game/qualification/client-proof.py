@@ -1,6 +1,5 @@
 import json,shutil,sys,time
 from play import session,client,ROOT,BIN
-history=json.loads((ROOT/'runs/room-exercise/exercise.json').read_text())['history']
 def run(name,fixture,commands,reset,zoom='1',scenario='room'):
     with session(name,fixture,reset) as (folder,env,host):
         path=folder/'controls.txt'; path.write_text('\n'.join(commands)+'\n')
@@ -18,6 +17,7 @@ def run(name,fixture,commands,reset,zoom='1',scenario='room'):
         (folder/('client-'+scenario+'.json')).write_text(json.dumps(receipt,indent=2))
         return receipt
 def room():
+    history=json.loads((ROOT/'runs/room-exercise/exercise.json').read_text())['history']
     commands=['WAIT 700','CAPTURE','TURN 3']
     for i,(op,a,b,outcome,head,coords,parent) in enumerate(history):
         if op=='STEP':commands.append(('CONFLICT' if i==0 else 'STEP')+' '+str(a))

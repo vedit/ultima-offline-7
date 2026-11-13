@@ -30,9 +30,13 @@ class Walkthrough:
         self.events.append(line)
         print(what,*details,'at',line[1],list(line[2].values()),flush=True)
         with (self.folder/'investigation.jsonl').open('a',encoding='utf-8') as f: f.write(json.dumps(line)+'\n')
-    def go(self,xy,near=0):
-        xy=tuple(xy)
+    def go(self,xy,near=0,npc=None):
         for attempt in range(600):
+            if npc is not None:
+                actor=self.actor(npc)
+                if not actor:raise ValueError(('missing NPC',npc,self.xy()))
+                xy=actor[3:5]
+            xy=tuple(xy)
             start=self.xy()
             if distance(start,xy)<=near:return
             queue=[(0,0,0,start,None)];best={start:0};first=None
@@ -70,7 +74,12 @@ class Walkthrough:
         if not started:
             actor=self.actor(n)
             if not actor:raise ValueError(('missing NPC',n,self.xy()))
-            self.p.send('USE',actor[0])
+            self.go(actor[3:5],2,npc=n)
+            actor=self.actor(n)
+            if abs(actor[5]-self.actor(0)[5])>3:
+                raise RuntimeError(('speaker on another floor',n,actor[3:6],self.actor(0)[3:6]))
+            outcome=self.p.send('USE',actor[0])
+            if outcome!='using':raise RuntimeError(('cannot start dialogue',n,outcome))
         left=list(topics);last='';visited=False
         for _ in range(240):
             self.p.sync()
@@ -112,8 +121,6 @@ class Walkthrough:
             self.check('stables and key')
         if stage<=1:
             if not self.actor(12):self.go((984,2202))
-            actor=self.actor(12)
-            self.go(actor[3:5],2)
             self.talk(['Yes','a key','bye'],12)
             assert self.flags()[72]
             self.check('key reported')
@@ -146,9 +153,8 @@ class Walkthrough:
             self.check('estate unlocked')
         if stage<=3:
             if self.actor(0)[5]>0:
-                for xy in ((971,2136),(965,2136),(965,2137),(965,2138),(965,2139),(971,2139)):self.go(xy)
+                for xy in ((971,2136),(965,2136),(965,2137),(965,2138),(965,2139),(971,2139),(974,2136)):self.go(xy)
             if not self.actor(2):self.go((970,2139))
-            self.go(self.actor(2)[3:5],2)
             self.talk(['Avatar','murder','find','something','man','hook','No','bye'],2)
             assert self.flags()[67]
             self.check('Spark witness')
@@ -162,19 +168,16 @@ class Walkthrough:
                     self.p.send('USE',door[0]);self.p.sync()
                 for xy in ((974,2135),(976,2135),(977,2138),(978,2142)):self.go(xy)
             if not self.actor(13):self.go((957,2257))
-            self.go(self.actor(13)[3:5],2)
             self.talk(['murder','knocked','blow','Crown Jewel','bye'],13)
             assert self.flags()[64]
             self.check('Gilberto witness')
         if stage<=5:
             if not self.actor(12):self.go((986,2205))
-            self.go(self.actor(12)[3:5],2)
             self.talk(['murder','report','Yes','blacksmith','a key','a chest','all of these','Yes','hook','Crown Jewel','Yes','bye'],12)
             assert self.flags()[61]
             self.check('password earned')
         if stage<=6:
             if not self.actor(14):self.go((1092,2215))
-            self.go(self.actor(14)[3:5],2)
             self.talk(['password','Blackbird','bye'],14)
             self.go((1100,2214))
             gate=next(r for r in self.p.rows if r[1]==271 and abs(r[3]-1102)<4)

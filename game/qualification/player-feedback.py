@@ -1,7 +1,8 @@
 """Regression for the local player's reported interactions, using an isolated room copy."""
 import runpy
+from pathlib import Path
 from play import ROOT
-run=runpy.run_path(str(ROOT/'qualification/client-proof.py'))['run']
+run=runpy.run_path(str(Path(__file__).with_name('client-proof.py')))['run']
 base=['WAIT 500','SELF','WAIT 400','INVENTORY','WAIT 400']
 walk=['STEP 3','WAIT 420','STEP 3','WAIT 420','STEP 3','WAIT 420','STEP 4','WAIT 420','STEP 5','WAIT 420','WALKCHECK']
 open_chest=['USE 21920','WAIT 500']

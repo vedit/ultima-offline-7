@@ -5,7 +5,8 @@ from functools import lru_cache
 from u7uo.walking import STATIC_RULES
 from u7uo.shore import PROJECTION
 from mapping import RULES
-EXULT=Path('E:/UltimaOffline/Tools/Exult-Source-v1.12.1/data/bg/shape_info.txt')
+from install_paths import INSTALL
+EXULT=INSTALL/'Tools/Exult-Source-v1.12.1/data/bg/shape_info.txt'
 frame_names={}
 for line in EXULT.read_text().split('%%section framenames')[1].split('%%endsection')[0].splitlines():
     if line.startswith(':'):

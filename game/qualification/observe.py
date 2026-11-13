@@ -1,5 +1,6 @@
 """Observe the fixed desktop host with or without an attached ClassicUO client."""
 import concurrent.futures,json,os,subprocess,threading,time
+from pathlib import Path
 from play import session,Pipe,ROOT,client
 from baseline import state
 from reference import members
@@ -20,7 +21,7 @@ def parity():
     import baseline
     name='adapter-observer-fixed-02';pipe='trinsic_parity_209'
     env=dict(os.environ,TRINSIC_PIPE=pipe)
-    sub=subprocess.Popen([os.sys.executable,str(ROOT/'qualification/baseline.py'),name,'--fixed'],env=env,cwd=ROOT,stdout=subprocess.DEVNULL)
+    sub=subprocess.Popen([os.sys.executable,str(Path(__file__).with_name('baseline.py')),name,'--fixed'],env=env,cwd=ROOT,stdout=subprocess.DEVNULL)
     p=Pipe(pipe,sub)
     count=0
     try:
