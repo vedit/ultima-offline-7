@@ -6,6 +6,7 @@ import re
 import shutil
 import struct
 import sys
+from house_walls import compact_house_walls, fit_house_window
 from functools import lru_cache
 from town_facing import layout, pack, roof_tiles, sign_sprite, stair_runs, reflected_sprite, wall_joins, fence_joins, tool_sprite, key_sprite, roof_edge_art
 from collections import defaultdict
@@ -266,7 +267,7 @@ def build(output=OUT,compact=False):
     blocks=defaultdict(bytearray)
     compact_statics=set()
     source_land={}
-    joins=wall_joins(refs,by_key)
+    joins={} if compact else wall_joins(refs,by_key)
     placements=[]
     for key,position,parts in (*stair_runs(refs,by_key),*fence_joins(refs,by_key)):
         row=by_key[key]
@@ -306,10 +307,10 @@ def build(output=OUT,compact=False):
             window=fitted_window(bases.get((x,y,lift-2)))
             if window is None:continue
             if name=='window':
-                window_bays[x//2,y//2,lift-2]=window
+                window_bays[x//2,y//2,lift-2]=(window,window)
             else:
                 # Leave this bay for the actual movable shutter state in the save.
-                window_bays[x//2,y//2,lift-2]=0
+                window_bays[x//2,y//2,lift-2]=(window,0)
                 sig=('closed shutter',window)
                 if sig not in private:
                     # The timber stock window supplies a framed shutter insert.
@@ -329,6 +330,12 @@ def build(output=OUT,compact=False):
                 fittings.append((x,y,lift,window,private[sig]))
         (output/'window-fittings.tsv').write_text(''.join(
             '\t'.join(map(str,v))+'\n' for v in fittings),encoding='ascii')
+        for (x,y,lift),graphics in compact_house_walls(refs,by_key).items():
+            bay=window_bays.get((x,y,lift))
+            if bay:
+                graphics=fit_house_window(graphics,*bay)
+            for graphic in graphics:
+                blocks[x//8*HEIGHT_BLOCKS+y//8].extend(struct.pack('<HBBbH',graphic,x%8,y%8,lift*4,0))
     roof_base={}
     for r in fixed_roofs:
         row=by_key[int(r['shape']),int(r['frame'])]
@@ -370,6 +377,7 @@ def build(output=OUT,compact=False):
         elif key in catalog:
             parts=geometries.get(key,[(catalog[key],0,0,0,0)])
             name=by_key[key]['source_name']
+            if compact and name=='wall':continue  # House faces were joined across the full floor.
             if compact and name=='window' and (x//2,y//2,z//4-2) in window_bays:continue
             if compact and kind=='Terrain' and name=='fortress':continue
             join=joins.get((key,x,y,z//4))
@@ -378,9 +386,6 @@ def build(output=OUT,compact=False):
                 xx,yy=x+dx,y+dy
                 if compact:
                     xx,yy=xx//2,yy//2
-                    if name=='wall' and graphic in (7,8,0x1b,0x1c):
-                        graphic=window_bays.get((xx,yy,z//4),graphic)
-                        if not graphic:continue
                     # At each gate the parapet and grille project into the same
                     # compact cell. End the solid coping at the two gateposts.
                     if name=='crenellations' and ((xx,yy,z+dz) in channels or

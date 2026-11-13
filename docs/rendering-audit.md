@@ -17,7 +17,9 @@ The native host owns each object's position, lift, frame, owner and game behavio
 
 ### What we measured
 
-The compact overlay verifier reads the generated art and static records. It checks 54,427 Trinsic placements, 426 wall joins, 49 stair rows, 72 connected fence posts, 2,312 compact roof cells and 28 approved art treatments. These are structural and pixel comparisons. A player walking behind a wall or clicking a moving object exercises additional client behavior.
+For every timber or stone house, a wall face ends at the compact vertex where the original run crosses a tile boundary at the same lift. When both incoming faces use one material, one corner sprite carries both. At a timber-to-stone junction each face keeps its material. Where both walls run away from a vertex, a post closes the seam. Doorways keep their native openings and a fitted window replaces only its own face. [House wall conversion](../game/qualification/house_walls.py)
+
+The compact overlay verifier reads the generated art and static records. It checks 54,427 Trinsic placements, all 894 house-wall cells, 49 stair rows, 72 connected fence posts, 2,312 compact roof cells and 28 approved art treatments. The wall check independently traces native wall and doorway footprints, then counts the faces and posts present in the installed facet at each height. [House wall verification](../game/qualification/verify_house_walls.py)
 
 The installed Forge world contains 9,437,184 terrain placements using 5,600 distinct shape/frame pairs. The reviewed Trinsic catalog lacks an exact row for 3,749 of those pairs, accounting for **2,865,369 placements**. Historical compiler rules or fallback art can cover some of them. This measurement tells us where the Trinsic atlas supplies no exact mapping. Run `py -3 -B game/atlas/complete-town/verify_town.py --world-terrain` to repeat it. [Atlas verifier](../game/atlas/complete-town/verify_town.py)
 

@@ -5,7 +5,8 @@ from town_atlas import COMPACT,ROOT,table,fitted_window
 from town_scale import BOUNDS,map_offset,portcullis_channels
 from play import BIN
 from install_paths import GAME_SOURCE
-from town_facing import wall_joins,stair_runs,fence_joins,roof_tiles
+from town_facing import stair_runs,fence_joins,roof_tiles
+from verify_house_walls import verify_house_walls
 
 
 def graphic_table(folder,name):
@@ -46,7 +47,6 @@ def verify(output=COMPACT):
         start,count,_=struct.unpack_from('<iii',idx,12*((x//8)*512+y//8))
         return start>=0 and any((i,tx,ty,h)==(graphic,x%8,y%8,z) for i,tx,ty,h,hue
                                 in struct.iter_unpack('<HBBbH',statics[start:start+count]))
-    joins=wall_joins(refs,rows)
     fittings=graphic_table(output,'window-fittings.tsv')
     channels=portcullis_channels(refs,rows)
     deck=set()
@@ -64,7 +64,6 @@ def verify(output=COMPACT):
     bases={(int(r['x']),int(r['y']),int(r['lift'])):rows[int(r['shape']),int(r['frame'])]
            for r in refs if r['layer'] in ('Fixed','Terrain')
            and rows[int(r['shape']),int(r['frame'])]['source_name']=='wall'}
-    bays={}
     for r in refs:
         key=int(r['shape']),int(r['frame'])
         row=rows[key]
@@ -74,7 +73,6 @@ def verify(output=COMPACT):
             bay=x//2,y//2,lift-2
             matches=[i for i in (14,15,34,35) if tile(bay[0],bay[1],bay[2]*4,i)]
             assert len(matches)==1,(bay,matches)
-            bays[bay]=matches[0]
         if row['source_name']=='crenellations':
             w,d=map(int,row['footprint'].split('×'))
             rail=0x2d if w==d else 0x78 if w>d else 0x79
@@ -83,13 +81,8 @@ def verify(output=COMPACT):
                     cell=(x-a)//2,(y-b)//2,lift*4
                     if cell not in deck:assert tile(*cell,rail)==(cell not in channels)
     for (x,y,lift,opened),closed in fittings.items():
-        bays[x//2,y//2,lift-2]=0
         assert opened in (14,15,34,35) and (output/'Art/Statics'/f'{closed}.art').is_file()
-    for x,y,lift in bays:
-        assert not any(tile(x,y,lift*4,i) for i in (7,8,27,28))
-    for (key,x,y,z),graphic in joins.items():
-        if (x//2,y//2,z) in bays and graphic in (7,8,27,28):continue
-        assert tile(x//2,y//2,z*4,graphic)
+    wall_cells=verify_house_walls(refs,rows,idx,statics,fittings)
     roofs=list(roof_tiles(refs,rows,ROOT.parents[1]/'Assets/UO-Classic',2))
     data=(output/'tiledata.mul').read_bytes()
     def roof_at(x,y,z,graphic):
@@ -300,7 +293,7 @@ def verify(output=COMPACT):
         if 0xBD00<=id<0xF400:assert id in private
     world=[r for r in refs if r['layer'] in ('World object','Fixed','Terrain')]
     results={'placements_examined':len(world),'source_frames_placed':len({(r['shape'],r['frame']) for r in world}),
-             'wall_joins':len(joins),'placed_stair_rows':len(steps),'connected_fence_posts':len(fences),
+             'house_wall_cells':wall_cells,'placed_stair_rows':len(steps),'connected_fence_posts':len(fences),
              'roof_cells':len(roofs),'preserved_approved_art':len(approved),'mapped_object_frames':len(frames)}
     print(json.dumps(results,indent=2))
     return results
