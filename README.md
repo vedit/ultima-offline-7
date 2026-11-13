@@ -1,8 +1,14 @@
-# Ultima Offline
+# Ultima Offline 7
 
-This Windows-first compiler turns part of the original Trinsic into a private ModernUO facet. The current development build uses English Steam Forge and UO Classic 7.0.118.46. The first campaign release targets English DOS Black Gate without Forge. The [task backlog](docs/tasks.md) tracks each acceptance check.
+Ultima Offline 7 plays the original Black Gate investigation through ClassicUO. The native Black Gate process owns movement, actions, Usecode, inventory and saves. ClassicUO draws the world and translates player input. The current playable slice uses English Steam Forge and UO Classic 7.0.118.46.
 
-## Run the Trinsic development build
+On the provisioned Windows machine, double-click **Play Ultima Offline 7.cmd** to start or resume at Trinsic. The investigation begins outside the stables after Finnigan has asked for help. Follow the key through the estate, question the witnesses and earn passage through the eastern gate. F5 saves. [Launcher](Play%20Ultima%20Offline%207.cmd) · [Source, controls and build instructions](game/README.md)
+
+For current milestones, the tested limits of the renderer and the work needed beyond Trinsic, see the [roadmap](docs/roadmap.md) and [rendering audit](docs/rendering-audit.md).
+
+## Run the archived ModernUO conversion
+
+The following commands reproduce the earlier compiler and private facet experiments. Their source checkpoint is tagged `archive/forge-conversion`. The active renderer still uses their source readers, stock asset staging and comparison evidence.
 
 From the directory containing `u7uo.cmd`, run the following on the provisioned machine. The one-time builds in the first block compile the loader checks and shard extensions using the installed SDK, compiler and package cache.
 

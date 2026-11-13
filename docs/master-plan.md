@@ -1,4 +1,6 @@
-# Master prompt: Build a local Ultima Online conversion of Ultima VII: The Black Gate
+# Historical master plan for the ModernUO conversion
+
+This is the original design brief for the compiler experiment preserved at `archive/forge-conversion`. The active Ultima Offline 7 design and milestones are in the [roadmap](roadmap.md).
 
 You are the lead engineer for **Ultima Offline**. Build a Windows-first toolchain that takes the player’s own installations of **Ultima VII: The Black Gate** and the **Ultima Online Classic** client data, then generates a playable, single-player campaign on **ModernUO**, viewed through **ClassicUO**.
 

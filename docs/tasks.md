@@ -1,4 +1,6 @@
-# Ultima Offline implementation tasks
+# Historical ModernUO implementation tasks
+
+These task IDs retain the evidence and outstanding questions for the original compiler route. The [Ultima Offline 7 roadmap](roadmap.md) tracks the native-host game and identifies which findings carry forward.
 
 **Next task on Forge (G2-05, G2-07 and G2-08).** Implement Finnigan’s loiter routine after an obstructed chair walk. The paired DOS and ModernUO controls now restore an active walk and agree on the change to activity 11 when a player occupies the destination. DOS session `session-fUhhjN` shows the area check (52) trying shutters (51), then lights (45), followed by a walk to (994, 2208) and a wait. The target currently records loiter and handles the next quarter-hour office appointment. Qualify the intervening actions, candidate searches, RNG and saved route against the original. Chair-use scripts, original anchor collision and intermediate poses also remain open. [Roadmap](roadmap.md) · [Master plan](master-plan.md)
 
