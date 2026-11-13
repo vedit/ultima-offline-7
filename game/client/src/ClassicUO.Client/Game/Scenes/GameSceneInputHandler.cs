@@ -666,6 +666,12 @@ namespace ClassicUO.Game.Scenes
                             );
                         }
 
+                        if (TrinsicSession.Enabled)
+                        {
+                            ItemClickLabelGump.Show(_world, name, Mouse.Position);
+                            break;
+                        }
+
                         _world.MessageManager.HandleMessage(
                             null,
                             name,
@@ -694,6 +700,12 @@ namespace ClassicUO.Game.Scenes
                                 1020000 + multi.Graphic,
                                 multi.ItemData.Name
                             );
+                        }
+
+                        if (TrinsicSession.Enabled)
+                        {
+                            ItemClickLabelGump.Show(_world, name, Mouse.Position);
+                            break;
                         }
 
                         _world.MessageManager.HandleMessage(

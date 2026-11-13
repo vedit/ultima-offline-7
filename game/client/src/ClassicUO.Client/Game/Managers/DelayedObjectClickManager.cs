@@ -2,6 +2,7 @@
 
 using ClassicUO.Game.GameObjects;
 using ClassicUO.Input;
+using Microsoft.Xna.Framework;
 
 namespace ClassicUO.Game.Managers
 {
@@ -33,7 +34,7 @@ namespace ClassicUO.Game.Managers
             {
                 if (TrinsicSession.Enabled || !_world.ClientFeatures.TooltipsEnabled || SerialHelper.IsItem(Serial) && ((Item) entity).IsLocked && ((Item) entity).ItemData.Weight == 255 && !((Item) entity).ItemData.IsContainer)
                 {
-                    GameActions.SingleClick(_world, Serial);
+                    GameActions.SingleClick(_world, Serial, new Point(LastMouseX, LastMouseY));
                 }
 
                 if (_world.ClientFeatures.PopupEnabled)

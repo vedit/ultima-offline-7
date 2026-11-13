@@ -22,6 +22,8 @@ namespace ClassicUO.Game
         private static readonly HashSet<byte> walkFrames=new();
         private static bool interpolated;
         private static ushort lastClickedGraphic;
+        private static Point labelClick;
+        private static string expectedLabel;
         private static Point? rightMousePoint;
         private static Point mouseStart;
         private static bool sawWalk,sawRun;
@@ -81,6 +83,27 @@ namespace ClassicUO.Game
             UIManager.OnMouseButtonUp(MouseButtonType.Left);
             if(Client.Game.UO.GameCursor.ItemHold.Enabled)
                 throw new InvalidOperationException($"Mouse failed to release over {UIManager.MouseOverControl?.GetType().Name}");
+        }
+
+        private static void ClickScenery()
+        {
+            var scene = Client.Game.GetScene<Scenes.GameScene>();
+            var bounds = scene.Camera.Bounds;
+            for (int dy = -120; dy <= 120; dy += 20)
+            for (int dx = -180; dx <= 180; dx += 20)
+            {
+                var point = bounds.Center + new Point(dx, dy);
+                var pixel = scene.Camera.ScreenToWorld(point - bounds.Location);
+                if (scene.PickReplayPixel(pixel) is not Static scenery || string.IsNullOrWhiteSpace(scenery.Name)) continue;
+                Mouse.Position = point;
+                UIManager.Update();
+                scene.OnMouseDown(MouseButtonType.Left);
+                if (!scene.OnMouseUp(MouseButtonType.Left)) continue;
+                expectedLabel = ClassicUO.Utility.StringHelper.GetPluralAdjustedString(scenery.Name, scenery.ItemData.Count > 1);
+                labelClick = point;
+                return;
+            }
+            throw new InvalidOperationException("No visible scenery to click");
         }
 
         internal static void Next(World world,ContainerGump chest,Gump dialogue)
@@ -157,6 +180,8 @@ namespace ClassicUO.Game
                         var coinHit=FindIcon(bagWindow,coins.First().Serial);
                         UIManager.MakeTopMostGump(bagWindow); Mouse.Position=coinHit.at;Mouse.ButtonPress(MouseButtonType.Left);
                         UIManager.OnMouseButtonDown(MouseButtonType.Left);Mouse.ButtonRelease(MouseButtonType.Left);UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                        labelClick=coinHit.at;
+                        expectedLabel=coins.First().Amount+" gold coins";
                     } else if(string.Join(",",coins.Select(i=>i.Amount))!=a[1])
                         throw new InvalidOperationException("Stack quantities: "+string.Join(",",coins.Select(i=>i.Amount)));
                     break;
@@ -176,6 +201,27 @@ namespace ClassicUO.Game
                     UIManager.OnMouseButtonDown(MouseButtonType.Left);
                     Mouse.ButtonRelease(MouseButtonType.Left);
                     UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                    labelClick=Mouse.Position;
+                    break;
+                case "MOVECURSOR":
+                    Mouse.Position=labelClick+new Point(-70,50);
+                    break;
+                case "LABELCHECK":
+                    var clickLabel=UIManager.Gumps.OfType<ItemClickLabelGump>().Where(g=>!g.IsDisposed).Single();
+                    var lettering=clickLabel.Children.OfType<Label>().Single();
+                    string expectedText=a.Length>1?string.Join(" ",a.Skip(1)):expectedLabel;
+                    Control hovered=null;
+                    clickLabel.HitTest(clickLabel.X+lettering.Width/2,clickLabel.Y+lettering.Height/2,ref hovered);
+                    if(lettering.Text!=expectedText || hovered!=null ||
+                       !new Rectangle(clickLabel.X,clickLabel.Y,lettering.Width,lettering.Height+8).Contains(labelClick))
+                        throw new InvalidOperationException($"Expected '{expectedText}' at {labelClick}, got '{lettering.Text}' at {clickLabel.Bounds}");
+                    Client.Game.TakeScreenshot();
+                    break;
+                case "LABELEXPIRED":
+                    if(UIManager.GetGump<ItemClickLabelGump>()!=null) throw new InvalidOperationException("Item label still visible");
+                    break;
+                case "STATICLOOK":
+                    ClickScenery();
                     break;
                 case "SHEETWAR":
                     UIManager.GetGump<PaperDollGump>(world.Player.Serial).OnButtonClick(7);break;
@@ -196,7 +242,7 @@ namespace ClassicUO.Game
                     if(world.Items[Item(1)].DisplayedGraphic==lastClickedGraphic)
                         throw new InvalidOperationException("Door failed to swing: "+command);
                     break;
-                case "PIXELUSE": case "PIXELPICK":
+                case "PIXELUSE": case "PIXELPICK": case "PIXELLOOK":
                     var target=world.Items[Item(1)];
                     var scene=Client.Game.GetScene<Scenes.GameScene>();
                     ref readonly var sprite=ref Client.Game.UO.Arts.GetArt(target.DisplayedGraphic);
@@ -216,6 +262,11 @@ namespace ClassicUO.Game
                             Mouse.Position=scene.Camera.WorldToScreen(at,true);
                             UIManager.Update();
                             if(a[0]=="PIXELUSE") hit=scene.OnMouseDoubleClick(MouseButtonType.Left);
+                            else if(a[0]=="PIXELLOOK") {
+                                labelClick=Mouse.Position;
+                                scene.OnMouseDown(MouseButtonType.Left);
+                                hit=scene.OnMouseUp(MouseButtonType.Left);
+                            }
                             else {
                                 Mouse.ButtonPress(MouseButtonType.Left);
                                 scene.OnMouseDown(MouseButtonType.Left);

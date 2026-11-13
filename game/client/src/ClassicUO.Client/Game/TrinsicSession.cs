@@ -26,7 +26,7 @@ namespace ClassicUO.Game
         private static NamedPipeClientStream pipe;
         private static int generation, last, chest, prompt;
         private static ulong lastBark;
-        private static readonly Encoding barkEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437);
+        private static readonly Encoding gameTextEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437);
         private static long nextPoll, nextWalk;
         private static string previousWords="";
         private static readonly HashSet<uint> draggable = new();
@@ -110,7 +110,7 @@ namespace ClassicUO.Game
             int y=((heldArrows>>2)&1)-(heldArrows&1);
             if(x!=0 || y!=0) Walk((Direction)(y<0 ? (x<0?7:x>0?1:0) : y>0 ? (x<0?5:x>0?3:4) : x>0?2:6));
         }
-        private static readonly Queue<(string op,int a,int b,string extra,int gen)> pending=new();
+        private static readonly Queue<(string op,int a,int b,string extra,int gen,Point? click)> pending=new();
         private static Gump dialog;
         private static bool capture = Environment.GetEnvironmentVariable("TRINSIC_CAPTURE") != null;
         private static int updates;
@@ -201,7 +201,7 @@ namespace ClassicUO.Game
                 {
                     if(!FinishObservation()) return;
                     if (chest!=0 && (chestWindow?.IsDisposed==true || inventoryWindow?.IsDisposed==true)) Send("CLOSE");
-                    if(pending.TryDequeue(out var intent) && intent.gen==generation) Send(intent.op,intent.a,intent.b,intent.extra);
+                    if(pending.TryDequeue(out var intent) && intent.gen==generation) Send(intent.op,intent.a,intent.b,intent.extra,intent.click);
                     if (TrinsicReplay.Active) TrinsicReplay.Next(world,chestWindow,dialog);
                     if (capture && ++updates==14) { Client.Game.TakeScreenshot(); capture=false; }
                 }
@@ -238,13 +238,13 @@ namespace ClassicUO.Game
         internal static int[] AvatarStats { get; private set; }
         internal static bool IsContainer(Item item) => TrinsicTown.Enabled ? nativeContainers.Contains(item.Serial) : item.ItemData.IsContainer;
         public static bool CanDrag(uint serial) => draggable.Contains(serial);
-        public static void Send(string op, int a=0, int b=0, string extra="")
+        public static void Send(string op, int a=0, int b=0, string extra="", Point? clickPosition=null)
         {
             if (pipe == null) return;
             try
             {
                 if(!FinishObservation()) {
-                    if(pending.Count<8 && (op!="STEP" || pending.Count==0)) pending.Enqueue((op,a,b,extra,generation));
+                    if(pending.Count<8 && (op!="STEP" || pending.Count==0)) pending.Enqueue((op,a,b,extra,generation,clickPosition));
                     return;
                 }
                 string command=$"{last+1} {generation} {op} {a} {b}{extra}";
@@ -272,10 +272,11 @@ namespace ClassicUO.Game
                 else if(outcome=="refused1") GameActions.Print(world,"That is too heavy to carry.");
                 else if(outcome=="refused4" || outcome=="cannotstore") GameActions.Print(world,"That item will not fit in this container.");
                 else if(outcome.StartsWith("name-")) {
-                    string name=Encoding.Latin1.GetString(Convert.FromHexString(outcome.Substring(5))).Trim();
-                    var item=world.Items.Get(ItemBase|(uint)a);
+                    string name=gameTextEncoding.GetString(Convert.FromHexString(outcome.Substring(5))).Trim();
                     if(!TrinsicTown.Enabled) {var parts=name.Split('/');name=parts.Length>1?parts[1]:parts[0];}
-                    GameActions.Print(world,item,name);
+                    uint serial=ItemBase|(uint)a;
+                    if (clickPosition is Point at) ItemClickLabelGump.Show(world, name, at, serial);
+                    else if (world.Items.Get(serial) is Item item) GameActions.Print(world, item, name);
                 }
                 else if(outcome=="stackfull") GameActions.Print(world,"That stack is full.");
                 else if (op=="SAVE" || op=="LOAD" || ((op=="MOVE" || op=="GROUND") && outcome!="ok" && outcome!="same" && outcome!="merged" && !outcome.StartsWith("split-"))) GameActions.Print(world,op+" "+outcome);
@@ -347,7 +348,7 @@ namespace ClassicUO.Game
                 lastBark = sequence;
                 uint serial = uint.Parse(fields[2]);
                 if (!visible.Contains(serial) || world.Mobiles.Get(serial) is not Mobile speaker) continue;
-                string text = barkEncoding.GetString(Convert.FromHexString(fields[3])).Replace('@', '"');
+                string text = gameTextEncoding.GetString(Convert.FromHexString(fields[3])).Replace('@', '"');
                 var profile = ProfileManager.CurrentProfile;
                 GameActions.Print(world, speaker, text, profile.SpeechHue, font: profile.ChatFont);
             }
@@ -363,6 +364,7 @@ namespace ClassicUO.Game
             if (reset)
             {
                 lastBark = 0;
+                UIManager.GetGump<ItemClickLabelGump>()?.Dispose();
                 foreach (uint serial in visible) world.Mobiles.Get(serial)?.TextContainer?.Clear();
             }
             if (reset) { heldArrows=0; targetPrompt=0; placements.Clear(); inventoryWindow?.Dispose(); inventoryWindow=null; chestWindow?.Dispose(); chestWindow=null; dialog?.Dispose(); chest=prompt=0; Client.Game.UO.GameCursor.ItemHold.Clear(); }

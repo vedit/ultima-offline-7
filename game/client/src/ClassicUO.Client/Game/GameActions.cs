@@ -327,13 +327,14 @@ namespace ClassicUO.Game
             }
         }
 
-        public static void SingleClick(World world, uint serial)
+        public static void SingleClick(World world, uint serial, Point? clickPosition = null)
         {
             if(TrinsicSession.Enabled && SerialHelper.IsItem(serial)) {
+                Point click = clickPosition ?? Mouse.Position;
                 if ((serial & 0x20000000u) != 0 && world.Items.Get(serial) is Item appearance)
-                    Print(world, appearance, appearance.ItemData.Name);
+                    ItemClickLabelGump.Show(world, StringHelper.GetPluralAdjustedString(appearance.ItemData.Name, false), click, serial);
                 else
-                    TrinsicSession.Send("LOOK",(int)(serial & 0x1fffffff));
+                    TrinsicSession.Send("LOOK",(int)(serial & 0x1fffffff), clickPosition: click);
                 return;
             }
             // add  request context menu
