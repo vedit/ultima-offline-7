@@ -26,6 +26,7 @@
 #include "combat.h"
 extern void OpenAndLoopItemDialog(objref);
 #include "usehook.h"
+#include "routine.h"
 #include "cast.h"
 #include "legalmov.h"
 #include "u7ibuf.h"
@@ -129,23 +130,25 @@ static bool portableShape(int shape) {
     }
 }
 
-static int wornSlot(objref item) {
+static int wornSlot(objref item, objref owner) {
     for(int slot=0;slot<12;++slot)
-        if(GetItemInSlot(AvatarRef,slot).off==item.off) return slot;
+        if(GetItemInSlot(owner,slot).off==item.off) return slot;
     return -1;
 }
 
 struct Row { int id,shape,frame,x,y,z,parent,npc,dir; int amount=1, slot=-1; };
-enum { Movable = 1, Container = 2, Usable = 4, Stack = 8 };
+enum { Movable = 1, Container = 2, Usable = 4, Stack = 8, Party = 16 };
 static int capabilities(const Row &r) {
-    if(r.npc>=0) return 0;
     objref item((short)r.id);
+    if(r.npc>=0) return item==AvatarRef || Item_isPartyMember(item) ? Party : 0;
     const auto &type=gItemTypeInfo[r.shape];
     int flags=item.isContainer() ? Container : 0;
     if(type.typeClass==TYPE_CLASS_QUANTITY) flags|=Stack;
-    if(type.door || r.shape==211 || r.shape==270 || r.shape==376 || r.shape==641 || r.shape==797 ||
-       r.shape==290 || r.shape==291 || r.shape==322 || r.shape==372) flags|=Usable;
-    if(!(r.parent==(uint16_t)AvatarRef.off && r.shape==801) &&
+    // available reads LINKDEP metadata without loading code into the shared
+    // interpreter or consuming its small cache while another script is running.
+    UsecodeRoutine routine;
+    if((r.shape<Linkdep1Count && routine.available(r.shape)) || type.door || r.shape==642) flags|=Usable;
+    if(!(r.parent && r.shape==801 && (objref((short)r.parent)==AvatarRef || Item_isPartyMember(objref((short)r.parent)))) &&
        type.typeClass!=TYPE_CLASS_NONE && type.typeClass!=TYPE_CLASS_EGG && type.typeClass!=TYPE_CLASS_BARGE &&
        type.typeClass!=TYPE_CLASS_HUMAN && type.typeClass!=TYPE_CLASS_MONSTER && Item_getWeight(item)!=0)
         flags|=Movable;
@@ -173,11 +176,16 @@ static std::vector<Row> inspect() {
         if(town() && (abs(Item_getX(ref).value-Item_getX(AvatarRef).value)>36 || abs(Item_getY(ref).value-Item_getY(AvatarRef).value)>36)) continue;
         rows.push_back({(uint16_t)ref.off,ref.type(),ref.ptr()->typeFrame>>10,Item_getX(ref),Item_getY(ref),ref.z(),0,n,GetNpcBufferForIbo(&ref)->facing()});
     }
-    for(objref gear=GetContainedItem(&AvatarRef);gear.valid();gear=gear.next()) {
-        rows.push_back({(uint16_t)gear.off,gear.type(),gear.ptr()->typeFrame>>10,0,0,0,(uint16_t)AvatarRef.off,-1,0,Item_getQuantity(&gear),wornSlot(gear)});
-        if(gear.type()!=801) continue;
-        for(objref item=GetContainedItem(&gear);item.valid();item=item.next())
-            rows.push_back({(uint16_t)item.off,item.type(),item.ptr()->typeFrame>>10,0,0,0,(uint16_t)gear.off,-1,0,Item_getQuantity(&item)});
+    const auto actors=rows;
+    for(const auto &actor:actors) {
+        objref owner((short)actor.id);
+        if(owner!=AvatarRef && (!town() || !Item_isPartyMember(owner))) continue;
+        for(objref gear=GetContainedItem(&owner);gear.valid();gear=gear.next()) {
+            rows.push_back({(uint16_t)gear.off,gear.type(),gear.ptr()->typeFrame>>10,0,0,0,(uint16_t)owner.off,-1,0,Item_getQuantity(&gear),wornSlot(gear,owner)});
+            if(gear.type()!=801) continue;
+            for(objref item=GetContainedItem(&gear);item.valid();item=item.next())
+                rows.push_back({(uint16_t)item.off,item.type(),item.ptr()->typeFrame>>10,0,0,0,(uint16_t)gear.off,-1,0,Item_getQuantity(&item)});
+        }
     }
     for(int slot=0; slot<4; ++slot) {
         if(LoadedRegions[slot]==255) continue;
@@ -300,8 +308,10 @@ static bool accessible(const Row &r) {
     if(!movable(r) || r.npc>=0) return false;
     if(r.parent && r.parent!=(uint16_t)AvatarRef.off) {
         objref parent((short)r.parent);
-        bool pack=parent.type()==801 && Item_getContainer(&parent)==AvatarRef;
-        if(!pack && (r.parent!=opened || (!town() && parent.type()!=800))) return false;
+        objref owner=Item_getContainer(&parent);
+        bool pack=parent.type()==801 && (owner==AvatarRef || (town() && Item_isPartyMember(owner)));
+        bool companion=town() && Item_isPartyMember(parent);
+        if(!pack && !companion && (r.parent!=opened || (!town() && parent.type()!=800))) return false;
     }
     return reachable(objref((short)r.id));
 }
@@ -319,7 +329,7 @@ static void restoreItem(objref item,const Row &r) {
     if(!r.parent) PlaceItemDirect(&item,Coord(r.x),Coord(r.y),r.z);
     else {
         PlaceItemInContainer(&item,objref((short)r.parent));
-        if(r.slot>=0) EquipItem(item,AvatarRef,r.slot,0);
+        if(r.slot>=0) EquipItem(item,objref((short)r.parent),r.slot,0);
     }
 }
 
@@ -428,7 +438,10 @@ static void poll(uint8_t *steps) {
     if(op=="BEGIN" && getenv("TRINSIC_READY")) started=true;
     else if(op=="ANSWER" && mode && a==(int)promptId && b>=0 && (mode==1 ? b==0 : b<(int)choices.size())) chosen=b;
     else if(op=="NUMBER" && mode==3 && a==(int)promptId && b>=numberLow && b<=numberHigh && (b-numberLow)%numberStep==0) { inputValue=b; mode=0; }
-    else if(op=="TARGET" && mode==4 && a==(int)promptId && (!b || (dst && reachable(objref((short)b))))) { inputValue=b; mode=0; }
+    else if(op=="TARGET" && mode==4 && a==(int)promptId) {
+        if(!b || (dst && reachable(objref((short)b)))) { inputValue=b; mode=0; }
+        else outcome="unreachable";
+    }
     else if(mode || (opened && !(town() && op=="USE" && r && r->parent==opened && (capabilities(*r)&(Container|Usable))) && op!="CLOSE" && op!="MOVE" && op!="GROUND" && op!="EQUIP" && op!="LOOK" && op!="WAR")) outcome="modal";
     else if(op=="STEP" && steps && a>=0 && a<8 && !AvatarDontMove) {
         int x=Item_getX(AvatarRef),y=Item_getY(AvatarRef);
@@ -462,21 +475,22 @@ static void poll(uint8_t *steps) {
     } else if(op=="LOOK" && r) {
         const char *name=GetItemName((uint16_t)a);
         if(name && *name) outcome="name-"+hexText(name);
-    } else if(op=="EQUIP" && r && dst && dst->npc==0) {
+    } else if(op=="EQUIP" && r && dst && dst->npc>=0 && (dst->npc==0 || (town() && (capabilities(*dst)&Party)))) {
         objref item((short)a);
+        objref wearer((short)b);
         int slot=equipSlot(r->shape);
-        if(!accessible(*r)) outcome="unreachable";
+        if(!accessible(*r) || !reachable(wearer)) outcome="unreachable";
         else if(slot<0) outcome="notwearable";
-        else if(r->slot>=0) outcome="same";
+        else if(r->slot>=0 && r->parent==dst->id) outcome="same";
         else {
             // The native game allows a torch in either hand. The UO torch art uses the off hand.
             if(r->shape==595 || r->shape==701) slot=2;
-            if(!CanEquipInSlot(item,AvatarRef,slot,0)) outcome="occupied";
+            if(!CanEquipInSlot(item,wearer,slot,0)) outcome="occupied";
             else if(!Item_detach(&item)) outcome="unavailable";
-            else if(!CanCarryWeight(AvatarRef,item)) {restoreItem(item,*r);outcome="refused1";}
+            else if(!CanCarryWeight(wearer,item)) {restoreItem(item,*r);outcome="refused1";}
             else {
-                PlaceItemInContainer(&item,AvatarRef);
-                if(EquipItem(item,AvatarRef,slot,0)) MarkItemOkayToTake(item);
+                PlaceItemInContainer(&item,wearer);
+                if(EquipItem(item,wearer,slot,0)) MarkItemOkayToTake(item);
                 else {Item_detach(&item);restoreItem(item,*r);outcome="occupied";}
             }
         }

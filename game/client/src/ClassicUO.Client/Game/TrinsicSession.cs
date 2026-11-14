@@ -34,12 +34,19 @@ namespace ClassicUO.Game
         internal static bool Overlay;
         internal static string Header { get; private set; }
         internal static string LastCommand { get; private set; }
-        internal static void Close() { pipe?.Dispose(); pipe=null; observation=null; walkingCommand=null; heldArrows=0; pending.Clear(); }
+        internal static void Close()
+        {
+            pipe?.Dispose(); pipe=null; observation=null; walkingCommand=null; heldArrows=0; pending.Clear();
+            if(targetPrompt!=0) world.TargetManager.Reset();
+            targetPrompt=prompt=0;
+        }
         internal static void Reconnect() { if(FinishObservation()) Apply(Connect()); }
         internal static void Duplicate() { Apply(Read(LastCommand)); }
         internal static void Stale() { Apply(Read("1 0 USE 824")); }
         internal static bool InventoryVisible => UIManager.GetGump<PaperDollGump>(world.Player.Serial)!=null;
         private static uint backpack;
+        private static readonly HashSet<uint> partyMembers = new();
+        private static readonly HashSet<uint> partyBackpacks = new();
         private static int targetPrompt;
         private static readonly HashSet<uint> usable = new();
         private static readonly Dictionary<uint,(uint owner,Point position)> placements=new();
@@ -55,22 +62,24 @@ namespace ClassicUO.Game
             else Send("LOOK",(int)(serial & 0x1fffffff));
             return true;
         }
-        internal static void ShowPaperdoll()
+        internal static void ShowPaperdoll(uint serial=0)
         {
-            uint serial=world.Player.Serial;
+            if(serial==0) serial=world.Player.Serial;
+            if(serial!=world.Player.Serial && !partyMembers.Contains(serial)) return;
             var sheet=UIManager.GetGump<PaperDollGump>(serial);
             if(sheet==null) {
-                sheet=new PaperDollGump(world,serial,false){X=Math.Max(0,Client.Game.ClientBounds.Width-267),Y=12};
+                sheet=new PaperDollGump(world,serial,partyMembers.Contains(serial)){X=Math.Max(0,Client.Game.ClientBounds.Width-(serial==world.Player.Serial?267:540)),Y=12};
                 UIManager.Add(sheet);
                 sheet.RequestUpdateContents();
             } else { sheet.IsMinimized=false; UIManager.MakeTopMostGump(sheet); }
         }
-        internal static void ShowBackpack()
+        internal static void ShowBackpack(uint serial=0)
         {
-            if(backpack==0) return;
-            var pack=UIManager.GetGump<ContainerGump>(backpack);
+            if(serial==0) serial=backpack;
+            if(serial==0) return;
+            var pack=UIManager.GetGump<ContainerGump>(serial);
             if(pack==null) {
-                pack=new ContainerGump(world,backpack,0x3c,false){X=Math.Max(0,Client.Game.ClientBounds.Width-258),Y=350};
+                pack=new ContainerGump(world,serial,0x3c,false){X=Math.Max(0,Client.Game.ClientBounds.Width-(serial==backpack?258:531)),Y=350};
                 UIManager.Add(pack); pack.RequestUpdateContents();
             } else { pack.IsMinimized=false; UIManager.MakeTopMostGump(pack); }
         }
@@ -83,8 +92,14 @@ namespace ClassicUO.Game
         internal static bool OpenPlayerWindow(uint serial)
         {
             if(targetPrompt!=0) {Send("TARGET",targetPrompt,(int)(serial & 0x1fffffff));return true;}
+            bool requestedPaperdoll=(serial&0x80000000)!=0;
+            serial &= 0x7fffffff;
             if(serial==world.Player.Serial) { ShowPaperdoll(); return true; }
-            if(backpack!=0 && serial==backpack) { ShowBackpack(); return true; }
+            if(partyMembers.Contains(serial)) {
+                ShowPaperdoll(serial);
+                return requestedPaperdoll;
+            }
+            if(partyBackpacks.Contains(serial) || (backpack!=0 && serial==backpack)) { ShowBackpack(serial); return true; }
             return false;
         }
         internal static int CameraX,CameraY;
@@ -364,6 +379,7 @@ namespace ClassicUO.Game
             string[] s=lines[0].Split(' ');
             int gen=int.Parse(s[2]);
             bool reset=gen!=generation;
+            if(reset && targetPrompt!=0) world.TargetManager.Reset();
             if (reset)
             {
                 lastBark = 0;
@@ -393,6 +409,10 @@ namespace ClassicUO.Game
                 world.Player.Gold=(uint)AvatarStats[7]; world.Player.InWarMode=AvatarStats[8]!=0;
             }
             var parents=new HashSet<int>{avatar[0]};
+            partyMembers.Clear(); partyBackpacks.Clear();
+            foreach(var member in rows.Where(r=>r[7]>=0 && r.Length>11 && (r[11]&16)!=0)) {
+                partyMembers.Add((uint)member[0]); parents.Add(member[0]);
+            }
             var slots=new Dictionary<int,int>();
             draggable.Clear(); usable.Clear(); nativeContainers.Clear(); stacks.Clear();
             foreach (int[] r in rows)
@@ -422,7 +442,8 @@ namespace ClassicUO.Game
                         mob.Name="Horse";
                     } else if(TrinsicTown.Enabled && npc!=0) {
                         mob.Name=TrinsicTown.Name(npc);
-                        TrinsicTown.Dress(world,mob,shape);
+                        TrinsicTown.Dress(world,mob,shape,partyMembers.Contains(serial));
+                        mob.Title=mob.Name;
                     }
                     if(TrinsicTown.Enabled && npc==0) {
                         mob.IsFemale=AvatarStats[9]!=0;
@@ -467,7 +488,8 @@ namespace ClassicUO.Game
                     if(shape==994) item.Name="Tongs";
                     if(placements.TryGetValue(serial,out var placed) && (parent==0 || placed.owner!=(ItemBase|(uint)parent))) placements.Remove(serial);
                     if(shape==800 || shape==522 || shape==801 || nativeContainers.Contains(serial)) parents.Add(id);
-                    if(parent==avatar[0]) {
+                    if(parent==avatar[0] || partyMembers.Contains((uint)parent)) {
+                        var wearer=world.Mobiles.Get((uint)parent);
                         // U7 chooses the occupied hand. Clothing draws on the layer of its stock UO artwork.
                         Layer wornLayer = shape == 801 ? Layer.Backpack : r[10] switch
                         {
@@ -476,19 +498,22 @@ namespace ClassicUO.Game
                             >= 0 when item.ItemData.IsWearable => (Layer)item.ItemData.Layer,
                             _ => Layer.Invalid
                         };
-                        bool changedOwner = item.Container != world.Player.Serial;
+                        bool changedOwner = item.Container != wearer.Serial;
                         if (changedOwner)
                         {
                             world.RemoveItemFromContainer(item);
-                            world.Player.PushToBack(item);
-                            item.Container = world.Player.Serial;
+                            wearer.PushToBack(item);
+                            item.Container = wearer.Serial;
                         }
                         if (changedOwner || item.Layer != wornLayer)
                         {
                             item.Layer = wornLayer;
-                            UIManager.GetGump<PaperDollGump>(world.Player.Serial)?.RequestUpdateContents();
+                            UIManager.GetGump<PaperDollGump>(wearer.Serial)?.RequestUpdateContents();
                         }
-                        if(shape==801) backpack=serial;
+                        if(shape==801) {
+                            partyBackpacks.Add(serial);
+                            if(parent==avatar[0]) backpack=serial;
+                        }
                         continue;
                     }
                     item.Layer=Layer.Invalid;
@@ -496,7 +521,7 @@ namespace ClassicUO.Game
                     {
                         uint owner=ItemBase|(uint)parent;
                         slots.TryGetValue(parent,out int slot); slots[parent]=slot+1;
-                        bool inPack=owner==backpack;
+                        bool inPack=owner==backpack || partyBackpacks.Contains(owner);
                         ushort gx=(ushort)(inPack?46+slot%4*23:23+slot%3*46);
                         ushort gy=(ushort)(inPack?62+slot/4*21:112+slot/3%2*32);
                         if(placements.TryGetValue(serial,out var placement)) {
@@ -528,6 +553,8 @@ namespace ClassicUO.Game
             foreach(uint id in visible.Except(keep))
                 if((id&ItemBase)!=0) world.RemoveItem(id,true); else world.RemoveMobile(id,true);
             visible=keep;
+            foreach(var sheet in UIManager.Gumps.OfType<PaperDollGump>().Where(g=>g.LocalSerial!=world.Player.Serial).ToArray())
+                if(!partyMembers.Contains(sheet.LocalSerial)) sheet.Dispose();
             if (Client.Game.Scene is GameScene) ShowBarks(lines);
             if(oldBackpack!=0 && oldBackpack!=backpack) {
                 UIManager.GetGump<ContainerGump>(oldBackpack)?.Dispose();
@@ -559,8 +586,9 @@ namespace ClassicUO.Game
             if(wanted!=prompt)
             {
                 dialog?.Dispose(); prompt=wanted;
+                if(targetPrompt!=0) world.TargetManager.Reset();
                 targetPrompt=mode==4?wanted:0;
-                if(mode==4) GameActions.Print(world,"Double-click the object to use the item on. Escape cancels.");
+                if(mode==4) GameActions.Print(world,"Choose a target. Escape cancels.");
                 else if(mode!=0)
                 {
                     string Decode(string line)=>gameTextEncoding.GetString(Convert.FromHexString(line.Substring(2))).Replace('@','"').Replace('~',' ');
@@ -571,6 +599,13 @@ namespace ClassicUO.Game
                     dialog=new TrinsicDialogue(world,prompt,int.Parse(s[11]),text,options,range);
                     UIManager.Add(dialog);
                 }
+            }
+            if(targetPrompt!=0 && !world.TargetManager.IsTargeting) {
+                int token=targetPrompt;
+                world.TargetManager.SetTargeting(target=>{
+                    if(target==null || target is Entity)
+                        Send("TARGET",token,target is Entity entity ? (int)(entity.Serial&0x1fffffff) : 0);
+                },(uint)token,TargetType.Neutral);
             }
         }
         private sealed class TrinsicDialogue : Gump

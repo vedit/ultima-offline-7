@@ -290,14 +290,22 @@ namespace ClassicUO.Game
                         throw new InvalidOperationException("Missing native player panels or equipment");
                     break;
                 case "DRAGICON":
-                    Gump Window(string key)=>key switch {
+                    Gump Window(string key) {
+                        if(key.Contains(':')) {
+                            var fields=key.Split(':');
+                            uint member=uint.Parse(fields[1]);
+                            return fields[0]=="sheet" ? UIManager.GetGump<PaperDollGump>(member)
+                                : UIManager.GetGump<ContainerGump>(world.Mobiles.Get(member).FindItemByLayer(Layer.Backpack).Serial);
+                        }
+                        return key switch {
                         "pack"=>UIManager.GetGump<ContainerGump>(world.Player.FindItemByLayer(Layer.Backpack).Serial),
                         "sheet"=>UIManager.GetGump<PaperDollGump>(world.Player.Serial),
                         "chest"=>chest,_=>throw new InvalidOperationException(key)};
+                    }
                     DragIcon(Window(a[2]),Item(1),Window(a[3]),new Point(Arg(4),Arg(5)));
                     break;
                 case "WORN":
-                    if(world.Player.FindItemByLayer(Enum.Parse<Layer>(a[2]))?.Serial!=Item(1))
+                    if((a.Length>3?world.Mobiles.Get((uint)Arg(3)):world.Player).FindItemByLayer(Enum.Parse<Layer>(a[2]))?.Serial!=Item(1))
                         throw new InvalidOperationException("Equipment mismatch: "+command);
                     break;
                 case "OWNER":
@@ -336,7 +344,40 @@ namespace ClassicUO.Game
                     break;
                 case "GROUND": GameActions.DropItem(Client.Game.UO.GameCursor.ItemHold.Serial,Arg(1),Arg(2),0,0xffffffff);break;
                 case "TURN": TrinsicSession.Send("TURN",Arg()); break;
-                case "USE": GameActions.DoubleClick(world,Arg()==824?824u:Item(1)); break;
+                case "USE": GameActions.DoubleClick(world,world.Mobiles.Get((uint)Arg())!=null?(uint)Arg():Item(1)); break;
+                case "PAPERDOLL":
+                    GameActions.OpenPaperdoll(world,(uint)Arg());
+                    break;
+                case "TARGETING":
+                    if(world.TargetManager.IsTargeting!=(Arg()!=0)) throw new InvalidOperationException("Target cursor mismatch");
+                    break;
+                case "TARGET":
+                    if(!world.TargetManager.IsTargeting) throw new InvalidOperationException("Missing item target cursor");
+                    if(Arg()==0) world.TargetManager.CancelTarget();
+                    else world.TargetManager.Target(world.Mobiles.Get((uint)Arg())!=null?(uint)Arg():Item(1));
+                    break;
+                case "ABSENT":
+                    if(world.Items.Get(Item(1))!=null) throw new InvalidOperationException("Item still exists: "+command);
+                    break;
+                case "SHAPECOUNT":
+                    if(world.Items.Values.Where(i=>i.Container==Item(2) && i.TrinsicShape==Arg(1)).Sum(i=>i.Amount)!=Arg(3))
+                        throw new InvalidOperationException("Wrong inventory quantity: "+command);
+                    break;
+                case "PARTYPANELS":
+                    var companion=world.Mobiles.Get((uint)Arg());
+                    var companionSheet=UIManager.GetGump<PaperDollGump>(companion.Serial);
+                    var companionBag=companion.FindItemByLayer(Layer.Backpack);
+                    var companionPack=companionBag==null?null:UIManager.GetGump<ContainerGump>(companionBag.Serial);
+                    if(companionSheet?.CanLift!=true || companionPack==null ||
+                       companionSheet.IsDisposed || companionPack.IsDisposed ||
+                       !companionPack.Children.OfType<ItemGump>().Any() ||
+                       companion.FindItemByLayer(Layer.Torso)==null)
+                        throw new InvalidOperationException("Missing companion equipment or inventory");
+                    break;
+                case "PARTYTALK":
+                    if(UIManager.GetGump<PaperDollGump>((uint)Arg())==null || dialogue==null || dialogue.IsDisposed)
+                        throw new InvalidOperationException("Companion double-click must open dialogue and paperdoll");
+                    break;
                 case "PICK": if(!GameActions.PickUp(world,Item(1),0,0)) throw new InvalidOperationException("pickup refused");break;
                 case "GUMPDROP": chest.DropHeldLocalItem();break;
                 case "DROP":

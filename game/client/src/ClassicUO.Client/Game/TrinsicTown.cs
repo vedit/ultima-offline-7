@@ -143,13 +143,17 @@ namespace ClassicUO.Game
             hair.Layer=Layer.Hair; hair.Graphic=0x203c; hair.Hue=0x0460; hair.Amount=1;
         }
         internal static string Name(int npc) => names.GetValueOrDefault(npc,"Traveller");
-        internal static void Dress(World world,Mobile mob,int shape)
+        internal static void Dress(World world,Mobile mob,int shape,bool nativeEquipment=false)
         {
             if(!outfits.TryGetValue(shape,out var items)) return;
             foreach (var part in items) {
                 mob.Graphic=part.body;
                 mob.Hue=part.skin;
                 uint id=0x60000000u | (mob.Serial<<5) | (uint)part.layer;
+                if(nativeEquipment && part.layer!=Layer.Hair && part.layer!=Layer.Beard) {
+                    if(world.Items.Get(id)!=null) world.RemoveItem(id,true);
+                    continue;
+                }
                 Item item=world.GetOrCreateItem(id);
                 if(item.Container!=mob.Serial) {
                     world.RemoveItemFromContainer(item);
