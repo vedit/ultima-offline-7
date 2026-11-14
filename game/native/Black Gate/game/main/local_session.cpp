@@ -76,6 +76,8 @@ void LocalBeforeStep() {
 }
 static int chosen = -1;
 static int inputValue, numberLow, numberHigh, numberStep;
+static bool targetPosition;
+static int targetX,targetY,targetZ;
 static int deferredUse;
 static bool town() { return getenv("TRINSIC_TOWN") != nullptr; }
 static unsigned long promptId;
@@ -311,9 +313,15 @@ int LocalNumber(int low,int high,int step) {
     return inputValue;
 }
 short LocalTarget() {
+    targetPosition=false;
     mode=4; ++promptId;
     while(mode==4){ LocalPoll(nullptr); plat_yield(); }
     return (short)inputValue;
+}
+bool LocalTargetPosition(int *x,int *y,int *z) {
+    if(!targetPosition) return false;
+    *x=targetX; *y=targetY; *z=targetZ;
+    return true;
 }
 // Original U7 UI is kept intact. Only its input wait crosses into ClassicUO.
 // Fetch the fixed-size frame separately, so normal snapshots stay small.
@@ -507,6 +515,14 @@ static void poll(uint8_t *steps) {
     else if(op=="TARGET" && mode==4 && a==(int)promptId) {
         if(!b || (dst && reachable(objref((short)b)))) { inputValue=b; mode=0; }
         else outcome="unreachable";
+    }
+    else if(op=="TARGETPOS" && mode==4 && a==(int)promptId) {
+        int y,z;
+        if(!(input>>y>>z) || b<0 || b>=3072 || y<0 || y>=3072 || z<0 || z>15) outcome="invalid";
+        else {
+            targetX=b; targetY=y; targetZ=z; targetPosition=true;
+            inputValue=0; mode=0;
+        }
     }
     else if(mode || (opened && !(town() && op=="USE" && r && r->parent==opened && (capabilities(*r)&(Container|Usable))) && op!="CLOSE" && op!="MOVE" && op!="GROUND" && op!="EQUIP" && op!="LOOK" && op!="WAR")) outcome="modal";
     else if(op=="STEP" && (!steps || AvatarDontMove || PlayerActionSuspended)) {

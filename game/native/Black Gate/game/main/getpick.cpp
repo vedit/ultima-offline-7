@@ -28,6 +28,12 @@ int8_t HavePlayerSelect(objref *picked, Coord *px, Coord *py, int16_t *pz)
 {
 	if(LocalEnabled()) {
         *picked=LocalTarget();
+        int x,y,z;
+        if(LocalTargetPosition(&x,&y,&z)) {
+            *px=Coord(x); *py=Coord(y); *pz=z;
+            if(getenv("TRINSIC_TRACE")) { fprintf(stderr,"selection position %d %d %d\n",x,y,z); fflush(stderr); }
+            return 0;
+        }
         if(!picked->valid()) { *px=Coord(0); *py=Coord(0); *pz=0; return 0; }
         *px=Item_getX(*picked); *py=Item_getY(*picked); *pz=picked->z();
         return 1;

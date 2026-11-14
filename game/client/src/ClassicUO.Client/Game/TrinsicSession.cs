@@ -666,6 +666,10 @@ namespace ClassicUO.Game
                 world.TargetManager.SetTargeting(target=>{
                     if(target==null || target is Entity)
                         Send("TARGET",token,target is Entity entity ? (int)(entity.Serial&0x1fffffff) : 0);
+                    else {
+                        var position=TrinsicTown.Compact?TrinsicTown.NativeGround(target.X,target.Y):new Point(target.X,target.Y);
+                        Send("TARGETPOS",token,position.X,$" {position.Y} {Math.Clamp(target.Z/4,0,15)}");
+                    }
                 },(uint)token,TargetType.Neutral);
             }
         }

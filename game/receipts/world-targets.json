@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-14",
+  "baseline": "95f5e02",
+  "implemented": "Shared object/location/cancel targeting through original HavePlayerSelect and UC_GetTarget, including compressed-world coordinate conversion.",
+  "verification": {
+    "command": "py -3 -B game/qualification/world-targets.py",
+    "native": "Invalid coordinates retain prompt; ground coordinates reach original selection routine; food remains after ground target and cancellation; Iolo consumes food when targeted; movement resumes.",
+    "client": "ClassicUO terrain targeting invokes TARGETPOS; Escape cancels; character targeting still feeds Iolo; movement resumes.",
+    "evidence": ["runs/world-target-native/host.log", "runs/world-target-client/client-targets.json"]
+  },
+  "deployment": "Built and verified in isolated candidate output; current live player session not restarted.",
+  "remaining_shared_work": [
+    "Expose native spellbook selection, bookmark and casting controls.",
+    "Preserve original ownership and witnessed-crime side effects across transfers and stack operations.",
+    "Support general creatures and native combat/action presentation.",
+    "Qualify complete bucket, rest, crafting, commerce and spell scenarios; coordinate plumbing alone does not qualify their effects."
+  ]
+}

@@ -349,6 +349,12 @@ namespace ClassicUO.Game
                     if(TrinsicSession.Header.Split(' ')[9]!=a[1]) throw new InvalidOperationException("Unexpected interaction mode: "+TrinsicSession.Header);
                     if(a[1]=="5" && (dialogue==null || dialogue.IsDisposed)) throw new InvalidOperationException("Missing original U7 display");
                     break;
+                case "TARGETGROUND":
+                    var tile=world.Map.GetTile(Arg(1),Arg(2));
+                    while(tile!=null && tile is not Land) tile=tile.TNext;
+                    if(tile==null) throw new InvalidOperationException("Missing ground target");
+                    world.TargetManager.Target(tile.Graphic,tile.X,tile.Y,tile.Z);
+                    break;
                 case "DISMISS":
                     if(dialogue==null || dialogue.IsDisposed) throw new InvalidOperationException("No view to dismiss");
                     dialogue.OnButtonClick(0); break;

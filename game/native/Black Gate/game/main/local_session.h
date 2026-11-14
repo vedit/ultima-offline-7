@@ -2,6 +2,7 @@
 bool LocalEnabled();
 int LocalNumber(int low,int high,int step);
 short LocalTarget();
+bool LocalTargetPosition(int *x,int *y,int *z);
 void LocalDisplay(const char *kind);
 void LocalDisplayBegin();
 void LocalRefusal(int reason);
