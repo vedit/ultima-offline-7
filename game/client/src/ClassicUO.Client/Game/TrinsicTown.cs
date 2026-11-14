@@ -34,7 +34,7 @@ namespace ClassicUO.Game
                 return 0;
             // A full wall replaces the native shutter. Its outward face may
             // share a compact cell with furniture one native step inside.
-            int across = fit.open is 14 or 0x22 ? y : x;
+            int across = fit.open is 14 or 0x22 or 0x13a ? y : x;
             return (across & 1) != 0 ? 0.25f : -0.25f;
         }
         internal static bool Compact { get; private set; }

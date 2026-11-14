@@ -3,8 +3,16 @@ import re
 from collections import defaultdict
 
 # The stock faces terminate at a common vertex. Bits denote a west or north arm.
-WALL_ART = {'wood': (9, 7, 8, 6), 'stone': (0x1d, 0x1c, 0x1b, 0x1a)}
-WINDOW_ARM = {14: 1, 15: 2, 0x22: 1, 0x23: 2}
+WALL_ART = {'wood': (9, 7, 8, 6), 'stone': (0x1d, 0x1c, 0x1b, 0x1a),
+            'plaster': (0x12a, 0x133, 0x134, 0x132)}
+WINDOW_ARM = {14: 1, 15: 2, 0x22: 1, 0x23: 2, 0x13a: 1, 0x13b: 2}
+
+def wall_face(row):
+    """Read the first stock piece from a static or assembled atlas recipe."""
+    match = re.match(r'(?:static|assembly) 0x([0-9a-fA-F]+)\b', row['uo_id'])
+    if not match:
+        return None
+    return int(match[1], 16)
 
 
 def compact_house_walls(refs, rows):
@@ -30,11 +38,15 @@ def compact_house_walls(refs, rows):
         if r['layer'] not in ('Terrain', 'Fixed') or row['source_name'] != 'wall':
             continue
         post = w == d == 1
+        graphic = wall_face(row)
         if post:
-            timber = shape == 497 or (shape == 879 and (frame & 31) in (5, 6, 7, 16))
-            posts[x, y, lift] = 'wood' if timber else 'stone'
+            if row['method'] == 'Source wall material':
+                posts[x, y, lift] = next(m for m, art in WALL_ART.items() if art[0] == graphic)
+            else:
+                # Earlier atlases represented posts with full wall leaves.
+                timber = shape == 497 or (shape == 879 and (frame & 31) in (5, 6, 7, 16))
+                posts[x, y, lift] = 'wood' if timber else 'stone'
         else:
-            graphic = int(re.search(r'0x([0-9a-fA-F]+)', row['uo_id'])[1], 16)
             arm = 1 if w > d else 2
             material = next(m for m, art in WALL_ART.items() if art[arm] == graphic)
         for a in range(w):
@@ -77,6 +89,9 @@ def fit_house_window(graphics, window, replacement):
     arm = WINDOW_ARM[window]
     result = []
     for graphic in graphics:
+        if graphic in WINDOW_ARM:
+            result.append(graphic)
+            continue
         art = next(art for art in WALL_ART.values() if graphic in art)
         mask = art.index(graphic)
         if mask & arm:

@@ -30,6 +30,13 @@ def verify(root):
     assert all(r['status']=='Stock equipment' for r in rows if int(r['shape']) in ITEMS and r['target_image'])
     assert len(table('equipment.csv'))==sum(r['status']=='Stock equipment' for r in rows)
     bykey=dict(zip(csvkeys,rows))
+    # Sills and full panels share a shape name. Check the original material
+    # per VGA frame and repeat the check after the native reflection.
+    for shape,base,material in ((344,0,'stone wall'),(346,0,'stone wall'),
+                                (374,0,'wooden wall'),(349,0,'wooden wall'),
+                                (349,1,'plaster wall'),(355,2,'plaster wall')):
+        for frame in (base,base+32):
+            assert bykey[shape,frame]['uo_name']==material,(shape,frame,material)
     assert bykey[414,26]['method']=='Corpse parts' and all(bykey[867,f]['method']=='Corpse parts' for f in (0,32))
     with Image.open(root/'images'/(bykey[867,0]['target_image']+'.png')) as floor, Image.open(root/'images'/(bykey[867,32]['target_image']+'.png')) as reflected:
         expected=floor.transpose(Image.Transpose.TRANSPOSE)

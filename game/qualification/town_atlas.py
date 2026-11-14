@@ -6,7 +6,7 @@ import re
 import shutil
 import struct
 import sys
-from house_walls import compact_house_walls, fit_house_window
+from house_walls import compact_house_walls, fit_house_window, wall_face
 from functools import lru_cache
 from town_facing import layout, pack, roof_tiles, sign_sprite, stair_runs, reflected_sprite, wall_joins, fence_joins, tool_sprite, key_sprite, roof_edge_art
 from collections import defaultdict
@@ -110,11 +110,9 @@ def ground_art(rows,base,output,tiledata):
 COMPACT=ROOT/'town-battlement-data'
 
 def fitted_window(base):
-    """Four stock wall faces have a reviewed, full-height window replacement."""
+    """Fit the stock window for the backing wall's material and axis."""
     if base is None:return None
-    match=re.match(r'(?:static|assembly) 0x([0-9a-fA-F]+)\b',base['uo_id'])
-    if match is None:return None
-    return {7:14,8:15,0x1b:0x23,0x1c:0x22}.get(int(match[1],16))
+    return {7:14,8:15,0x1b:0x23,0x1c:0x22,0x133:0x13a,0x134:0x13b}.get(wall_face(base))
 
 def build(output=OUT,compact=False):
     # Read the same stock archive as the review atlas. Suppress caches in its source folder.
@@ -293,7 +291,7 @@ def build(output=OUT,compact=False):
             '\t'.join(r[k] for k in ('shape','frame','x','y','lift'))+'\n' for r in fixed),encoding='ascii')
     # Native windows sit two lifts up on an intact base wall. A UO window
     # already includes that wall from sill to roof. Replace one compact bay.
-    window_bays={}
+    window_bays=defaultdict(dict)
     fittings=[]
     if compact:
         bases={(int(r['x']),int(r['y']),int(r['lift'])):by_key[int(r['shape']),int(r['frame'])]
@@ -307,16 +305,16 @@ def build(output=OUT,compact=False):
             window=fitted_window(bases.get((x,y,lift-2)))
             if window is None:continue
             if name=='window':
-                window_bays[x//2,y//2,lift-2]=(window,window)
+                window_bays[x//2,y//2,lift-2][window]=window
             else:
                 # Leave this bay for the actual movable shutter state in the save.
-                window_bays[x//2,y//2,lift-2]=(window,0)
+                window_bays[x//2,y//2,lift-2][window]=0
                 sig=('closed shutter',window)
                 if sig not in private:
                     # The timber stock window supplies a framed shutter insert.
                     # Preserve the stone or timber outline and the window frame.
                     im=stock(window).copy()
-                    right=window in (15,0x23)
+                    right=window in (15,0x23,0x13b)
                     for xx in range(44):
                         col=43-xx if right else xx
                         if not 5<=col<=18:continue
@@ -331,9 +329,8 @@ def build(output=OUT,compact=False):
         (output/'window-fittings.tsv').write_text(''.join(
             '\t'.join(map(str,v))+'\n' for v in fittings),encoding='ascii')
         for (x,y,lift),graphics in compact_house_walls(refs,by_key).items():
-            bay=window_bays.get((x,y,lift))
-            if bay:
-                graphics=fit_house_window(graphics,*bay)
+            for window,replacement in window_bays.get((x,y,lift),{}).items():
+                graphics=fit_house_window(graphics,window,replacement)
             for graphic in graphics:
                 blocks[x//8*HEIGHT_BLOCKS+y//8].extend(struct.pack('<HBBbH',graphic,x%8,y%8,lift*4,0))
         # Native positions just inside an exterior-facing wall can share the

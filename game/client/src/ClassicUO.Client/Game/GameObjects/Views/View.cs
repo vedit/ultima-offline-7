@@ -38,6 +38,12 @@ namespace ClassicUO.Game.GameObjects
             int y = Y;
             int z = PriorityZ;
 
+            // Stock house walls and fitted windows carry a hanging on the room
+            // side. Give the support its own depth below same-cell floor objects.
+            if (TrinsicTown.Compact && this is Static &&
+                Graphic is 0x12a or 0x132 or 0x133 or 0x134 or 0x13a or 0x13b)
+                return x+y+(127+Z)*0.01f-0.08f;
+
             if(this is Entity entity && entity.NativePosition.HasValue)
             {
                 // Within a UO cell use subtile Y to break ties at the same height.

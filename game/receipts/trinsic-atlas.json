@@ -25,14 +25,14 @@
     "Actor": 17
   },
   "town_decisions": {
-    "Stock assembly": 298,
-    "Stock candidate": 1512,
+    "Stock assembly": 306,
+    "Stock candidate": 1504,
     "Stock equipment": 30,
     "No visible art": 19,
     "Stock outfit": 15
   },
   "total_rows": 7141,
-  "unique_png": 6747,
+  "unique_png": 6755,
   "input_sha256": {
     "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\SHAPES.VGA": "193df5e56326adb5b695f0781b760fa81bf6c2f17af761cac95d4e449dcb5fd4",
     "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\TEXT.FLX": "bd6786162075866e6dbf3a4454a3319cec94ea24e372c7998c678caa84e367d9",
@@ -58,10 +58,10 @@
     "E:\\UltimaOffline\\Tools\\Exult-Source-v1.12.1\\data\\bg\\bodies.txt": "5ab2c21e2a2b977641b550249c1ac5a0f51007d4688de67f65bd5846cbaa612a"
   },
   "output_sha256": {
-    "mapping.csv": "2f825990953d48f65d665f928e749f290d07aec495eff7a0f7d8f98acb451667",
+    "mapping.csv": "576c6e3c46ab1df54031f2d10e100a46d3ea64609b0a1094c29e726b961c99e6",
     "custom-art.csv": "16a5c6a548900f477acbdb76b581fcb7a1a30bc3e687c4188005fbae835b8d70",
     "references.csv": "0b3d3ae305845e431d6047fc868d4de8744768e18aaeb9ab59ea61efb1673e88",
-    "catalog.js": "1c6ef9ae8bac56a7880d3e84dbd8e03c2d3612084f5d45cd9fb589ff43321f6d",
+    "catalog.js": "636efbef5b6568de7b74a09717f10600795ad019f8ebe53d20f6b1865595eb79",
     "revised-matches.html": "a678b59d28088c0f89e28b880e4167ab84609a1401b1d9e8ef3e7cbfa29834d1",
     "revised-lights.png": "b0f79a6f63190931acc31617a21c1850c7e7cfd95c28b9a3a60d0de4fd5479fa",
     "revised-dishes.png": "b08444b28495d95b492c99536d4176a5d770a8aec4cdd25b163d9429cf357487",

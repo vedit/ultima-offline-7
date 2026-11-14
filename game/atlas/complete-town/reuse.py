@@ -1,5 +1,6 @@
 """Map Trinsic presentation onto stock UO bodies, equipment and modular scenery."""
 import math
+from wall_materials import house_wall_art
 import equipment,scene_parts,town_review,rake
 from functools import lru_cache
 import numpy as np
@@ -114,6 +115,9 @@ def simplify(s,f,im,original):
     if category=='Architecture':
         name=names[s];id=spec[1];tx,ty=dx,dy
         if name in ('wall','fortress'):
+            reviewed=house_wall_art(s,f,tx,ty) if name=='wall' else None
+            if reviewed is not None:
+                return category,span(reviewed,tx,ty),'Stock assembly','Source wall material','Match the material of the original Black Gate wall frame across its native span.'
             if s in (828,845) and k>=16:id=0x051a
             elif s in (828,845):id=0x241 if tx>=ty else 0x242
             elif tile(id)[0]=='wooden wall':id=0x7 if tx>=ty else 0x8

@@ -37,6 +37,7 @@ def layout(row, original):
         top=int(row['native_height'])*4
         return span(0x7A3 if stone else 0x738,w,d,max(0,top-10))
     if name in ('wall','fortress') and (w,d)==(1,1):
+        if row['method']=='Source wall material':return original
         # A diagonal streak in native projection is a vertical column. Full wall leaves at these
         # positions make every second wall and all exposed corners turn through ninety degrees.
         timber=shape==497 or (shape==879 and base in (5,6,7,16))
@@ -283,6 +284,7 @@ def wall_joins(refs,rows):
         west=(x-1,y,z) in occupied
         north=(x,y-1,z) in occupied
         wood=key[0]==497 or (key[0]==879 and (key[1]&31) in (5,6,7,16))
+        if row['method']=='Source wall material':wood=row['uo_id'].startswith('assembly 0x0009@')
         south,east,corner,post=(0x7,0x8,0x6,0x9) if wood else (0x1C,0x1B,0x1A,0x1D)
         # UO walls extend towards negative coordinates from the shared corner.
         graphic=(corner if west and north else south if along_x and not along_y else

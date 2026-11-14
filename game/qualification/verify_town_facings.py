@@ -71,8 +71,8 @@ def verify(output=COMPACT):
         x,y,lift=(int(r[k]) for k in ('x','y','lift'))
         if row['source_name']=='window' and fitted_window(bases.get((x,y,lift-2))) is not None:
             bay=x//2,y//2,lift-2
-            matches=[i for i in (14,15,34,35) if tile(bay[0],bay[1],bay[2]*4,i)]
-            assert len(matches)==1,(bay,matches)
+            matches=[i for i in (14,15,34,35,0x13a,0x13b) if tile(bay[0],bay[1],bay[2]*4,i)]
+            assert fitted_window(bases[x,y,lift-2]) in matches,(bay,matches)
         if row['source_name']=='crenellations':
             w,d=map(int,row['footprint'].split('×'))
             rail=0x2d if w==d else 0x78 if w>d else 0x79
@@ -81,7 +81,7 @@ def verify(output=COMPACT):
                     cell=(x-a)//2,(y-b)//2,lift*4
                     if cell not in deck:assert tile(*cell,rail)==(cell not in channels)
     for (x,y,lift,opened),closed in fittings.items():
-        assert opened in (14,15,34,35) and (output/'Art/Statics'/f'{closed}.art').is_file()
+        assert opened in (14,15,34,35,0x13a,0x13b) and (output/'Art/Statics'/f'{closed}.art').is_file()
     wall_cells=verify_house_walls(refs,rows,idx,statics,fittings)
     contacts=graphic_table(output,'furniture-walls.tsv')
     wall_x=set()
