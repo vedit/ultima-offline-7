@@ -295,9 +295,12 @@ static std::string snapshot(int seq,const std::string &outcome) {
     for(const auto &row:inspect()) { s<<"E "<<wireId(row.id)<<" "<<row.shape<<" "<<row.frame<<" "<<row.x<<" "<<row.y<<" "<<row.z<<" "<<wireId(row.parent)<<" "<<row.npc<<" "<<row.dir<<" "<<row.amount<<" "<<row.slot; if(town()) s<<" "<<capabilities(row); s<<"\n";
         if(town() && row.npc>=0) {
             objref actor((short)row.id); auto npc=GetNpcBufferForIbo(&actor);
-            const char *name=GetItemName(actor.off);
+            const char *kind=GetItemName(actor.off);
+            std::string name=row.npc<NpcRecordCount && npc->name[0]
+                ? std::string(npc->name,strnlen(npc->name,sizeof npc->name))
+                : std::string(kind?kind:"");
             s<<"C "<<wireId(row.id)<<" "<<int(Item_getHitPoints(&actor))<<" "<<int(Npc_getStrength(&actor))
-             <<" "<<int(IsInCombat(&actor))<<" "<<npc->status<<" "<<hexText(name?name:"")<<"\n";
+             <<" "<<int(IsInCombat(&actor))<<" "<<npc->status<<" "<<hexText(name)<<"\n";
         }
     }
     if(town()) {

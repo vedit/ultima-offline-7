@@ -45,7 +45,7 @@ namespace ClassicUO.Game
             if(targetPrompt!=0) world.TargetManager.Reset();
             targetPrompt=prompt=0;
         }
-        internal static void Reconnect() { if(FinishObservation()) Apply(Connect()); }
+        internal static void Reconnect() { if(FinishObservation()) Apply(Connect(true)); }
         internal static void Duplicate() { Apply(Read(LastCommand)); }
         internal static void Stale() { Apply(Read("1 0 USE 824")); }
         internal static bool InventoryVisible => UIManager.GetGump<PaperDollGump>(world.Player.Serial)!=null;
@@ -160,11 +160,13 @@ namespace ClassicUO.Game
             using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(2));
             return Exchange(command,timeout.Token).GetAwaiter().GetResult();
         }
-        private static string Connect()
+        private static string Connect(bool waitForDisconnect=false)
         {
             pipe?.Dispose();
             pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
-            pipe.Connect(world?.Player == null ? 120000 : 50);
+            // An explicit reconnect must let the native poll observe the old pipe closing.
+            // Automatic retries stay short so a missing host does not block the UI.
+            pipe.Connect(world?.Player == null ? 120000 : waitForDisconnect ? 2000 : 50);
             pipe.ReadMode = PipeTransmissionMode.Message;
             string frame = Read("0 0 SYNC");
             if (world?.Player != null) TrinsicReplay.Record("RECONNECTED", frame);

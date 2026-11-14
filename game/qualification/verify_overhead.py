@@ -14,4 +14,6 @@ if __name__ == '__main__':
     assert (len(observations) == 4 and observations[0] == 'NPC overhead Iolo'
             and observations[1].startswith('RECONNECTED -> S ')
             and observations[2:] == ['NPC overhead Iolo', 'NPC overhead Petre']), observations
+    from play import ROOT
+    assert 'TRINSIC interaction timeout/error' not in (ROOT/'runs/npc-opening-barks/client.log').read_text()
     print('Verified both speakers and the single live Iolo reaction after reconnect.')
