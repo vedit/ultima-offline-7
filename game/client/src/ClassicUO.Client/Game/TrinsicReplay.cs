@@ -27,7 +27,7 @@ namespace ClassicUO.Game
         private static Point? rightMousePoint;
         private static Point mouseStart;
         private static bool sawWalk,sawRun;
-        private static int testBook;
+        private static int testBook,testCreature;
         internal static void ObserveWalk(PlayerMobile player)
         {
             if(rightMousePoint is Point point) {
@@ -350,6 +350,30 @@ namespace ClassicUO.Game
                     if(TrinsicSession.Header.Split(' ')[9]!=a[1]) throw new InvalidOperationException("Unexpected interaction mode: "+TrinsicSession.Header);
                     if(a[1]=="5" && (dialogue==null || dialogue.IsDisposed)) throw new InvalidOperationException("Missing original U7 display");
                     break;
+                case "CREATUREART":
+                    foreach(ushort body in Enumerable.Range(0,1024).Select(TrinsicCreatures.Body).Where(b=>b!=0).Distinct()) {
+                        byte attack=TrinsicCreatures.Attack(body);
+                        foreach(byte action in new byte[]{0,attack}) for(byte direction=0;direction<5;direction++)
+                            if(Client.Game.UO.Animations.GetAnimationFrames(body,action,direction,out _,out _).Length==0)
+                                throw new InvalidOperationException($"Missing creature animation {body}/{action}/{direction}");
+                    }
+                    break;
+                case "CREATURE":
+                    TrinsicSession.Send("AUDITCREATURE",Arg());
+                    testCreature=int.Parse(TrinsicSession.Header.Split(' ')[5].Substring(9));
+                    break;
+                case "CREATURECHECK":
+                    var creature=world.Mobiles.Get((uint)testCreature);
+                    if(creature==null || creature.Graphic!=Arg() || creature.HitsMax==0)
+                        throw new InvalidOperationException("Missing creature body or native health");
+                    File.AppendAllText(path+".log",$"creature {testCreature} body {creature.Graphic} hits {creature.Hits}/{creature.HitsMax} name {creature.Name}\n");
+                    break;
+                case "ATTACKCREATURE": GameActions.Attack(world,(uint)testCreature);break;
+                case "ACTIONCHECK":
+                    if(TrinsicSession.PresentedActions==0) throw new InvalidOperationException("No native action was presented");
+                    File.AppendAllText(path+".log",$"native actions {TrinsicSession.PresentedActions}\n");
+                    break;
+                case "PEACE": TrinsicSession.Send("WAR",0);break;
                 case "BOOKCREATE":
                     TrinsicSession.Send("AUDITBOOK");
                     testBook=int.Parse(TrinsicSession.Header.Split(' ')[5].Substring(5));

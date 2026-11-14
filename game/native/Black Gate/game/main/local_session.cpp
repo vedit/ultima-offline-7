@@ -214,8 +214,6 @@ static std::vector<Row> inspect() {
                 gCamera.getCenterX(),gCamera.getCenterY(),0,0,n,GetNpcBufferForIbo(&ref)->facing()});
             continue;
         }
-        // The stable egg allocates its horse from the extra creature slots.
-        if(n>=NpcRecordCount && ref.type()!=727) continue;
         if(town() && (abs(Item_getX(ref).value-Item_getX(AvatarRef).value)>36 || abs(Item_getY(ref).value-Item_getY(AvatarRef).value)>36)) continue;
         rows.push_back({(uint16_t)ref.off,ref.type(),ref.ptr()->typeFrame>>10,Item_getX(ref),Item_getY(ref),ref.z(),0,n,GetNpcBufferForIbo(&ref)->facing()});
     }
@@ -294,7 +292,14 @@ static std::string snapshot(int seq,const std::string &outcome) {
             s<<"I "<<child.type()<<" "<<int(Item_getQuantity(&child))<<" "<<hexText(name ? name : "item")<<"\n";
         }
     }
-    for(const auto &row:inspect()) { s<<"E "<<wireId(row.id)<<" "<<row.shape<<" "<<row.frame<<" "<<row.x<<" "<<row.y<<" "<<row.z<<" "<<wireId(row.parent)<<" "<<row.npc<<" "<<row.dir<<" "<<row.amount<<" "<<row.slot; if(town()) s<<" "<<capabilities(row); s<<"\n"; }
+    for(const auto &row:inspect()) { s<<"E "<<wireId(row.id)<<" "<<row.shape<<" "<<row.frame<<" "<<row.x<<" "<<row.y<<" "<<row.z<<" "<<wireId(row.parent)<<" "<<row.npc<<" "<<row.dir<<" "<<row.amount<<" "<<row.slot; if(town()) s<<" "<<capabilities(row); s<<"\n";
+        if(town() && row.npc>=0) {
+            objref actor((short)row.id); auto npc=GetNpcBufferForIbo(&actor);
+            const char *name=GetItemName(actor.off);
+            s<<"C "<<wireId(row.id)<<" "<<int(Item_getHitPoints(&actor))<<" "<<int(Npc_getStrength(&actor))
+             <<" "<<int(IsInCombat(&actor))<<" "<<npc->status<<" "<<hexText(name?name:"")<<"\n";
+        }
+    }
     if(town()) {
         s<<"Q"; for(int flag : {60,61,62,64,66,67,72,90}) s<<" "<<int(GameFlags.get(flag)); s<<"\n";
         if(mode==3) s<<"D "<<numberLow<<" "<<numberHigh<<" "<<numberStep<<"\n";
@@ -668,6 +673,12 @@ static void poll(uint8_t *steps) {
                 outcome=placed?"unreachable":"blocked";
             }
         }
+    } else if(op=="AUDITCREATURE" && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit") && (a==523 || a==727)) {
+        objref creature;
+        if(CreateNpc(&creature,TypeFrame(a,0),Item_getX(AvatarRef),Item_getY(AvatarRef)-2,0)) {
+            RandomizeCreature(creature,TypeFrame(a,0));
+            outcome="creature-"+std::to_string(wireId((uint16_t)creature.off));
+        } else outcome="unavailable";
     } else if(op=="AUDITOWN" && r && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
         objref item((short)r->id);
         if(b==0) Item_clearOkayToTake(&item);

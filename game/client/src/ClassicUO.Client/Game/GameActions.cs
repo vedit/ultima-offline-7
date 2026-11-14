@@ -262,6 +262,11 @@ namespace ClassicUO.Game
 
         public static void Attack(World world, uint serial)
         {
+            if(TrinsicSession.Enabled) {
+                TrinsicSession.Send("WAR",1);
+                TrinsicSession.Send("USE",(int)(serial & 0x1fffffff));
+                return;
+            }
             if (ProfileManager.CurrentProfile.EnabledCriminalActionQuery)
             {
                 Mobile m = world.Mobiles.Get(serial);

@@ -413,10 +413,26 @@ namespace ClassicUO.Game
             }
         }
 
+        // Poses are source animation groups, not simulated combat outcomes.
+        private static readonly Dictionary<uint,int> actorActions=new();
+        internal static int PresentedActions { get; private set; }
+        private static void PresentAction(Mobile mobile,int nativeFrame,bool reset)
+        {
+            int pose=nativeFrame&15;
+            int group=pose switch { >=4 and <=6=>1, >=7 and <=9=>2, >=14=>3, _=>0 };
+            if(!reset && actorActions.TryGetValue(mobile.Serial,out int old) && group!=0 && group!=old) {
+                byte action=mobile.IsHuman ? (byte)(group==1?9:group==2?12:16) :
+                    TrinsicCreatures.Attack(mobile.Graphic);
+                mobile.SetAnimation(action,repeatCount:1,forward:true,fromServer:true);
+                PresentedActions++;
+            }
+            actorActions[mobile.Serial]=group;
+        }
         private static void Apply(string frame,bool run=false)
         {
             string[] lines = frame.Split('\n');
             Header=lines[0];
+            var actorState=lines.Where(l=>l.StartsWith("C ")).Select(l=>l.Split(' ')).ToDictionary(c=>uint.Parse(c[1]));
             health=lines.FirstOrDefault(l=>l.StartsWith("H "))??"";
             connectionFault=false;
             string refusal=lines.FirstOrDefault(l=>l.StartsWith("R "));
@@ -442,7 +458,7 @@ namespace ClassicUO.Game
                 UIManager.GetGump<ItemClickLabelGump>()?.Dispose();
                 foreach (uint serial in visible) world.Mobiles.Get(serial)?.TextContainer?.Clear();
             }
-            if (reset) { heldArrows=0; targetPrompt=0; placements.Clear(); inventoryWindow?.Dispose(); inventoryWindow=null; chestWindow?.Dispose(); chestWindow=null; dialog?.Dispose(); chest=prompt=0; Client.Game.UO.GameCursor.ItemHold.Clear(); }
+            if (reset) { actorActions.Clear(); heldArrows=0; targetPrompt=0; placements.Clear(); inventoryWindow?.Dispose(); inventoryWindow=null; chestWindow?.Dispose(); chestWindow=null; dialog?.Dispose(); chest=prompt=0; Client.Game.UO.GameCursor.ItemHold.Clear(); }
             generation=gen; last=int.Parse(s[4]); CameraX=int.Parse(s[6]); CameraY=int.Parse(s[7]);
             CameraOnly=Array.IndexOf(lines,"CAMERA_ONLY")>=0;
             int[][] rows=Rows(frame).ToArray();
@@ -492,14 +508,21 @@ namespace ClassicUO.Game
                     Mobile mob=npc==0 ? world.Player : world.GetOrCreateMobile(serial);
                     mob.Graphic=0x0190; mob.Hue=(ushort)(npc==0?1002:npc==12?1021:1008);
                     mob.Name=npc switch {0=>avatarName,1=>"Iolo",2=>"Spark",12=>"Finnigan",_=>"Companion"};
-                    if(TrinsicTown.Enabled && shape==727) {
-                        mob.Graphic=0x00C8;
-                        mob.Hue=0;
-                        mob.Name="Horse";
+                    ushort body=TrinsicCreatures.Body(shape);
+                    if(TrinsicTown.Enabled && body!=0) {
+                        mob.Graphic=body; mob.Hue=0;
+                        mob.Name=TrinsicCreatures.Name(shape);
                     } else if(TrinsicTown.Enabled && npc!=0) {
                         mob.Name=TrinsicTown.Name(npc);
                         TrinsicTown.Dress(world,mob,shape,partyMembers.Contains(serial));
                         mob.Title=mob.Name;
+                    }
+                    if(actorState.TryGetValue(serial,out var state)) {
+                        mob.Hits=(ushort)Math.Max(0,int.Parse(state[2]));
+                        mob.HitsMax=(ushort)Math.Max(1,int.Parse(state[3]));
+                        mob.InWarMode=int.Parse(state[4])!=0;
+                        if(npc!=0 && state.Length>6 && state[6].Length>0)
+                            mob.Name=gameTextEncoding.GetString(Convert.FromHexString(state[6]));
                     }
                     if(TrinsicTown.Enabled && npc==0) {
                         mob.IsFemale=AvatarStats[9]!=0;
@@ -508,6 +531,7 @@ namespace ClassicUO.Game
                         TrinsicTown.AvatarHair(world,mob);
                     }
                     mob.CheckGraphicChange();
+                    PresentAction(mob,r[2],reset || !visible.Contains(serial));
                     Direction facing=(Direction)(r[8]&7);
                     if(TrinsicTown.Compact) {
                         mob.SetNativePosition(x,y,(sbyte)z,facing,reset || !visible.Contains(serial),npc==0 && run);

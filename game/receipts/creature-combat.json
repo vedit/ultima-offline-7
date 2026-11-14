@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-14",
+  "authority": "Original CreateNpc/RandomizeCreature in test-only fixture; original Use and combat simulation. Presentation consumes source poses and Item_getHitPoints.",
+  "changes": [
+    "Export all nearby original extra creature slots, rather than only horses",
+    "Stock UO bodies for matching creature species",
+    "Native names, current health, strength and combat stance",
+    "Forward explicit ClassicUO attack to native WAR and USE",
+    "Translate original attack/casting poses to UO action animations"
+  ],
+  "verified": [
+    "Native spawned rat remains visible and loses health from an original attack",
+    "Peace and resumed movement",
+    "ClassicUO horse and rat bodies and health",
+    "Every mapped UO body walk and attack frames in all five stored directions, including native body conversions",
+    "Client action animation observed after attack"
+  ],
+  "evidence": [
+    "runs/creature-combat/combat.json",
+    "runs/creature-combat-client/client-creatures.json"
+  ],
+  "limits": [
+    "Other U7-specific creatures still need species artwork mapping; no new creature art was synthesized",
+    "Projectile, spell-effect and death-art families are not exhaustively qualified",
+    "Private candidate builds only; active player session untouched"
+  ]
+}
