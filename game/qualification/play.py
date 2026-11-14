@@ -2,7 +2,8 @@
 import argparse, contextlib, json, os, subprocess, sys, time, uuid
 from pathlib import Path
 from reference import ROOT, SOURCE, stage, members
-BIN = ROOT/'client/bin/Release-Trinsic-Avatar-Sheet/net10.0'
+BIN = Path(os.environ.get('TRINSIC_CLIENT_BIN',str(ROOT/'client/bin/Release-Trinsic-Avatar-Sheet/net10.0')))
+HOST = Path(os.environ.get('TRINSIC_HOST_EXECUTABLE',str(ROOT/'build-host/playtest-avatar-inventory/Ultima7.exe')))
 RELEASE = SOURCE/'Builds/BritanniaChairRouteFacet/releases/50f99d0c53594314f443902201e3a2312aa43764c7d35fede5f252da601ec4f1'
 @contextlib.contextmanager
 def session(name,fixture,reset=False,extra=None,*,original_opening=False):
@@ -35,7 +36,7 @@ def session(name,fixture,reset=False,extra=None,*,original_opening=False):
         if fixture.startswith('Iolo-') and not extra: env['TRINSIC_READY']='1'
         if extra: env.update(extra)
         with (folder/'host.log').open('w') as log:
-            host=subprocess.Popen([str(ROOT/'build-host/playtest-avatar-inventory/Ultima7.exe'),'--data',str(folder),'--program','u7','-p'],cwd=folder,env=env,stdout=log,stderr=log)
+            host=subprocess.Popen([str(HOST),'--data',str(folder),'--program','u7','-p'],cwd=folder,env=env,stdout=log,stderr=log)
             try: yield folder,env,host
             finally:
                 if host.poll() is None: host.terminate()

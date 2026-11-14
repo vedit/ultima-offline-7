@@ -1,0 +1,37 @@
+# Trinsic interaction qualification
+
+The native Black Gate engine owns outcomes. ClassicUO supplies gestures and presents the resulting state. There are no replacement bread, key, bucket, merchant, training or combat rules in the client.
+
+Run `py -3 -B game/qualification/interaction-suite.py` from the repository root. To target an already-built candidate without replacing the development binaries, set `TRINSIC_HOST_EXECUTABLE` to its `Ultima7.exe` and `TRINSIC_CLIENT_BIN` to its client directory. For the qualified candidate:
+
+```powershell
+$env:TRINSIC_HOST_EXECUTABLE = 'E:/UltimaOffline/PoCs/ClassicUO-U7-Local/build-host/interactions-20261114/Ultima7.exe'
+$env:TRINSIC_CLIENT_BIN = 'E:/UltimaOffline/PoCs/ClassicUO-U7-Local/client/bin/Interactions-20261114'
+py -3 -B game/qualification/interaction-suite.py
+```
+
+Each case uses a private save and owned host/client processes. Results and per-case logs are in `runs/full-interaction-suite` under the local game installation. Supplying case names runs only those cases and writes a separate results file. The candidate used for the November 14 qualification is recorded in `receipts/full-interactions.json`; it does not replace the running player session.
+
+| Interaction | Authority and current evidence |
+| --- | --- |
+| Item use across town | Original `Use` / `RunUsable`; 26 inventory items and 65 reachable town families checked for dispatch, prompt completion/cancellation and restored movement. This checks one instance per family, not every outcome. |
+| Object and ground targeting | Original target callback; invalid coordinates, cancellation, ground selection and feeding have separate assertions. |
+| Food and companions | Native consumption; companion dialogue and paperdoll together; inventory transfer, equipment rejection and save/restart. |
+| Keys and doors | Original murder-scene key unlocks Christopher's chest; investigation opens doors and earns the gate password. |
+| Spellbook | Original book drawing and controls, paging, selection/bookmark, resource refusal and an Awaken invocation. Client mouse clicks and Escape are exercised. Other spell effects are not all qualified. |
+| Theft and placement | Native ownership reconciliation, `ReportCrime`, egg triggers and settling after successful placement. Rejected drops retain ownership and location. Petre and the gate guard also emit their original witness objections. Escalated guard combat and every witness outcome are not exhaustively qualified. |
+| Creatures and combat | Nearby extra creature records exported; matching stock UO bodies, original health and combat state, attack/casting poses. All mapped bodies have walk/attack frames in five stored directions. An original attack damages a spawned rat; peace restores movement. U7-specific unmatched creatures and all projectile/death effects still need visual coverage. |
+| Buckets | Original blood-drinking refusal, ground blood creation, well filling, drinking and saved frame/ownership. The blood bucket can pour repeatedly according to its original quality value. |
+| Commerce and training | Dell takes 2 gold and supplies a bucket. Markus takes 20 gold and increases combat skill through the original student-selection dialogue. |
+| Potions | Original consumption, full-health cap, poison status and cure. Other potion varieties have dispatch coverage where present, not exhaustive effects. |
+| Rest | Original numeric hours choice, one-hour time advance, wake-up and recovered movement. Tests approach the bed from its free side; native reach checks remain authoritative. |
+| Forge | Original bellows frames, fire heating and cooldown. The Trinsic blank's original frame is preserved; tests do not manufacture a different forging scenario. |
+| Containers and equipment | ClassicUO mouse pickup, transfer, equip/unequip, refusal, icon repositioning, close/reopen and process restart. Gold split/merge and failed-drop rollback conserve quantities. |
+| Feedback and controls | Single-click names, NPC overhead reactions, stack sliders, status load, Tab and paperdoll war/peace controls. |
+| Map and signs | Original displays surfaced in ClassicUO, close/Escape, movement after dismissal. |
+| Murder to gate | Existing original investigation walkthrough, dialogue choices, evidence and gate exit; no quest flags granted by the adapter. |
+| Audit setup isolation | Book creation, ownership setup and creature spawning are rejected without the explicit private audit environment. |
+
+Baking and weaving are original engine routines, but the Trinsic source census has no baking hearth or loom. Their complete production chains are outside this town qualification. Vehicles, other towns, all spells and alternate quest outcomes also need their own campaign tests. Passing this suite is not a claim that every Black Gate interaction or visual effect has been exhaustively tested.
+
+The broad town matrix positions an observer near source objects, then uses original interactions. It does not certify a walkable path to every item. The murder-to-gate case separately exercises normal movement and quest progression. No check forcibly clears native movement holds to turn a failure into a pass.

@@ -1,0 +1,197 @@
+{
+  "date": "2026-11-14",
+  "implementation_commits": [
+    "18119e6",
+    "6149b2f",
+    "28e4cb8",
+    "31ce7c4"
+  ],
+  "authority": "Original native Black Gate Usecode, ownership/crime, spells and combat. ClassicUO presents state and forwards input.",
+  "candidate_builds": {
+    "native": {
+      "path": "build-host/interactions-20261114/Ultima7.exe",
+      "sha256": "43bfca97669e10726f325e3247e7907c784f33ef65344ab75ac52b6ee8828269"
+    },
+    "client": {
+      "path": "client/bin/Interactions-20261114/cuo.dll",
+      "sha256": "dd14e6dcf7b14081d4da6e27b863e3622afe65ba656e089b25d9195868cb08ed"
+    }
+  },
+  "qualification": "Full baseline suite followed by focused rechecks for original NPC names, explicit reconnect, stock Tab hold behavior and added effect assertions. Latest passing result for each case is listed; earlier failing attempts remain in the runtime results files.",
+  "passed_groups": 21,
+  "cases": [
+    {
+      "case": "inventory-dispatch",
+      "status": "passed",
+      "seconds": 54.47,
+      "log": "inventory-dispatch.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "town-dispatch",
+      "status": "passed",
+      "seconds": 176.95,
+      "log": "town-dispatch.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "world-targets",
+      "status": "passed",
+      "seconds": 22.38,
+      "log": "world-targets.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "spellbook",
+      "status": "passed",
+      "seconds": 26.77,
+      "log": "spellbook.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "theft",
+      "status": "passed",
+      "seconds": 6.89,
+      "log": "theft.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "theft-witness",
+      "status": "passed",
+      "seconds": 5.16,
+      "log": "theft-witness.log",
+      "result_file": "runs/full-interaction-suite/results-item-labels-npc-overhead-stacks-controls-theft-witness.json"
+    },
+    {
+      "case": "creatures-combat",
+      "status": "passed",
+      "seconds": 22.59,
+      "log": "creatures-combat.log",
+      "result_file": "runs/full-interaction-suite/results-creatures-combat-npc-overhead.json"
+    },
+    {
+      "case": "world-effects",
+      "status": "passed",
+      "seconds": 12.46,
+      "log": "20261114-234859-world-effects.log",
+      "result_file": "runs/full-interaction-suite/results-world-effects.json"
+    },
+    {
+      "case": "commerce-training",
+      "status": "passed",
+      "seconds": 10.95,
+      "log": "commerce-training.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "rest-potions",
+      "status": "passed",
+      "seconds": 11.57,
+      "log": "rest-potions.log",
+      "result_file": "runs/full-interaction-suite/results-audit-boundaries-forge-effects-rest-potions.json"
+    },
+    {
+      "case": "forge-effects",
+      "status": "passed",
+      "seconds": 9.01,
+      "log": "forge-effects.log",
+      "result_file": "runs/full-interaction-suite/results-audit-boundaries-forge-effects-rest-potions.json"
+    },
+    {
+      "case": "audit-boundaries",
+      "status": "passed",
+      "seconds": 5.64,
+      "log": "20261114-235013-audit-boundaries.log",
+      "result_file": "runs/full-interaction-suite/results-audit-boundaries-npc-overhead.json"
+    },
+    {
+      "case": "companions-keys",
+      "status": "passed",
+      "seconds": 95.4,
+      "log": "companions-keys.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "inventory-mouse",
+      "status": "passed",
+      "seconds": 30.78,
+      "log": "inventory-mouse.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "panels",
+      "status": "passed",
+      "seconds": 23.89,
+      "log": "panels.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "stacks-controls",
+      "status": "passed",
+      "seconds": 28.69,
+      "log": "stacks-controls.log",
+      "result_file": "runs/full-interaction-suite/results-npc-overhead-stacks-controls.json"
+    },
+    {
+      "case": "item-labels",
+      "status": "passed",
+      "seconds": 19.31,
+      "log": "item-labels.log",
+      "result_file": "runs/full-interaction-suite/results-item-labels-npc-overhead-stacks-controls-theft-witness.json"
+    },
+    {
+      "case": "npc-overhead",
+      "status": "passed",
+      "seconds": 8.18,
+      "log": "20261114-235013-npc-overhead.log",
+      "result_file": "runs/full-interaction-suite/results-audit-boundaries-npc-overhead.json"
+    },
+    {
+      "case": "reported-interactions",
+      "status": "passed",
+      "seconds": 32.88,
+      "log": "reported-interactions.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "map-sign-client",
+      "status": "passed",
+      "seconds": 17.79,
+      "log": "map-sign-client.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    },
+    {
+      "case": "murder-to-gate",
+      "status": "passed",
+      "seconds": 195.98,
+      "log": "murder-to-gate.log",
+      "result_file": "runs/full-interaction-suite/results.json"
+    }
+  ],
+  "scope": {
+    "inventory_items": 26,
+    "town_families": 65,
+    "town_unreached": 0,
+    "world_effects": [
+      "blood pouring",
+      "well filling",
+      "drinking",
+      "shop purchase",
+      "combat training",
+      "poison/cure",
+      "healing cap",
+      "rest/wake",
+      "forge heat/cooldown",
+      "witnessed theft",
+      "native attack damage"
+    ],
+    "campaign_route": "Original murder investigation through leaving the east gate"
+  },
+  "limits": [
+    "65-family matrix verifies dispatch and return of control; it is not every state/target combination.",
+    "Some creature species, projectile/death art and spells need additional visual/effect qualification.",
+    "No baking hearth or loom in the Trinsic source census; those production chains remain outside this town suite.",
+    "Frozen playtest, regular development binaries and player saves were not replaced."
+  ],
+  "documentation": "game/INTERACTIONS.md"
+}

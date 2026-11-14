@@ -32,7 +32,3 @@ with session('theft-transfers','Investigation',True,{'TRINSIC_PREPARE':'interact
     assert (folder/'host.log').read_text().count('transfer crime')==before
     p.close()
     print('Property move, owned move, rollback and mixed-ownership merge passed.',flush=True)
-
-
-
-
