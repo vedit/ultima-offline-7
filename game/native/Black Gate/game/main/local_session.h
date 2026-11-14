@@ -24,3 +24,5 @@ void LocalOpened(short object);
 bool LocalChestOpen();
 void LocalRecovery(short object, int status, int beforeX, int beforeY);
 
+
+int LocalWireId(short handle);

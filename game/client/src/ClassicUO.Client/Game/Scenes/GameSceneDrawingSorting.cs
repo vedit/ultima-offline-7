@@ -1216,6 +1216,8 @@ namespace ClassicUO.Game.Scenes
             int winGameHeight = Camera.Bounds.Height;
             int winGameCenterX = winGamePosX + (winGameWidth >> 1);
             int winGameCenterY = winGamePosY + (winGameHeight >> 1) + (_world.Player.Z << 2);
+            winGameCenterX += TrinsicEffects.CameraOffset.X;
+            winGameCenterY += TrinsicEffects.CameraOffset.Y;
             winGameCenterX -= (int)_world.Player.Offset.X;
             winGameCenterY -= (int)(_world.Player.Offset.Y - _world.Player.Offset.Z);
 

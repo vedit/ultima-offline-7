@@ -9,6 +9,7 @@
 #include <map>
 #include <algorithm>
 #include "u7port.h"
+#include "local_effects.h"
 #include "objref.h"
 #include "coord.h"
 #include "item.h"
@@ -69,7 +70,9 @@ static uint16_t lifetimes[65536];
 static int wireId(int handle) {
     return handle && getenv("TRINSIC_TOWN") ? (int(lifetimes[handle])<<16) | handle : handle;
 }
+int LocalWireId(short handle) { return wireId((uint16_t)handle); }
 void LocalFreed(short handle) {
+    LocalEffectMissileEnd(handle);
     if(!LocalEnabled()) return;
     auto id=(uint16_t)handle;
     if(getenv("TRINSIC_TOWN") && lifetimes[id]<8191) ++lifetimes[id];
@@ -86,6 +89,7 @@ static int inputValue, numberLow, numberHigh, numberStep;
 static bool targetPosition;
 static int targetX,targetY,targetZ;
 static int deferredUse;
+static int auditSpell=-1;
 static bool town() { return getenv("TRINSIC_TOWN") != nullptr; }
 static unsigned long promptId;
 static std::string displayKind, displayFrame;
@@ -318,7 +322,7 @@ static std::string snapshot(int seq,const std::string &outcome) {
                 ? std::string(npc->name,strnlen(npc->name,sizeof npc->name))
                 : std::string(kind?kind:"");
             s<<"C "<<wireId(row.id)<<" "<<int(Item_getHitPoints(&actor))<<" "<<int(Npc_getStrength(&actor))
-             <<" "<<int(IsInCombat(&actor))<<" "<<npc->status<<" "<<hexText(name)<<"\n";
+             <<" "<<int(IsInCombat(&actor))<<" "<<npc->status<<" "<<hexText(name)<<" "<<int(Item_getQualityFlags(&actor))<<"\n";
         }
     }
     if(town()) {
@@ -332,6 +336,7 @@ static std::string snapshot(int seq,const std::string &outcome) {
     for (const auto &bark : recentBarks)
         s<<"B "<<bark.sequence<<" "<<bark.speaker<<" "<<bark.text<<"\n";
     for(auto &choice:choices) s<<"A "<<hexText(choice)<<"\n";
+    s<<LocalEffectsSnapshot();
     return s.str();
 }
 
@@ -545,6 +550,10 @@ static std::string transfer(const Row &src,const Row *dst,int requested,int x,in
 
 static void poll(uint8_t *steps) {
     if(!LocalEnabled()) return;
+    if(steps && auditSpell>=0) {
+        int spell=auditSpell; auditSpell=-1;
+        RunUsable(1,AvatarRef.off,1600+spell);
+    }
     if(steps && deferredUse) {
         const int id=deferredUse;
         deferredUse=0;
@@ -723,6 +732,15 @@ static void poll(uint8_t *steps) {
         if(b==0) Item_clearOkayToTake(&item);
         else if(b==1) Item_setOkayToTake(&item);
         outcome=Item_isOkayToTake(&item)?"owned":"property";
+    } else if(op=="AUDITFXSTATE" && r && r->npc>=0 && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
+        int status=0; input>>status;
+        objref actor((short)r->id);
+        Item_setHitPoints(&actor,(int8_t)b);
+        auto npc=GetNpcBufferForIbo(&actor);
+        // Only prepare spell conditions; preserve alignment, party and life state.
+        npc->status=(npc->status & ~0x7380) | (status & 0x7380);
+    } else if(op=="AUDITCAST" && steps && a>=0 && a<72 && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
+        auditSpell=a;
     } else if(op=="AUDITBOOK" && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
         objref book;
         if(!CreateItemInContainer(&book,TypeFrame(761,0),AvatarRef)) outcome="unavailable";
@@ -748,7 +766,7 @@ static void poll(uint8_t *steps) {
     else if(op=="LOAD") {
         char title[80]={}; SaveGameFiles.getSaveTitle(0,title);
         if(!*title) outcome="empty";
-        else {SaveGameFiles.restoreGame(0);++generation;memset(retired,0,sizeof(retired));memset(lifetimes,0,sizeof lifetimes);history.clear();recentBarks.clear();lastSeq=0;opened=0;words.clear();}
+        else {SaveGameFiles.restoreGame(0);++generation;memset(retired,0,sizeof(retired));memset(lifetimes,0,sizeof lifetimes);history.clear();recentBarks.clear();LocalEffectsReset();lastSeq=0;opened=0;words.clear();}
     } else if(op=="CLOSE") opened=0;
     else if(op=="QUIT") {reply(snapshot(seq,"bye"));plat_exit(0);return;}
     else outcome="invalid";

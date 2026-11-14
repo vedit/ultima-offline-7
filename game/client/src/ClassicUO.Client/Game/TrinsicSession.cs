@@ -40,6 +40,7 @@ namespace ClassicUO.Game
         internal static string LastCommand { get; private set; }
         internal static void Close()
         {
+            TrinsicEffects.Clear();
             observationTimeout?.Cancel(); observationTimeout?.Dispose(); observationTimeout=null;
             pipe?.Dispose(); pipe=null; observation=null; walkingCommand=null; heldArrows=0; pending.Clear();
             if(targetPrompt!=0) world.TargetManager.Reset();
@@ -175,6 +176,7 @@ namespace ClassicUO.Game
         public static void Start(World target)
         {
             world = target;
+            TrinsicEffects.Start(world);
             lastBark = 0;
             TrinsicTown.Load();
             string data = Connect();
@@ -223,6 +225,7 @@ namespace ClassicUO.Game
         }
         public static void Update(World target)
         {
+            TrinsicEffects.Update();
             if(TrinsicReplay.Active) TrinsicReplay.ObserveWalk(target.Player);
             if(!Client.Game.IsActive && !TrinsicReplay.Active) heldArrows=0;
             try
@@ -433,6 +436,7 @@ namespace ClassicUO.Game
         private static void Apply(string frame,bool run=false)
         {
             string[] lines = frame.Split('\n');
+            TrinsicEffects.Prepare(lines);
             Header=lines[0];
             var actorState=lines.Where(l=>l.StartsWith("C ")).Select(l=>l.Split(' ')).ToDictionary(c=>uint.Parse(c[1]));
             health=lines.FirstOrDefault(l=>l.StartsWith("H "))??"";
@@ -495,9 +499,11 @@ namespace ClassicUO.Game
                 if (parent==0 && npc!=0 && Math.Max(Math.Abs(x-avatar[3]),Math.Abs(y-avatar[4]))>36) continue;
                 if (parent!=0 && !parents.Contains(parent)) continue;
                 uint serial=(uint)id | (npc<0?ItemBase:0u);
+                if(parent==0 && TrinsicEffects.IsMissile(id)) continue;
+                ushort fieldGraphic=parent==0 ? TrinsicEffects.FieldGraphic(shape) : (ushort)0;
                 ushort townGraphic = 0;
                 if(TrinsicTown.Enabled && npc<0) {
-                    townGraphic=TrinsicTown.Graphic(shape,r[2],x,y,r[5],parent==0);
+                    townGraphic=fieldGraphic!=0 ? fieldGraphic : TrinsicTown.Graphic(shape,r[2],x,y,r[5],parent==0);
                     if(townGraphic==0) continue;
                     // The complete street-sign sprite includes its ground-level support.
                     if(parent==0 && shape==361) z=0;
@@ -523,6 +529,11 @@ namespace ClassicUO.Game
                         mob.Hits=(ushort)Math.Max(0,int.Parse(state[2]));
                         mob.HitsMax=(ushort)Math.Max(1,int.Parse(state[3]));
                         mob.InWarMode=int.Parse(state[4])!=0;
+                        if(state.Length>7) {
+                            mob.Flags=(mob.Flags & ~(Flags.Hidden|Flags.Poisoned)) |
+                                ((int.Parse(state[7])&1)!=0 ? Flags.Hidden : 0) |
+                                ((int.Parse(state[5])&0x2000)!=0 ? Flags.Poisoned : 0);
+                        }
                         if(npc!=0 && state.Length>6 && state[6].Length>0)
                             mob.Name=gameTextEncoding.GetString(Convert.FromHexString(state[6]));
                     }
@@ -559,7 +570,8 @@ namespace ClassicUO.Game
                     item.FurnitureWall = parent==0 && TrinsicTown.Compact
                         ? TrinsicTown.FurnitureWall(shape,x,y,r[5]) : 0;
                     if(parent!=0) { item.NativePosition=null; item.Offset=Vector3.Zero; }
-                    item.Graphic=TrinsicTown.Enabled ? townGraphic : Art(shape,r[2]); item.Amount=TrinsicTown.Enabled && (r[11]&8)==0 ? (ushort)1 : (ushort)Math.Max(1,r[9]);
+                    if(fieldGraphic!=0) item.Hue=(ushort)(shape==902?0x0480:0);
+                    item.Graphic=fieldGraphic!=0 ? fieldGraphic : TrinsicTown.Enabled ? townGraphic : Art(shape,r[2]); item.Amount=TrinsicTown.Enabled && (r[11]&8)==0 ? (ushort)1 : (ushort)Math.Max(1,r[9]);
                     if(TrinsicTown.Enabled) {
                         int capabilities=r[11];
                         if((capabilities&8)!=0) stacks.Add(serial);
@@ -635,6 +647,7 @@ namespace ClassicUO.Game
             foreach(uint id in visible.Except(keep))
                 if((id&ItemBase)!=0) world.RemoveItem(id,true); else world.RemoveMobile(id,true);
             visible=keep;
+            TrinsicEffects.Apply(world,lines,gen);
             foreach(var sheet in UIManager.Gumps.OfType<PaperDollGump>().Where(g=>g.LocalSerial!=world.Player.Serial).ToArray())
                 if(!partyMembers.Contains(sheet.LocalSerial)) sheet.Dispose();
             if (Client.Game.Scene is GameScene) ShowBarks(lines);

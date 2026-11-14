@@ -4,6 +4,7 @@
  */
 
 #include "u7port.h"
+#include "local_effects.h"
 #include "lowlevel.h"
 #include "objref.h"
 #include "iteminfo.h"
@@ -183,6 +184,7 @@ int16_t SpriteManager_playSprite(SpriteManager *pool, CellCoord x, CellCoord y, 
 	int16_t index = SpriteManager_findFreeSprite(pool);
 	if (index != -1) {
 		Sprite_initMovingEffect(&pool->sprites[index], x, y, dx, dy, shape, frame, lifetime, mode);
+		LocalEffectSprite(0,x,y,shape);
 	}
 	return index;
 }
@@ -196,6 +198,7 @@ int16_t SpriteManager_playSpriteForItem(SpriteManager *pool, int16_t item, int16
 	int16_t index = SpriteManager_findFreeSprite(pool);
 	if (index != -1) {
 		Sprite_initItemEffect(&pool->sprites[index], item, -x, -y, dx, dy, shape, frame, mode, lifetime);
+		LocalEffectSprite(item,0,0,shape);
 	}
 	return index;
 }

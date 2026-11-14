@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-15",
+  "implementation": "Stock UO visual effects driven by native U7 mutations, projectile state, field placement and environment state. No UO gameplay rules.",
+  "verified": [
+    "72-spell dispatch and modal-recovery smoke",
+    "Healing after native HP mutation; cancellation emits no healing",
+    "Cure, Protection and Invisibility mutation cues",
+    "Exactly one lightning impact for a native explosive strike",
+    "Successful native Conjure emits summoning",
+    "Death Vortex exports native projectile positions",
+    "Flame Strike bursts exactly match successful native fire-field placements",
+    "Repeated snapshots preserve identities; native load clears transients",
+    "Observer-on/off native HP, condition and invisibility outcome parity",
+    "Client stock-art availability, healing and per-target Flame Strike",
+    "Client reconnect and duplicate-snapshot suppression, effect expiry capture and movement"
+  ],
+  "regressions": [
+    "world-targets",
+    "spellbook",
+    "creatures-combat",
+    "world-effects",
+    "audit-boundaries"
+  ],
+  "limits": [
+    "Smoke coverage is not successful-effect or visual qualification for every spell.",
+    "Sleep/Charm/Fear/Dance/Might, Energy Mist, Death Vortex, Swordstrike, Seance, Time Stop, Fireworks and Detect Trap use provisional visual equivalents.",
+    "Some summoned species still lack native UO body mappings.",
+    "Field collision remains native; exact visible coverage of every 3-by-3 field shape is not qualified.",
+    "Lighting spells have activation cues; global town lighting is not replaced.",
+    "Build includes existing parallel rendering/art working state; commit isolates spell-effect deltas."
+  ],
+  "candidate": {
+    "native": "build-host/spell-effects-20261115/Ultima7.exe",
+    "client": "client/bin/Spell-Effects-20261115/cuo.dll",
+    "normal_launcher": "not replaced",
+    "player_saves": "unchanged",
+    "native_sha256": "32a36418292016e49da231961524e0ca4b5eea185d082bbf3ffe61f7522e58df",
+    "client_sha256": "d6cadd011f197d50eea340ab186649fbd66e9b5d3591fd6d3dedfc8e851606c6"
+  },
+  "evidence": {
+    "runs/spell-effects-native/events.json": "61d7dac16f74d8524e2f93073e6fd12d0a6a8e7abd2e9894c40703802f3596c2",
+    "runs/spell-effects-client/client-effects.json": "cce31226dae132b191a3758f1ef404fc5146f58308b1cd799d323a70e5355d62",
+    "runs/spell-effects-parity-0/outcomes.json": "03dadabb51e66a2a88681fe797f4b5ec969dcba82ea3911aa6c35e55ec094ffa",
+    "runs/spell-effects-parity-1/outcomes.json": "03dadabb51e66a2a88681fe797f4b5ec969dcba82ea3911aa6c35e55ec094ffa",
+    "runs/full-interaction-suite/results-audit-boundaries-creatures-combat-spellbook-world-effects-world-targets.json": "11563aa0696e2793bb3f968827e2628d381d02d79ddb112ff2bf2c0f640f9e31"
+  },
+  "commands": [
+    "py -3 -B game/qualification/spell-effects.py --all",
+    "py -3 -B game/qualification/spell-effects.py --client",
+    "py -3 -B game/qualification/spell-effects.py --parity",
+    "py -3 -B game/qualification/interaction-suite.py spellbook creatures-combat world-effects audit-boundaries world-targets"
+  ]
+}

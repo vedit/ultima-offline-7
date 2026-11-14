@@ -107,6 +107,7 @@ namespace ClassicUO.Game
             throw new InvalidOperationException("No visible scenery to click");
         }
 
+        private static long effectWaitStart;
         internal static void Next(World world,ContainerGump chest,Gump dialogue)
         {
             if(Environment.TickCount64<due) return;
@@ -133,6 +134,13 @@ namespace ClassicUO.Game
                     Client.Game.TakeScreenshot();
                     return;
                 }
+                return;
+            }
+            if(actions.Peek().StartsWith("FXWAIT ")) {
+                var wait=actions.Peek().Split(' ');
+                if(TrinsicEffects.Counts.GetValueOrDefault(wait[1])>=int.Parse(wait[2])) {actions.Dequeue();effectWaitStart=0;return;}
+                if(effectWaitStart==0) effectWaitStart=Environment.TickCount64;
+                if(Environment.TickCount64-effectWaitStart>6000) throw new InvalidOperationException("No native "+wait[1]+" effect; HP="+world.Player.Hits+" "+TrinsicSession.Header);
                 return;
             }
             if((actions.Peek().StartsWith("STEP ") || actions.Peek().StartsWith("CONFLICT ")) && !TrinsicSession.WalkReady) return;
@@ -346,6 +354,17 @@ namespace ClassicUO.Game
                 case "GROUND": GameActions.DropItem(Client.Game.UO.GameCursor.ItemHold.Serial,Arg(1),Arg(2),0,0xffffffff);break;
                 case "TURN": TrinsicSession.Send("TURN",Arg()); break;
                 case "USE": GameActions.DoubleClick(world,world.Mobiles.Get((uint)Arg())!=null?(uint)Arg():Item(1)); break;
+                case "FXCAST": TrinsicSession.Send("AUDITCAST",Arg());break;
+                case "FXSTATE": TrinsicSession.Send("AUDITFXSTATE",Arg(1),Arg(2)," "+(a.Length>3?a[3]:"0"));break;
+                case "FXCOUNT":
+                    if(TrinsicEffects.Counts.GetValueOrDefault(a[1])!=Arg(2)) throw new InvalidOperationException("Effect count "+a[1]+": "+TrinsicEffects.Counts.GetValueOrDefault(a[1]));
+                    break;
+                case "FXART":
+                    foreach(ushort graphic in new ushort[]{0x376a,0x373a,0x375a,0x374a,0x3709,0x3728,0x3735,0x36cb,0x379f,0x37eb,0x36d4,0x398c,0x3915,0x3979,0x3946}) {
+                        var spellArtBounds=Client.Game.UO.Arts.GetArt(graphic).UV;
+                        if(spellArtBounds.Width==0 || spellArtBounds.Height==0) throw new InvalidOperationException("Missing spell art "+graphic.ToString("x"));
+                    }
+                    break;
                 case "MODAL":
                     if(TrinsicSession.Header.Split(' ')[9]!=a[1]) throw new InvalidOperationException("Unexpected interaction mode: "+TrinsicSession.Header);
                     if(a[1]=="5" && (dialogue==null || dialogue.IsDisposed)) throw new InvalidOperationException("Missing original U7 display");
