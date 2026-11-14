@@ -44,6 +44,10 @@ extern void OpenAndLoopItemDialog(objref);
 #include "palfade.h"
 #include "party.h"
 #include "spell.h"
+#include "crime.h"
+#include "trigger.h"
+#include "collide.h"
+extern uint8_t TheftReported;
 
 extern "C" void CopyScreenPalette(uint8_t *rgb);
 extern uint8_t DialogState;
@@ -432,6 +436,7 @@ static void restoreItem(objref item,const Row &r) {
 // Move one selected quantity as a transaction. A split clone remains detached
 // until placement succeeds. A failed drop restores the original stack in place.
 static std::string transfer(const Row &src,const Row *dst,int requested,int x,int y,int z) {
+    if(!opened) TheftReported=0; // A world drag starts its own native pick dialog.
     if(!accessible(src)) return "unreachable";
     int amount=requested<0?src.amount:requested;
     bool counted=(capabilities(src)&Stack)!=0;
@@ -465,6 +470,9 @@ static std::string transfer(const Row &src,const Row *dst,int requested,int x,in
             objref owner=GetOuterContainer(target,AvatarRef);
             if(!CanCarryWeight(owner,item))error="refused1";
             else {
+                // Match WorldGump's ownership reconciliation before merging.
+                if(Item_isOkayToTake(&target)!=Item_isOkayToTake(&item))
+                    MarkItemOkayToTake(Item_isOkayToTake(&target)?item:target);
                 Item_setQuantity(target,dst->amount+amount,0);
                 ZapDetachedItem(&item);
                 return "merged";
@@ -482,6 +490,22 @@ static std::string transfer(const Row &src,const Row *dst,int requested,int x,in
         if(split){ZapDetachedItem(&item);Item_setQuantity(original,src.amount,0);}
         else restoreItem(item,src);
         return error;
+    }
+    if(dst) {
+        objref owner=GetOuterContainer(target,item);
+        if(Item_isOkayToTake(&owner) || owner.isBody()) MarkItemOkayToTake(item);
+    } else if(!Item_isOkayToTake(&item) && !TheftReported) {
+        // Same witnessed-property-movement event as WorldGump::accepts.
+        TheftReported=1;
+        ReportCrime(item.off,0,1);
+        if(getenv("TRINSIC_TRACE")) {fprintf(stderr,"transfer crime item=%d\n",wireId((uint16_t)item.off));fflush(stderr);}
+    }
+    bool triggered=false;
+    if(!dst && item.valid()) triggered=TriggerEggsUnderItem(item,Item_getX(item),Item_getY(item));
+    if(!src.parent) {
+        if(!triggered && item.valid()) TriggerEggsUnderItem(item,Coord(src.x),Coord(src.y));
+        SettleChunkItems(Coord(src.x),Coord(src.y));
+        if(split && item.valid()) Item_setQualityFlags(&item,Item_getQualityFlags(&item)&0xef);
     }
     return split?"split-"+std::to_string(wireId((uint16_t)item.off)):"ok";
 }
@@ -644,6 +668,11 @@ static void poll(uint8_t *steps) {
                 outcome=placed?"unreachable":"blocked";
             }
         }
+    } else if(op=="AUDITOWN" && r && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
+        objref item((short)r->id);
+        if(b==0) Item_clearOkayToTake(&item);
+        else if(b==1) Item_setOkayToTake(&item);
+        outcome=Item_isOkayToTake(&item)?"owned":"property";
     } else if(op=="AUDITBOOK" && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
         objref book;
         if(!CreateItemInContainer(&book,TypeFrame(761,0),AvatarRef)) outcome="unavailable";

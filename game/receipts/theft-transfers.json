@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-14",
+  "implementation": "Original ownership reconciliation, ReportCrime, TriggerEggsUnderItem and SettleChunkItems after accepted transfers.",
+  "verified": [
+    "rejected ground drop rollback",
+    "property ground movement reports native crime",
+    "owned ground movement does not report crime",
+    "mixed ownership gold merge"
+  ],
+  "fixture": "Private Investigation save with audit-only ownership setup on native quantity items.",
+  "limits": [
+    "Crime dispatch is verified; every witness/guard outcome is not.",
+    "Candidate build, active player game untouched."
+  ],
+  "evidence": [
+    "runs/theft-transfers/host.log"
+  ]
+}
