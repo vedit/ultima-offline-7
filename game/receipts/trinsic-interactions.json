@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-14",
+  "edition": "Steam Black Gate with Forge of Virtue, native Windows development build",
+  "baseline_commit": "13ef324",
+  "authority": "Original Use, RunUsable, container handling and retail Usecode. No item-specific replacement scripts or quest flag overrides.",
+  "shared_fixes": [
+    "Remove the town USE shape allowlist, including the locked-chest shortcut; original code decides the outcome.",
+    "Expose original map, sign and remote-view displays through one ClassicUO modal adapter instead of waiting for hidden native-window input.",
+    "Forward item barks as well as NPC barks, and original ReportNoCanDo feedback.",
+    "Start the full resource-cache discard scan at its first slot; previously more than 37 cached resources could raise E401 despite released blocks.",
+    "Bound asynchronous client observations to five seconds and record the last interaction and native hold flags on failure.",
+    "Explain pending targets and displays on attempted movement; restore a missing modal while its original prompt remains active."
+  ],
+  "native_health_fields": [
+    "active_item", "active_shape", "elapsed_ms", "AvatarDontMove",
+    "GameTime.hold", "UsableRunning", "DialogState", "PlayerActionSuspended"
+  ],
+  "qualification": {
+    "inventory": {
+      "command": "py -3 -B game/qualification/item-use-audit.py",
+      "items": 26,
+      "evidence": "runs/inventory-item-audit/interaction-audit.json",
+      "checks": "Avatar and Iolo equipment/backpack contents; complete or cancel original prompts, verify movement, reload isolated save after each item. Verify AUDITVISIT is unavailable without the audit environment."
+    },
+    "town": {
+      "command": "py -3 -B game/qualification/item-use-audit.py --town",
+      "item_families": 65,
+      "unreached_families": 0,
+      "evidence": "runs/town-item-matrix/interaction-audit.json",
+      "selection": "One original instance per shape with LINKDEP1 Usecode or container metadata, drawn from reviewed Trinsic world, fixed and contained references.",
+      "checks": "Original dispatch, prompt completion/cancellation, zero active Usecode and movement holds, then movement on a clear road. Feedback and refusals are retained.",
+      "positioning": "AUDITVISIT uses TeleportParty only with TRINSIC_PREPARE=interaction-audit and bounded Trinsic coordinates. Production launchers do not enable it."
+    },
+    "client": {
+      "command": "py -3 -B game/qualification/item-use-audit.py --client",
+      "evidence": "runs/original-map-client/client-map.json",
+      "checks": "Original cloth map via close button and Escape, original sign via Escape, rendered screenshots, resumed movement."
+    },
+    "companion_and_key_regression": {
+      "command": "py -3 -B game/qualification/companion-items.py",
+      "evidence": [
+        "runs/companion-item-native/item-use.json",
+        "runs/companion-item-client/client-items.json",
+        "runs/companion-item-client/client-restart.json"
+      ],
+      "checks": "Cancel and feed, use within open backpack, party transfers, occupied equipment slot, equip/unequip, save/restart, companion dialogue plus paperdoll, original murder-scene key unlocks Christopher's chest."
+    },
+    "timeout_reproduction": {
+      "evidence": "runs/interaction-timeout-proof/client.log",
+      "method": "Candidate client paired with pre-fix native host in an isolated save; USE 104 reproduces hidden map input wait.",
+      "result": "Client reports bounded interaction timeout with USE 104 recorded, rather than an indefinitely pending observation."
+    }
+  },
+  "limits": [
+    "Town matrix tests dispatch and return of control, not every frame, target combination or quest outcome. Some original interactions legitimately refuse the action.",
+    "Target prompts are cancelled in the broad matrix. Feeding and the murder-scene key have separate effect assertions.",
+    "Town observer teleport qualifies interaction/control return, not pathfinding or physical access to every object.",
+    "The shared remote-view adapter is implemented but no accessible Trinsic remote-view item was exercised in the matrix.",
+    "Timeout diagnostics do not forcibly clear original game flags or rewind a running script.",
+    "Existing saves and the frozen Trinsic playtest build are not modified."
+  ]
+}

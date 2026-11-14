@@ -2,6 +2,9 @@
 bool LocalEnabled();
 int LocalNumber(int low,int high,int step);
 short LocalTarget();
+void LocalDisplay(const char *kind);
+void LocalDisplayBegin();
+void LocalRefusal(int reason);
 void LocalPoll(unsigned char *steps);
 void LocalBeforeStep();
 void LocalPartyObservation();

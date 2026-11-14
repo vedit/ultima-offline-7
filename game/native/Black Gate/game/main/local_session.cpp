@@ -40,6 +40,13 @@ extern void OpenAndLoopItemDialog(objref);
 #include "random.h"
 #include "plat.h"
 #include "local_session.h"
+#include "arena.h"
+#include "palfade.h"
+#include "party.h"
+
+extern "C" void CopyScreenPalette(uint8_t *rgb);
+extern uint8_t DialogState;
+extern int8_t UsableRunning;
 
 extern objref AvatarRef;
 extern "C" uint8_t AvatarDontMove;
@@ -72,6 +79,30 @@ static int inputValue, numberLow, numberHigh, numberStep;
 static int deferredUse;
 static bool town() { return getenv("TRINSIC_TOWN") != nullptr; }
 static unsigned long promptId;
+static std::string displayKind, displayFrame;
+static std::vector<uint8_t> displayBefore;
+static int activeItem, activeShape;
+static uint32_t activeSince;
+static unsigned long refusalSequence;
+static int refusalReason=-1;
+void LocalRefusal(int reason) {
+    if(!LocalEnabled()) return;
+    refusalReason=reason; ++refusalSequence;
+    fprintf(stderr,"interaction refused reason=%d item=%d shape=%d\n",reason,activeItem,activeShape);
+    fflush(stderr);
+}
+struct Interaction {
+    Interaction(objref item) {
+        activeItem=wireId((uint16_t)item.off); activeShape=item.type(); activeSince=plat_milliseconds();
+        fprintf(stderr,"interaction begin item=%d shape=%d tick=%u\n",activeItem,activeShape,GameTime.ticks);
+        fflush(stderr);
+    }
+    ~Interaction() {
+        fprintf(stderr,"interaction end item=%d shape=%d elapsed=%llu mode=%d movement=%d\n",
+            activeItem,activeShape,(unsigned long long)(uint32_t(plat_milliseconds()-activeSince)),mode,AvatarDontMove);
+        fflush(stderr); activeItem=activeShape=0;
+    }
+};
 void LocalPartyObservation() {
     if(!getenv("TRINSIC_TRACE")) return;
     static int px=-1,py=-1,pz=-1;
@@ -100,7 +131,7 @@ static std::deque<Bark> recentBarks;
 static uint64_t barkSequence;
 
 void LocalBark(short speaker, const char *text) {
-    if (!LocalEnabled() || !speaker || !text || !*text || !objref(speaker).isNpc()) return;
+    if (!LocalEnabled() || !speaker || !text || !*text || !objref(speaker).valid()) return;
     if (recentBarks.size() == 32) recentBarks.pop_front();
     recentBarks.push_back({++barkSequence, GetTickCount64() + 3000,
                            wireId((uint16_t)speaker), hexText(text)});
@@ -229,6 +260,11 @@ static std::string snapshot(int seq,const std::string &outcome) {
     std::ostringstream s;
     s<<"S "<<seq<<" "<<generation<<" "<<GameTime.ticks<<" "<<lastSeq<<" "<<outcome<<" "<<gCamera.getCenterX().value<<" "<<gCamera.getCenterY().value<<" "<<wireId(opened)<<" "<<mode<<" "<<promptId<<" "<<face<<" "<<GetRandomSeed()<<" "<<int(GameFlags.get(60))<<" "<<int(GameFlags.get(72))<<"\n";
     auto avatar=GetNpcBufferForIbo(&AvatarRef);
+    s<<"H "<<activeItem<<" "<<activeShape<<" "<<(activeItem?uint32_t(plat_milliseconds()-activeSince):0)
+     <<" "<<int(AvatarDontMove)<<" "<<GameTime.hold<<" "<<int(UsableRunning)<<" "<<int(DialogState)
+     <<" "<<int(PlayerActionSuspended)<<"\n";
+    if(mode==5) s<<"U "<<displayKind<<"\n";
+    if(refusalReason>=0) s<<"R "<<refusalSequence<<" "<<refusalReason<<"\n";
     s<<"N "<<hexText(std::string(avatar->name,strnlen(avatar->name,sizeof avatar->name)))<<"\n";
     s<<"V "<<int(Npc_getStrength(&AvatarRef))<<" "<<int(Npc_getDexterity(&AvatarRef))<<" "<<int(Npc_getIntelligence(&AvatarRef))<<" "<<int(avatar->hitPoints)<<" "<<int(avatar->mana)<<" "<<int(avatar->magic)<<"\n";
     if(town()) {
@@ -278,6 +314,33 @@ short LocalTarget() {
     mode=4; ++promptId;
     while(mode==4){ LocalPoll(nullptr); plat_yield(); }
     return (short)inputValue;
+}
+// Original U7 UI is kept intact. Only its input wait crosses into ClassicUO.
+// Fetch the fixed-size frame separately, so normal snapshots stay small.
+void LocalDisplayBegin() {
+    if(LocalEnabled()) displayBefore.assign(ScreenPixels(),ScreenPixels()+320*200);
+}
+void LocalDisplay(const char *kind) {
+    uint8_t palette[768]; CopyScreenPalette(palette);
+    displayKind=kind;
+    int left=0,top=0,right=319,bottom=199;
+    if(displayBefore.size()==320*200) {
+        left=320;top=200;right=bottom=-1;
+        for(int y=0;y<200;++y) for(int x=0;x<320;++x) if(displayBefore[y*320+x]!=ScreenPixels()[y*320+x]) {
+            left=std::min(left,x);right=std::max(right,x);top=std::min(top,y);bottom=std::max(bottom,y);
+        }
+        if(right<left){left=top=0;right=319;bottom=199;}
+    }
+    displayBefore.clear();
+    std::string pixels;
+    for(int y=top;y<=bottom;++y) pixels.append((char*)ScreenPixels()+y*320+left,right-left+1);
+    displayFrame="F "+std::to_string(right-left+1)+" "+std::to_string(bottom-top+1)+" "+
+        hexText(std::string((char*)palette,sizeof palette))+" "+hexText(pixels)+"\n";
+    mode=5; ++promptId;
+    fprintf(stderr,"interaction display=%s prompt=%lu item=%d shape=%d\n",kind,promptId,activeItem,activeShape);
+    fflush(stderr);
+    while(mode==5){ LocalPoll(nullptr); plat_yield(); }
+    displayFrame.clear(); displayKind.clear();
 }
 void LocalOpened(short object) { opened=(uint16_t)object; }
 bool LocalChestOpen() { return opened!=0; }
@@ -397,6 +460,7 @@ static void poll(uint8_t *steps) {
         deferredUse=0;
         objref item((short)id);
         if(wireId((uint16_t)item.off)==id && item.valid() && reachable(item)) {
+            Interaction interaction(item);
             if(Item_canBeOpened(item)) OpenAndLoopItemDialog(item);
             else RunUsable(1,item.off,-1);
         }
@@ -424,6 +488,7 @@ static void poll(uint8_t *steps) {
     int seq,gen,a=0,b=0; std::string op;
     if(!(input>>seq>>gen>>op)) {reply("ERROR syntax\n"); return;}
     input>>a>>b;
+    if(op=="SCREEN") { reply(mode==5?displayFrame:"ERROR no-display\n"); return; }
     if(op=="SYNC") { reply(snapshot(0,"sync")); return; }
     if(gen!=generation) { reply(snapshot(seq,"stale"));return; }
     if(auto it=history.find(seq);it!=history.end()){reply(snapshot(seq,it->second));return;}
@@ -436,6 +501,7 @@ static void poll(uint8_t *steps) {
     if(r && (op=="USE" || op=="LOOK" || op=="EQUIP" || op=="MOVE" || op=="GROUND")) a=r->id;
     if(dst && (op=="TARGET" || op=="EQUIP" || op=="MOVE")) b=dst->id;
     if(op=="BEGIN" && getenv("TRINSIC_READY")) started=true;
+    else if(op=="DISMISS" && mode==5 && a==(int)promptId) mode=0;
     else if(op=="ANSWER" && mode && a==(int)promptId && b>=0 && (mode==1 ? b==0 : b<(int)choices.size())) chosen=b;
     else if(op=="NUMBER" && mode==3 && a==(int)promptId && b>=numberLow && b<=numberHigh && (b-numberLow)%numberStep==0) { inputValue=b; mode=0; }
     else if(op=="TARGET" && mode==4 && a==(int)promptId) {
@@ -443,6 +509,9 @@ static void poll(uint8_t *steps) {
         else outcome="unreachable";
     }
     else if(mode || (opened && !(town() && op=="USE" && r && r->parent==opened && (capabilities(*r)&(Container|Usable))) && op!="CLOSE" && op!="MOVE" && op!="GROUND" && op!="EQUIP" && op!="LOOK" && op!="WAR")) outcome="modal";
+    else if(op=="STEP" && (!steps || AvatarDontMove || PlayerActionSuspended)) {
+        outcome=steps?"movement-held":"busy";
+    }
     else if(op=="STEP" && steps && a>=0 && a<8 && !AvatarDontMove) {
         int x=Item_getX(AvatarRef),y=Item_getY(AvatarRef);
         static const int keys[]={0x148,0x149,0x14d,0x151,0x150,0x14f,0x14b,0x147};
@@ -452,12 +521,13 @@ static void poll(uint8_t *steps) {
     else if(op=="USE" && r) {
         objref target((short)a);
         if(town() && r->parent && !reachable(target)) outcome="unreachable";
-        else if(town() && opened && r->parent==opened && (capabilities(*r)&(Container|Usable)) && target.type()!=522) {
+        else if(town() && opened && r->parent==opened && (capabilities(*r)&(Container|Usable))) {
             deferredUse=wireId(a); opened=0;
-        } else if(target.type()==522) outcome=CanAvatarReach(target,0)?"locked":"unreachable";
-        else if(r->npc>=0 || target.type()==800 || presentShape(target.type()) || (town() && (capabilities(*r)&(Container|Usable)))) {
+        } else if(!town() && target.type()==522) outcome=CanAvatarReach(target,0)?"locked":"unreachable";
+        else if(town() || r->npc>=0 || target.type()==800 || presentShape(target.type())) {
             // Modal input can arrive before Use returns. Acknowledge dispatch first.
             history[seq]="using"; while(history.size()>12)history.erase(history.begin()); reply(snapshot(seq,"using"));
+            Interaction interaction(target);
             if(town() && r->parent) {
                 if(Item_canBeOpened(target)) OpenAndLoopItemDialog(target);
                 else RunUsable(1,target.off,-1);
@@ -528,6 +598,11 @@ static void poll(uint8_t *steps) {
                 outcome=placed?"unreachable":"blocked";
             }
         }
+    } else if(op=="AUDITVISIT" && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
+        // Qualification only: move the observer, preserving the original objects and Usecode.
+        int z=0;input>>z;
+        if(a<928 || a>=1120 || b<2080 || b>=2352 || z<0 || z>15) outcome="unreachable";
+        else TeleportParty(Coord(a),Coord(b),(int8_t)z);
     } else if(op=="PREPARE" && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"room")) {
         const int placement[][5]={{994,1079,2185,987,2215},{800,962,2221,987,2216},{522,1050,2278,988,2216}};
         for(auto &v:placement) {

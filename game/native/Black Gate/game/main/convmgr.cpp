@@ -451,6 +451,7 @@ int16_t GetTextCharWidth(int8_t c)
 /* show a gump with a message until the player clicks */
 void ShowSignGump(int16_t shape, char *text)
 {
+	LocalDisplayBegin();
 	SignGump box(shape, text);
 
 	box.show();
@@ -458,6 +459,7 @@ void ShowSignGump(int16_t shape, char *text)
 	box.paint(&Viewport);
 	SetFixedPalette(0);
 	CopyFrameBuffer();
+	if (LocalEnabled()) { LocalDisplay("sign"); return; }
 	while (!GameInput.isButtonPressed(1))
 		;
 }

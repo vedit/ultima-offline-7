@@ -345,6 +345,15 @@ namespace ClassicUO.Game
                 case "GROUND": GameActions.DropItem(Client.Game.UO.GameCursor.ItemHold.Serial,Arg(1),Arg(2),0,0xffffffff);break;
                 case "TURN": TrinsicSession.Send("TURN",Arg()); break;
                 case "USE": GameActions.DoubleClick(world,world.Mobiles.Get((uint)Arg())!=null?(uint)Arg():Item(1)); break;
+                case "MODAL":
+                    if(TrinsicSession.Header.Split(' ')[9]!=a[1]) throw new InvalidOperationException("Unexpected interaction mode: "+TrinsicSession.Header);
+                    if(a[1]=="5" && (dialogue==null || dialogue.IsDisposed)) throw new InvalidOperationException("Missing original U7 display");
+                    break;
+                case "DISMISS":
+                    if(dialogue==null || dialogue.IsDisposed) throw new InvalidOperationException("No view to dismiss");
+                    dialogue.OnButtonClick(0); break;
+                case "ESCAPE":
+                    TrinsicSession.Key(new SDL3.SDL.SDL_KeyboardEvent {key=(uint)SDL3.SDL.SDL_Keycode.SDLK_ESCAPE});break;
                 case "PAPERDOLL":
                     GameActions.OpenPaperdoll(world,(uint)Arg());
                     break;

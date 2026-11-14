@@ -16,6 +16,9 @@ using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.Gumps;
 using Microsoft.Xna.Framework;
 using SDL3;
+using ClassicUO.Input;
+using ClassicUO.Renderer;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ClassicUO.Game
 {
@@ -26,6 +29,7 @@ namespace ClassicUO.Game
         private static NamedPipeClientStream pipe;
         private static int generation, last, chest, prompt;
         private static ulong lastBark;
+        private static ulong lastRefusal;
         private static readonly Encoding gameTextEncoding = CodePagesEncodingProvider.Instance.GetEncoding(437);
         private static long nextPoll, nextWalk;
         private static string previousWords="";
@@ -36,6 +40,7 @@ namespace ClassicUO.Game
         internal static string LastCommand { get; private set; }
         internal static void Close()
         {
+            observationTimeout?.Cancel(); observationTimeout?.Dispose(); observationTimeout=null;
             pipe?.Dispose(); pipe=null; observation=null; walkingCommand=null; heldArrows=0; pending.Clear();
             if(targetPrompt!=0) world.TargetManager.Reset();
             targetPrompt=prompt=0;
@@ -109,6 +114,11 @@ namespace ClassicUO.Game
         private static ContainerGump chestWindow;
         private static Gump inventoryWindow;
         private static Task<string> observation;
+        private static CancellationTokenSource observationTimeout;
+        private static bool connectionFault;
+        private static string lastInteraction="startup";
+        private static string health="";
+        private static long lastBlockedNotice;
         private static string walkingCommand;
         private static bool runningCommand;
         private static int heldArrows;
@@ -227,10 +237,23 @@ namespace ClassicUO.Game
                 if(observation!=null || Environment.TickCount64<nextPoll) return;
                 nextPoll=Environment.TickCount64+110;
                 if(pipe==null) Apply(Connect());
-                observation=Exchange("0 0 SYNC",CancellationToken.None);
+                Observe("0 0 SYNC");
             }
             catch (Exception ex) when (ex is IOException || ex is TimeoutException || ex is OperationCanceledException)
-            { Close(); nextPoll=Environment.TickCount64+1000; }
+            { ConnectionFailure(ex); }
+        }
+        private static void Observe(string command)
+        {
+            observationTimeout?.Dispose();
+            observationTimeout=new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            observation=Exchange(command,observationTimeout.Token);
+        }
+        private static void ConnectionFailure(Exception error)
+        {
+            Console.Error.WriteLine($"TRINSIC interaction timeout/error after {lastInteraction}; state={Header}; health={health}; {error.GetType().Name}");
+            if(!connectionFault) GameActions.Print(world,"The game stopped responding during an interaction. See the client log for details.");
+            connectionFault=true;
+            Close(); nextPoll=Environment.TickCount64+1000;
         }
         private static bool FinishObservation()
         {
@@ -239,10 +262,17 @@ namespace ClassicUO.Game
             var result=observation;
             observation=null;
             string frame=result.GetAwaiter().GetResult();
+            observationTimeout?.Dispose(); observationTimeout=null;
             bool run=walkingCommand!=null && runningCommand;
             if(walkingCommand!=null) {
                 LastCommand=walkingCommand;
                 TrinsicReplay.Record(walkingCommand,frame);
+                string outcome=frame.Split(' ')[5];
+                if((outcome=="busy" || outcome=="movement-held") && Environment.TickCount64-lastBlockedNotice>3000) {
+                    GameActions.Print(world,"An original-game action is holding movement. Its state has been recorded in the client log.");
+                    Console.Error.WriteLine($"TRINSIC movement held after {lastInteraction}; {frame.Split('\n')[0]}; {frame.Split('\n').FirstOrDefault(l=>l.StartsWith("H "))}");
+                    lastBlockedNotice=Environment.TickCount64;
+                }
                 walkingCommand=null;
             }
             Apply(frame,run);
@@ -266,10 +296,11 @@ namespace ClassicUO.Game
                     return;
                 }
                 string command=$"{last+1} {generation} {op} {a} {b}{extra}";
+                if(op!="STEP" && op!="TURN") lastInteraction=command;
                 if(op=="STEP" && TrinsicTown.Compact) {
                     walkingCommand=command;
                     runningCommand=b!=0;
-                    observation=Exchange(command,CancellationToken.None);
+                    Observe(command);
                     return;
                 }
                 string frame = Read(command);
@@ -299,12 +330,20 @@ namespace ClassicUO.Game
                 else if(outcome=="stackfull") GameActions.Print(world,"That stack is full.");
                 else if (op=="SAVE" || op=="LOAD" || ((op=="MOVE" || op=="GROUND") && outcome!="ok" && outcome!="same" && outcome!="merged" && !outcome.StartsWith("split-"))) GameActions.Print(world,op+" "+outcome);
             }
-            catch (Exception ex) when (ex is IOException || ex is OperationCanceledException) { Close(); pending.Clear(); }
+            catch (Exception ex) when (ex is IOException || ex is TimeoutException || ex is OperationCanceledException) { ConnectionFailure(ex); }
         }
         internal static bool WalkReady => Environment.TickCount64>=nextWalk && world.Player.Steps.Count<=1;
         public static bool Walk(Direction dir,bool run=false)
         {
-            if (!WalkReady || (TrinsicTown.Compact && prompt!=0)) return false;
+            if (!WalkReady) return false;
+            if(TrinsicTown.Compact && prompt!=0) {
+                if(Environment.TickCount64-lastBlockedNotice>3000) {
+                    GameActions.Print(world,targetPrompt!=0?"Choose a target, or press Escape to cancel.":
+                        dialog is NativeDisplay?"Close the open view or press Escape to move.":"Finish the conversation or reading to move.");
+                    lastBlockedNotice=Environment.TickCount64;
+                }
+                return false;
+            }
             if(TrinsicTown.Compact && chest!=0) Send("CLOSE");
             run=TrinsicTown.Compact && (run || ProfileManager.CurrentProfile.AlwaysRun);
             nextWalk=Environment.TickCount64+Mobile.NativeStepDuration(run);
@@ -317,6 +356,7 @@ namespace ClassicUO.Game
             switch(key)
             {
                 case SDL.SDL_Keycode.SDLK_ESCAPE when targetPrompt!=0: Send("TARGET",targetPrompt,0);return true;
+                case SDL.SDL_Keycode.SDLK_ESCAPE when dialog is NativeDisplay: dialog.OnButtonClick(0);return true;
                 case SDL.SDL_Keycode.SDLK_F2: ShowPaperdoll();return true;
                 case SDL.SDL_Keycode.SDLK_F3: ShowBackpack();return true;
                 case SDL.SDL_Keycode.SDLK_F4: ShowMap();return true;
@@ -365,7 +405,8 @@ namespace ClassicUO.Game
                 if (sequence <= lastBark) continue;
                 lastBark = sequence;
                 uint serial = uint.Parse(fields[2]);
-                if (!visible.Contains(serial) || world.Mobiles.Get(serial) is not Mobile speaker) continue;
+                Entity speaker=world.Mobiles.Get(serial) ?? (Entity)world.Items.Get(ItemBase|serial);
+                if(speaker==null) continue;
                 string text = gameTextEncoding.GetString(Convert.FromHexString(fields[3])).Replace('@', '"');
                 var profile = ProfileManager.CurrentProfile;
                 GameActions.Print(world, speaker, text, profile.SpeechHue, font: profile.ChatFont);
@@ -376,6 +417,21 @@ namespace ClassicUO.Game
         {
             string[] lines = frame.Split('\n');
             Header=lines[0];
+            health=lines.FirstOrDefault(l=>l.StartsWith("H "))??"";
+            connectionFault=false;
+            string refusal=lines.FirstOrDefault(l=>l.StartsWith("R "));
+            if(refusal!=null) {
+                string[] r=refusal.Split(' ');
+                ulong sequence=ulong.Parse(r[1]);
+                if(sequence>lastRefusal) {
+                    lastRefusal=sequence;
+                    GameActions.Print(world,int.Parse(r[2]) switch {
+                        2=>"That is out of range.", 3=>"No ammunition.", 4=>"That is too heavy.",
+                        5=>"There is not enough room.", 7=>"You cannot reach that.",
+                        _=>"You cannot do that now."
+                    });
+                }
+            }
             string[] s=lines[0].Split(' ');
             int gen=int.Parse(s[2]);
             bool reset=gen!=generation;
@@ -583,12 +639,17 @@ namespace ClassicUO.Game
                 }
             }
             int mode=int.Parse(s[9]), wanted=mode!=0?int.Parse(s[10]):0;
-            if(wanted!=prompt)
+            if(wanted!=prompt || (mode!=0 && mode!=4 && (dialog==null || dialog.IsDisposed)))
             {
                 dialog?.Dispose(); prompt=wanted;
                 if(targetPrompt!=0) world.TargetManager.Reset();
                 targetPrompt=mode==4?wanted:0;
                 if(mode==4) GameActions.Print(world,"Choose a target. Escape cancels.");
+                else if(mode==5) {
+                    dialog=new NativeDisplay(world,prompt,Read("0 0 SCREEN"));
+                    UIManager.Add(dialog);
+                    UIManager.KeyboardFocusControl=dialog; dialog.SetKeyboardFocus();
+                }
                 else if(mode!=0)
                 {
                     string Decode(string line)=>gameTextEncoding.GetString(Convert.FromHexString(line.Substring(2))).Replace('@','"').Replace('~',' ');
@@ -607,6 +668,54 @@ namespace ClassicUO.Game
                         Send("TARGET",token,target is Entity entity ? (int)(entity.Serial&0x1fffffff) : 0);
                 },(uint)token,TargetType.Neutral);
             }
+        }
+        // One presentation adapter for original map/sign/view screens, independent of item shapes.
+        private sealed class NativeDisplay : Gump
+        {
+            private readonly int token;
+            private readonly Texture2D texture;
+            private readonly int pictureWidth,pictureHeight;
+            public NativeDisplay(World w,int id,string frame) : base(w,0,0)
+            {
+                string[] data=frame.Trim().Split(' ');
+                if(data.Length!=5 || data[0]!="F" || !int.TryParse(data[1],out int width) || !int.TryParse(data[2],out int height) ||
+                    width<1 || width>320 || height<1 || height>200) throw new IOException("Invalid native display");
+                byte[] palette=Convert.FromHexString(data[3]), pixels=Convert.FromHexString(data[4]);
+                if(palette.Length!=768 || pixels.Length!=width*height) throw new IOException("Incomplete native display");
+                var colors=new Color[pixels.Length];
+                for(int i=0;i<pixels.Length;i++) {
+                    int p=pixels[i]*3;
+                    colors[i]=new Color(palette[p]*255/63,palette[p+1]*255/63,palette[p+2]*255/63);
+                }
+                texture=new Texture2D(Client.Game.GraphicsDevice,width,height);
+                texture.SetData(colors);
+                token=id; IsModal=true; CanMove=true; AcceptMouseInput=AcceptKeyboardInput=true;
+                CanCloseWithEsc=CanCloseWithRightClick=false;
+                pictureWidth=width*2;pictureHeight=height*2;
+                Width=Math.Max(160,pictureWidth); Height=pictureHeight+40; WantUpdateSize=false;
+                X=Math.Max(0,(Client.Game.ClientBounds.Width-Width)/2);Y=Math.Max(0,(Client.Game.ClientBounds.Height-Height)/2);
+                Add(new ResizePic(0x0a28){Y=pictureHeight,Width=Width,Height=40});
+                Add(new Button(0,0x481,0x482,0x483){X=Width/2-25,Y=pictureHeight+7,ButtonAction=ButtonAction.Activate});
+            }
+            public override bool AddToRenderLists(RenderLists lists,int x,int y,ref float depth)
+            {
+                float layer=depth;
+                lists.AddGumpNoAtlas(batcher=>{
+                    if(!texture.IsDisposed) batcher.Draw(texture,new Rectangle(x+(Width-pictureWidth)/2,y,pictureWidth,pictureHeight),ShaderHueTranslator.GetHueVector(0),layer);
+                    return true;
+                });
+                return base.AddToRenderLists(lists,x,y,ref depth);
+            }
+            protected override void OnKeyDown(SDL.SDL_Keycode key,SDL.SDL_Keymod mod) {
+                if(key==SDL.SDL_Keycode.SDLK_ESCAPE || key==SDL.SDL_Keycode.SDLK_RETURN) OnButtonClick(0);
+                else base.OnKeyDown(key,mod);
+            }
+            protected override void OnMouseUp(int x,int y,MouseButtonType button) {
+                if(button==MouseButtonType.Right) OnButtonClick(0);
+                else base.OnMouseUp(x,y,button);
+            }
+            public override void OnButtonClick(int id) { Send("DISMISS",token); }
+            public override void Dispose() { texture?.Dispose(); base.Dispose(); }
         }
         private sealed class TrinsicDialogue : Gump
         {
