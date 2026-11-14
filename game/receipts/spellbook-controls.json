@@ -1,9 +1,42 @@
 {
-  "date": "2026-11-14",
-  "implementation": "Original Spellbook controls and TryToCastSpell; client forwards completed clicks and displays the original book region.",
-  "verified": ["Original page changes", "Selection", "Selection retained on reopening", "Original missing-resource refusal", "Awaken cast enters original target script and emits An Zu", "Cancel/close and movement recovery", "ClassicUO mouse clicks and Escape"],
+  "date": "2026-11-15",
+  "implementation": "ClassicUO SpellbookGump with a U7 content provider; stock UO artwork, circle tabs, page corners, minimization and sounds. Original U7 learned bits, reagent masks/counts, bookmark, CanCastSpell and TryToCastSpell remain authoritative.",
+  "verified": [
+    "All 72 source-indexed spells and nine circles",
+    "Unlearned/out-of-range/stale selection rejection",
+    "Native resource refusal without closing the book",
+    "Bookmark retained through close and native save/load",
+    "Awaken target cancellation and successful invocation with An Zu",
+    "UO circle tabs and page corners",
+    "Mouse selection and double-click casting",
+    "Minimize/restore",
+    "Escape and right-click closing",
+    "Movement recovery",
+    "Visual cantrip, index and eight-reagent detail pages"
+  ],
+  "regressions": [
+    "world-targets",
+    "audit-boundaries",
+    "map-sign-client"
+  ],
   "command": "py -3 -B game/qualification/spellbook-controls.py",
-  "evidence": ["runs/spellbook-controls/host.log", "runs/spellbook-client/client-book.json"],
-  "fixture": "Synthetic learned-spell book created only when TRINSIC_PREPARE=interaction-audit. Player saves and quest flags untouched.",
-  "limits": ["Does not qualify every spell or its world effects", "Candidate builds only; live player session not restarted"]
+  "evidence": [
+    "runs/spellbook-controls/host.log",
+    "runs/spellbook-client/client-book.json",
+    "runs/spellbook-client/book-3.png",
+    "runs/spellbook-client/book-4.png",
+    "runs/full-interaction-suite/results-audit-boundaries-map-sign-client-world-targets.json"
+  ],
+  "fixture": "Synthetic full and sparse learned-spell books in private audit saves. Player saves and quest flags untouched.",
+  "limits": [
+    "Not every spell effect is qualified",
+    "U7 spell names and reagent text replace UO spell definitions; no UO spell rules are used"
+  ],
+  "installed": {
+    "launcher": "Play Ultima Offline 7.cmd",
+    "native_sha256": "1e0d84a968a087b062705a0b1f70da275b44a209307b0e5d1b451ff1cc2a4e39",
+    "client_sha256": "3495ac052590886a4079761ef88ab5907b18684c74a13c0cab497699a493d846",
+    "backup": "runs/spellbook-install-20261115-before",
+    "saves": "Unchanged"
+  }
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 bool LocalEnabled();
 int LocalNumber(int low,int high,int step);
 short LocalTarget();
@@ -7,6 +8,7 @@ void LocalDisplay(const char *kind);
 void LocalDisplayBegin();
 short LocalOpenedObject();
 int LocalControlInput(int *x,int *y,int left,int top,int width,int height);
+bool LocalSpellbookInput(short book,short caster,int8_t *selected);
 extern bool LocalControlReleased;
 void LocalControlBegin();
 void LocalRefusal(int reason);

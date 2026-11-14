@@ -506,17 +506,10 @@ void ItemDialogInputLoop()
 			// Only its input and presentation move to the local client.
 			GumpNode *node=GetOpenItemDialogListNode(objref(LocalOpenedObject()),0);
 			if(!node) { LocalOpened(0); DialogState=DIALOG_DONE; continue; }
-			RedrawDialogs(); CopyFrameBuffer();
-			auto &bounds=node->dialog->bounds;
-			int x,y,action=LocalControlInput(&x,&y,bounds.x,bounds.y,bounds.width()+1,bounds.height()+1);
-			if(!action) { LocalOpened(0); DialogState=DIALOG_DONE; continue; }
-			MouseState click((int8_t)action,1,(int16_t)(x*2),(int16_t)y);
-			LocalControlReleased=true; // Client sends completed mouse-up gestures.
-			uint8_t result=node->dialog->handle(&click);
-			LocalControlReleased=false;
-			if(getenv("TRINSIC_TRACE")) {auto book=static_cast<Spellbook*>(node->dialog);fprintf(stderr,"spellbook page=%d selected=%d result=%d\n",book->page,book->selectedSpell,result);fflush(stderr);}
-			if(result==GUMP_CLOSE) { LocalOpened(0); DialogState=DIALOG_DONE; }
-			else if(result==GUMP_CAST_SPELL) {
+			auto book=static_cast<Spellbook*>(node->dialog);
+			if(!LocalSpellbookInput(book->object().off,book->owner.off,&book->selectedSpell)) {
+				LocalOpened(0); DialogState=DIALOG_DONE;
+			} else {
 				objref caster=node->dialog->object();
 				List_removeAndDestroy(&OpenItemDialogsList,node);
 				uint8_t spell=GetSpellbookBookmark(&NPCRef(caster));

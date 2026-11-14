@@ -44,6 +44,8 @@ extern void OpenAndLoopItemDialog(objref);
 #include "palfade.h"
 #include "party.h"
 #include "spell.h"
+#include "spell_names.h"
+#include "text.h"
 #include "crime.h"
 #include "trigger.h"
 #include "collide.h"
@@ -93,6 +95,10 @@ bool LocalControlReleased;
 static int controlAction,controlX,controlY;
 static int controlLeft,controlTop,controlWidth,controlHeight;
 static std::vector<uint8_t> controlBackground;
+static short spellbookObject,spellbookCaster;
+static int8_t *spellbookSelection;
+static bool spellbookCast;
+extern const uint8_t SpellReagents[72];
 static int activeItem, activeShape;
 static uint32_t activeSince;
 static unsigned long refusalSequence;
@@ -274,6 +280,18 @@ static std::string snapshot(int seq,const std::string &outcome) {
      <<" "<<int(AvatarDontMove)<<" "<<GameTime.hold<<" "<<int(UsableRunning)<<" "<<int(DialogState)
      <<" "<<int(PlayerActionSuspended)<<"\n";
     if(mode==5) {s<<"U "<<displayKind;if(interactiveDisplay) s<<" "<<controlLeft<<" "<<controlTop;s<<"\n";}
+    if(mode==6) {
+        objref book(spellbookObject);
+        ReagentCounter reagents; reagents.countReagentsInPossession(NPCRef(spellbookCaster));
+        s<<"K "<<wireId((uint16_t)spellbookObject)<<" "<<int(*spellbookSelection)<<"\n";
+        for(int i=0;i<8;++i) {
+            char name[80]; ProduceItemDisplayName(name,842,1,i);
+            s<<"J "<<i<<" "<<hexText(name)<<"\n";
+        }
+        for(int i=0;i<72;++i)
+            s<<"L "<<i<<" "<<int(DoesSpellbookHaveSpell(&book,i)!=0)<<" "<<reagents.getCastCount(i)
+             <<" "<<int(SpellReagents[i])<<" "<<hexText(LocalSpellNames[i])<<"\n";
+    }
     if(refusalReason>=0) s<<"R "<<refusalSequence<<" "<<refusalReason<<"\n";
     s<<"N "<<hexText(std::string(avatar->name,strnlen(avatar->name,sizeof avatar->name)))<<"\n";
     s<<"V "<<int(Npc_getStrength(&AvatarRef))<<" "<<int(Npc_getDexterity(&AvatarRef))<<" "<<int(Npc_getIntelligence(&AvatarRef))<<" "<<int(avatar->hitPoints)<<" "<<int(avatar->mana)<<" "<<int(avatar->magic)<<"\n";
@@ -389,6 +407,13 @@ int LocalControlInput(int *x,int *y,int left,int top,int width,int height) {
     return controlAction;
 }
 bool LocalChestOpen() { return opened!=0; }
+bool LocalSpellbookInput(short book,short caster,int8_t *selected) {
+    spellbookObject=book; spellbookCaster=caster; spellbookSelection=selected; spellbookCast=false;
+    mode=6; ++promptId;
+    while(mode==6){LocalPoll(nullptr);plat_yield();}
+    spellbookSelection=nullptr;
+    return spellbookCast;
+}
 static void poll(uint8_t *steps);
 void LocalPrompt(bool answers) {
     if(!LocalEnabled()) return;
@@ -566,7 +591,18 @@ static void poll(uint8_t *steps) {
     if(r && (op=="USE" || op=="LOOK" || op=="EQUIP" || op=="MOVE" || op=="GROUND")) a=r->id;
     if(dst && (op=="TARGET" || op=="EQUIP" || op=="MOVE")) b=dst->id;
     if(op=="BEGIN" && getenv("TRINSIC_READY")) started=true;
-    else if(op=="DISMISS" && mode==5 && a==(int)promptId) mode=0;
+    else if(op=="DISMISS" && (mode==5 || mode==6) && a==(int)promptId) mode=0;
+    else if((op=="BOOKSELECT" || op=="BOOKCAST") && mode==6 && a==(int)promptId) {
+        objref book(spellbookObject);
+        if(b<0 || b>=72 || !book.valid() || !DoesSpellbookHaveSpell(&book,b)) outcome="invalid";
+        else {
+            *spellbookSelection=(int8_t)b;
+            if(op=="BOOKCAST") {
+                if(CanCastSpell(objref(spellbookCaster),b,1,1)) {spellbookCast=true;mode=0;}
+                else {ReportNoCanDo(0);outcome="refused";}
+            }
+        }
+    }
     else if(op=="VIEWCLICK" && mode==5 && interactiveDisplay && a==(int)promptId) {
         int y,action;
         if(!(input>>y>>action) || b<0 || b>=320 || y<0 || y>=200 || (action!=1 && action!=2)) outcome="invalid";
@@ -691,7 +727,8 @@ static void poll(uint8_t *steps) {
         objref book;
         if(!CreateItemInContainer(&book,TypeFrame(761,0),AvatarRef)) outcome="unavailable";
         else {
-            for(int spell=0;spell<72;spell++) AddSpellToSpellbook(&book,(uint8_t)spell);
+            ClearSpellbook(&book.off);
+            for(int spell=0;spell<(a>0 && a<=72?a:72);spell++) AddSpellToSpellbook(&book,(uint8_t)spell);
             outcome="book-"+std::to_string(wireId((uint16_t)book.off));
         }
     } else if(op=="AUDITVISIT" && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {

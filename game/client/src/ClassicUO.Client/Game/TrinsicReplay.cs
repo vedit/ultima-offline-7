@@ -379,6 +379,20 @@ namespace ClassicUO.Game
                     testBook=int.Parse(TrinsicSession.Header.Split(' ')[5].Substring(5));
                     break;
                 case "BOOKOPEN": TrinsicSession.Send("USE",testBook);break;
+                case "BOOKCHECK":
+                    if(dialogue is not SpellbookGump nativeBook || nativeBook.IsDisposed || nativeBook.TrinsicPage!=Arg(1) || nativeBook.IsMinimized!=(Arg(2)!=0))
+                        throw new InvalidOperationException("Native UO spellbook page/minimized state mismatch");
+                    break;
+                case "BOOKCLICK":
+                case "BOOKDOUBLE":
+                case "BOOKRIGHT":
+                    if(dialogue is not SpellbookGump || dialogue.IsDisposed) throw new InvalidOperationException("Missing UO spellbook");
+                    Mouse.Position=new Point(dialogue.X+Arg(1),dialogue.Y+Arg(2));
+                    MouseButtonType bookButton=a[0]=="BOOKRIGHT"?MouseButtonType.Right:MouseButtonType.Left;
+                    Mouse.ButtonPress(bookButton); UIManager.OnMouseButtonDown(bookButton);
+                    if(a[0]=="BOOKDOUBLE") UIManager.OnMouseDoubleClick(bookButton);
+                    Mouse.ButtonRelease(bookButton); UIManager.OnMouseButtonUp(bookButton);
+                    break;
                 case "VIEWCLICK":
                     if(dialogue==null || dialogue.IsDisposed) throw new InvalidOperationException("Missing native controls");
                     Mouse.Position=new Point(dialogue.X+Arg(1)*2,dialogue.Y+Arg(2)*2);

@@ -65,6 +65,8 @@ def settle(p):
         elif mode == 3:
             low = int(next(line for line in p.frame.splitlines() if line.startswith('D ')).split()[1])
             p.send('NUMBER', token, low)
+        elif mode == 6:
+            p.send('DISMISS', token)
         elif mode == 5:
             # SCREEN is read-only and does not alter sequence or the outstanding prompt.
             frame = p.raw('0 0 SCREEN').split()

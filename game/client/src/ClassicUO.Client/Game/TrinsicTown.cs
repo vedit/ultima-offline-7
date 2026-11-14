@@ -124,6 +124,8 @@ namespace ClassicUO.Game
 
         internal static ushort Graphic(int shape,int frame,int x,int y,int lift,bool onGround)
         {
+            // Spellbooks may be learned/acquired outside the town's source census.
+            if(shape==761) return 0x0efa;
             if(onGround && IsFittedShutter(shape,x,y,lift)) {
                 var fit=windowFittings[(x,y,lift)];
                 return shape is 290 or 291 ? fit.closed : fit.open;

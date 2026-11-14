@@ -358,7 +358,7 @@ namespace ClassicUO.Game
             switch(key)
             {
                 case SDL.SDL_Keycode.SDLK_ESCAPE when targetPrompt!=0: Send("TARGET",targetPrompt,0);return true;
-                case SDL.SDL_Keycode.SDLK_ESCAPE when dialog is NativeDisplay: dialog.OnButtonClick(0);return true;
+                case SDL.SDL_Keycode.SDLK_ESCAPE when dialog is NativeDisplay || dialog is SpellbookGump: dialog.OnButtonClick(0);return true;
                 case SDL.SDL_Keycode.SDLK_F2: ShowPaperdoll();return true;
                 case SDL.SDL_Keycode.SDLK_F3: ShowBackpack();return true;
                 case SDL.SDL_Keycode.SDLK_F4: ShowMap();return true;
@@ -645,7 +645,7 @@ namespace ClassicUO.Game
             int scale=TrinsicTown.Compact?2:1;
             world.RangeSize.X=avatar[3]/scale; world.RangeSize.Y=avatar[4]/scale;
             int open=int.Parse(s[8]);
-            if(lines.Any(l=>l.StartsWith("U controls "))) open=0;
+            if(int.Parse(s[9])==6 || rows.Any(r=>r[0]==open && r[1]==761) || lines.Any(l=>l.StartsWith("U controls "))) open=0;
             if(open!=0 || int.Parse(s[9])!=0) heldArrows=0;
             if(open!=chest)
             {
@@ -668,10 +668,17 @@ namespace ClassicUO.Game
             int mode=int.Parse(s[9]), wanted=mode!=0?int.Parse(s[10]):0;
             if(wanted!=prompt || (mode!=0 && mode!=4 && (dialog==null || dialog.IsDisposed)))
             {
-                dialog?.Dispose(); prompt=wanted;
+                if(dialog is SpellbookGump oldBook) oldBook.CloseFromSession(); else dialog?.Dispose();
+                dialog=null; prompt=wanted;
                 if(targetPrompt!=0) world.TargetManager.Reset();
                 targetPrompt=mode==4?wanted:0;
                 if(mode==4) GameActions.Print(world,"Choose a target. Escape cancels.");
+                else if(mode==6) {
+                    int token=prompt;
+                    uint serial=ItemBase|uint.Parse(lines.First(l=>l.StartsWith("K ")).Split(' ')[1]);
+                    dialog=new SpellbookGump(world,serial,lines,(op,spell)=>Send(op,token,spell));
+                    UIManager.Add(dialog);
+                }
                 else if(mode==5) {
                     dialog=new NativeDisplay(world,prompt,Read("0 0 SCREEN"),lines.FirstOrDefault(l=>l.StartsWith("U controls ")));
                     UIManager.Add(dialog);
