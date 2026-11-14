@@ -196,7 +196,7 @@ static int capabilities(const Row &r) {
     // available reads LINKDEP metadata without loading code into the shared
     // interpreter or consuming its small cache while another script is running.
     UsecodeRoutine routine;
-    if((r.shape<Linkdep1Count && routine.available(r.shape)) || type.door || r.shape==642) flags|=Usable;
+    if(Item_canBeOpened(item) || (r.shape<Linkdep1Count && routine.available(r.shape)) || type.door || r.shape==642) flags|=Usable;
     if(!(r.parent && r.shape==801 && (objref((short)r.parent)==AvatarRef || Item_isPartyMember(objref((short)r.parent)))) &&
        type.typeClass!=TYPE_CLASS_NONE && type.typeClass!=TYPE_CLASS_EGG && type.typeClass!=TYPE_CLASS_BARGE &&
        type.typeClass!=TYPE_CLASS_HUMAN && type.typeClass!=TYPE_CLASS_MONSTER && Item_getWeight(item)!=0)

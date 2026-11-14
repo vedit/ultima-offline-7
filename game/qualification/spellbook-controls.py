@@ -18,6 +18,7 @@ def wait(p,mode):
 with session('spellbook-controls','Investigation',True,{'TRINSIC_PREPARE':'interaction-audit'}) as (folder,env,host):
     p=Pipe(env['TRINSIC_PIPE'],host)
     book=int(p.send('AUDITBOOK')[5:])
+    assert next(r for r in p.rows if r[0]==book)[11]&4, 'Native openable items must advertise USE'
     p.send('USE',book);wait(p,6)
     token=int(p.head[10])
     spells=[l.split() for l in p.frame.splitlines() if l.startswith('L ')]

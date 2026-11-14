@@ -378,7 +378,7 @@ namespace ClassicUO.Game
                     TrinsicSession.Send("AUDITBOOK");
                     testBook=int.Parse(TrinsicSession.Header.Split(' ')[5].Substring(5));
                     break;
-                case "BOOKOPEN": TrinsicSession.Send("USE",testBook);break;
+                case "BOOKOPEN": GameActions.DoubleClick(world,0x40000000u|(uint)testBook);break;
                 case "BOOKCHECK":
                     if(dialogue is not SpellbookGump nativeBook || nativeBook.IsDisposed || nativeBook.TrinsicPage!=Arg(1) || nativeBook.IsMinimized!=(Arg(2)!=0))
                         throw new InvalidOperationException("Native UO spellbook page/minimized state mismatch");
