@@ -43,6 +43,7 @@ extern void OpenAndLoopItemDialog(objref);
 #include "arena.h"
 #include "palfade.h"
 #include "party.h"
+#include "spell.h"
 
 extern "C" void CopyScreenPalette(uint8_t *rgb);
 extern uint8_t DialogState;
@@ -83,6 +84,11 @@ static bool town() { return getenv("TRINSIC_TOWN") != nullptr; }
 static unsigned long promptId;
 static std::string displayKind, displayFrame;
 static std::vector<uint8_t> displayBefore;
+static bool interactiveDisplay;
+bool LocalControlReleased;
+static int controlAction,controlX,controlY;
+static int controlLeft,controlTop,controlWidth,controlHeight;
+static std::vector<uint8_t> controlBackground;
 static int activeItem, activeShape;
 static uint32_t activeSince;
 static unsigned long refusalSequence;
@@ -265,7 +271,7 @@ static std::string snapshot(int seq,const std::string &outcome) {
     s<<"H "<<activeItem<<" "<<activeShape<<" "<<(activeItem?uint32_t(plat_milliseconds()-activeSince):0)
      <<" "<<int(AvatarDontMove)<<" "<<GameTime.hold<<" "<<int(UsableRunning)<<" "<<int(DialogState)
      <<" "<<int(PlayerActionSuspended)<<"\n";
-    if(mode==5) s<<"U "<<displayKind<<"\n";
+    if(mode==5) {s<<"U "<<displayKind;if(interactiveDisplay) s<<" "<<controlLeft<<" "<<controlTop;s<<"\n";}
     if(refusalReason>=0) s<<"R "<<refusalSequence<<" "<<refusalReason<<"\n";
     s<<"N "<<hexText(std::string(avatar->name,strnlen(avatar->name,sizeof avatar->name)))<<"\n";
     s<<"V "<<int(Npc_getStrength(&AvatarRef))<<" "<<int(Npc_getDexterity(&AvatarRef))<<" "<<int(Npc_getIntelligence(&AvatarRef))<<" "<<int(avatar->hitPoints)<<" "<<int(avatar->mana)<<" "<<int(avatar->magic)<<"\n";
@@ -328,10 +334,14 @@ bool LocalTargetPosition(int *x,int *y,int *z) {
 void LocalDisplayBegin() {
     if(LocalEnabled()) displayBefore.assign(ScreenPixels(),ScreenPixels()+320*200);
 }
+void LocalControlBegin() {
+    if(LocalEnabled()) controlBackground.assign(ScreenPixels(),ScreenPixels()+320*200);
+}
 void LocalDisplay(const char *kind) {
     uint8_t palette[768]; CopyScreenPalette(palette);
     displayKind=kind;
     int left=0,top=0,right=319,bottom=199;
+    if(interactiveDisplay) {left=controlLeft;top=controlTop;right=std::min(319,left+controlWidth-1);bottom=std::min(199,top+controlHeight-1);}
     if(displayBefore.size()==320*200) {
         left=320;top=200;right=bottom=-1;
         for(int y=0;y<200;++y) for(int x=0;x<320;++x) if(displayBefore[y*320+x]!=ScreenPixels()[y*320+x]) {
@@ -344,6 +354,13 @@ void LocalDisplay(const char *kind) {
     for(int y=top;y<=bottom;++y) pixels.append((char*)ScreenPixels()+y*320+left,right-left+1);
     displayFrame="F "+std::to_string(right-left+1)+" "+std::to_string(bottom-top+1)+" "+
         hexText(std::string((char*)palette,sizeof palette))+" "+hexText(pixels)+"\n";
+    if(interactiveDisplay && controlBackground.size()==320*200) {
+        std::string mask((pixels.size()+7)/8,0);
+        size_t i=0;
+        for(int y=top;y<=bottom;++y) for(int x=left;x<=right;++x,++i)
+            if(ScreenPixels()[y*320+x]!=controlBackground[y*320+x]) mask[i/8]|=1<<(i%8);
+        displayFrame.pop_back();displayFrame+=" "+hexText(mask)+"\n";
+    }
     mode=5; ++promptId;
     fprintf(stderr,"interaction display=%s prompt=%lu item=%d shape=%d\n",kind,promptId,activeItem,activeShape);
     fflush(stderr);
@@ -351,6 +368,14 @@ void LocalDisplay(const char *kind) {
     displayFrame.clear(); displayKind.clear();
 }
 void LocalOpened(short object) { opened=(uint16_t)object; }
+short LocalOpenedObject() { return (short)opened; }
+int LocalControlInput(int *x,int *y,int left,int top,int width,int height) {
+    controlLeft=std::max(0,left);controlTop=std::max(0,top);controlWidth=width;controlHeight=height;
+    interactiveDisplay=true; controlAction=0; displayBefore.clear();
+    LocalDisplay("controls");
+    interactiveDisplay=false; *x=controlX; *y=controlY;
+    return controlAction;
+}
 bool LocalChestOpen() { return opened!=0; }
 static void poll(uint8_t *steps);
 void LocalPrompt(bool answers) {
@@ -510,6 +535,11 @@ static void poll(uint8_t *steps) {
     if(dst && (op=="TARGET" || op=="EQUIP" || op=="MOVE")) b=dst->id;
     if(op=="BEGIN" && getenv("TRINSIC_READY")) started=true;
     else if(op=="DISMISS" && mode==5 && a==(int)promptId) mode=0;
+    else if(op=="VIEWCLICK" && mode==5 && interactiveDisplay && a==(int)promptId) {
+        int y,action;
+        if(!(input>>y>>action) || b<0 || b>=320 || y<0 || y>=200 || (action!=1 && action!=2)) outcome="invalid";
+        else {controlX=b;controlY=y;controlAction=action;mode=0;}
+    }
     else if(op=="ANSWER" && mode && a==(int)promptId && b>=0 && (mode==1 ? b==0 : b<(int)choices.size())) chosen=b;
     else if(op=="NUMBER" && mode==3 && a==(int)promptId && b>=numberLow && b<=numberHigh && (b-numberLow)%numberStep==0) { inputValue=b; mode=0; }
     else if(op=="TARGET" && mode==4 && a==(int)promptId) {
@@ -613,6 +643,13 @@ static void poll(uint8_t *steps) {
                 restoreItem(item,*r);
                 outcome=placed?"unreachable":"blocked";
             }
+        }
+    } else if(op=="AUDITBOOK" && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
+        objref book;
+        if(!CreateItemInContainer(&book,TypeFrame(761,0),AvatarRef)) outcome="unavailable";
+        else {
+            for(int spell=0;spell<72;spell++) AddSpellToSpellbook(&book,(uint8_t)spell);
+            outcome="book-"+std::to_string(wireId((uint16_t)book.off));
         }
     } else if(op=="AUDITVISIT" && steps && getenv("TRINSIC_PREPARE") && !strcmp(getenv("TRINSIC_PREPARE"),"interaction-audit")) {
         // Qualification only: move the observer, preserving the original objects and Usecode.

@@ -427,6 +427,7 @@ uint8_t Input::isButtonPressed(uint8_t button)
 
 uint8_t Input::isButtonReleased(uint8_t button)
 {
+	if(LocalControlReleased && button==1) return 1;
 	MouseState *state;
 
 	UpdateAndGetMouseState();

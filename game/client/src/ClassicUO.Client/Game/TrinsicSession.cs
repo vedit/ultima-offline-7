@@ -619,6 +619,7 @@ namespace ClassicUO.Game
             int scale=TrinsicTown.Compact?2:1;
             world.RangeSize.X=avatar[3]/scale; world.RangeSize.Y=avatar[4]/scale;
             int open=int.Parse(s[8]);
+            if(lines.Any(l=>l.StartsWith("U controls "))) open=0;
             if(open!=0 || int.Parse(s[9])!=0) heldArrows=0;
             if(open!=chest)
             {
@@ -646,7 +647,7 @@ namespace ClassicUO.Game
                 targetPrompt=mode==4?wanted:0;
                 if(mode==4) GameActions.Print(world,"Choose a target. Escape cancels.");
                 else if(mode==5) {
-                    dialog=new NativeDisplay(world,prompt,Read("0 0 SCREEN"));
+                    dialog=new NativeDisplay(world,prompt,Read("0 0 SCREEN"),lines.FirstOrDefault(l=>l.StartsWith("U controls ")));
                     UIManager.Add(dialog);
                     UIManager.KeyboardFocusControl=dialog; dialog.SetKeyboardFocus();
                 }
@@ -679,17 +680,25 @@ namespace ClassicUO.Game
             private readonly int token;
             private readonly Texture2D texture;
             private readonly int pictureWidth,pictureHeight;
-            public NativeDisplay(World w,int id,string frame) : base(w,0,0)
+            private readonly bool interactive;
+            private readonly Point origin;
+            private static long lastClick;
+            private static Point lastPoint;
+            public NativeDisplay(World w,int id,string frame,string controls=null) : base(w,0,0)
             {
+                interactive=controls!=null;
+                if(interactive) {var fields=controls.Split(' ');origin=new Point(int.Parse(fields[2]),int.Parse(fields[3]));}
                 string[] data=frame.Trim().Split(' ');
-                if(data.Length!=5 || data[0]!="F" || !int.TryParse(data[1],out int width) || !int.TryParse(data[2],out int height) ||
+                if((data.Length!=5 && data.Length!=6) || data[0]!="F" || !int.TryParse(data[1],out int width) || !int.TryParse(data[2],out int height) ||
                     width<1 || width>320 || height<1 || height>200) throw new IOException("Invalid native display");
                 byte[] palette=Convert.FromHexString(data[3]), pixels=Convert.FromHexString(data[4]);
                 if(palette.Length!=768 || pixels.Length!=width*height) throw new IOException("Incomplete native display");
+                byte[] mask=data.Length==6?Convert.FromHexString(data[5]):null;
+                if(mask!=null && mask.Length!=(pixels.Length+7)/8) throw new IOException("Incomplete native display mask");
                 var colors=new Color[pixels.Length];
                 for(int i=0;i<pixels.Length;i++) {
                     int p=pixels[i]*3;
-                    colors[i]=new Color(palette[p]*255/63,palette[p+1]*255/63,palette[p+2]*255/63);
+                    colors[i]=mask!=null && (mask[i/8]&(1<<(i%8)))==0?Color.Transparent:new Color(palette[p]*255/63,palette[p+1]*255/63,palette[p+2]*255/63);
                 }
                 texture=new Texture2D(Client.Game.GraphicsDevice,width,height);
                 texture.SetData(colors);
@@ -716,6 +725,13 @@ namespace ClassicUO.Game
             }
             protected override void OnMouseUp(int x,int y,MouseButtonType button) {
                 if(button==MouseButtonType.Right) OnButtonClick(0);
+                else if(interactive && button==MouseButtonType.Left && x>=0 && x<pictureWidth && y>=0 && y<pictureHeight) {
+                    var point=new Point(x/2,y/2);
+                    long now=Environment.TickCount64;
+                    int action=now-lastClick<500 && Math.Abs(point.X-lastPoint.X)<3 && Math.Abs(point.Y-lastPoint.Y)<3?2:1;
+                    lastClick=action==2?0:now; lastPoint=point;
+                    Send("VIEWCLICK",token,point.X+origin.X,$" {point.Y+origin.Y} {action}");
+                }
                 else base.OnMouseUp(x,y,button);
             }
             public override void OnButtonClick(int id) { Send("DISMISS",token); }

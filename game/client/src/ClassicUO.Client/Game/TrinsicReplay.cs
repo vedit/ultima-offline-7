@@ -27,6 +27,7 @@ namespace ClassicUO.Game
         private static Point? rightMousePoint;
         private static Point mouseStart;
         private static bool sawWalk,sawRun;
+        private static int testBook;
         internal static void ObserveWalk(PlayerMobile player)
         {
             if(rightMousePoint is Point point) {
@@ -348,6 +349,17 @@ namespace ClassicUO.Game
                 case "MODAL":
                     if(TrinsicSession.Header.Split(' ')[9]!=a[1]) throw new InvalidOperationException("Unexpected interaction mode: "+TrinsicSession.Header);
                     if(a[1]=="5" && (dialogue==null || dialogue.IsDisposed)) throw new InvalidOperationException("Missing original U7 display");
+                    break;
+                case "BOOKCREATE":
+                    TrinsicSession.Send("AUDITBOOK");
+                    testBook=int.Parse(TrinsicSession.Header.Split(' ')[5].Substring(5));
+                    break;
+                case "BOOKOPEN": TrinsicSession.Send("USE",testBook);break;
+                case "VIEWCLICK":
+                    if(dialogue==null || dialogue.IsDisposed) throw new InvalidOperationException("Missing native controls");
+                    Mouse.Position=new Point(dialogue.X+Arg(1)*2,dialogue.Y+Arg(2)*2);
+                    Mouse.ButtonPress(MouseButtonType.Left); UIManager.OnMouseButtonDown(MouseButtonType.Left);
+                    Mouse.ButtonRelease(MouseButtonType.Left); UIManager.OnMouseButtonUp(MouseButtonType.Left);
                     break;
                 case "TARGETGROUND":
                     var tile=world.Map.GetTile(Arg(1),Arg(2));

@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-14",
+  "implementation": "Original Spellbook controls and TryToCastSpell; client forwards completed clicks and displays the original book region.",
+  "verified": ["Original page changes", "Selection", "Selection retained on reopening", "Original missing-resource refusal", "Awaken cast enters original target script and emits An Zu", "Cancel/close and movement recovery", "ClassicUO mouse clicks and Escape"],
+  "command": "py -3 -B game/qualification/spellbook-controls.py",
+  "evidence": ["runs/spellbook-controls/host.log", "runs/spellbook-client/client-book.json"],
+  "fixture": "Synthetic learned-spell book created only when TRINSIC_PREPARE=interaction-audit. Player saves and quest flags untouched.",
+  "limits": ["Does not qualify every spell or its world effects", "Candidate builds only; live player session not restarted"]
+}

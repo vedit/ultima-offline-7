@@ -501,6 +501,31 @@ void ItemDialogInputLoop()
 	int16_t i;
 
 	while (DialogState != DIALOG_DONE && DialogState != 0) {
+		if(LocalChestOpen() && gItemTypeInfo[objref(LocalOpenedObject()).type()].typeClass==TYPE_CLASS_SPELLBOOK) {
+			// Keep the original spellbook's selection, page, reagent and cast rules.
+			// Only its input and presentation move to the local client.
+			GumpNode *node=GetOpenItemDialogListNode(objref(LocalOpenedObject()),0);
+			if(!node) { LocalOpened(0); DialogState=DIALOG_DONE; continue; }
+			RedrawDialogs(); CopyFrameBuffer();
+			auto &bounds=node->dialog->bounds;
+			int x,y,action=LocalControlInput(&x,&y,bounds.x,bounds.y,bounds.width()+1,bounds.height()+1);
+			if(!action) { LocalOpened(0); DialogState=DIALOG_DONE; continue; }
+			MouseState click((int8_t)action,1,(int16_t)(x*2),(int16_t)y);
+			LocalControlReleased=true; // Client sends completed mouse-up gestures.
+			uint8_t result=node->dialog->handle(&click);
+			LocalControlReleased=false;
+			if(getenv("TRINSIC_TRACE")) {auto book=static_cast<Spellbook*>(node->dialog);fprintf(stderr,"spellbook page=%d selected=%d result=%d\n",book->page,book->selectedSpell,result);fflush(stderr);}
+			if(result==GUMP_CLOSE) { LocalOpened(0); DialogState=DIALOG_DONE; }
+			else if(result==GUMP_CAST_SPELL) {
+				objref caster=node->dialog->object();
+				List_removeAndDestroy(&OpenItemDialogsList,node);
+				uint8_t spell=GetSpellbookBookmark(&NPCRef(caster));
+				LocalOpened(0); RedrawDialogs();
+				TryToCastSpell(AvatarRef,spell,1,1,1);
+				DialogState=DIALOG_DONE;
+			}
+			continue;
+		}
 		if (LocalChestOpen()) { LocalPoll(nullptr); if (!LocalChestOpen()) DialogState=DIALOG_DONE; }
 		plat_yield();
 		CyclePalette();
@@ -954,6 +979,7 @@ uint8_t PickWorldItem(objref *out)
 
 void OpenAndLoopItemDialog(objref obj)
 {
+	LocalControlBegin();
 	OpenItemDialog(obj);
 	if (LocalEnabled() && DialogState && DialogState!=DIALOG_DONE) LocalOpened(obj.off);
 	ItemDialogInputLoop();
