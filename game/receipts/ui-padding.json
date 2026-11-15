@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-15",
+  "feature": "Approved Clear of ornaments layout",
+  "padding_pixels": 44,
+  "changes": [
+    "Dialogue panel grows from 510 to 558 pixels; body font and 398-pixel text width preserved.",
+    "Status panel grows from 372x202 to 420x250 pixels; existing values and column spacing preserved.",
+    "Reply labels wrap inside the frame with rows sized for both choices.",
+    "Status condition text wraps within 332 pixels and the frame grows to preserve the bottom inset."
+  ],
+  "native_gameplay_changed": false,
+  "validation": {
+    "build": "passed: 18 warnings, 0 errors",
+    "dialogue": "Replayed existing Finnigan investigation/report sequence through all three native numeric geography questions; inspected portrait, reply menu and numeric entry captures.",
+    "status": "All twelve existing value captions checked. Native sleep, poison, protection, curse, paralysis and hunger captured together; inspected two-line conditions and bottom padding."
+  },
+  "evidence": [
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\ui-padding-dialogue-20261115\\client-padding.json",
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\ui-padding-conditions-20261115\\client-conditions.json"
+  ],
+  "screenshots": [
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\ui-padding-dialogue-20261115\\padding-2.png",
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\ui-padding-dialogue-20261115\\padding-3.png",
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\ui-padding-conditions-20261115\\conditions-0.png"
+  ],
+  "test_saves": "Independent copies only; native debug mutations restricted to the disposable conditions run.",
+  "installed_client_sha256": "88b350364b2e873ff495c37b424d419927798391a654f7e23db08fc600c8f782",
+  "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\archive\\before-u7-padding-20261115-054906",
+  "player_save_unchanged": true,
+  "scope": "Only dialogue/status layout changes; parallel renderer and asset work excluded from this commit."
+}

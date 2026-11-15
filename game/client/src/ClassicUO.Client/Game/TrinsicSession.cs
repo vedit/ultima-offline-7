@@ -805,6 +805,7 @@ namespace ClassicUO.Game
         }
         private sealed class TrinsicDialogue : Gump
         {
+            private const int Padding=44;
             private readonly int token;
             private readonly StbTextBox number;
             private readonly int minimum, maximum, increment;
@@ -813,26 +814,41 @@ namespace ClassicUO.Game
                 bool numeric=range!=null;
                 token=id; X=70; Y=35; CanMove=true; IsModal=true;
                 CanCloseWithRightClick=false; CanCloseWithEsc=false;
-                var label=new Label(text,false,0x386,398,1){X=85,Y=20};
-                int top=Math.Max(90,32+label.Height);
-                Add(new ResizePic(0x0a28){Width=510,Height=top+(numeric?65:((options.Length+1)/2)*27+20)});
-                if(face==12 || face==-12) Add(new GumpPic(24,20,64012,0));
+                var label=new Label(text,false,0x386,398,1){X=109,Y=Padding};
+                int top=Math.Max(Padding+70,Padding+12+label.Height);
+                var background=new ResizePic(0x0a28){Width=558};
+                Add(background);
+                if(face==12 || face==-12) Add(new GumpPic(48,Padding,64012,0));
                 Add(label);
                 if(numeric) {
                     minimum=int.Parse(range[0]); maximum=int.Parse(range[1]); increment=int.Parse(range[2]);
-                    Add(new Label($"Enter {minimum} to {maximum} in steps of {increment}.",false,0x386){X=85,Y=top+30});
-                    Add(new ResizePic(0xbb8){X=85,Y=top,Width=120,Height=27});
-                    number=new StbTextBox(1,5,104){X=91,Y=top+4,Width=104,Height=22,NumbersOnly=true};
+                    var hint=new Label($"Enter {minimum} to {maximum} in steps of {increment}.",false,0x386,398){X=109,Y=top+30};
+                    Add(hint);
+                    Add(new ResizePic(0xbb8){X=109,Y=top,Width=120,Height=27});
+                    number=new StbTextBox(1,5,104){X=115,Y=top+4,Width=104,Height=22,NumbersOnly=true};
                     Add(number);
-                    Add(new Button(0,0x481,0x482,0x483){X=216,Y=top,ButtonAction=ButtonAction.Activate});
+                    Add(new Button(0,0x481,0x482,0x483){X=240,Y=top,ButtonAction=ButtonAction.Activate});
+                    background.Height=Math.Max(top+45,hint.Y+hint.Height)+Padding;
                     UIManager.KeyboardFocusControl=number;
                     number.SetKeyboardFocus();
                 }
-                else for(int i=0;i<options.Length;i++)
+                else
                 {
-                    int x=25+(i%2)*237, y=top+(i/2)*27;
-                    Add(new Button(i,0x837,0x838,0x837){X=x,Y=y,ButtonAction=ButtonAction.Activate});
-                    Add(new Label(options[i],false,0x386){X=x+23,Y=y});
+                    int y=top;
+                    for(int row=0;row<options.Length;row+=2)
+                    {
+                        int rowHeight=27;
+                        for(int i=row;i<Math.Min(row+2,options.Length);i++)
+                        {
+                            int x=49+(i%2)*237;
+                            Add(new Button(i,0x837,0x838,0x837){X=x,Y=y,ButtonAction=ButtonAction.Activate});
+                            var choice=new Label(options[i],false,0x386,205){X=x+23,Y=y};
+                            Add(choice);
+                            rowHeight=Math.Max(rowHeight,choice.Height+8);
+                        }
+                        y+=rowHeight;
+                    }
+                    background.Height=y+Padding;
                 }
             }
             public override void OnKeyboardReturn(int textID,string text) {

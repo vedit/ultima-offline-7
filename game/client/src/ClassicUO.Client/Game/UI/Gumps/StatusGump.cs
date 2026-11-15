@@ -183,20 +183,22 @@ namespace ClassicUO.Game.UI.Gumps
 
     internal sealed class TrinsicStatusGump : StatusGumpBase
     {
+        private const int Padding = 44;
+        private readonly ResizePic background;
         private readonly Label[] values=new Label[12];
         private readonly Label conditions;
         private readonly string[] captions={"Strength","Dexterity","Intelligence","Health","Combat","Magic",
                                             "Mana","Experience","Level","Training","Weight","Gold"};
         public TrinsicStatusGump(World world) : base(world)
         {
-            Add(new ResizePic(0x0A28){Width=372,Height=202});
+            Add(background=new ResizePic(0x0A28){Width=420,Height=250});
             for(int i=0;i<values.Length;i++) {
-                int x=20+i/6*172,y=21+i%6*23;
+                int x=Padding+i/6*172,y=Padding+1+i%6*23;
                 Text(x,y,captions[i]);
                 values[i]=Text(x+95,y,"");
             }
-            conditions=Text(20,168,"");
-            _point=new Point(372,202);
+            Add(conditions=new Label("",false,0x0386,332,font:1){X=Padding,Y=192});
+            _point=new Point(420,250);
             Refresh();
         }
         private Label Text(int x,int y,string text) {
@@ -221,6 +223,8 @@ namespace ClassicUO.Game.UI.Gumps
             if((s[10]&0x1000)!=0) states.Add("Paralyzed");
             if(s[11]!=0)states.Add("Hungry");
             conditions.Text=string.Join("  ",states);
+            background.Height=Math.Max(250,conditions.Y+conditions.Height+Padding);
+            _point=new Point(background.Width,background.Height);
         }
         public override void Update() {
             base.Update();
