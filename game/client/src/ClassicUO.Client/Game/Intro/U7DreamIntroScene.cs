@@ -21,7 +21,10 @@ namespace ClassicUO.Game.Intro
         private readonly Action begin;
         private readonly U7IntroData data;
         internal readonly U7IntroTimeline Timeline;
-        private Texture2D relief;
+        private Texture2D relief, blueStatic;
+        private const int BlueWidth=154, BlueHeight=341, BlueColumns=13, BlueFrames=78;
+        private double visualSeconds, pausedVisualAt;
+        private int BlueFrame=>(int)(visualSeconds*20)%BlueFrames;
         private SoundEffect voice;
         private SoundEffectInstance speech;
         private RenderedText caption, hint;
@@ -55,13 +58,20 @@ namespace ClassicUO.Game.Intro
             try {
                 using(var stream=File.OpenRead(Path.Combine(folder,"guardian.png"))) relief=Texture2D.FromStream(Client.Game.GraphicsDevice,stream);
                 if(relief.Width!=data.Width*5 || relief.Height!=data.Height*3) throw new InvalidDataException("Invalid relief atlas size");
+                string bluePath=Path.Combine(folder,"blue-static.png");
+                if(File.Exists(bluePath)) {
+                    using var blueStream=File.OpenRead(bluePath);
+                    blueStatic=Texture2D.FromStream(Client.Game.GraphicsDevice,blueStream);
+                    if(blueStatic.Width!=BlueWidth*BlueColumns || blueStatic.Height!=BlueHeight*6)
+                        throw new InvalidDataException("Invalid original blue monitor atlas");
+                }
                 try {
                     using var stream=File.OpenRead(Path.Combine(folder,"guardian.wav"));
                     voice=SoundEffect.FromStream(stream);speech=voice.CreateInstance();
                     var profile=ProfileManager.CurrentProfile;
                     speech.Volume=profile.TrinsicSpeechEnabled ? Math.Clamp(profile.TrinsicSpeechVolume/100f,0,1) : 0;
                 } catch(Exception ex) { Console.Error.WriteLine("Dream voice unavailable; captions remain active: "+ex.Message); }
-            } catch { speech?.Dispose();voice?.Dispose();relief?.Dispose();throw; }
+            } catch { speech?.Dispose();voice?.Dispose();relief?.Dispose();blueStatic?.Dispose();throw; }
         }
         public override void Load()
         {
@@ -88,6 +98,7 @@ namespace ClassicUO.Game.Intro
             else if(speech?.State==SoundState.Paused) speech.Resume();
             var previous=Timeline.Phase;
             Timeline.Advance(dt);
+            if(!pause)visualSeconds+=dt;
             if(Timeline.Phase==DreamPhase.Speech && !voiceStarted) {voiceStarted=true;speech?.Play();}
             if(previous==DreamPhase.Speech && Timeline.Phase!=DreamPhase.Speech) speech?.Stop();
             if(TrinsicReplay.Active && replayPointer is Point pointer)Mouse.Position=pointer;
@@ -146,6 +157,12 @@ namespace ClassicUO.Game.Intro
             batcher.Draw(SolidColorTextureCache.GetTexture(Color.Black),new Rectangle(0,0,viewport.Width,viewport.Height),Vector3.UnitZ,0);
             for(int sum=0;sum<=9;sum++) for(int x=0;x<5;x++) {int y=sum-x;if(y>=0 && y<6) Art(batcher,0x519,new Vector2(x,y),0);}
             for(int y=0;y<6;y++) for(int level=0;level<2;level++) Art(batcher,0x1b,new Vector2(0,y),level*80);
+            if(blueStatic!=null && Timeline.FaceAlpha>0) {
+                int frame=BlueFrame;
+                batcher.Draw(blueStatic,Rect(-132,-187,BlueWidth,BlueHeight),
+                    new Rectangle(frame%BlueColumns*BlueWidth,frame/BlueColumns*BlueHeight,BlueWidth,BlueHeight),
+                    new Vector3(0,0,Timeline.FaceAlpha),0);
+            }
             Art(batcher,0xa5d,new Vector2(2.75f,1.8f),0);
             Art(batcher,0xa5c,new Vector2(2.75f,2.8f),0);
             if(Timeline.FaceAlpha>0) batcher.Draw(relief,Rect(-107,-102,data.Width,data.Height),
@@ -231,9 +248,11 @@ namespace ClassicUO.Game.Intro
                     scene.OnKeyDown(new SDL.SDL_KeyboardEvent {key=(uint)Enum.Parse<SDL.SDL_Keycode>("SDLK_"+args[2])});break;
                 case "KEYUP":
                     scene.OnKeyUp(new SDL.SDL_KeyboardEvent {key=(uint)Enum.Parse<SDL.SDL_Keycode>("SDLK_"+args[2])});break;
-                case "PAUSESTART":scene.pausedAt=scene.Timeline.Seconds;break;
+                case "PAUSESTART":scene.pausedAt=scene.Timeline.Seconds;scene.pausedVisualAt=scene.visualSeconds;break;
+                case "STATIC":
+                    if(scene.blueStatic==null || scene.BlueFrame!=int.Parse(args[2]))throw new InvalidOperationException("Unexpected blue static frame "+scene.BlueFrame);break;
                 case "PAUSED":
-                    if(!scene.Timeline.Paused || scene.Timeline.Seconds!=scene.pausedAt || scene.speech?.State==SoundState.Playing)throw new InvalidOperationException("Dream did not pause");break;
+                    if(!scene.Timeline.Paused || scene.Timeline.Seconds!=scene.pausedAt || scene.visualSeconds!=scene.pausedVisualAt || scene.speech?.State==SoundState.Playing)throw new InvalidOperationException("Dream did not pause");break;
                 case "AUDIO":
                     if(scene.speech==null || scene.speech.State.ToString()!=args[2])throw new InvalidOperationException("Unexpected dream audio state "+scene.speech?.State);break;
                 case "MUTED":
@@ -249,7 +268,7 @@ namespace ClassicUO.Game.Intro
         }
         public override void Unload()
         {
-            arrows=0;steering=false;speech?.Stop();speech?.Dispose();voice?.Dispose();relief?.Dispose();caption?.Destroy();hint?.Destroy();
+            arrows=0;steering=false;speech?.Stop();speech?.Dispose();voice?.Dispose();relief?.Dispose();blueStatic?.Dispose();caption?.Destroy();hint?.Destroy();
             base.Unload();
         }
     }

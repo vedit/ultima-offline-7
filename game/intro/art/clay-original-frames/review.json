@@ -1,7 +1,7 @@
 {
   "date": "2026-11-15",
-  "status": "pending-user-visual-review",
-  "scope": "Closed master and three original-frame-derived open-mouth studies. Not a complete animation set. Not installed into runtime.",
+  "status": "accepted-interim-by-user",
+  "scope": "Four full-head poses installed for the isolated blue-wall demo; rounded cues reuse medium and eye rows repeat open eyes. Not final art.",
   "crop": [
     60,
     40,
@@ -103,5 +103,6 @@
       }
     }
   ],
-  "assessment": "Original poses now drive upper lip and jaw shape. Camera and grey clay material use the first approved clay study. Full-frame regeneration varies fixed facial shading/landmarks; metrics are RGB differences, not proof of identical geometry. Remaining original poses and blink combinations await this method review."
+  "assessment": "Original poses now drive upper lip and jaw shape. Camera and grey clay material use the first approved clay study. Full-frame regeneration varies fixed facial shading/landmarks; metrics are RGB differences, not proof of identical geometry. Remaining original poses and blink combinations await this method review.",
+  "user_feedback": "Still not good enough but this will do for now"
 }

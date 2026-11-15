@@ -1,0 +1,182 @@
+{
+  "date": "2026-11-15",
+  "feature": "Original U7 blue monitor on the dream wall with matching transparent mouths",
+  "build": "Separate ClassicUO intro client; zero build errors",
+  "import": {
+    "source": "Local original U7 speech/cues/blue monitor; interim clay poses with transparent mouths",
+    "crop": [
+      60,
+      40,
+      1010,
+      1390
+    ],
+    "size": [
+      104,
+      148
+    ],
+    "transparentMouthPixels": [
+      0,
+      104,
+      474,
+      864,
+      474
+    ],
+    "blue": {
+      "shape": 19,
+      "palette": 2,
+      "cycle": [
+        93,
+        16
+      ],
+      "frames": 78,
+      "fps": 20,
+      "sourceSize": [
+        320,
+        200
+      ],
+      "wallSize": [
+        154,
+        341
+      ],
+      "columns": 13,
+      "placement": [
+        -132,
+        -187
+      ],
+      "source": "Original U7 monitor bitmap and palette; UO wall projection",
+      "original": {
+        "ENDSHAPE.FLX": "c8fc86dc82b02951d8eaacb83fec09916d4a67e1e0732d195d714590905002d4",
+        "INTROPAL.DAT": "4557803effcc3550f442b8118aee9e85ca7599b5f3b8c1b59f0c9e8b559d9a65"
+      }
+    },
+    "mouthSources": [
+      "master",
+      "u7-frame-06",
+      "u7-frame-05",
+      "u7-frame-03",
+      "u7-frame-05"
+    ],
+    "eyeStates": "open only (interim)",
+    "originalCues": 297,
+    "seconds": 49.102576025295264,
+    "authored": {
+      "u7-frame-06": "6ac2d99840e8b3e2ac8ad334179976bcbf8e5f3adf6c66db1c64c8e3cc044b0c",
+      "u7-frame-03": "4b52e855a6d2874fded75618ca34b6b26d10ac1e761fe6bb1f884a33ef4961b1",
+      "master": "54b8ceab493b229d618c2c68736f5e38c8ac054405f8cd77d7c70a28f1ad9dea",
+      "u7-frame-05": "3d8117248b3320d6c205ec5c9f42a8d1d1f88e16045ccf13576b0aa7208ae135"
+    },
+    "original": {
+      "INTROSND.DAT": "f85bd778dd45d82811c9e16914f525123157a03b005d2aa3f267a18d0e1d2fcb",
+      "MAINSHP.FLX": "8bf0c27d7d07445c5e49e593f83d5b835583fc5cd60c2a5aa5f710d5e4e47a42"
+    }
+  },
+  "integration": {
+    "run": "dream-full-proof",
+    "zoom": "1",
+    "images": [
+      "dream-0.png",
+      "dream-1.png",
+      "dream-2.png",
+      "dream-3.png",
+      "dream-4.png"
+    ],
+    "events": [
+      "INTRO HELD | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 2300 | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO PHASE Speech | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO AUDIO Playing | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO KEY SPACE | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 100 | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO PAUSESTART | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 700 | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO PAUSED | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO HELD | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "CAPTURE | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO KEY SPACE | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 12000 | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "CAPTURE | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 12000 | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "CAPTURE | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 26000 | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO PHASE Portal | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO AUDIO Stopped | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO HELD | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "CAPTURE | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "INTRO PORTAL | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 2400 | S 0 1 9000 0 sync 1079 2214 0 0 0 0 447965933 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "1 1 BEGIN 0 0 -> S 1 1 9000 1 ok 1079 2214 0 0 0 0 447965933 0 0",
+      "2 1 AUDIO 1 1 1 80 100 100 0 -> S 2 1 9002 2 ok 1079 2214 0 0 0 0 202254248 0 0",
+      "INTRO GAME | S 0 1 9009 2 sync 1079 2214 0 0 0 0 -436446823 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 1200 | S 0 1 9012 2 sync 1079 2214 0 0 0 0 1178795589 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "CAPTURE | S 0 1 9024 2 sync 1079 2214 0 0 0 0 -1116366816 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "EXIT | S 0 1 9030 2 sync 1079 2214 0 0 0 0 -720317048 0 0 | display 539 1107 0 iolo 1069 2212 zoom 1 cursor False parent 4294967295 chest  dialogue "
+    ]
+  },
+  "renderVerification": [
+    {
+      "capture": "dream-0.png",
+      "paletteFrame": 65,
+      "uncoveredWallMeanAbsoluteRgbError": 0.0,
+      "mouthPixel": [
+        640,
+        402
+      ],
+      "expectedBlue": [
+        28,
+        0,
+        153
+      ],
+      "observed": [
+        28,
+        0,
+        153
+      ],
+      "mouthMatchesWall": true
+    },
+    {
+      "capture": "dream-1.png",
+      "paletteFrame": 76,
+      "uncoveredWallMeanAbsoluteRgbError": 0.0,
+      "mouthPixel": [
+        640,
+        402
+      ],
+      "expectedBlue": [
+        12,
+        0,
+        133
+      ],
+      "observed": [
+        12,
+        0,
+        133
+      ],
+      "mouthMatchesWall": true
+    },
+    {
+      "capture": "dream-2.png",
+      "paletteFrame": 9,
+      "uncoveredWallMeanAbsoluteRgbError": 0.0,
+      "mouthPixel": [
+        640,
+        402
+      ],
+      "expectedBlue": [
+        0,
+        0,
+        113
+      ],
+      "observed": [
+        0,
+        0,
+        113
+      ],
+      "mouthMatchesWall": true
+    }
+  ],
+  "result": "Full speech/audio, pause including palette phase, held native state, face disappearance, portal entry, and single native BEGIN handoff passed. Three engine captures exactly match the projected source wall in an uncovered region and a mouth aperture sample.",
+  "limitations": [
+    "Interim four-head clay set; no authored blinking or distinct rounded pose",
+    "UO wall projection and 20 Hz palette playback adapt the original texture to the dream scene"
+  ]
+}

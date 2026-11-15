@@ -30,7 +30,8 @@ regions. Full-head regeneration still changes some fixed shading and landmarks;
 the comparison metrics do not establish pixel-identical geometry. The wide
 pose's nose differs more than those in the smaller poses.
 
-This first set is pending visual review. Remaining original mouth poses and
-blink combinations are not generated, and the candidates are not installed in
-the runtime atlas. The local `clay-original-frames/mouth-study.gif` review loop
-uses manual timings to expose transitions; it is not the original lip-sync.
+The user accepted this set for now, while retaining the quality reservations.
+It is installed in the separate intro demo. Rounded cues reuse medium and eye
+rows repeat the open-eye heads; the remaining original poses and blink
+combinations are not complete. The local `clay-original-frames/mouth-study.gif`
+uses manual timings for review; the running demo uses the original speech cues.

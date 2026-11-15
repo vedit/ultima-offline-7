@@ -41,7 +41,7 @@ def run(mode):
             profile.write_text(json.dumps(settings))
         else:
             folder=HERE/'bin/no-voice';folder.mkdir(exist_ok=True)
-            for name in ('guardian.png','intro.json'):shutil.copyfile(HERE/'bin/assets'/name,folder/name)
+            for name in ('guardian.png','intro.json','blue-static.png'):shutil.copyfile(HERE/'bin/assets'/name,folder/name)
             options['TRINSIC_INTRO_ASSETS']=str(folder)
         commands=['WAIT 2500','INTRO PHASE Speech','INTRO '+mode.upper(),'INTRO HELD','CAPTURE',
                   'INTRO KEY ESCAPE','WAIT 1800','INTRO GAME','EXIT']

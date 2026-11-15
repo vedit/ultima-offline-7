@@ -1,48 +1,36 @@
 # Dream opening
 
-**Art status â€” frame studies under review on 2026-11-15.** The user selected
-the first grey clay master and rejected the later structure/colour passes.
-Mouth variants made by opening that master's closed seam were also rejected.
-The current approach reconstructs each pose from its corresponding original
-U7 cutscene frame, with the selected clay study supplying camera and material.
-`art/clay-original-frames/` contains the selected master and three initial
-complete-head studies sourced independently from original frames 6, 5 and 3.
-See its `prompts.json` and `review.json` for provenance and measured limits.
-These are review candidates, not a complete animation set or installed art.
+**Interim art — accepted for now on 2026-11-15.** The user considers the clay
+animation imperfect but usable for this demo. The selected first grey clay
+master and three original-frame mouth studies are now installed in the isolated
+intro. Small, medium and wide openings come from original U7 frames 6, 5 and 3.
+Rounded cues reuse medium, and eyelid rows repeat the open-eye heads. This is
+still four full-head poses, not a final animation set. The rejected red head,
+second clay pass and later colour pass are not used.
 
-The older red head and its 15 packed combinations remain rejected; see
-`art/review.json`. The existing asset recipe still builds that historical set.
-Functional intro verification is not visual approval. No new clay study is
-used by the game launcher yet.
+The wall uses the original blue monitor pattern from `ENDSHAPE.FLX` member 19
+and `INTROPAL.DAT` member 2. The importer projects that bitmap onto the UO wall
+plane and exports all 78 palette phases for entries 16 through 93, rotating in
+the original speech-loop direction. The client advances at 20 phases/second.
+The texture and colours are original; the wall projection and presentation
+cadence are adaptations for this scene. No new random noise is generated.
 
-This development-only presentation precedes the original Black Gate Trinsic
-arrival. The bare Guardian relief uses a fixed head with four alternate
-mouth patches and two eyelid patches. Original speech, subtitles and facial
-cues are read from the player's local U7 installation; retail audio and data
-are not checked in.
+One animated wall is drawn behind the complete head. Mouth apertures are true
+alpha holes, so they expose the same wall coordinates and animation phase.
+There is no separate texture inside the mouth. The wall fades with the face,
+pauses with the scene, and gives way to the existing stone wall and red portal.
+Original retail pixels and audio are prepared from the local installation into
+ignored `bin/` files; they are not checked in.
 
-The dream has no native objects or quest flags. Native time stays behind the
-existing `TRINSIC_READY` / `BEGIN` boundary until portal entry or skipping.
-An existing save bypasses the intro.
+This development-only scene precedes the original Black Gate Trinsic arrival.
+Original speech, subtitle strings and facial cues remain unchanged. Native time
+stays behind the existing `TRINSIC_READY` / `BEGIN` boundary until portal entry
+or skipping. An existing save bypasses the intro. The dream allocates no native
+objects or quest flags.
 
-Art in `art/` is generated with the built-in image generation tool from the
-selected relief concept. There is no trophy plate, mounting hardware, teeth
-or tongue. Mouth openings are real alpha cutouts exposing the stock wall.
-Production variants remain registered to
-the master; import crops and layer masks are recorded by the asset recipe.
-These are separate development candidates, not replacements for town art.
-The older eye sources contribute only the two cropped eyelid regions; their
-surrounding material is never imported. `art/relief-prompts.json` records the
-prompts and the user's revisions.
-
-Before generating replacement animation, review one master against the original
-U7 Guardian's identity and stock UO stone faces (including 0x110F) for projection.
-The skull, brow, nose bridge/tip, mouth centre and chin must describe one head
-orientation. Check the nose's depth and occlusion, the far side's foreshortening,
-and the mouth wrapping around the muzzle. Keep the expression stern, with
-restrained lips and angular facial planes. Check enlarged and at 104 x 140 before
-making mouth/eyelid patches. Preserve the requested transparent mouth apertures
-and absence of teeth, tongue, trophy plate and hardware.
+`art/clay-original-frames/prompts.json` records the image-generation provenance.
+Its review record preserves the known landmark drift and the user's interim
+acceptance. The old red set remains rejected in `art/review.json`.
 
 ## Play
 
@@ -75,9 +63,9 @@ $output = Join-Path $PWD 'game/intro/bin/client/'
 
 The asset importer accepts `--static` for another local U7 STATIC directory.
 It imports the original VOC as PCM, the original 297 facial cues in file order,
-and the original subtitle strings. Five mouth shapes and three eye states form
-15 packed cells from seven authored images; it does not generate 15 separate
-heads. Native randomness, inventory and quest state are untouched.
+and the original subtitle strings. Four complete clay heads fill the existing five-column, three-row atlas;
+medium is reused for rounded cues and open eyes for all eyelid rows. The
+original blue pattern is exported as a separate 78-frame palette-cycle atlas. Native randomness, inventory and quest state are untouched.
 
 ## Verification
 

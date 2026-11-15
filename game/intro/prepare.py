@@ -9,12 +9,51 @@ from PIL import Image, ImageDraw
 
 HERE = Path(__file__).resolve().parent
 ART = HERE / 'art'
-CROP = (216, 284, 868, 1165)
-MOUTH = (330, 805, 826, 1146)
-EYES = ((420, 650, 615, 750), (680, 568, 800, 683))
-SIZE = (104, 140)
-MOUTHS = ['guardian-bare-master', 'mouth-cut-small', 'mouth-cut-medium', 'mouth-cut-wide', 'mouth-cut-oval']
-EYELIDS = ['guardian-bare-master', 'eyes-half', 'eyes-closed']
+CROP = (60, 40, 1010, 1390)
+SIZE = (104, 148)
+CLAY = ART / 'clay-original-frames'
+# The accepted interim set has four whole-head poses. Rounded cues reuse medium;
+# eyelid rows repeat the same pose rather than reintroducing rejected artwork.
+MOUTHS = ['master', 'u7-frame-06', 'u7-frame-05', 'u7-frame-03', 'u7-frame-05']
+BLUE_SIZE = (154, 341)
+BLUE_COLUMNS = 13
+BLUE_FRAMES = 78
+
+def blue_wall(static, out):
+    # Original monitor bitmap: ENDSHAPE 19, single RLE frame with a flagged offset.
+    # Reuse the project's decoder after stripping the offset's high-byte flags.
+    import sys
+    sys.path.insert(0, str(HERE.parent / 'atlas'))
+    from frames import rle
+    raw = bytearray(member((static/'ENDSHAPE.FLX').read_bytes(), 19))
+    offset = struct.unpack_from('<I', raw, 4)[0] & 0xFFFFFF
+    if offset != 8: raise ValueError('Expected one monitor frame')
+    struct.pack_into('<I', raw, 4, offset)
+    w,h,pixels,_,origin = rle(raw,0)
+    if (w,h,origin)!=(320,200,(0,0)) or any(v is None for v in pixels):
+        raise ValueError('Invalid original monitor pattern')
+    palette = member((static/'INTROPAL.DAT').read_bytes(), 2)
+    if len(palette)==1536: palette=palette[::2]
+    if len(palette)!=768 or max(palette)>63: raise ValueError('Invalid monitor palette')
+    colors=[tuple(v*255//63 for v in palette[i:i+3])+(255,) for i in range(0,768,3)]
+    width,height=BLUE_SIZE
+    # Same UO wall plane for every frame. No independent mouth texture.
+    projected=[]
+    for y in range(height):
+        for x in range(width):
+            v=y+x-width
+            projected.append(pixels[min(199,v*200//187)*320+min(319,x*320//width)] if 0<=v<187 else None)
+    atlas=Image.new('RGBA',(width*BLUE_COLUMNS,height*6))
+    for phase in range(BLUE_FRAMES):
+        frame=Image.new('RGBA',BLUE_SIZE)
+        # Original speech loop: palette.rotate(93,16,1), inclusive range.
+        frame.putdata([(0,0,0,0) if i is None else colors[16+(i-16-phase)%78 if 16<=i<=93 else i] for i in projected])
+        atlas.paste(frame,((phase%BLUE_COLUMNS)*width,(phase//BLUE_COLUMNS)*height))
+    atlas.save(out/'blue-static.png')
+    return dict(shape=19,palette=2,cycle=[93,16],frames=78,fps=20,
+                sourceSize=[320,200],wallSize=BLUE_SIZE,columns=BLUE_COLUMNS,
+                placement=[-132,-187],source='Original U7 monitor bitmap and palette; UO wall projection',
+                original={n:hashlib.sha256((static/n).read_bytes()).hexdigest() for n in ('ENDSHAPE.FLX','INTROPAL.DAT')})
 
 def member(data, index):
     if len(data) < 128 or index >= struct.unpack_from('<I', data, 84)[0]:
@@ -41,32 +80,24 @@ def read_voc(data):
 
 def prepare(static, out):
     out.mkdir(parents=True, exist_ok=True)
-    sources = {name: Image.open(ART / (name+'.png')).convert('RGBA') for name in set(MOUTHS+EYELIDS)}
-    if any(im.size != (1043,1508) for im in sources.values()):
-        raise ValueError('Relief sources must retain their registered source canvas')
+    sources = {name: Image.open(CLAY / (name+'.png')).convert('RGBA') for name in set(MOUTHS)}
+    if any(im.size != (1122,1402) for im in sources.values()):
+        raise ValueError('Clay sources must retain their source canvas')
     for im in sources.values():
-        # Remove low-opacity export noise; keep authored edges and real apertures.
         im.putalpha(im.getchannel('A').point(lambda a: 0 if a < 16 else a))
     atlas = Image.new('RGBA', (SIZE[0]*5, SIZE[1]*3))
     transparent_counts = []
     for eye in range(3):
         for mouth in range(5):
-            image = sources['guardian-bare-master'].copy()
-            if mouth:
-                image.paste(sources[MOUTHS[mouth]].crop(MOUTH), MOUTH)
-            if eye:
-                for box in EYES:
-                    image.paste(sources[EYELIDS[eye]].crop(box), box)
-            image = image.crop(CROP).resize(SIZE, Image.Resampling.NEAREST)
+            image = sources[MOUTHS[mouth]].crop(CROP).resize(SIZE, Image.Resampling.NEAREST)
             atlas.paste(image, (mouth*SIZE[0],eye*SIZE[1]))
-            # These pixels lie inside the mouth area, not the outer transparent border.
             if eye == 0:
-                region = image.crop((23,86,95,126)).getchannel('A')
+                region = image.crop((30,90,90,120)).getchannel('A')
                 transparent_counts.append(sum(a == 0 for a in region.getdata()))
-    assert transparent_counts[2] > transparent_counts[0]
-    assert transparent_counts[3] > transparent_counts[2]
+    assert transparent_counts[3] > transparent_counts[2] > transparent_counts[1] > transparent_counts[0]
     atlas.save(out/'guardian.png')
     atlas.resize((atlas.width*3,atlas.height*3),Image.Resampling.NEAREST).save(out/'guardian-review.png')
+    blue = blue_wall(static,out)
 
     mains = (static/'MAINSHP.FLX').read_bytes()
     cue_bytes = member(mains,15)
@@ -83,10 +114,11 @@ def prepare(static, out):
     payload = dict(version=1,width=SIZE[0],height=SIZE[1],duration=len(samples)/rate,
                    cues=cues,lines=lines,textTimes=[.25,1.7,5.25,8.2,10.55,12.9,16,19.95,22.7,27.2,32.4,36.4,39.65,42.4,44])
     (out/'intro.json').write_text(json.dumps(payload),encoding='utf8')
-    receipt=dict(source='Local original U7 speech/cues; custom relief with transparent mouth apertures',
-                 crop=CROP,mouth=MOUTH,eyes=EYES,size=SIZE,transparentMouthPixels=transparent_counts,
+    receipt=dict(source='Local original U7 speech/cues/blue monitor; interim clay poses with transparent mouths',
+                 crop=CROP,size=SIZE,transparentMouthPixels=transparent_counts,blue=blue,
+                 mouthSources=MOUTHS,eyeStates='open only (interim)',
                  originalCues=len(cues),seconds=len(samples)/rate,
-                 authored={n:hashlib.sha256((ART/(n+'.png')).read_bytes()).hexdigest() for n in sources},
+                 authored={n:hashlib.sha256((CLAY/(n+'.png')).read_bytes()).hexdigest() for n in sources},
                  original={n:hashlib.sha256((static/n).read_bytes()).hexdigest() for n in ('INTROSND.DAT','MAINSHP.FLX')})
     (out/'manifest.json').write_text(json.dumps(receipt,indent=2)+'\n',encoding='utf8')
     print(json.dumps(receipt,indent=2))
