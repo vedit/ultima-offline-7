@@ -70,12 +70,15 @@ def freeze():
     shutil.copyfile(INVESTIGATION, ROOT / "fixtures" / "Investigation.U7")
     print(f"Verified {len(manifest['installed_inputs'])} game files and {len(manifest['checkpoints'])} DOS checkpoints")
 
-def stage(name):
+def stage(name, *, fresh=False):
     if not re.fullmatch("[a-zA-Z0-9_-]+", name):
         raise ValueError("use a simple run name")
     fixture = ROOT / "fixtures" / "Finnigan-before-chair.U7"
-    checked(fixture, PIN)
-    saved = members(fixture)
+    if fresh:
+        saved = {}  # Native LoadGameArgs reads the player's own INITGAME.DAT.
+    else:
+        checked(fixture, PIN)
+        saved = members(fixture)
     dest = ROOT / "runs" / name
     dest.mkdir(parents=True, exist_ok=False)
     shutil.copytree(GAME / "STATIC", dest / "STATIC")

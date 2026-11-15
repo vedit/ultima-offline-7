@@ -23,7 +23,8 @@ class TestCopy(unittest.TestCase):
         self.root=Path(self.temp.name);self.runs=self.root/'runs';self.runs.mkdir()
         self.source=self.runs/'player-investigation';self.source.mkdir()
         self.save=self.source/'GAME00.U7';self.save.write_bytes(archive())
-        def stage(name):
+        def stage(name, *, fresh=False):
+            self.assertTrue(fresh, 'Copies must not require a maintainer fixture')
             folder=self.runs/name;folder.mkdir(exist_ok=False);(folder/'GAMEDAT').mkdir()
         self.root_patch=patch.object(play,'ROOT',self.root);self.root_patch.start();self.addCleanup(self.root_patch.stop)
         self.stage_patch=patch.object(play,'stage',stage);self.stage_patch.start();self.addCleanup(self.stage_patch.stop)

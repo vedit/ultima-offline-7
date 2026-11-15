@@ -1,10 +1,11 @@
 """Launch one private native authority and the ClassicUO fork using one owned run directory."""
-import argparse, contextlib, hashlib, json, os, re, struct, subprocess, sys, time, uuid
+import argparse, contextlib, hashlib, json, os, re, shutil, struct, subprocess, sys, time, uuid
 from pathlib import Path
 from reference import ROOT, SOURCE, stage, members
 BIN = Path(os.environ.get('TRINSIC_CLIENT_BIN',str(ROOT/'client/bin/Release-Trinsic-Avatar-Sheet/net10.0')))
 HOST = Path(os.environ.get('TRINSIC_HOST_EXECUTABLE',str(ROOT/'build-host/playtest-avatar-inventory/Ultima7.exe')))
 RELEASE = SOURCE/'Builds/BritanniaChairRouteFacet/releases/50f99d0c53594314f443902201e3a2312aa43764c7d35fede5f252da601ec4f1'
+ASSETS = Path(os.environ.get('TRINSIC_UO_ASSETS',str(RELEASE/'assets' if (RELEASE/'assets').is_dir() else SOURCE/'Assets/UO-Classic')))
 def active_slot(folder):
     try: value=int((folder/"active-slot.txt").read_text().strip())
     except (OSError,ValueError): return 0
@@ -13,7 +14,7 @@ def active_slot(folder):
 @contextlib.contextmanager
 def session(name,fixture,reset=False,extra=None,*,original_opening=False):
     folder=ROOT/'runs'/name
-    if not folder.exists(): stage(name)
+    if not folder.exists(): stage(name,fresh=original_opening)
     if folder.resolve().parent != (ROOT/'runs').resolve(): raise ValueError(name)
     import msvcrt
     with (folder/'session.lock').open('a+b') as lock:
@@ -23,7 +24,7 @@ def session(name,fixture,reset=False,extra=None,*,original_opening=False):
         slot=folder/f'GAME{active_slot(folder):02d}.U7'
         if reset: (folder/'active-slot.txt').write_text('0\n');slot=folder/'GAME00.U7'
         if reset and slot.exists(): slot.replace(folder/('previous-'+uuid.uuid4().hex+'.U7'))
-        parts=members(slot if slot.exists() else seed)
+        parts={} if original_opening and not slot.exists() else members(slot if slot.exists() else seed)
         for f in (folder/'GAMEDAT').iterdir():
             if f.is_file() and f.name not in parts: f.unlink()
         for k,v in parts.items(): (folder/'GAMEDAT'/k).write_bytes(v)
@@ -97,7 +98,7 @@ def copy_test_save(source_run,new_run):
         raise ValueError('Source is not a complete native world save')
     if source.read_bytes()!=data:
         raise RuntimeError('Source save changed during copying; retry after Save World finishes')
-    stage(new_run)  # Uses mkdir(exist_ok=False), also protecting against a concurrent copy.
+    stage(new_run,fresh=True)  # The source save, not a private fixture, seeds this copy.
     with (destination/'GAME00.U7').open('xb') as output:
         output.write(data)
     (destination/'test-copy.json').write_text(json.dumps({
@@ -106,12 +107,18 @@ def copy_test_save(source_run,new_run):
     },indent=2)+'\n')
     return destination
 def client(folder,env,host,seconds):
-    config=json.loads((RELEASE/'client/settings.json').read_text())
-    config.update(profilespath=str(folder/'profiles'),ultimaonlinedirectory=str(RELEASE/'assets'),window_size=({'X':1440,'Y':900} if 'TRINSIC_TOWN' in env else {'X':1216,'Y':720}),is_win_maximized=False)
+    template=RELEASE/'client/settings.json'
+    config=json.loads(template.read_text()) if template.is_file() else dict(
+        autologin=False,clientversion='7.0.118.46',ip='127.0.0.1',port=2599,plugins=[],
+        saveaccount=False,use_verdata=False,maps_layouts='7168,4096;7168,4096;2304,1600;2560,2048;1448,1448;1280,4096')
+    config.update(profilespath=str(folder/'profiles'),ultimaonlinedirectory=str(ASSETS),window_size=({'X':1440,'Y':900} if 'TRINSIC_TOWN' in env else {'X':1216,'Y':720}),is_win_maximized=False)
     settings=folder/'settings.json'
     settings.write_text(json.dumps(config))
     with (folder/'client.log').open('w') as log:
-        proc=subprocess.Popen([str(SOURCE/'Tools/dotnet/dotnet.exe'),str(BIN/'cuo.dll'),'-settings',str(settings)],cwd=BIN,env=env,stdout=log,stderr=log)
+        bundled=SOURCE/'Tools/dotnet/dotnet.exe'
+        dotnet=os.environ.get('DOTNET') or (str(bundled) if bundled.is_file() else shutil.which('dotnet'))
+        if not dotnet: raise RuntimeError('Install the .NET 10 SDK/runtime or set DOTNET to dotnet.exe')
+        proc=subprocess.Popen([dotnet,str(BIN/'cuo.dll'),'-settings',str(settings)],cwd=BIN,env=env,stdout=log,stderr=log)
         try:
             end=time.monotonic()+seconds if seconds else float('inf')
             while time.monotonic()<end:
@@ -131,7 +138,7 @@ if __name__=='__main__':
     p.add_argument('--test-copy',metavar='NEW_RUN',help='copy the current --run saved checkpoint into a new independent test run')
     a=p.parse_args()
     if a.from_opening and a.scenario!='investigation': p.error('--from-opening requires the investigation')
-    if a.test_copy and (a.reset or a.from_opening): p.error('--test-copy cannot be combined with --reset or --from-opening')
+    if a.test_copy and a.reset: p.error('--test-copy cannot be combined with --reset')
     fixture=('Trinsic-room' if (ROOT/'fixtures/Trinsic-room.U7').exists() else 'Finnigan-before-chair') if a.scenario=='room' else ('Investigation' if a.scenario=='investigation' else 'Iolo-'+a.scenario)
     slot=a.run or ('player-trinsic-opening' if a.from_opening else 'player-'+a.scenario)
     if a.test_copy:

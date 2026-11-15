@@ -1,67 +1,48 @@
-# Ultima Offline 7 development build
+# Playing and developing Ultima Offline 7
 
-Run `Play Ultima Offline 7.cmd` at the repository root. It resumes `runs/player-investigation/GAME00.U7` in the existing private installation, or starts with Finnigan's commission at the stables. Use the arrow keys or right mouse button to move, double-click objects and people to use them, and drag items between the world, containers and paperdoll. F2 opens the paperdoll, F3 the backpack, F4 the map and F5 saves. Close the client window to end that session.
+For a first installation, follow [Build locally](../docs/build-local.md). This directory contains source overlays, not complete upstream checkouts. The default private installation is `%LOCALAPPDATA%\UltimaOffline7`; set `ULTIMA_OFFLINE_HOME` to choose another location.
 
-The Avatar's backpack includes a [Developer's Wand](developer-wand.md) for native supplies, spawning, inspection, stat editing and world controls. Use `--test-copy <new-run>` for an independent copy of the current saved checkpoint, or `--no-debug` to disable the toolbox.
+## Play
 
-Short NPC reactions appear over the speaker using ClassicUO's overhead speech. Black Gate supplies the words and decides when each character speaks.
+Run **Play Ultima Offline 7.cmd** at the repository root. A new run asks for your name and Avatar, plays the Guardian dream, then lets you walk into the red portal to arrive outside the Trinsic stables. A saved run skips setup and resumes its world.
 
-Open **Play Trinsic Playtest.cmd** for frozen playtest 02. New games include name/gender selection, the Guardian dream and a player-controlled portal walk to the stable entrance. F5 saves; relaunching resumes the saved world and skips setup and the dream. Its independent saves live under `E:\UltimaOffline\Builds\UltimaOffline7\Trinsic-playtest-02\PoCs\ClassicUO-U7-Local\runs\player-trinsic-opening`. Use `--run another-name` for another playthrough. The original playtest 01 remains available. [Playtest 02 package and validation](receipts/trinsic-playtest-02.json)
+| Input | Action |
+| --- | --- |
+| Right mouse button / arrow keys | Move |
+| Single-click | Name or quantity |
+| Double-click | Use an item or talk to someone; companions also expose their paperdoll |
+| Drag | Move items between world, containers, backpack and equipment |
+| F2 / F3 / F4 | Paperdoll / backpack / map |
+| F5 | Save the current native world |
+| Tab | War / peace |
+| Space / Escape during the dream | Pause / wake; you still walk to the portal |
 
-The default installation is `E:\UltimaOffline`. Set `ULTIMA_OFFLINE_HOME` to use another installation with the same layout. The historical folder name `PoCs\ClassicUO-U7-Local` identifies the private runtime and its save slots. Use a separate slot to try a new investigation.
+The backpack contains a [Developer's Wand](developer-wand.md). Pass `--no-debug` to disable it. Ordinary U7 spell and inventory rules still apply.
 
-```powershell
-& '.\Play Ultima Offline 7.cmd' --run my-investigation
-```
+## Saves and independent runs
 
-## Source and private inputs
-
-| Repository files | Origin and use |
-|---|---|
-| `game/client/src` | Editable source overlay for ClassicUO at `ee79d7ebc1cc0e53ff84fe6cae17d389e2737f93`. The first checkpoint includes 21 changed tracked files and three new files. The base commit pins FNA, FileEmbed and MP3Sharp. Keep the upstream source tree, its recursive submodules and notices. [ClassicUO license](client/LICENSE.md) |
-| `game/native/Black Gate` | Editable source overlay for the portable Black Gate engine in Kitrinx/Ultima7_Decomp at `872a613c718abf3a40cf94533887171bec8cfb24`. The first checkpoint includes eight changed files and two new local-session files. The local `Downloads/Kitrinx-872a613c.zip` has SHA-256 `f0ce7336158e7a3ca86390576f4f63599495849b785b37c0264590e46321bcb4`. [Upstream notice](native/LICENSE) |
-| `game/atlas` | Source readers, reviewed mappings and stock-art recipes. The review covers 18 revised matches and all ten rake frames. The source census and generated file hashes are in the [atlas receipt](receipts/trinsic-atlas.json). |
-| `game/qualification` | Windows build scripts, launcher, atlas-to-ClassicUO conversion, renderer checks and input replays. The [investigation receipt](receipts/trinsic-investigation.json) records the original town playthrough. The [facing receipt](receipts/trinsic-facing.json) describes an earlier facing pass at its recorded revision. |
-
-The private build reads `Assets/UltimaVII-Steam`, `Assets/UO-Classic`, and the assets, settings and sample from `Builds/BritanniaChairRouteFacet/releases/50f99d0c53594314f443902201e3a2312aa43764c7d35fede5f252da601ec4f1`. The atlas also uses the installed Exult 1.12.1 shape metadata and the ModernUO decoration reference. Git contains the recipes and source changes. Generated retail art, game data, compiled executables, evidence images and player saves live in the private installation.
-
-The local Git tag `archive/forge-conversion` points to the preceding ModernUO checkpoint. Three superseded native binaries and their manifests are under `PoCs/ClassicUO-U7-Local/archive/pre-uo7-hosts`. To restore one, return its directory to `build-host` and verify its files against the [archive manifest](receipts/archived-hosts.json). The older `build-host/playtest` is still used for reference checks.
-
-## Rebuild on a provisioned machine
-
-Begin with a private installation containing the pinned toolchains, packages, input data and DOS evidence. Its `PoCs/ClassicUO-U7-Local/client` must contain a checkout of the pinned ClassicUO revision and its submodules. Under `native`, extract the pinned archive's `ultima7-portable/Black Gate`, `third_party` and `assets` trees. Apply the tracked overlay to those two source trees, preserving relative paths. For example, starting from the repository root in PowerShell with a separate provisioned development installation:
+In PowerShell from the repository root:
 
 ```powershell
-$installation = if ($env:ULTIMA_OFFLINE_HOME) { $env:ULTIMA_OFFLINE_HOME } else { 'E:\UltimaOffline' }
-$runtime = Join-Path $installation 'PoCs\ClassicUO-U7-Local'
-Copy-Item -LiteralPath 'game\client\src' -Destination "$runtime\client" -Recurse -Force
-Copy-Item -LiteralPath 'game\native\Black Gate' -Destination "$runtime\native" -Recurse -Force
-& .\game\qualification\build-native.cmd matoya
-& .\game\qualification\build-native.cmd
-& .\game\qualification\build-client.ps1
+& '.\Play Ultima Offline 7.cmd' --run my-playtest
+& '.\Play Ultima Offline 7.cmd' --run my-playtest --test-copy spell-testing
+& '.\Play Ultima Offline 7.cmd' --run spell-testing
 ```
 
-The native script uses VS 2019 Build Tools, clang-cl 18.1.8, CMake and Ninja. The client uses the private .NET SDK and NuGet mirror. `reference.py` can recreate the investigation starter from `Evidence/dos-reference/session-jrKbjq/accepted-GAME00.U7` and its staging fixture from the pinned chair-route evidence. The installed investigation save and that original DOS checkpoint have the same SHA-256.
+Save with F5 before making a test copy. The copy operation refuses an existing destination. It copies the selected saved checkpoint, not unsaved live progress.
 
-```powershell
-py -3 -B game/qualification/reference.py
-py -3 -B game/atlas/complete-town/generate.py
-py -3 -B game/qualification/town_atlas.py
+The default run is `player-trinsic-opening`. Runs live under:
+
+```text
+<ULTIMA_OFFLINE_HOME>/PoCs/ClassicUO-U7-Local/runs/<run-name>/
 ```
 
-Use Python 3.11 or later with Pillow. The generators default to `reviewed-atlas` and `town-battlement-data` inside the private runtime. For a comparison build use `--out <directory>` on either generator. The town generator reads the runtime's reviewed atlas. This keeps the parallel asset-mapping project's newer candidates available for separate review. The town validator also reads the retained `town-data` and `town-stables-data` comparison builds. The atlas validator uses the earlier review's `Trinsic-Asset-Mapping/atlas/mapping.csv`.
+`GAME00.U7` through `GAME09.U7` are native save slots; `active-slot.txt` selects the current slot. Back up the whole run folder after closing its game. Do not start two clients against one run. Use another `--run` for experiments instead of deleting or resetting your playthrough.
 
-## Verify
+**Play Ultima Offline 7 Intro.cmd** is an alias with its own `player-dream-intro` run. **Play Trinsic Playtest.cmd** is a maintainer-only launcher for an old frozen local package; that package is not distributed here.
 
-```powershell
-py -3 -B game/atlas/complete-town/verify_town.py
-py -3 -B game/atlas/complete-town/verify_town.py --world-terrain
-py -3 -B game/qualification/verify_town_facings.py
-py -3 -B game/qualification/investigation.py --run verify-investigation
-py -3 -B game/qualification/investigation.py --opening --run verify-opening-to-gate
-py -3 -B game/qualification/verify_overhead.py
-py -3 -B game/qualification/verify_item_labels.py
-py -3 -B -m unittest discover -s tests -q
-```
+## Verification
 
-The atlas checks compare source records, reviewed output hashes and world terrain. The facing check reads the installed map, statics, art and tile flags. The investigation replays send player actions to a separate native host and save at each milestone. One starts from the DOS commission checkpoint and the other plays the opening from INITGAME. The two ClassicUO checks exercise overhead speech and single-click item labels. The last command runs the repository's compiler and source-reader tests.
+The [build guide](../docs/build-local.md#verify-the-installation) separates data-free unit tests from local-data checks. Many older qualification scripts require private DOS reference saves; those are neither installation prerequisites nor included downloads.
+
+The atlas generates the reviewed Trinsic mapping and stock-derived rake locally. Parallel art candidates and private comparison builds are not part of the published source baseline.

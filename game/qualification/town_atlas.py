@@ -14,10 +14,10 @@ from town_scale import BOUNDS, LANDSCAPE, compact_parts, deck_paver, door_leaf, 
 from pathlib import Path
 
 from PIL import Image
-from play import ROOT, RELEASE
+from play import ROOT, RELEASE, ASSETS
 from install_paths import ATLAS_OUTPUT as ATLAS, GAME_SOURCE
 
-BASE = RELEASE/'assets'
+BASE = ASSETS
 OUT = ROOT/'town-stables-data'
 HEIGHT_BLOCKS = 512
 TILE_START = 512 * 964
@@ -264,9 +264,14 @@ def build(output=OUT,compact=False):
         catalog[key]=graphic
     assert sum(r['method']=='Approved stock rake' for r in rows)==10
     assert sum(r['method'] in ('Approved stock match','Approved stock treatment','Empty plate fragments') for r in rows)==18
-    mapfile=bytearray((BASE/'map0.mul').read_bytes())
-    idx=bytearray((BASE/'staidx0.mul').read_bytes())
-    data=bytearray((BASE/'statics0.mul').read_bytes())
+    # This is a U7 facet, not a patch on the retail UO world. Start outside the
+    # converted region with void land and no statics; modern UO ships its maps
+    # as UOP, and an earlier private MUL build must not be an installation input.
+    from u7uo.facet import WIDTH, HEIGHT, EMPTY_INDEX, VOID
+    count=(WIDTH//8)*(HEIGHT//8)
+    mapfile=bytearray((bytes(4)+struct.pack('<Hb',VOID,0)*64)*count)
+    idx=bytearray(EMPTY_INDEX*count)
+    data=bytearray()
     blocks=defaultdict(bytearray)
     compact_statics=set()
     source_land={}

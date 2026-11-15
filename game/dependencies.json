@@ -1,0 +1,6 @@
+{
+  "classicuo": {"url": "https://github.com/ClassicUO/ClassicUO.git", "revision": "ee79d7ebc1cc0e53ff84fe6cae17d389e2737f93", "recursive_submodules": true},
+  "native": {"url": "https://github.com/Kitrinx/Ultima7_Decomp.git", "revision": "872a613c718abf3a40cf94533887171bec8cfb24", "source_directory": "ultima7-portable", "variant": "Black Gate"},
+  "exult_metadata": {"url": "https://github.com/exult/exult.git", "revision": "v1.12.1", "file": "data/bg/shape_info.txt"},
+  "tested": {"os": "Windows x64", "python": "3.13", "dotnet_target": "net10.0", "clang_cl": "18.1.8", "visual_studio_build_tools": "2019", "uo_classic": "7.0.118.46", "u7": "English Black Gate + Forge of Virtue (Steam)"}
+}

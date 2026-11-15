@@ -1,7 +1,7 @@
 import json,shutil,sys,time
 from play import session,client,ROOT,BIN
-def run(name,fixture,commands,reset,zoom='1',scenario='room',*,original_opening=False):
-    with session(name,fixture,reset,original_opening=original_opening) as (folder,env,host):
+def run(name,fixture,commands,reset,zoom='1',scenario='room',*,original_opening=False,extra=None):
+    with session(name,fixture,reset,original_opening=original_opening,extra=extra) as (folder,env,host):
         path=folder/'controls.txt'; path.write_text('\n'.join(commands)+'\n')
         log=path.with_suffix('.txt.log')
         if log.exists():log.replace(folder/('previous-'+str(time.time_ns())+'.log'))

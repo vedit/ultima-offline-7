@@ -121,7 +121,10 @@ def prepare(static, out):
     return receipt
 
 if __name__=='__main__':
+    import sys
+    sys.path.insert(0,str(HERE.parent))
+    from install_paths import INSTALL, RUNTIME
     p=argparse.ArgumentParser()
-    p.add_argument('--static',type=Path,default=Path('E:/UltimaOffline/Assets/UltimaVII-Steam/STATIC'))
-    p.add_argument('--out',type=Path,default=HERE/'bin/painted-assets')
+    p.add_argument('--static',type=Path,default=INSTALL/'Assets/UltimaVII-Steam/STATIC')
+    p.add_argument('--out',type=Path,default=RUNTIME/'intro-assets')
     a=p.parse_args();prepare(a.static,a.out)

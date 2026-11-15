@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-16",
+  "scope": "Public Windows source setup; no retail data included",
+  "baseline": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
+  "client": {
+    "upstream": "ee79d7ebc1cc0e53ff84fe6cae17d389e2737f93",
+    "source": "pinned upstream src plus repository overlay; existing cached dependency sources",
+    "result": "build passed",
+    "errors": 0,
+    "warnings": 19
+  },
+  "native": {
+    "upstream": "872a613c718abf3a40cf94533887171bec8cfb24",
+    "source": "pinned upstream archive plus repository overlay",
+    "clang_cl": "18.1.8",
+    "result": "matoya and native build passed",
+    "warnings": "Existing compiler/deprecation warnings remain"
+  },
+  "inputs": {
+    "u7": "English Steam Black Gate + Forge of Virtue",
+    "uo": "Classic 7.0.118.46",
+    "metadata": "Exult v1.12.1",
+    "data_access": "separate private root with read-only use of locally installed game data"
+  },
+  "generated": {
+    "atlas_rows": 7141,
+    "atlas_images": 6757,
+    "object_frames": 3915,
+    "land_frames": 1900,
+    "private_sprites": 661,
+    "intro": "original local speech, blue background and authored Guardian sprites"
+  },
+  "checks": {
+    "unit_tests": 113,
+    "skipped": 9,
+    "save_copy_tests": 4,
+    "client_creation": "passed, 40 replay events",
+    "client_world": "passed, 51 replay events",
+    "native_fresh_save_resume": "passed; created name retained; resumed at 1071,2210,0",
+    "independent_save_copy": "passed"
+  },
+  "absent_prerequisites": [
+    "maintainer DOS fixtures",
+    "old generated release/assets",
+    "old generated settings.json",
+    "bundled dotnet under private root",
+    "retail map0.mul"
+  ],
+  "limits": [
+    "Used existing toolchain and dependency caches, not a clean Windows VM or network reinstallation",
+    "Other OSes, game editions and newer upstream revisions are unqualified",
+    "No full Trinsic quest replay in this setup check; historical replays require private fixtures",
+    "Parallel uncommitted art candidates remain outside this source baseline"
+  ]
+}

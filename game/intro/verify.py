@@ -7,12 +7,13 @@ import shutil
 import sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
-os.environ.setdefault('TRINSIC_CLIENT_BIN',str(HERE/'bin/placement-client'))
-os.environ.setdefault('TRINSIC_HOST_EXECUTABLE',str(HERE/'bin/native-creation/Ultima7.exe'))
+sys.path.insert(0,str(HERE.parent))
+from install_paths import RUNTIME
+(HERE/'bin').mkdir(exist_ok=True)
 sys.path.insert(0,str(HERE.parent/'qualification'))
 spec=importlib.util.spec_from_file_location('client_proof',HERE.parent/'qualification/client-proof.py')
 proof=importlib.util.module_from_spec(spec);spec.loader.exec_module(proof)
-extra={'TRINSIC_INTRO_ASSETS':os.environ.get('TRINSIC_INTRO_ASSETS',str(HERE/'bin/painted-assets')),'U7_ENABLE_AUDIO':'1'}
+extra={'TRINSIC_INTRO_ASSETS':os.environ.get('TRINSIC_INTRO_ASSETS',str(RUNTIME/'intro-assets')),'U7_ENABLE_AUDIO':'1'}
 
 def run(mode):
     if mode=='creation-resume':
