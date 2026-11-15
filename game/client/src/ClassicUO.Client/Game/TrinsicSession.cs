@@ -852,10 +852,11 @@ namespace ClassicUO.Game
             private readonly int token;
             private readonly StbTextBox number;
             private readonly int minimum, maximum, increment;
+            private Point centeredWindow;
             public TrinsicDialogue(World w,int id,int face,string text,string[] options,string[] range) : base(w,0,0)
             {
                 bool numeric=range!=null;
-                token=id; X=70; Y=35; CanMove=true; IsModal=true;
+                token=id; CanMove=true; IsModal=true;
                 CanCloseWithRightClick=false; CanCloseWithEsc=false;
                 var label=new Label(text,false,0x386,398,1){X=109,Y=Padding};
                 int top=Math.Max(Padding+70,Padding+12+label.Height);
@@ -893,6 +894,21 @@ namespace ClassicUO.Game
                     }
                     background.Height=y+Padding;
                 }
+                Width=background.Width;Height=background.Height;
+                CenterInWindow();
+            }
+            private void CenterInWindow()
+            {
+                var bounds=Client.Game.ClientBounds;
+                centeredWindow=new Point(bounds.Width,bounds.Height);
+                X=Math.Max(0,(bounds.Width-Width)/2);Y=Math.Max(0,(bounds.Height-Height)/2);
+            }
+            public override void Update()
+            {
+                base.Update();
+                var bounds=Client.Game.ClientBounds;
+                // Recenter on window resize, but retain the player's drag otherwise.
+                if(centeredWindow!=new Point(bounds.Width,bounds.Height))CenterInWindow();
             }
             public override void OnKeyboardReturn(int textID,string text) {
                 if(number!=null) OnButtonClick(0);

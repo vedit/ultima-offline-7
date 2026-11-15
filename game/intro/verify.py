@@ -7,7 +7,7 @@ import shutil
 import sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
-os.environ.setdefault('TRINSIC_CLIENT_BIN',str(HERE/'bin/creation-client'))
+os.environ.setdefault('TRINSIC_CLIENT_BIN',str(HERE/'bin/layout-client'))
 os.environ.setdefault('TRINSIC_HOST_EXECUTABLE',str(HERE/'bin/native-creation/Ultima7.exe'))
 sys.path.insert(0,str(HERE.parent/'qualification'))
 spec=importlib.util.spec_from_file_location('client_proof',HERE.parent/'qualification/client-proof.py')
@@ -58,12 +58,13 @@ def run(mode):
     if mode in ('creation','creation-male'):
         name,sex=('Éowyn',1) if mode=='creation' else ('Avatar12345678',0)
         encoded=name.encode('cp437').hex()
-        commands=['WAIT 500','INTRO FORM','INTRO HELD','CAPTURE','INTRO NAME','INTRO SUBMIT','INTRO INVALID',
+        commands=['WAIT 500','INTRO FORM','INTRO HELD','INTRO SEX 0','INTRO SEX 0 label',
+                  'INTRO SEX 1','INTRO SEX 1 label','INTRO SEX 0','CAPTURE','INTRO NAME','INTRO SUBMIT','INTRO INVALID',
                   'INTRO KEY ESCAPE','INTRO KEY RIGHT','WAIT 300','INTRO FORM','INTRO HELD',
                   f'INTRO NAMEHEX {encoded}',f'INTRO SEX {sex}','CAPTURE','INTRO KEY RETURN','WAIT 3000',
                   f'INTRO IDENTITY {encoded} {sex}','INTRO APPEARANCE','CAPTURE',
                   'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO PORTAL','WAIT 20000','INTRO GAME',
-                  f'INTRO IDENTITY {encoded} {sex}','FXCOUNT travel 1','CAPTURE','EXIT']
+                  f'INTRO IDENTITY {encoded} {sex}','FXCOUNT travel 1','INTRO DIALOGUECENTER','CAPTURE','EXIT']
     elif mode=='creation-cancel':
         commands=['WAIT 500','INTRO FORM','INTRO HELD','INTRO NAME Unfinished','INTRO SEX 1','INTRO KEY ESCAPE',
                   'WAIT 700','INTRO FORM','INTRO HELD','CAPTURE','EXIT']
@@ -74,7 +75,7 @@ def run(mode):
                   'INTRO KEY RIGHT','WAIT 700','INTRO KEYUP RIGHT','WAIT 800','INTRO MOVED','CAPTURE',
                   'INTRO KEY SPACE','WAIT 200','INTRO RECORDPOS','INTRO KEY LEFT','WAIT 600','INTRO STILL','INTRO KEYUP LEFT','INTRO KEY SPACE',
                   'INTRO MOVE 5 7','WAIT 2500','INTRO RAN','INTRO STOP',
-                  'INTRO PORTAL','WAIT 20000','INTRO GAME','FXCOUNT travel 1','CAPTURE','EXIT']
+                  'INTRO PORTAL','WAIT 20000','INTRO GAME','FXCOUNT travel 1','INTRO DIALOGUECENTER','CAPTURE','EXIT']
     elif mode=='preview':
         commands=['WAIT 6000','CAPTURE','WAIT 700','EXIT']
     elif mode=='full':

@@ -47,6 +47,11 @@ New games first show a native UO-style name and gender panel. Enter a name of
 The name uses the original game's CP437 character set; unsupported characters
 produce a message. Typing and arrow keys do not move the Avatar or advance
 native time on this screen. Quit leaves without creating a world save.
+Gender choices are mutually exclusive and cannot be toggled off. Quit and
+Begin use the stock blue-gem controls from the in-game menus. Native dialogue
+opens centered in the client window, recenters on resize, and remains draggable.
+The bed and sleeping Avatar share the platform's center line with the Guardian;
+the bed's collision footprint and the wake position move with its anchor.
 
 The native `CREATEAVATAR` command is available only at the fresh, off-map
 opening boundary. It uses the same NPC name buffer and sex operations as
@@ -71,7 +76,7 @@ robocopy E:/UltimaOffline/PoCs/ClassicUO-U7-Local/client game/intro/bin/source /
 robocopy game/client/src game/intro/bin/source/src /E /NFL /NDL /NJH /NJS /NP /R:0 /W:0
 $env:DOTNET_CLI_HOME = Join-Path $PWD 'game/intro/bin/cache/dotnet'
 $env:NUGET_PACKAGES = Join-Path $PWD 'game/intro/bin/cache/packages'
-$output = Join-Path $PWD 'game/intro/bin/creation-client/'
+$output = Join-Path $PWD 'game/intro/bin/layout-client/'
 & E:/UltimaOffline/Tools/dotnet/dotnet.exe build game/intro/bin/source/src/ClassicUO.Client/ClassicUO.Client.csproj -c Release -p:PublishAot=false -p:UseSharedCompilation=false -p:NuGetAudit=false '-p:RestoreFallbackFolders=E:/UltimaOffline/Cache/NuGet' --source E:/UltimaOffline/Cache/NuGet --disable-build-servers "-p:OutputPath=$output"
 ```
 

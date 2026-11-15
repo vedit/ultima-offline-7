@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-16",
+  "feature": "Opening controls, centered dialogue and dream composition",
+  "build": {
+    "client": "game/intro/bin/layout-client",
+    "client_sha256": "b795461b9f9c67c74ad53582d0fc764420a1bc3336fc495ac1ff36b5fc74599b",
+    "native": "game/intro/bin/native-creation/Ultima7.exe",
+    "native_unchanged": true,
+    "errors": 0,
+    "warnings": 15
+  },
+  "changes": [
+    "Mandatory exclusive gender selection using a form-local stock-radio subclass",
+    "Quit and Begin use the same stock blue gem and clickable caption as in-game menus",
+    "Native dialogue centers in the full client window on creation and resize, retaining manual dragging otherwise",
+    "Bed, sleeper and invisible collision moved together to the platform center; wake tile follows the bed",
+    "Guardian placed on the same center line with its entire chin above the platform"
+  ],
+  "validation": {
+    "creation": "Passed real mouse clicks on each radio and label, repeated clicks on the selected choice, blank-name rejection, Enter submission, female identity in dream and Trinsic, centered arrival dialogue, one travel effect",
+    "world": "Passed male identity/appearance, sleeping alignment, bed and void collision, keyboard movement, mouse-distance running, pause recovery, portal entry, native state held, stable arrival and centered dialogue",
+    "full": "Passed full speech playback, pause/resume, floor visibility, wake and player-controlled portal entry",
+    "visual_review": [
+      "dream-creation-proof/dream-1.png",
+      "dream-creation-proof/dream-3.png",
+      "dream-world-proof/dream-0.png",
+      "dream-full-proof/dream-2.png"
+    ]
+  },
+  "evidence": [
+    "game/intro/bin/proof-creation.json",
+    "game/intro/bin/proof-world.json",
+    "game/intro/bin/proof-full.json"
+  ],
+  "parallel_work": "Shared TrinsicSession staged by dialogue-only patch; other rendering, asset and native edits left unstaged; separate client output, existing user runs preserved"
+}

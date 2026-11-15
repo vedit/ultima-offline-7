@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-2-Clause
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using ClassicUO.Assets;
 using ClassicUO.Configuration;
@@ -43,6 +44,10 @@ namespace ClassicUO.Game.Intro
         private Point replayStart;
         private bool sawWalk, sawRun;
         private const int Origin=64;
+        // The bed is anchored at its southeast end; its visible mattress is
+        // centered over the 10-by-10 platform at this tile, not at tile (5,5).
+        private static readonly Point BedTile=new(Origin+6,Origin+6);
+        private static readonly Point WakeTile=BedTile+new Point(1,1);
         internal static readonly Point PortalTile=new(Origin+1,Origin+5);
         private const int BlueWidth=320, BlueHeight=200, BlueColumns=13, BlueFrames=78;
         private int BlueFrame=>(int)(visualSeconds*20)%BlueFrames;
@@ -79,7 +84,7 @@ namespace ClassicUO.Game.Intro
                 room.Player.Stamina=room.Player.StaminaMax=30;
                 room.Player.Hits=room.Player.HitsMax=30;
                 room.MapIndex=0;
-                room.Player.SetInWorldTile(Origin+4,Origin+4,4);
+                room.Player.SetInWorldTile((ushort)BedTile.X,(ushort)BedTile.Y,4);
                 room.Player.Direction=(Direction)7;
                 uint serial=0x7ffe0100;
                 // Keep the actual Avatar's body, skin and hair, without copying combat gear.
@@ -98,9 +103,9 @@ namespace ClassicUO.Game.Intro
                 bed=Item.Create(room,0x7ffe0003);
                 bed.Graphic=TrinsicTown.Graphic(696,0,0,0,0,true);bed.Amount=1;bed.Name="Bed";
                 if(bed.Graphic==0)throw new InvalidDataException("The approved town bed is unavailable");
-                room.Items.Add(bed);bed.SetInWorldTile(Origin+4,Origin+4,0);
+                room.Items.Add(bed);bed.SetInWorldTile((ushort)BedTile.X,(ushort)BedTile.Y,0);
                 room.Player.NativeLyingDown=true;
-                room.Player.NativeBedAnchor=new Point(Origin+4,Origin+4);
+                room.Player.NativeBedAnchor=BedTile;
                 room.Player.NativeBedAcrossX=true;
                 room.Player.NativeRestOffset=new Point(-5,-17);
                 room.Player.SetAnimation(21,frameCount:byte.MaxValue,fromServer:true);room.Player.ExecuteAnimation=false;
@@ -122,7 +127,7 @@ namespace ClassicUO.Game.Intro
                 if(rx>=1 && rx<=10 && ry>=1 && ry<=10)Add(0x519,0);
                 // The approved bed is one whole sprite; these invisible stock
                 // collision tiles cover its two-tile length, without extra bed art.
-                if((rx==3 || rx==4) && ry==4)Add(0xa63,0,false);
+                if((wx==BedTile.X-1 || wx==BedTile.X) && wy==BedTile.Y)Add(0xa63,0,false);
             }
             return true;
         }
@@ -137,7 +142,7 @@ namespace ClassicUO.Game.Intro
             if(awakened)return;awakened=true;
             room.Player.NativeLyingDown=false;room.Player.NativeBedAnchor=null;room.Player.NativeRestOffset=Point.Zero;
             room.Player.ExecuteAnimation=true;room.Player.SetAnimation(0xff);
-            room.Player.ClearSteps();room.Player.Walker.Reset();room.Player.SetInWorldTile(Origin+5,Origin+5,0);
+            room.Player.ClearSteps();room.Player.Walker.Reset();room.Player.SetInWorldTile((ushort)WakeTile.X,(ushort)WakeTile.Y,0);
             UpdateDrawPosition=true;
         }
         public override void Update()
@@ -245,7 +250,9 @@ namespace ClassicUO.Game.Intro
                             Vector2.Zero,Vector2.One,SpriteEffects.None,depth+bay+1f+bias);
                     }
                 }
-                Layer(scene.relief,new Rectangle(scene.Timeline.Mouth*scene.data.Width,scene.Timeline.Eyes*scene.data.Height,scene.data.Width,scene.data.Height),-151,-58,.1f);
+                // Address the bed along the platform's center line. Keep the
+                // entire face above the far floor corner, including the chin.
+                Layer(scene.relief,new Rectangle(scene.Timeline.Mouth*scene.data.Width,scene.Timeline.Eyes*scene.data.Height,scene.data.Width,scene.data.Height),-scene.data.Width/2,-138,.1f);
                 return true;
             }
             public override bool CheckMouseSelection()=>false;
@@ -255,6 +262,13 @@ namespace ClassicUO.Game.Intro
             if(!TrinsicReplay.Active)throw new InvalidOperationException("Replay is disabled");
             if(Client.Game.Scene is U7CharacterCreationScene creation){creation.Replay(args);return;}
             var scene=Client.Game.Scene as U7DreamIntroScene;
+            if(args[1]=="DIALOGUECENTER") {
+                var dialog=UIManager.Gumps.Single(g=>!g.IsDisposed && g.GetType().Name=="TrinsicDialogue");
+                var bounds=Client.Game.ClientBounds;
+                if(Math.Abs(dialog.X+dialog.Width/2-bounds.Width/2)>1 || Math.Abs(dialog.Y+dialog.Height/2-bounds.Height/2)>1)
+                    throw new InvalidOperationException($"Dialogue is not centered: {dialog.Bounds} in {bounds}");
+                return;
+            }
             if(args[1]=="IDENTITY") {
                 var native=Client.Game.UO.World.Player;
                 bool female=args[3]=="1";
@@ -292,7 +306,7 @@ namespace ClassicUO.Game.Intro
                 case "PHASE":if(scene.Timeline.Phase.ToString()!=args[2])throw new InvalidOperationException("Unexpected dream phase "+scene.Timeline.Phase);break;
                 case "WORLD":Console.WriteLine($"DREAM WORLD: body={scene.room.Player.Graphic:x}, pos={scene.room.Player.X-Origin},{scene.room.Player.Y-Origin}, objects={scene.room.Items.Count}");if(scene.room==scene.nativeWorld || scene.RenderedObjectsCount<30)throw new InvalidOperationException("Room was not rendered by GameScene");break;
                 case "COLLISION":
-                    foreach(var start in new[]{new Point(Origin+1,Origin+7),new Point(Origin+5,Origin+4)}) {
+                    foreach(var start in new[]{new Point(Origin+1,Origin+7),BedTile+new Point(1,0)}) {
                         int x=start.X,y=start.Y;sbyte z=0;Direction direction=Direction.West;
                         if(scene.room.Player.Pathfinder.CanWalk(ref direction,ref x,ref y,ref z))throw new InvalidOperationException("Void or bed allowed walking");
                     }break;

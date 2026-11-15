@@ -8,6 +8,8 @@ using ClassicUO.Game.Managers;
 using ClassicUO.Game.Scenes;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Game.UI.Gumps;
+using ClassicUO.Input;
+using Microsoft.Xna.Framework;
 using SDL3;
 
 namespace ClassicUO.Game.Intro
@@ -89,12 +91,29 @@ namespace ClassicUO.Game.Intro
                 case "FORM":if(panel.IsDisposed)throw new InvalidOperationException("Missing character form");break;
                 case "NAME":panel.NameInput.SetText("");panel.NameInput.InvokeTextInput(string.Join(" ",args.Skip(2)));break;
                 case "NAMEHEX":panel.NameInput.SetText("");panel.NameInput.InvokeTextInput(CodePagesEncodingProvider.Instance.GetEncoding(437).GetString(Convert.FromHexString(args[2])));break;
-                case "SEX":panel.Female.IsChecked=args[2]=="1";panel.Male.IsChecked=args[2]!="1";break;
+                case "SEX":
+                    var choice=args[2]=="1"?panel.Female:panel.Male;
+                    Mouse.Position=new Point(panel.X+choice.X+(args.Length>3?30:5),panel.Y+choice.Y+5);
+                    Mouse.ButtonPress(MouseButtonType.Left);UIManager.OnMouseButtonDown(MouseButtonType.Left);
+                    Mouse.ButtonRelease(MouseButtonType.Left);UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                    if(panel.Male.IsChecked==panel.Female.IsChecked || !choice.IsChecked)
+                        throw new InvalidOperationException("Gender click must leave exactly the selected choice checked");
+                    break;
                 case "SUBMIT":panel.OnButtonClick(1);break;
                 case "INVALID":if(request!=null || string.IsNullOrEmpty(panel.Error.Text))throw new InvalidOperationException("Invalid name was accepted");break;
                 case "HELD":string state=TrinsicSession.DreamCheckpoint();if(checkpoint!=null && state!=checkpoint)throw new InvalidOperationException("Creation advanced the game");checkpoint=state;break;
                 case "KEY":OnKeyDown(new SDL.SDL_KeyboardEvent{key=(uint)Enum.Parse<SDL.SDL_Keycode>("SDLK_"+args[2])});break;
                 default:throw new InvalidOperationException("Expected character creation, got "+args[1]);
+            }
+        }
+        // The stock radio inherits a checkbox's toggle-off click. Keep selection
+        // mandatory on this form without changing other client radio controls.
+        private sealed class AvatarChoice : RadioButton
+        {
+            internal AvatarChoice(string text):base(1,0xd0,0xd1,text,1,0x386,false) { }
+            protected override void OnMouseUp(int x,int y,MouseButtonType button)
+            {
+                if(!IsChecked)base.OnMouseUp(x,y,button);
             }
         }
         private sealed class CreationGump : Gump
@@ -113,12 +132,19 @@ namespace ClassicUO.Game.Intro
                 Add(new ResizePic(0xbb8){X=44,Y=148,Width=352,Height=36});
                 Add(NameInput=new StbTextBox(1,14,328,true,hue:0x386){X=56,Y=157,Width=328,Height=22});
                 Text(196,"Choose your Avatar");
-                Add(Male=new RadioButton(1,0xd0,0xd1,"Male",1,0x386,false){X=44,Y=228,IsChecked=true});
-                Add(Female=new RadioButton(1,0xd0,0xd1,"Female",1,0x386,false){X=220,Y=228});
+                Add(Male=new AvatarChoice("Male"){X=44,Y=228,IsChecked=true});
+                Add(Female=new AvatarChoice("Female"){X=220,Y=228});
                 Error=Text(268,"");
                 NameInput.TextChanged+=(_,_)=>{if(scene.request==null)Error.Text="";};
-                Add(new NiceButton(44,334,144,28,ButtonAction.Activate,"Quit",hue:0x386,unicode:false,font:1){ButtonParameter=2,IsSelectable=false});
-                Add(new NiceButton(252,334,144,28,ButtonAction.Activate,"Begin",hue:0x386,unicode:false,font:1){ButtonParameter=1,IsSelectable=false});
+                Action(2,44,"Quit");Action(1,300,"Begin");
+            }
+            private void Action(int id,int x,string text)
+            {
+                // Same stock blue gem and clickable caption as the in-game U7 menus.
+                Add(new Button(id,0x837,0x838,0x837){X=x,Y=334,ButtonAction=ButtonAction.Activate});
+                Add(new NiceButton(x+21,331,75,25,ButtonAction.Activate,text,
+                    align:ClassicUO.Assets.TEXT_ALIGN_TYPE.TS_LEFT,hue:0x386,unicode:false,font:1)
+                    {ButtonParameter=id,IsSelectable=false});
             }
             private Label Text(int y,string text){var label=new Label(text,false,0x386,352,font:1){X=44,Y=y};Add(label);return label;}
             internal void Busy(bool busy){NameInput.IsEnabled=Male.IsEnabled=Female.IsEnabled=!busy;}
