@@ -62,6 +62,32 @@ class AtlasSiteTests(unittest.TestCase):
         self.assertIsNone(site.PATH_PATTERN.search('https://github.com/vedit/ultima-offline-7'))
         self.assertIsNotNone(site.PATH_PATTERN.search('C:/Users/Test/atlas'))
 
+    def test_weapons_land_at_root_and_catalog_links_keep_their_location(self):
+        (self.atlas / 'index.html').write_text('<main>Catalog <a href="armory.html">Weapons</a></main>')
+        (self.atlas / 'armory.html').write_text('<main>Weapon review <a href="index.html?scope=all#637/0">Original</a></main>')
+        result = self.run_export()
+        self.assertEqual(result['landing_page'], 'armory.html')
+        self.assertEqual((self.out / 'index.html').read_bytes(), (self.out / 'armory.html').read_bytes())
+        self.assertIn('atlas.html?scope=all#637/0', (self.out / 'index.html').read_text())
+        self.assertIn('Catalog', (self.out / 'atlas.html').read_text())
+        self.assertIn('atlas.html', result['output_sha256'])
+
+    def test_review_overlay_preserves_ordinary_items_and_replaces_superseded_variants(self):
+        spec = importlib.util.spec_from_file_location('review_snapshot', script.with_name('review_snapshot.py'))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        base = [dict(shape=s, ground='old') for s in (561, 564, 759, 587, 545, 663, 637, 702)]
+        lore = [dict(shape=s, ground='accepted') for s in ('561/0', '564/0', '759/0', '759/1', '587/1', '587-approved')]
+        cards = module.reconcile_cards(base, lore, {'ground':'final contour'}, {545:{'ground':'silver'}, 663:{'ground':'blue rim'}})
+        by_shape = {c['shape']:c for c in cards}
+        self.assertNotIn(561, by_shape)
+        self.assertNotIn('587-approved', by_shape)
+        self.assertEqual(by_shape[587]['ground'], 'old')
+        self.assertEqual(by_shape['587/1']['ground'], 'accepted')
+        self.assertEqual(by_shape[663]['ground'], 'blue rim')
+        self.assertEqual(by_shape[637]['ground'], 'final contour')
+        self.assertTrue(by_shape['759/1']['approved'])
+
     def test_local_atlas_link_is_rewritten_but_outside_file_is_rejected(self):
         if self.root.drive:  # Windows file:/// drive syntax used by the review pages.
             url = (self.atlas / 'index.html').as_uri()

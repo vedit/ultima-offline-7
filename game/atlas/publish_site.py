@@ -72,18 +72,24 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def export(atlas, output):
+def export(atlas, output, reviews=None, guard_ground=None):
     atlas, output = atlas.resolve(), output.resolve()
     if atlas == output or atlas.is_relative_to(output) or output.is_relative_to(atlas):
         raise ValueError('Export must be separate from the source atlas')
     if output.exists() and any(p.name != '.git' for p in output.iterdir()):
         raise ValueError('Use an empty export directory (a new Pages worktree may contain .git)')
+    overrides, review_receipt = {}, None
+    if reviews is not None:
+        if guard_ground is None:
+            raise ValueError('The final approved guard-ground directory is required with reviews')
+        from review_snapshot import build_reviews
+        overrides, review_receipt = build_reviews(reviews, guard_ground)
     text = (atlas / 'catalog.js').read_text(encoding='utf-8-sig')
     match = re.fullmatch(r'\s*const CATALOG\s*=\s*(\[.*\]);\s*', text, re.S)
     if not match:
         raise ValueError('Unknown atlas catalog format')
     catalog = json.loads(match[1])
-    queue = deque(['index.html', 'catalog.js'])
+    queue = deque(['index.html', 'catalog.js', *overrides])
     for row in catalog:
         for field in ('source_image', 'target_image', 'detail_image'):
             if value := row.get(field):
@@ -100,26 +106,31 @@ def export(atlas, output):
             raise ValueError(f'Missing or unsupported website dependency: {name}')
         selected.add(name)
         if name.endswith('.html'):
-            html = (atlas / name).read_text(encoding='utf-8-sig')
+            html = overrides.get(name) or (atlas / name).read_text(encoding='utf-8-sig')
             for url in Links(html).urls:
                 target = local_link(url, name, atlas)
                 if target:
                     queue.append(target)
-                    if url.startswith('file:///'):
+                    if target == 'index.html':
+                        parts = urlsplit(url)
+                        html = html.replace(url, 'atlas.html' + ('?' + parts.query if parts.query else '') + ('#' + parts.fragment if parts.fragment else ''))
+                    elif url.startswith('file:///'):
                         html = html.replace(url, target)
             if PATH_PATTERN.search(html):
                 raise ValueError(f'Unresolved local path in {name}')
             pages[name] = html
 
     output.mkdir(parents=True, exist_ok=True)
-    nav = [('index.html', 'Atlas'), ('homes.html', 'Homes'), ('inn.html', 'Inn'),
-           ('public-interiors.html', 'Public interiors'), ('armory.html', 'Armory'), ('shields.html', 'Shields')]
-    links = ' '.join(f'<a href="{url}">{label}</a>' for url, label in nav if url in selected)
-    style = '<style>.atlas-site-nav{max-width:1510px;margin:0 auto;padding:16px clamp(16px,4vw,60px);display:flex;flex-wrap:wrap;gap:10px 20px;font:14px/1.5 system-ui,sans-serif;border-bottom:1px solid #45575a}.atlas-site-nav a{color:#aadad5}.atlas-site-nav strong{color:#edf1e8;margin-right:auto}.atlas-site-note{font:12px/1.5 system-ui,sans-serif;color:#b5c5c2;margin:24px 0}.atlas-site-note a{color:#aadad5}</style>'
+    exported = {('atlas.html' if p == 'index.html' else p) for p in selected} | {'index.html'}
+    nav = [('index.html', 'Weapons & armour'), ('atlas.html', 'Full catalog'),
+           ('homes.html', 'Homes'), ('inn.html', 'Inn'),
+           ('public-interiors.html', 'Public interiors'), ('shields.html', 'Shields')]
+    links = ' '.join(f'<a href="{url}">{label}</a>' for url, label in nav if url in exported)
+    style = '<style>.atlas-site-nav{position:static;max-width:1510px;margin:0 auto;padding:16px clamp(16px,4vw,60px);display:flex;flex-wrap:wrap;gap:10px 20px;font:14px/1.5 system-ui,sans-serif;border-bottom:1px solid #45575a}.atlas-site-nav a{color:#aadad5}.atlas-site-nav strong{color:#edf1e8;margin-right:auto}.atlas-site-note{font:12px/1.5 system-ui,sans-serif;color:#b5c5c2;margin:24px 0}.atlas-site-note a{color:#aadad5}</style>'
     header = style + f'<nav class="atlas-site-nav" aria-label="Atlas pages"><strong>Ultima Offline 7</strong>{links} <a href="{REPO}">GitHub</a></nav>'
     note = '<p class="atlas-site-note">Public review snapshot. Candidate and approval labels describe artwork review, not guaranteed in-game coverage. Ultima VII and Ultima Online artwork belongs to its respective rights holders. <a href="publication.json">Snapshot details</a></p>'
     for name in sorted(selected):
-        dest = output / name
+        dest = output / ('atlas.html' if name == 'index.html' else name)
         dest.parent.mkdir(parents=True, exist_ok=True)
         if name in pages:
             html = pages[name]
@@ -135,16 +146,21 @@ def export(atlas, output):
             dest.write_text(json.dumps(payload, indent=2) + '\n', encoding='utf8')
         else:
             shutil.copyfile(atlas / name, dest)
+    # Serve the actual equipment page at the site root, with no redirect or
+    # intermediate catalog flash. Keep armory.html bookmarks working too.
+    landing = 'armory.html' if 'armory.html' in pages else 'atlas.html'
+    shutil.copyfile(output / landing, output / 'index.html')
     (output / '.nojekyll').write_text('')
     metadata = dict(published_at=datetime.now(timezone.utc).isoformat(),
                     source_updated_at=datetime.fromtimestamp((atlas / 'index.html').stat().st_mtime, timezone.utc).isoformat(),
-                    rows=len(catalog), pages=sorted(pages), files=len(selected),
-                    bytes=sum((output / p).stat().st_size for p in selected),
+                    rows=len(catalog), pages=sorted(p for p in exported if p.endswith('.html')), files=len(exported),
+                    bytes=sum((output / p).stat().st_size for p in exported),
+                    landing_page=landing, review_snapshot=review_receipt,
                     source_catalog_sha256=sha(atlas / 'catalog.js'),
                     scope='Linked review galleries and catalog thumbnails; runtime files and unlinked old revisions excluded',
-                    output_sha256={p:sha(output / p) for p in sorted(selected) if not p.startswith('images/')})
+                    output_sha256={p:sha(output / p) for p in sorted(exported) if not p.startswith('images/')})
     (output / 'publication.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf8')
-    print(json.dumps({k:v for k,v in metadata.items() if k != 'output_sha256'}, indent=2))
+    print(json.dumps({k:v for k,v in metadata.items() if k not in ('output_sha256', 'review_snapshot')}, indent=2))
     return metadata
 
 
@@ -152,5 +168,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--atlas', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--reviews', type=Path, help='Atlas chat review root; reconcile later equipment reviews')
+    parser.add_argument('--guard-ground', type=Path, help='Final approved 637-0.png through 637-4.png directory')
     args = parser.parse_args()
-    export(args.atlas, args.out)
+    export(args.atlas, args.out, args.reviews, args.guard_ground)
