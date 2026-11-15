@@ -37,14 +37,14 @@ namespace ClassicUO.Game.Intro
         private long lastTick;
         private bool handedOff, voiceStarted, manuallyPaused, awakened;
         private double visualSeconds, pausedVisualAt, pausedAt;
-        private Item portal;
+        private Item portal, bed;
         private Point? replayDestination;
         private readonly Queue<Point> replayRoute=new();
         private Point replayStart;
         private bool sawWalk, sawRun;
         private const int Origin=64;
         internal static readonly Point PortalTile=new(Origin+1,Origin+5);
-        private const int BlueWidth=154, BlueHeight=341, BlueColumns=13, BlueFrames=78;
+        private const int BlueWidth=320, BlueHeight=200, BlueColumns=13, BlueFrames=78;
         private int BlueFrame=>(int)(visualSeconds*20)%BlueFrames;
 
         internal static bool TryCreate(World world,Action begin,out U7DreamIntroScene scene)
@@ -75,18 +75,34 @@ namespace ClassicUO.Game.Intro
                 Chunk.ClearPool();
                 room.CreatePlayer(0x7ffe);
                 room.Player.Graphic=native.Player.Graphic;room.Player.Hue=native.Player.Hue;room.Player.Name=native.Player.Name;
+                room.Player.IsFemale=native.Player.IsFemale;
                 room.Player.Stamina=room.Player.StaminaMax=30;
                 room.Player.Hits=room.Player.HitsMax=30;
                 room.MapIndex=0;
-                room.Player.SetInWorldTile(Origin+4,Origin+4,5);
-                room.Player.Direction=(Direction)4;
+                room.Player.SetInWorldTile(Origin+4,Origin+4,4);
+                room.Player.Direction=(Direction)7;
                 uint serial=0x7ffe0100;
-                for(int layer=1;layer<=27;layer++) {
-                    var source=native.Player.FindItemByLayer((Layer)layer);if(source==null)continue;
+                // Keep the actual Avatar's body, skin and hair, without copying combat gear.
+                foreach(var layer in new[]{Layer.Hair,Layer.Beard}) {
+                    var source=native.Player.FindItemByLayer(layer);if(source==null)continue;
                     var item=Item.Create(room,serial++);item.Graphic=source.Graphic;item.Hue=source.Hue;
-                    item.Layer=(Layer)layer;item.Container=room.Player.Serial;item.Amount=1;
+                    item.Layer=layer;item.Container=room.Player.Serial;item.Amount=1;
                     room.Items.Add(item);room.Player.PushToBack(item);
                 }
+                void Clothes(ushort graphic,ushort hue,Layer layer) {
+                    var item=Item.Create(room,serial++);item.Graphic=graphic;item.Hue=hue;
+                    item.Layer=layer;item.Container=room.Player.Serial;item.Amount=1;
+                    room.Items.Add(item);room.Player.PushToBack(item);
+                }
+                Clothes(0x1517,0,Layer.Shirt);Clothes(0x1539,0x0386,Layer.Pants);
+                bed=Item.Create(room,0x7ffe0003);
+                bed.Graphic=TrinsicTown.Graphic(696,0,0,0,0,true);bed.Amount=1;bed.Name="Bed";
+                if(bed.Graphic==0)throw new InvalidDataException("The approved town bed is unavailable");
+                room.Items.Add(bed);bed.SetInWorldTile(Origin+4,Origin+4,0);
+                room.Player.NativeLyingDown=true;
+                room.Player.NativeBedAnchor=new Point(Origin+4,Origin+4);
+                room.Player.NativeBedAcrossX=true;
+                room.Player.NativeRestOffset=new Point(-5,-17);
                 room.Player.SetAnimation(21,frameCount:byte.MaxValue,fromServer:true);room.Player.ExecuteAnimation=false;
                 var vision=new VisionItem(this) {Serial=0x7ffe0001,Graphic=0x1b,Name="Guardian",Amount=1};
                 room.Items.Add(vision);vision.SetInWorldTile(Origin,Origin,0);
@@ -99,14 +115,14 @@ namespace ClassicUO.Game.Intro
             for(int y=0;y<8;y++)for(int x=0;x<8;x++) {
                 ushort wx=(ushort)(chunk.X*8+x),wy=(ushort)(chunk.Y*8+y);
                 var land=Land.Create(world,2);land.AllowedToDraw=false;land.X=wx;land.Y=wy;land.Z=0;land.UpdateScreenPosition();chunk.AddGameObject(land,x,y);
-                void Add(ushort graphic,sbyte z) {
-                    var tile=Static.Create(world,graphic,0,y*8+x);tile.X=wx;tile.Y=wy;tile.Z=z;tile.UpdateScreenPosition();chunk.AddGameObject(tile,x,y);
+                void Add(ushort graphic,sbyte z,bool visible=true) {
+                    var tile=Static.Create(world,graphic,0,y*8+x);tile.AllowedToDraw=visible;tile.X=wx;tile.Y=wy;tile.Z=z;tile.UpdateScreenPosition();chunk.AddGameObject(tile,x,y);
                 }
                 int rx=wx-Origin,ry=wy-Origin;
                 if(rx>=1 && rx<=10 && ry>=1 && ry<=10)Add(0x519,0);
-                if(rx==0 && ry>=0 && ry<=10){Add(0x1b,0);Add(0x1b,20);}
-                if(rx==4 && ry==3)Add(0xa63,0);
-                if(rx==4 && ry==4)Add(0xa5c,0);
+                // The approved bed is one whole sprite; these invisible stock
+                // collision tiles cover its two-tile length, without extra bed art.
+                if((rx==3 || rx==4) && ry==4)Add(0xa63,0,false);
             }
             return true;
         }
@@ -119,6 +135,7 @@ namespace ClassicUO.Game.Intro
         private void Wake()
         {
             if(awakened)return;awakened=true;
+            room.Player.NativeLyingDown=false;room.Player.NativeBedAnchor=null;room.Player.NativeRestOffset=Point.Zero;
             room.Player.ExecuteAnimation=true;room.Player.SetAnimation(0xff);
             room.Player.ClearSteps();room.Player.Walker.Reset();room.Player.SetInWorldTile(Origin+5,Origin+5,0);
             UpdateDrawPosition=true;
@@ -210,9 +227,16 @@ namespace ClassicUO.Game.Intro
             internal VisionItem(U7DreamIntroScene scene):base(scene.room){this.scene=scene;}
             public override bool Draw(UltimaBatcher2D batcher,int x,int y,float depth)
             {
-                float alpha=scene.Timeline.FaceAlpha;if(alpha<=0)return true;
                 int phase=scene.BlueFrame;
-                // Each bay shares its supporting wall's world depth, with the head just in front.
+                // A viewport-filling backdrop in the world render target. The floor,
+                // bed, player and portal retain their ordinary world depth in front.
+                var topLeft=scene.Camera.ScreenToWorld(Point.Zero);
+                var bottomRight=scene.Camera.ScreenToWorld(new Point(scene.Camera.Bounds.Width,scene.Camera.Bounds.Height));
+                batcher.Draw(scene.blueStatic,new Vector2(topLeft.X-1,topLeft.Y-1),
+                    new Rectangle(phase%BlueColumns*BlueWidth,phase/BlueColumns*BlueHeight,BlueWidth,BlueHeight),
+                    new Vector3(0,0,1),0,Vector2.Zero,
+                    new Vector2((bottomRight.X-topLeft.X+2f)/BlueWidth,(bottomRight.Y-topLeft.Y+2f)/BlueHeight),SpriteEffects.None,0);
+                float alpha=scene.Timeline.FaceAlpha;if(alpha<=0)return true;
                 void Layer(Texture2D texture,Rectangle source,int dx,int dy,float bias) {
                     for(int col=0;col<source.Width;col++) {
                         float bay=Math.Max(0,(int)Math.Ceiling((-dx-col)/22f));
@@ -220,14 +244,6 @@ namespace ClassicUO.Game.Intro
                             new Rectangle(source.X+col,source.Y,1,source.Height),new Vector3(0,0,alpha),0,
                             Vector2.Zero,Vector2.One,SpriteEffects.None,depth+bay+1f+bias);
                     }
-                }
-                // Widen the wall along its isometric axis, retaining vertical pixel scale.
-                // Sample the same original pattern; mouths still reveal this one wall layer.
-                const int wallWidth=242,wallLeft=-220;
-                for(int col=0;col<wallWidth;col++) {
-                    int sourceCol=col*BlueWidth/wallWidth;
-                    int dy=wallWidth-col-(BlueWidth-sourceCol);
-                    Layer(scene.blueStatic,new Rectangle(phase%BlueColumns*BlueWidth+sourceCol,phase/BlueColumns*BlueHeight,1,BlueHeight),wallLeft+col,-187+dy,.05f);
                 }
                 Layer(scene.relief,new Rectangle(scene.Timeline.Mouth*scene.data.Width,scene.Timeline.Eyes*scene.data.Height,scene.data.Width,scene.data.Height),-151,-58,.1f);
                 return true;
@@ -241,6 +257,27 @@ namespace ClassicUO.Game.Intro
             if(args[1]=="GAME"){if(scene!=null || Client.Game.Scene is not GameScene)throw new InvalidOperationException($"Dream did not hand off at {scene?.room.Player.X-Origin},{scene?.room.Player.Y-Origin}, phase {scene?.Timeline.Phase}");return;}
             if(scene==null)throw new InvalidOperationException("Expected dream world scene");
             switch(args[1]) {
+                case "APPEARANCE":
+                    var player=scene.room.Player;var native=scene.nativeWorld.Player;
+                    if(player.Graphic!=native.Graphic || player.Hue!=native.Hue || player.IsFemale!=native.IsFemale)
+                        throw new InvalidOperationException("Dream Avatar identity differs from the game");
+                    var hair=player.FindItemByLayer(Layer.Hair);var nativeHair=native.FindItemByLayer(Layer.Hair);
+                    if(hair==null || nativeHair==null || hair.Graphic!=nativeHair.Graphic || hair.Hue!=nativeHair.Hue)
+                        throw new InvalidOperationException("Dream hair differs from the game");
+                    for(int layer=1;layer<=27;layer++)
+                        if((Layer)layer is not (Layer.Hair or Layer.Beard or Layer.Shirt or Layer.Pants) && player.FindItemByLayer((Layer)layer)!=null)
+                            throw new InvalidOperationException("Combat equipment leaked into the dream");
+                    if(player.NativeLyingDown!=!scene.awakened || player.NativeBedAnchor.HasValue!=!scene.awakened)
+                        throw new InvalidOperationException("Dream sleeping pose did not reset on waking");
+                    if(!scene.awakened) {
+                        var restOrigin=player.RealScreenPosition+new Point(22,19)+player.NativeRestDrawOffset;
+                        var restBounds=new Rectangle(restOrigin.X-player.FrameInfo.X,restOrigin.Y-player.FrameInfo.Y,player.FrameInfo.Width,player.FrameInfo.Height);
+                        var uv=Client.Game.UO.Arts.GetArt(scene.bed.Graphic).UV;
+                        var bedBounds=new Rectangle(scene.bed.RealScreenPosition.X+22-uv.Width/2,scene.bed.RealScreenPosition.Y+44-uv.Height,uv.Width,uv.Height);
+                        if(!bedBounds.Contains(restBounds.Center))throw new InvalidOperationException($"Sleeper misses bed: {restBounds} / {bedBounds}");
+                        Console.WriteLine($"DREAM BED: {scene.bed.Graphic:x}, body {restBounds}, bed {bedBounds}, hair {hair.Graphic:x}/{hair.Hue:x}");
+                    }
+                    break;
                 case "PHASE":if(scene.Timeline.Phase.ToString()!=args[2])throw new InvalidOperationException("Unexpected dream phase "+scene.Timeline.Phase);break;
                 case "WORLD":Console.WriteLine($"DREAM WORLD: body={scene.room.Player.Graphic:x}, pos={scene.room.Player.X-Origin},{scene.room.Player.Y-Origin}, objects={scene.room.Items.Count}");if(scene.room==scene.nativeWorld || scene.RenderedObjectsCount<30)throw new InvalidOperationException("Room was not rendered by GameScene");break;
                 case "COLLISION":

@@ -7,12 +7,12 @@ import shutil
 import sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
-os.environ.setdefault('TRINSIC_CLIENT_BIN',str(HERE/'bin/arrival-client'))
+os.environ.setdefault('TRINSIC_CLIENT_BIN',str(HERE/'bin/painted-client'))
 os.environ.setdefault('TRINSIC_HOST_EXECUTABLE',str(HERE/'bin/native-arrival/Ultima7.exe'))
 sys.path.insert(0,str(HERE.parent/'qualification'))
 spec=importlib.util.spec_from_file_location('client_proof',HERE.parent/'qualification/client-proof.py')
 proof=importlib.util.module_from_spec(spec);spec.loader.exec_module(proof)
-extra={'TRINSIC_INTRO_ASSETS':str(HERE/'bin/assets'),'U7_ENABLE_AUDIO':'1'}
+extra={'TRINSIC_INTRO_ASSETS':os.environ.get('TRINSIC_INTRO_ASSETS',str(HERE/'bin/painted-assets')),'U7_ENABLE_AUDIO':'1'}
 
 def run(mode):
     if mode=='arrival':
@@ -48,8 +48,8 @@ def run(mode):
         print(json.dumps(results));return
     options=dict(extra)
     if mode=='world':
-        commands=['WAIT 3000','INTRO WORLD','INTRO HELD','CAPTURE',
-                  'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO WORLD','INTRO COLLISION','INTRO HELD','CAPTURE',
+        commands=['WAIT 3000','INTRO WORLD','INTRO APPEARANCE','INTRO HELD','CAPTURE',
+                  'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO WORLD','INTRO APPEARANCE','INTRO COLLISION','INTRO HELD','CAPTURE',
                   'WAIT 1800','INTRO PHASE Portal','INTRO RECORDPOS',
                   'INTRO KEY RIGHT','WAIT 700','INTRO KEYUP RIGHT','WAIT 800','INTRO MOVED','CAPTURE',
                   'INTRO KEY SPACE','WAIT 200','INTRO RECORDPOS','INTRO KEY LEFT','WAIT 600','INTRO STILL','INTRO KEYUP LEFT','INTRO KEY SPACE',
@@ -81,7 +81,7 @@ def run(mode):
             profile.write_text(json.dumps(settings))
         else:
             folder=HERE/'bin/no-voice';folder.mkdir(exist_ok=True)
-            for name in ('guardian.png','intro.json','blue-static.png'):shutil.copyfile(HERE/'bin/assets'/name,folder/name)
+            for name in ('guardian.png','intro.json','blue-static.png'):shutil.copyfile(Path(extra['TRINSIC_INTRO_ASSETS'])/name,folder/name)
             options['TRINSIC_INTRO_ASSETS']=str(folder)
         commands=['WAIT 2500','INTRO PHASE Speech','INTRO '+mode.upper(),'INTRO HELD','CAPTURE',
                   'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO HELD','INTRO PORTAL','WAIT 10000','INTRO GAME','EXIT']
@@ -91,12 +91,22 @@ def run(mode):
         last=next(e for e in reversed(r['events']) if e.startswith('INTRO GAME |'))
         if 'sync 1071 2210 0 1 ' not in last:raise RuntimeError('Arrival did not reach the original greeting at the stable entrance')
         r['stable_arrival']=[1071,2210,0]
+        from PIL import Image
+        with Image.open(proof.ROOT/'runs'/r['run']/r['images'][0]) as shot:
+            for box in ((15,80,80,180),(1080,80,1145,180),(350,10,450,30)):
+                pixels=list(shot.crop(box).convert('RGB').getdata())
+                if sum(b>r*2 and b>g*2 and b>35 for r,g,b in pixels)<len(pixels)*.9:
+                    raise RuntimeError('Blue backdrop does not cover viewport edges')
+        r['blue_covers_left_right_top']=True
     if mode=='full':
         # Void must not fade into an opaque foreground over the room.
         from PIL import Image
         for name in r['images'][1:3]:
             with Image.open(proof.ROOT/'runs'/r['run']/name) as shot:
-                visible=sum(max(pixel[:3])>30 for pixel in shot.crop((560,400,650,500)).getdata())
+                    # Distinguish the neutral stone floor from the saturated blue
+                    # backdrop, which must not count as a surviving room surface.
+                    visible=sum(min(pixel[:3])>30 and max(pixel[:3])-min(pixel[:3])<65
+                                for pixel in shot.crop((560,400,650,500)).getdata())
             if visible<6000:raise RuntimeError('Room floor disappeared during speech')
         r['floor_visible_during_speech']=True
     if mode=='resume':

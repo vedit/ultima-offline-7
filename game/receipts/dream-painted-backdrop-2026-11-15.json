@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-15",
+  "feature": "Painted Guardian, full blue backdrop, approved bed and unarmoured Avatar",
+  "client": "game/intro/bin/painted-client",
+  "client_sha256": "833b6e25f89d0f0766c0e63cb4fec9b4a886d253964f872bd43c529bbc47127a",
+  "assets": "game/intro/bin/painted-assets",
+  "guardian_sha256": "ae6b396e0171d0fffa770f10c6c51e6c485bbe7911c1d2738a2f609fce3b89dc",
+  "blue_sha256": "2053ece66afd9b1d6889159c504411038f39d47bffc70f7d2230da9e3c3cfa72",
+  "art": {
+    "source": "Four accepted interim clay poses, coloured through built-in image_gen",
+    "provenance": "game/intro/art/painted-clay/prompts.json",
+    "colours": "Crimson face, golden yellow eyes",
+    "transparent_mouth_pixels": [0, 103, 472, 856, 472],
+    "blue": "Original U7 320x200 monitor bitmap and 78 palette phases, filling the world viewport",
+    "stone_wall_removed": true,
+    "bed": "Current town mapping for original shape 696/frame 0, observed graphic 0xc2b4"
+  },
+  "avatar": {
+    "identity": "Body, skin, gender, hair and beard copied from the actual game Avatar",
+    "hair_observed": "0x203c, hue 0x0460",
+    "clothing": "Local plain shirt and trousers; no copied armour or weapons",
+    "alignment": "Existing game sleeper registration, cleared on waking",
+    "observed_body_bounds": [543, 398, 59, 32],
+    "observed_bed_bounds": [532, 371, 92, 105],
+    "native_equipment_unchanged": true
+  },
+  "validation": {
+    "build": "Passed, 0 errors and 15 warnings",
+    "world": "Passed appearance/identity, bed registration, wake reset, collision, walking, running, pause and original stable-door arrival",
+    "background": "Passed blue coverage assertions at left, right and top viewport edges",
+    "arrival": "Final native position 1071,2210,0 and exactly one travel effect",
+    "full_speech": "Passed audio, pause, unchanged native state, complete speech and portal transition",
+    "neutral_floor_pixels_during_speech": [7139, 7139],
+    "resume": "Passed native save/reload and intro bypass",
+    "visual_review": ["dream-world-proof/dream-0.png", "dream-world-proof/dream-1.png"]
+  },
+  "limits": [
+    "Interim four-pose facial animation remains; all eye rows reuse the open-eye poses",
+    "Uses the current approved town bed mapping and existing native-sleeper client dependency"
+  ],
+  "parallel_work": "Separate client/assets output; no parallel rendering, native gameplay or town-art files changed"
+}

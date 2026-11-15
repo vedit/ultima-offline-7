@@ -1,24 +1,27 @@
 # Dream opening
 
-**Interim art — accepted for now on 2026-11-15.** The user considers the clay
+**Interim art â€” accepted for now on 2026-11-15.** The user considers the clay
 animation imperfect but usable for this demo. The selected first grey clay
-master and three original-frame mouth studies are now installed in the isolated
+master and three original-frame mouth studies now have a crimson/yellow colour
+pass installed in the isolated
 intro. Small, medium and wide openings come from original U7 frames 6, 5 and 3.
 Rounded cues reuse medium, and eyelid rows repeat the open-eye heads. This is
 still four full-head poses, not a final animation set. The rejected red head,
-second clay pass and later colour pass are not used.
+second clay pass and the old colour pass are not used. The new paint pass is in
+`art/painted-clay`; its prompt and source-image provenance are recorded there.
 
-The wall uses the original blue monitor pattern from `ENDSHAPE.FLX` member 19
-and `INTROPAL.DAT` member 2. The importer projects that bitmap onto the UO wall
-plane and exports all 78 palette phases for entries 16 through 93, rotating in
+The background uses the original blue monitor pattern from `ENDSHAPE.FLX` member 19
+and `INTROPAL.DAT` member 2. The importer exports the full 320-by-200 bitmap in
+all 78 palette phases for entries 16 through 93, rotating in
 the original speech-loop direction. The client advances at 20 phases/second.
-The texture and colours are original; the wall projection and presentation
-cadence are adaptations for this scene. No new random noise is generated.
+The texture and colours are original; viewport scaling and presentation cadence
+are adaptations for this scene. No new random noise is generated.
 
-One animated wall is drawn behind the complete head. Mouth apertures are true
-alpha holes, so they expose the same wall coordinates and animation phase.
-There is no separate texture inside the mouth. The wall fades with the face,
-pauses with the scene, and gives way to the existing stone wall and red portal.
+One background is drawn behind the complete head in the world render target,
+covering its full width and height. Mouth apertures are true alpha holes, so
+they expose the same background coordinates and animation phase. There is no
+separate texture inside the mouth. The pattern pauses with the scene and stays
+behind the red portal after the head fades. The stone wall is removed.
 Original retail pixels and audio are prepared from the local installation into
 ignored `bin/` files; they are not checked in.
 
@@ -56,7 +59,7 @@ robocopy E:/UltimaOffline/PoCs/ClassicUO-U7-Local/client game/intro/bin/source /
 robocopy game/client/src game/intro/bin/source/src /E /NFL /NDL /NJH /NJS /NP /R:0 /W:0
 $env:DOTNET_CLI_HOME = Join-Path $PWD 'game/intro/bin/cache/dotnet'
 $env:NUGET_PACKAGES = Join-Path $PWD 'game/intro/bin/cache/packages'
-$output = Join-Path $PWD 'game/intro/bin/arrival-client/'
+$output = Join-Path $PWD 'game/intro/bin/painted-client/'
 & E:/UltimaOffline/Tools/dotnet/dotnet.exe build game/intro/bin/source/src/ClassicUO.Client/ClassicUO.Client.csproj -c Release -p:PublishAot=false -p:UseSharedCompilation=false -p:NuGetAudit=false '-p:RestoreFallbackFolders=E:/UltimaOffline/Cache/NuGet' --source E:/UltimaOffline/Cache/NuGet --disable-build-servers "-p:OutputPath=$output"
 ```
 
@@ -69,7 +72,7 @@ original blue pattern is exported as a separate 78-frame palette-cycle atlas. Na
 ## Verification
 
 ```powershell
-& E:/UltimaOffline/Tools/dotnet/dotnet.exe run --project game/intro/tests/TimelineTests.csproj -- game/intro/bin/assets/intro.json
+& E:/UltimaOffline/Tools/dotnet/dotnet.exe run --project game/intro/tests/TimelineTests.csproj -- game/intro/bin/painted-assets/intro.json
 py -3.13 game/intro/verify.py world
 py -3.13 game/intro/verify.py full
 py -3.13 game/intro/verify.py skip
@@ -92,7 +95,7 @@ Earth bedroom cinematic.
 ## World-rendered first slice
 
 The opening now uses `U7DreamIntroScene : GameScene` with a separate client
-`World`. Floor, bed, back wall and moongate are ordinary UO world objects;
+`World`. Floor, bed and moongate are ordinary UO world objects;
 the Guardian is a world item drawn through the normal render list and depth
 buffer. Only captions and control hints use the UI layer. No video is played.
 
@@ -110,10 +113,17 @@ exists only in the opt-in replay and never runs in a player session.
 
 ## Stable-door arrival revision
 
-The bed now uses matching stock north-facing pieces 0x0A63 and 0x0A5C.
-The sleeper selects the final animation frame explicitly. The floor is 10×10
-UO tiles and the back wall spans 11 bays; the original blue pattern covers the
-wider plane without changing the vertical scale or the head artwork.
+The bed resolves original shape 696/frame 0 through the current town mapping,
+so it uses the approved widened bed sprite rather than separate stock pieces.
+It uses the same live-sleeper alignment as the game's beds: a held final prone
+frame registered to the mattress. Waking clears that registration. The floor
+is 10Ã—10 UO tiles; the stone wall is absent.
+
+The dream copies the native Avatar's body, skin, gender, hair and beard. Only
+plain shirt and trousers are added locally; no armour or weapons are copied.
+The native Avatar's equipment is untouched and returns at Trinsic. The client
+dependency baseline must include the existing `Mobile.NativeLyingDown` and
+bed-registration support used by ordinary Trinsic sleepers.
 
 Dream handoff sends `BEGIN 1`; ordinary `BEGIN` retains the retail placement.
 The native adapter moves the off-map arrival anchor to (1074,2210,0), then

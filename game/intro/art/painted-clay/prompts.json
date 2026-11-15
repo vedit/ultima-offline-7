@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-15",
+  "tool": "built-in image_gen",
+  "request": "Paint the antagonist's head and eyes",
+  "prompt": "Edit this fictional clay sculpture asset by colouring the same sculpture red with golden-yellow eyes. Colour only: preserve its exact shape, pose, perspective, mouth shape, lighting, placement and size. Matte crimson surface and yellow eye surfaces. Preserve transparent background and transparent empty mouth aperture. No teeth or tongue, no neck or stand, no other additions. The geometric form must remain unchanged. This is one frame of a fantasy video game animation.",
+  "inputs": [
+    {
+      "name": "master",
+      "source": "../clay-original-frames/master.png",
+      "generated": "exec-27355557-411d-461c-b02a-6315cda421a7.png"
+    },
+    {
+      "name": "u7-frame-06",
+      "source": "../clay-original-frames/u7-frame-06.png",
+      "generated": "exec-c40bf0bf-dbb2-43d5-bc14-d80010f5156e.png"
+    },
+    {
+      "name": "u7-frame-05",
+      "source": "../clay-original-frames/u7-frame-05.png",
+      "generated": "exec-375f0915-8ed2-4afb-876b-148f2938e4b4.png"
+    },
+    {
+      "name": "u7-frame-03",
+      "source": "../clay-original-frames/u7-frame-03.png",
+      "generated": "exec-0dc55414-9869-41b5-b5dc-270630bfbcf3.png"
+    }
+  ],
+  "notes": [
+    "Colour pass on the accepted interim clay poses; no new anatomy or perspective requested.",
+    "Mouth apertures and backgrounds remain transparent.",
+    "Original eyelid limitations remain; all three runtime eye rows reuse open eyes."
+  ]
+}

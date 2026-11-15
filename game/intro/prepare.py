@@ -11,11 +11,11 @@ HERE = Path(__file__).resolve().parent
 ART = HERE / 'art'
 CROP = (60, 40, 1010, 1390)
 SIZE = (104, 148)
-CLAY = ART / 'clay-original-frames'
+CLAY = ART / 'painted-clay'
 # The accepted interim set has four whole-head poses. Rounded cues reuse medium;
 # eyelid rows repeat the same pose rather than reintroducing rejected artwork.
 MOUTHS = ['master', 'u7-frame-06', 'u7-frame-05', 'u7-frame-03', 'u7-frame-05']
-BLUE_SIZE = (154, 341)
+BLUE_SIZE = (320, 200)
 BLUE_COLUMNS = 13
 BLUE_FRAMES = 78
 
@@ -37,22 +37,18 @@ def blue_wall(static, out):
     if len(palette)!=768 or max(palette)>63: raise ValueError('Invalid monitor palette')
     colors=[tuple(v*255//63 for v in palette[i:i+3])+(255,) for i in range(0,768,3)]
     width,height=BLUE_SIZE
-    # Same UO wall plane for every frame. No independent mouth texture.
-    projected=[]
-    for y in range(height):
-        for x in range(width):
-            v=y+x-width
-            projected.append(pixels[min(199,v*200//187)*320+min(319,x*320//width)] if 0<=v<187 else None)
+    # Full original bitmap. The client fills its world viewport with this layer;
+    # transparent mouth apertures reveal it at the same coordinates and phase.
     atlas=Image.new('RGBA',(width*BLUE_COLUMNS,height*6))
     for phase in range(BLUE_FRAMES):
         frame=Image.new('RGBA',BLUE_SIZE)
         # Original speech loop: palette.rotate(93,16,1), inclusive range.
-        frame.putdata([(0,0,0,0) if i is None else colors[16+(i-16-phase)%78 if 16<=i<=93 else i] for i in projected])
+        frame.putdata([colors[16+(i-16-phase)%78 if 16<=i<=93 else i] for i in pixels])
         atlas.paste(frame,((phase%BLUE_COLUMNS)*width,(phase//BLUE_COLUMNS)*height))
     atlas.save(out/'blue-static.png')
     return dict(shape=19,palette=2,cycle=[93,16],frames=78,fps=20,
-                sourceSize=[320,200],wallSize=BLUE_SIZE,columns=BLUE_COLUMNS,
-                placement=[-132,-187],source='Original U7 monitor bitmap and palette; UO wall projection',
+                sourceSize=[320,200],frameSize=BLUE_SIZE,columns=BLUE_COLUMNS,
+                placement='World viewport backdrop',source='Original U7 monitor bitmap and palette',
                 original={n:hashlib.sha256((static/n).read_bytes()).hexdigest() for n in ('ENDSHAPE.FLX','INTROPAL.DAT')})
 
 def member(data, index):
@@ -82,7 +78,7 @@ def prepare(static, out):
     out.mkdir(parents=True, exist_ok=True)
     sources = {name: Image.open(CLAY / (name+'.png')).convert('RGBA') for name in set(MOUTHS)}
     if any(im.size != (1122,1402) for im in sources.values()):
-        raise ValueError('Clay sources must retain their source canvas')
+        raise ValueError('Painted clay sources must retain their source canvas')
     for im in sources.values():
         im.putalpha(im.getchannel('A').point(lambda a: 0 if a < 16 else a))
     atlas = Image.new('RGBA', (SIZE[0]*5, SIZE[1]*3))
@@ -114,7 +110,7 @@ def prepare(static, out):
     payload = dict(version=1,width=SIZE[0],height=SIZE[1],duration=len(samples)/rate,
                    cues=cues,lines=lines,textTimes=[.25,1.7,5.25,8.2,10.55,12.9,16,19.95,22.7,27.2,32.4,36.4,39.65,42.4,44])
     (out/'intro.json').write_text(json.dumps(payload),encoding='utf8')
-    receipt=dict(source='Local original U7 speech/cues/blue monitor; interim clay poses with transparent mouths',
+    receipt=dict(source='Local original U7 speech/cues/blue monitor; painted interim clay poses with transparent mouths',
                  crop=CROP,size=SIZE,transparentMouthPixels=transparent_counts,blue=blue,
                  mouthSources=MOUTHS,eyeStates='open only (interim)',
                  originalCues=len(cues),seconds=len(samples)/rate,
@@ -127,5 +123,5 @@ def prepare(static, out):
 if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('--static',type=Path,default=Path('E:/UltimaOffline/Assets/UltimaVII-Steam/STATIC'))
-    p.add_argument('--out',type=Path,default=HERE/'bin/assets')
+    p.add_argument('--out',type=Path,default=HERE/'bin/painted-assets')
     a=p.parse_args();prepare(a.static,a.out)
