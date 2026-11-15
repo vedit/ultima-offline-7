@@ -54,6 +54,15 @@ namespace ClassicUO.Game
         private static uint backpack;
         private static readonly HashSet<uint> partyMembers = new();
         private static readonly HashSet<uint> partyBackpacks = new();
+        internal static Mobile[] RosterMembers => world == null ? Array.Empty<Mobile>() :
+            partyMembers.Append(world.Player.Serial).Distinct().OrderBy(id => id == world.Player.Serial ? 0 : 1).ThenBy(id => id)
+                .Select(id => world.Mobiles.Get(id)).Where(m => m != null && !m.IsDestroyed).ToArray();
+        internal static void ShowPartyRoster()
+        {
+            var roster = UIManager.GetGump<TrinsicPartyGump>();
+            if (roster == null) UIManager.Add(new TrinsicPartyGump(world));
+            else UIManager.MakeTopMostGump(roster);
+        }
         private static int targetPrompt;
         private static readonly HashSet<uint> usable = new();
         private static readonly Dictionary<uint,(uint owner,Point position)> placements=new();
@@ -506,7 +515,7 @@ namespace ClassicUO.Game
             foreach (int[] r in rows)
             {
                 int id=r[0], shape=r[1], x=r[3], y=r[4], z=r[5]*4, parent=r[6], npc=r[7];
-                if (parent==0 && npc!=0 && Math.Max(Math.Abs(x-avatar[3]),Math.Abs(y-avatar[4]))>36) continue;
+                if (parent==0 && npc!=0 && !partyMembers.Contains((uint)id) && Math.Max(Math.Abs(x-avatar[3]),Math.Abs(y-avatar[4]))>36) continue;
                 if (parent!=0 && !parents.Contains(parent)) continue;
                 uint serial=(uint)id | (npc<0?ItemBase:0u);
                 if(parent==0 && TrinsicEffects.IsMissile(id)) continue;

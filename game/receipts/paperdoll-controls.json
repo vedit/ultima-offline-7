@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-15",
+  "feature": "U7 paperdoll controls and native companion roster",
+  "kept_buttons": [
+    "Options",
+    "Logout (quit)",
+    "Journal",
+    "War/Peace",
+    "Status"
+  ],
+  "removed_controls": [
+    "Help",
+    "Quests",
+    "UO Skills",
+    "Guild",
+    "Public profile",
+    "Virtues",
+    "UO combat and racial ability books"
+  ],
+  "party": "Double-click the paperdoll party scroll. Native party members and Avatar show current HP and buttons to open equipment or backpack. Joining/leaving remains original U7 dialogue.",
+  "native_logic_changed": false,
+  "qualification": {
+    "build": "passed; 0 errors, 18 warnings",
+    "paperdoll-controls": "passed on candidate and installed client; real scroll/button mouse input, Iolo equipment/backpack, reconnect, save/load and movement",
+    "inventory-mouse": "passed",
+    "panels": "passed",
+    "stacks-controls": "passed"
+  },
+  "evidence": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\paperdoll-controls\\client-u7-controls.json",
+  "screenshots": [
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\paperdoll-controls\\u7-controls-0.png",
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\paperdoll-controls\\u7-controls-1.png",
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\paperdoll-controls\\u7-controls-2.png"
+  ],
+  "installed_client_sha256": "f572fe81155ff48706112a4e85802eaef2b2b0036d63de925af8bb3500eb3e4d",
+  "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\archive\\before-paperdoll-controls-20261115-043457",
+  "player_save_unchanged": true,
+  "commit_scope": "Only paperdoll/roster changes and their replay qualification; pre-existing rendering, equipment art and browser edits excluded."
+}

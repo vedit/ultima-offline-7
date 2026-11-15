@@ -12,6 +12,7 @@ using ClassicUO.Utility;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 
 namespace ClassicUO.Game.UI.Gumps
@@ -112,7 +113,7 @@ namespace ClassicUO.Game.UI.Gumps
             _hitBox?.Dispose();
 
             var showPaperdollBooks =
-                LocalSerial == World.Player && World.ClientFeatures.PaperdollBooks;
+                !TrinsicSession.Enabled && LocalSerial == World.Player && World.ClientFeatures.PaperdollBooks;
             var showRacialAbilitiesBook =
                 showPaperdollBooks && Client.Game.UO.Version >= ClientVersion.CV_7000;
 
@@ -316,8 +317,29 @@ namespace ClassicUO.Game.UI.Gumps
 
             Add(_titleLabel);
 
+            if (TrinsicSession.Enabled)
+            {
+                // U7 has no shard help, guilds, UO skills, virtues or public profiles.
+                _profilePic?.Dispose();
+                _virtueMenuPic?.Dispose();
+                foreach (var button in Children.OfType<Button>().ToArray())
+                    if (!NativeButton((Buttons)button.ButtonID)) button.Dispose();
+                if (LocalSerial == World.Player)
+                {
+                    if (!Children.OfType<Button>().Any(b => !b.IsDisposed && b.ButtonID == (int)Buttons.Journal))
+                        Add(new Button((int)Buttons.Journal, 0x7dc, 0x7dd, 0x7de) { X = 185, ButtonAction = ButtonAction.Activate });
+                    var order = new[] { Buttons.Options, Buttons.LogOut, Buttons.Journal, Buttons.PeaceWarToggle, Buttons.Status };
+                    foreach (var button in Children.OfType<Button>().Where(b => !b.IsDisposed))
+                        button.Y = 44 + 27 * Array.IndexOf(order, (Buttons)button.ButtonID);
+                    _partyManifestPic.X = 25;
+                    _partyManifestPic.SetTooltip("U7 party: paperdolls and backpacks");
+                }
+            }
+
             RequestUpdateContents();
         }
+
+        private static bool NativeButton(Buttons button) => button is Buttons.Options or Buttons.LogOut or Buttons.Journal or Buttons.PeaceWarToggle or Buttons.Status;
 
         private void _picBase_MouseDoubleClick(object sender, MouseDoubleClickEventArgs e)
         {
@@ -361,6 +383,7 @@ namespace ClassicUO.Game.UI.Gumps
         {
             if (args.Button == MouseButtonType.Left)
             {
+                if (TrinsicSession.Enabled) { TrinsicSession.ShowPartyRoster(); return; }
                 PartyGump party = UIManager.GetGump<PartyGump>();
 
                 if (party == null)
@@ -575,6 +598,7 @@ namespace ClassicUO.Game.UI.Gumps
 
         public override void OnButtonClick(int buttonID)
         {
+            if (TrinsicSession.Enabled && !NativeButton((Buttons)buttonID)) return;
             if (
                 Client.Game.UO.GameCursor.ItemHold.Enabled
                 && !Client.Game.UO.GameCursor.ItemHold.IsFixedPosition

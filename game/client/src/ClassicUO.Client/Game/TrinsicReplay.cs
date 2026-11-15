@@ -489,6 +489,30 @@ namespace ClassicUO.Game
                     if(world.Items.Values.Where(i=>i.Container==Item(2) && i.TrinsicShape==Arg(1)).Sum(i=>i.Amount)!=Arg(3))
                         throw new InvalidOperationException("Wrong inventory quantity: "+command);
                     break;
+                case "U7SHEET":
+                    var u7sheet=UIManager.GetGump<PaperDollGump>(world.Player.Serial);
+                    var ids=u7sheet.Children.OfType<Button>().Where(b=>!b.IsDisposed).Select(b=>b.ButtonID).Order().ToArray();
+                    if(!ids.SequenceEqual(new[]{1,2,3,7,8}))throw new InvalidOperationException("Unrelated paperdoll buttons remain: "+string.Join(",",ids));
+                    break;
+                case "PARTYOPEN":
+                    var rosterSheet=UIManager.GetGump<PaperDollGump>(world.Player.Serial);
+                    Mouse.Position=new Point(rosterSheet.X+30,rosterSheet.Y+201);
+                    Mouse.ButtonPress(MouseButtonType.Left);UIManager.OnMouseButtonDown(MouseButtonType.Left);
+                    UIManager.OnMouseDoubleClick(MouseButtonType.Left);
+                    Mouse.ButtonRelease(MouseButtonType.Left);UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                    break;
+                case "PARTYSELECT":
+                    var roster=UIManager.GetGump<TrinsicPartyGump>();
+                    if(roster==null || UIManager.GetGump<PartyGump>()!=null)throw new InvalidOperationException("Native party roster missing or UO party menu opened");
+                    int memberIndex=Array.FindIndex(TrinsicSession.RosterMembers,m=>m.Serial==(uint)Arg(1));
+                    if(memberIndex<0)throw new InvalidOperationException("Native companion absent from roster");
+                    int memberButton=100+memberIndex*2+(a[2]=="pack"?1:0);
+                    var rosterButton=roster.Children.OfType<Button>().First(b=>b.ButtonID==memberButton);
+                    UIManager.MakeTopMostGump(roster);
+                    Mouse.Position=new Point(rosterButton.ScreenCoordinateX+5,rosterButton.ScreenCoordinateY+5);
+                    Mouse.ButtonPress(MouseButtonType.Left);UIManager.OnMouseButtonDown(MouseButtonType.Left);
+                    Mouse.ButtonRelease(MouseButtonType.Left);UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                    break;
                 case "PARTYPANELS":
                     var companion=world.Mobiles.Get((uint)Arg());
                     var companionSheet=UIManager.GetGump<PaperDollGump>(companion.Serial);
