@@ -1,0 +1,115 @@
+﻿shape,frame,name,evidence,uo_id,uo_name
+249,0,Green top,Town records,"item 0x1517 · layer 5 (shirt), animation 0x01B2, hue 0x02FB",shirt
+249,1,Orange dress,Town records,"item 0x1F01 · layer 22 (robe), animation 0x01BF, hue 0x002C",plain dress
+249,2,Blue dress,Other frame,"item 0x1F01 · layer 22 (robe), animation 0x01BF, hue 0x0005",plain dress
+249,32,Green top,Other frame,"item 0x1517 · layer 5 (shirt), animation 0x01B2, hue 0x02FB",shirt
+249,33,Orange dress,Other frame,"item 0x1F01 · layer 22 (robe), animation 0x01BF, hue 0x002C",plain dress
+249,34,Blue dress,Other frame,"item 0x1F01 · layer 22 (robe), animation 0x01BF, hue 0x0005",plain dress
+285,0,cloak,Other frame,"item 0x1530 · layer 20 (cloak), animation 0x01D4, hue 0x0389",cloak
+285,1,cloak,Other frame,"item 0x1530 · layer 20 (cloak), animation 0x01D4, hue 0x0296",cloak
+285,2,cloak,Town records,"item 0x1530 · layer 20 (cloak), animation 0x01D4",cloak
+285,32,cloak,Other frame,"item 0x1530 · layer 20 (cloak), animation 0x01D4, hue 0x0389",cloak
+285,33,cloak,Other frame,"item 0x1530 · layer 20 (cloak), animation 0x01D4, hue 0x0296",cloak
+285,34,cloak,Other frame,"item 0x1530 · layer 20 (cloak), animation 0x01D4",cloak
+444,0,hood,Town records,"item 0x278E · layer 6 (head), animation 0x01A9",Leather Ninja Hood
+444,1,hood,Town records,"item 0x278E · layer 6 (head), animation 0x01A9",Leather Ninja Hood
+444,32,hood,Other frame,"item 0x278E · layer 6 (head), animation 0x01A9",Leather Ninja Hood
+444,33,hood,Other frame,"item 0x278E · layer 6 (head), animation 0x01A9",Leather Ninja Hood
+539,0,chain coif,Town records,"item 0x13BB · layer 6 (head), animation 0x0231",chainmail  coif
+539,32,chain coif,Other frame,"item 0x13BB · layer 6 (head), animation 0x0231",chainmail  coif
+542,0,crested helm,Town records,"item 0x140A · layer 6 (head), animation 0x0235",helmet
+542,32,crested helm,Other frame,"item 0x140A · layer 6 (head), animation 0x0235",helmet
+543,0,buckler,Town records,"item 0x1B73 · layer 2 (shield hand), animation 0x0243",buckler
+543,1,buckler,Town records,"item 0x1B73 · layer 2 (shield hand), animation 0x0243",buckler
+543,2,buckler,Other frame,"item 0x1B73 · layer 2 (shield hand), animation 0x0243",buckler
+543,32,buckler,Other frame,"item 0x1B73 · layer 2 (shield hand), animation 0x0243",buckler
+543,33,buckler,Other frame,"item 0x1B73 · layer 2 (shield hand), animation 0x0243",buckler
+543,34,buckler,Other frame,"item 0x1B73 · layer 2 (shield hand), animation 0x0243",buckler
+569,0,leather armour,Town records,"item 0x13CC · layer 13 (torso), animation 0x021E",leather tunic
+569,32,leather armour,Other frame,"item 0x13CC · layer 13 (torso), animation 0x021E",leather tunic
+572,0,wooden shield,Town records,"item 0x1B7A · layer 2 (shield hand), animation 0x0242",wooden shield
+572,1,wooden shield,Town records,"item 0x1B7A · layer 2 (shield hand), animation 0x0242",wooden shield
+572,2,wooden shield,Other frame,"item 0x1B7A · layer 2 (shield hand), animation 0x0242",wooden shield
+572,32,wooden shield,Other frame,"item 0x1B7A · layer 2 (shield hand), animation 0x0242",wooden shield
+572,33,wooden shield,Other frame,"item 0x1B7A · layer 2 (shield hand), animation 0x0242",wooden shield
+572,34,wooden shield,Other frame,"item 0x1B7A · layer 2 (shield hand), animation 0x0242",wooden shield
+574,0,leather leggings,Town records,"item 0x13CB · layer 4 (pants), animation 0x021F",leather leggings
+574,32,leather leggings,Other frame,"item 0x13CB · layer 4 (pants), animation 0x021F",leather leggings
+575,0,chain leggings,Town records,"item 0x13BE · layer 4 (pants), animation 0x021C",chainmail leggings
+575,32,chain leggings,Other frame,"item 0x13BE · layer 4 (pants), animation 0x021C",chainmail leggings
+579,0,leather gloves,Town records,"item 0x13C6 · layer 7 (hands), animation 0x0221",Leather Gloves
+579,32,leather gloves,Other frame,"item 0x13C6 · layer 7 (hands), animation 0x0221",Leather Gloves
+580,0,gauntlets,Town records,"item 0x1414 · layer 7 (hands), animation 0x0212",platemail gloves
+580,32,gauntlets,Other frame,"item 0x1414 · layer 7 (hands), animation 0x0212",platemail gloves
+582,0,leather collar,Town records,"item 0x13C7 · layer 10 (neck), animation 0x0222",leather gorget
+582,32,leather collar,Other frame,"item 0x13C7 · layer 10 (neck), animation 0x0222",leather gorget
+584,0,kidney belt,Town records,"item 0x2790 · layer 12 (waist), animation 0x0202",Leather Ninja Belt
+584,32,kidney belt,Other frame,"item 0x2790 · layer 12 (waist), animation 0x0202",Leather Ninja Belt
+585,0,shoes,Town records,"item 0x170F · layer 3 (feet), animation 0x01E0",shoes
+585,32,shoes,Other frame,"item 0x170F · layer 3 (feet), animation 0x01E0",shoes
+586,0,gorget,Town records,"item 0x1413 · layer 10 (neck), animation 0x0213",platemail gorget
+586,32,gorget,Other frame,"item 0x1413 · layer 10 (neck), animation 0x0213",platemail gorget
+587,0,boots,Town records,"item 0x170B · layer 3 (feet), animation 0x01DD",boots
+587,1,boots,Other frame,"item 0x170B · layer 3 (feet), animation 0x01DD",boots
+587,32,boots,Other frame,"item 0x170B · layer 3 (feet), animation 0x01DD",boots
+587,33,boots,Other frame,"item 0x170B · layer 3 (feet), animation 0x01DD",boots
+588,0,swamp boots,Town records,"item 0x170B · layer 3 (feet), animation 0x01DD",boots
+588,32,swamp boots,Other frame,"item 0x170B · layer 3 (feet), animation 0x01DD",boots
+640,0,ring,Town records,"item 0x108A · layer 8 (finger), animation 0x01F2",ring
+640,1,ring,Town records,"item 0x108A · layer 8 (finger), animation 0x01F2",ring
+640,32,ring,Other frame,"item 0x108A · layer 8 (finger), animation 0x01F2",ring
+640,33,ring,Other frame,"item 0x108A · layer 8 (finger), animation 0x01F2",ring
+738,0,pants,Town records,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,1,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,2,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,3,pants,Town records,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,4,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,5,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,32,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,33,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,34,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,35,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,36,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+738,37,pants,Other frame,"item 0x1539 · layer 4 (pants), animation 0x01AF",long pants
+801,0,backpack,Town records,"item 0x0E75 · layer 21 (backpack), animation 0x01A6",backpack
+801,32,backpack,Other frame,"item 0x0E75 · layer 21 (backpack), animation 0x01A6",backpack
+937,0,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,1,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,2,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,3,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,4,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,5,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,6,Gargoyle jewelry,Town records,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,32,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,33,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,34,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,35,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,36,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,37,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+937,38,Gargoyle jewelry,Other frame,"item 0x1089 · layer 10 (neck), animation 0x01EE",necklace
+955,0,Ankh,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,1,Fellowship Medallion,Town records,"item 0xA429 · layer 10 (neck), animation 0x26F4",fellowship_medallion
+955,2,locket,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,3,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,4,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,5,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,6,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,7,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,8,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,9,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,10,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,11,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,32,Ankh,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,33,Fellowship Medallion,Other frame,"item 0xA429 · layer 10 (neck), animation 0x26F4",fellowship_medallion
+955,34,locket,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,35,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,36,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,37,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,38,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,39,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,40,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,41,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,42,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+955,43,amulet,Other frame,"item 0x1088 · layer 10 (neck), animation 0x01F1",necklace
+1004,0,leather helm,Town records,"item 0x1DB9 · layer 6 (head), animation 0x0230",leather cap
+1004,32,leather helm,Other frame,"item 0x1DB9 · layer 6 (head), animation 0x0230",leather cap

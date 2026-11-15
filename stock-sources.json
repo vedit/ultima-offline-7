@@ -1,0 +1,72 @@
+{
+  "doors_from_decoration": {
+    "0x693": [
+      5857,
+      562,
+      15
+    ],
+    "0x68f": [
+      5863,
+      554,
+      15
+    ],
+    "0x68d": [
+      5863,
+      555,
+      15
+    ],
+    "0x687": [
+      5667,
+      567,
+      20
+    ],
+    "0x685": [
+      5666,
+      567,
+      20
+    ],
+    "0x691": [
+      5848,
+      581,
+      15
+    ],
+    "0x318": [
+      5679,
+      520,
+      0
+    ],
+    "0x31a": [
+      5652,
+      552,
+      20
+    ]
+  },
+  "walls_from_statics": {
+    "0x241": [
+      5786,
+      551,
+      10
+    ],
+    "0x242": [
+      5785,
+      545,
+      10
+    ],
+    "0x243": [
+      5786,
+      552,
+      10
+    ],
+    "0x244": [
+      5796,
+      558,
+      10
+    ]
+  },
+  "input_sha256": {
+    "dependencies/ModernUO/Distribution/Data/Decoration/Britannia/_wrong.cfg": "76b86b444cf8d60d1a4aa783e397e95c6a1ef0be59afd076fd2de2adfff2fee7",
+    "dependencies/ModernUO/Projects/UOContent/Items/Misc/Corpses/Corpse.cs": "ca4366f9fa06f2f86bfc20a8f2a076fcba52d667d76a6235d110374632d89a23",
+    "local-assets/UO-Classic/staidx0.mul": "209319aeff26e01c7ea7ec86b8f01e3d598e4d82411431c43cb6e9b6ccc69de7",
+    "local-assets/UO-Classic/statics0.mul": "aac798ae8786d97eb893d5338e27113f3ace606221c4a7f80c24e57bd4a19976"
+  }
+}
