@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-15",
+  "implementation": "Separate desktop dream intro; native BEGIN gate unchanged",
+  "asset_policy": "Bare relief; no trophy mount, teeth or tongue; true alpha apertures",
+  "audio_source": "Local original INTROSND.DAT; not committed",
+  "original_cues": 297,
+  "audio_seconds": 49.102576025295264,
+  "sprite_size": [
+    104,
+    140
+  ],
+  "transparent_mouth_pixels": [
+    28,
+    31,
+    327,
+    1404,
+    115
+  ],
+  "timeline_checks": 16,
+  "release_build": {
+    "errors": 0,
+    "warnings": 15
+  },
+  "integration": {
+    "full": {
+      "passed": true,
+      "run": "dream-full-proof",
+      "commands": 29,
+      "captures": [
+        "dream-0.png",
+        "dream-1.png",
+        "dream-2.png",
+        "dream-3.png",
+        "dream-4.png"
+      ],
+      "native_begin_count": 1,
+      "native_snapshot_equality_checks": 3
+    },
+    "skip": {
+      "passed": true,
+      "run": "dream-skip-proof",
+      "commands": 9,
+      "captures": [
+        "dream-0.png"
+      ]
+    },
+    "resume": {
+      "passed": true,
+      "run": "dream-resume-proof",
+      "commands": 8,
+      "captures": [
+        "dream-0.png"
+      ],
+      "native_load_generation": 2,
+      "reload_captures": [
+        "reload-0.png"
+      ]
+    },
+    "muted": {
+      "passed": true,
+      "run": "dream-muted-proof",
+      "commands": 11,
+      "captures": [
+        "dream-0.png"
+      ]
+    },
+    "silent": {
+      "passed": true,
+      "run": "dream-silent-proof",
+      "commands": 11,
+      "captures": [
+        "dream-0.png"
+      ]
+    }
+  },
+  "limitations": [
+    "Stock held prone pose for sleeping; no bespoke waking animation",
+    "Isolated development candidate; normal launcher remains unchanged"
+  ]
+}

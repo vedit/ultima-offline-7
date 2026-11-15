@@ -223,10 +223,28 @@ namespace ClassicUO.Game
             world.CreatePlayer((uint)avatar[0]);
             world.MapIndex = 0;
             Apply(data);
+            if(Intro.U7DreamIntroScene.TryCreate(world,()=>BeginAfterDream(data),out var dream)) {
+                Client.Game.SetScene(dream);
+                return;
+            }
+            BeginPresentation(data,false);
+        }
+        private static void BeginAfterDream(string data)
+        {
+            heldArrows=0;
+            BeginPresentation(data,true);
+        }
+        internal static string DreamCheckpoint()
+        {
+            if(Client.Game.Scene is not Intro.U7DreamIntroScene) throw new InvalidOperationException("No active dream");
+            return Read("0 0 SYNC");
+        }
+        private static void BeginPresentation(string data,bool afterDream)
+        {
             Client.Game.SetScene(new GameScene(world));
             ShowBarks(data.Split('\n'));
             ShowMap(); ShowPaperdoll(); ShowBackpack();
-            if(Environment.GetEnvironmentVariable("TRINSIC_READY")!=null && !TrinsicReplay.Active) {
+            if(Environment.GetEnvironmentVariable("TRINSIC_READY")!=null && (afterDream || !TrinsicReplay.Active)) {
                 if(TrinsicTown.Enabled) Send("BEGIN");
                 else { Overlay=true; GameActions.Print(world,"Iolo is ready. Ctrl+wheel changes zoom. Press F6 to begin."); }
             }

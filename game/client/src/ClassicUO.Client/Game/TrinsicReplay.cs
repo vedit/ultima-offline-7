@@ -173,6 +173,7 @@ namespace ClassicUO.Game
             due=Environment.TickCount64+(live?20:260);
             switch(a[0])
             {
+                case "INTRO": Intro.U7DreamIntroScene.Replay(a);break;
                 case "RIGHTMOVE":
                     var bounds=Client.Game.Scene.Camera.Bounds;
                     int distance=a[1]=="edge"?bounds.Width/2-16:60;
