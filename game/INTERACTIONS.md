@@ -5,12 +5,12 @@ The native Black Gate engine owns outcomes. ClassicUO supplies gestures and pres
 Run `py -3 -B game/qualification/interaction-suite.py` from the repository root. To target an already-built candidate without replacing the development binaries, set `TRINSIC_HOST_EXECUTABLE` to its `Ultima7.exe` and `TRINSIC_CLIENT_BIN` to its client directory. For the qualified candidate:
 
 ```powershell
-$env:TRINSIC_HOST_EXECUTABLE = 'E:/UltimaOffline/PoCs/ClassicUO-U7-Local/build-host/interactions-20261114/Ultima7.exe'
-$env:TRINSIC_CLIENT_BIN = 'E:/UltimaOffline/PoCs/ClassicUO-U7-Local/client/bin/Interactions-20261114'
+$env:TRINSIC_HOST_EXECUTABLE = 'E:/UltimaOffline/PoCs/ClassicUO-U7-Local/build-side-20261115/bin/Ultima7.exe'
+$env:TRINSIC_CLIENT_BIN = 'E:/UltimaOffline/PoCs/ClassicUO-U7-Local/client/bin/Trinsic-Sides-20261115'
 py -3 -B game/qualification/interaction-suite.py
 ```
 
-Each case uses a private save and owned host/client processes. Results and per-case logs are in `runs/full-interaction-suite` under the local game installation. Supplying case names runs only those cases and writes a separate results file. The candidate used for the November 14 qualification is recorded in `receipts/full-interactions.json`; it does not replace the running player session.
+Each case uses a private save and owned host/client processes. Results and per-case logs are in `runs/full-interaction-suite` under the local game installation. Supplying case names runs only those cases and writes a separate results file. The November 14 baseline is recorded in `receipts/full-interactions.json`; the November 15 side-activity candidate and deployment are recorded in `receipts/trinsic-side-activities.json`.
 
 | Interaction | Authority and current evidence |
 | --- | --- |
@@ -21,7 +21,7 @@ Each case uses a private save and owned host/client processes. Results and per-c
 | Spellbook | Native ClassicUO SpellbookGump, stock art/circle tabs/page corners/minimization; all 72 U7 spell entries including cantrips, original learned bits, reagent requirements/counts, save/load bookmark, resource refusal and Awaken invocation. Mouse selection/double-click casting, right-click/Escape closing and movement recovery are exercised. Other spell effects are not all qualified. |
 | Theft and placement | Native ownership reconciliation, `ReportCrime`, egg triggers and settling after successful placement. Rejected drops retain ownership and location. Petre and the gate guard also emit their original witness objections. Escalated guard combat and every witness outcome are not exhaustively qualified. |
 | Creatures and combat | Nearby extra creature records exported; matching stock UO bodies, original health and combat state, attack/casting poses. All mapped bodies have walk/attack frames in five stored directions. An original attack damages a spawned rat; peace restores movement. U7-specific unmatched creatures and all projectile/death effects still need visual coverage. |
-| Buckets | Original blood-drinking refusal, ground blood creation, well filling, drinking and saved frame/ownership. The blood bucket can pour repeatedly according to its original quality value. |
+| Buckets | Original blood-drinking refusal, ground blood creation, well filling, drinking and saved frame/ownership. Three wells have complete UO walk/fill/drink coverage. The pub-side well's scripted standing point is blocked by native collision; its refusal and movement recovery are covered, with no frontend bypass. The earlier observer-positioned native test did not prove access to that well. The blood bucket can pour repeatedly according to its original quality value. |
 | Commerce and training | Dell takes 2 gold and supplies a bucket. Markus takes 20 gold and increases combat skill through the original student-selection dialogue. |
 | Potions | Original consumption, full-health cap, poison status and cure. Other potion varieties have dispatch coverage where present, not exhaustive effects. |
 | Rest | Original numeric hours choice, one-hour time advance, wake-up and recovered movement. Tests approach the bed from its free side; native reach checks remain authoritative. |
@@ -46,3 +46,22 @@ checks, report/quiz recovery with an exactly-once reward, and a source census of
 48 area triggers. See `receipts/trinsic-trigger-audit.json` for input hashes,
 evidence and explicit coverage limits. The full suite now includes these cases;
 passing shared dispatch does not imply every optional trigger has been replayed.
+
+The subsequent side-activity pass is recorded in
+`receipts/trinsic-side-activities.json`. It exercises all eleven haunted-smithy
+script triggers, paid healing/cure/resurrection, inn food/drink/rental/rest,
+training, provisions/ammunition, ship/cart titles, native sextant use, refusal
+branches, post-investigation cleanup, Guardian speech and regional music through
+the UO frontend. Original bed/forge sprites also receive pixel-picked double-clicks.
+Run `trinsic-side-activities.py --all --checkpoint <earned-gate-exit-save>` to
+repeat the matrix independently; the full interaction suite includes it as
+`trinsic-sides` after producing its prerequisite investigation save.
+
+This pass corrects shared presentation/debug connections: live native HP
+now supplies stat inspection/edit/refill/duplication and the avatar snapshot;
+native human bend/kneel poses invoke stock UO bow animation; read-only bridge
+observations continue during native rest/speech waits, preventing a false
+disconnect while preserving mutation gating. Original item
+scripts, costs, saving throws, actor schedules and quest progression remain the
+authority. The health regression compares inspection with live combat/status
+records so a matching but stale debug cache cannot pass unnoticed.

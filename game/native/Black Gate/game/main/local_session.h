@@ -13,6 +13,8 @@ extern bool LocalControlReleased;
 void LocalControlBegin();
 void LocalRefusal(int reason);
 void LocalPoll(unsigned char *steps);
+// Read-only bridge progress while native time advancement/speech owns the turn.
+void LocalProgress();
 void LocalBeforeStep();
 void LocalPartyObservation();
 void LocalFreed(short handle);

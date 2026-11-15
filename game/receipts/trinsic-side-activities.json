@@ -1,0 +1,1634 @@
+{
+  "date": "2026-11-15",
+  "scope": "Original Trinsic optional activities through ClassicUO",
+  "status": "qualified-with-known-native-well-issue",
+  "cases": 35,
+  "fixes": [
+    "Live native Item_getHitPoints/Item_setHitPoints replaces the NPC cache in debug stats/refill/copies and avatar stat export.",
+    "Original human bend/kneel frames invoke stock UO bow animation; nonhuman poses retain their existing mapping.",
+    "Native time advancement and speech waits serve read-only bridge observations. Mutations return busy without consuming their sequence. Normal timeout detection remains active."
+  ],
+  "candidate_host": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\build-side-20261115\\bin\\Ultima7.exe",
+    "sha256": "a1cf388d17ded9f3fbcc9c35669545e2cd4de2c022596782a49499c68f66d698"
+  },
+  "candidate_client": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Trinsic-Sides-20261115\\cuo.dll",
+    "sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557"
+  },
+  "source_census": {
+    "path": "C:\\Users\\veditoid\\Documents\\ChatGPT\\Ultima Offline\\game\\receipts\\trinsic-trigger-audit.json",
+    "sha256": "e7582bc86a78b7ed20fc649d1a203878b80bb02778d0fdf41db96abb01f9ef3d"
+  },
+  "original_script_hashes": {
+    "ChairHaunt.use": "d9f9338e3cca73ac136448b6c498cb4992a840f89f02b9e940ddde75fee49494",
+    "DoorHaunt.use": "199ace65a05246837c5017fc58423c7005ba1f887a4ed18a8a6179cef0a4aa17",
+    "Puke.use": "9f9070a9306b98e91f79b6d18b54498d992ab0fd00a738fe084094470c18f4a3",
+    "Fear.use": "f55487574ce662e96d8c60275e65d888ab5527d18320e2a32dec7efe037306c3",
+    "Chantu.use": "2a3e360aebdb5f79489b209c7b13f2ef761db82e3788c238deb022feaa48a75d",
+    "Apollonia.use": "14feb0fa57e97d5f8970560a78f299dc4a37161fbae95d8b7ff75b956db7decb",
+    "Markus.use": "2a433d19308044f2dc23e5af25eee235aaf4a43bcff21abfbf256c0e381cd893",
+    "Gargan.use": "40fc18a3559e8be8e2ae56fd6dcc51e4ccd7464170bd131f53da2b10ee18d93a",
+    "Petre.use": "12e39dcaf1522788b58e0a4d7f300fcb20eb037f34addfe45fc3a27245b35c7c",
+    "Dell.use": "0dec10b6cfafc06ce99c794724b23ca2767788e6123ff06464b19d94641650b7",
+    "Bucket.use": "9a3444ab2794365363feab8fe1f372284c3e01eb7ac3585fe2d4e1f8d8c13263",
+    "Well_01D6.use": "fb82682ff9a3e7c4c5a0fa52eb24008f82b31b74a1f92897b05a7ab102f25092",
+    "Well_02E4.use": "a5d10e4119ca8d7b59dadad32b3072fb4ce1525ed4466c1d4f2e2496373580cf",
+    "Sextant.use": "3c765b7fa742af376c87f3bb5915efcc249c0872534114fa106681e6acded5f1",
+    "Bellows.use": "5389b7b8c7f8179facb5c413b8884f49e6c39a53bbfbd5b2591b6a9d19367d94",
+    "PutTheAvatarToBed_i.use": "1104ddbe48b2b988ac8c8d6d525d20154642fd0b1aa5e8474d47273e2ebc307d",
+    "DirFrom_i.use": "2e3304e27caa1ba764c23359e0f59063c8539f7b429d6ffbee09bdea5bcb314c",
+    "TrinsicCleanupEgg_i.use": "9ed94dd95a108fbcfaf9307cf22b01a8499387dc90c6f108725686082f7071d0",
+    "BargeType_i.use": "78d3373305d00bf74cc979f108f0cb0d9b581b4ef35cb14ae9cdcfc6a2830d76"
+  },
+  "matrix": [
+    {
+      "case": "haunted",
+      "status": "passed",
+      "run": "side-haunted-20261115-g",
+      "seconds": 38.66,
+      "checks": [
+        {
+          "case": "haunted traversal and recovery",
+          "chairs": {
+            "21560": [
+              20,
+              21,
+              22,
+              23
+            ],
+            "21912": [
+              20,
+              21,
+              22,
+              23
+            ]
+          },
+          "doors": {
+            "21208": [
+              16,
+              17
+            ]
+          },
+          "poses": {
+            "0": [
+              0,
+              1,
+              2
+            ],
+            "1": [
+              0,
+              1,
+              2,
+              11,
+              12
+            ]
+          },
+          "barks": [
+            "B 1 184 2241696969656565652122"
+          ],
+          "temporary_blood": [
+            86824,
+            86832,
+            86840,
+            86848
+          ],
+          "iolo_schedule": 31,
+          "fear_work": [
+            31,
+            31,
+            0,
+            0,
+            31
+          ],
+          "fear_observed": true,
+          "all_eleven_eggs_consumed": true,
+          "nausea_presented": true
+        },
+        {
+          "case": "haunted save/load movement recovery"
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\side-result.json",
+        "sha256": "13aa2c96df034319fce9b78940c9368ff595700cee15a28a4dc1352f3d15884b"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\frontend-commands.jsonl",
+        "sha256": "96493c631277c1adbb5ec52f132432b7b115e6855f3f5fb7d0af178d2fbc092f"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\native-setup.jsonl",
+        "sha256": "840857a12df012bbd2b51b96cdc2b1ecec889606faa5b5b4f089db2f7769906a"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\prepared.U7",
+        "sha256": "17b73ebdb2d295d85d74ab19253757d6d443203a334918be414620d6cb08075b"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\side-00.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\side-01.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\side-02.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\side-03.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-haunted-20261115-g\\side-04.png"
+      ]
+    },
+    {
+      "case": "healer",
+      "status": "passed",
+      "run": "side-healer-20261115-c",
+      "seconds": 48.44,
+      "checks": [
+        {
+          "case": "paid healing",
+          "price": 30,
+          "hp": 18,
+          "max_hp": 18
+        },
+        {
+          "case": "healthy actor not charged"
+        },
+        {
+          "case": "paid native poison cure",
+          "price": 50,
+          "potion_consumed": true
+        },
+        {
+          "case": "healer cancellation, price refusal and absent corpse recover",
+          "gold": 46
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-20261115-c\\side-result.json",
+        "sha256": "7993848fc5556489130f3ce7bfc6b65bd0f2159cb4a2aa1bd59333a989bd5577"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-20261115-c\\frontend-commands.jsonl",
+        "sha256": "89acc80b03892c4b77d3bda416e27e114732c9a0e0d798fa7613aaff6a949b19"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-20261115-c\\native-setup.jsonl",
+        "sha256": "bec7f366a4f483efbf1c148385c421fddbf4c1b4047b904f60a6d53b5a13bf80"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-20261115-c\\prepared.U7",
+        "sha256": "23927ef304ea768d297c67628f54de03df2c8a87c87f64e294b83a4b3078386d"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-20261115-c\\side-00.png"
+      ]
+    },
+    {
+      "case": "inn",
+      "status": "passed",
+      "run": "side-inn-20261115-l",
+      "seconds": 61.0,
+      "checks": [
+        {
+          "case": "pub food quantity controls",
+          "loaves": 3,
+          "price": 6
+        },
+        {
+          "case": "pub drink purchase",
+          "price": 2
+        },
+        {
+          "case": "inn rental",
+          "party_count": 2,
+          "price": 12,
+          "keys_received": 1
+        },
+        {
+          "case": "rental persists through load"
+        },
+        {
+          "case": "rental key unlocks room and native one-hour rest wakes",
+          "elapsed_ticks": 1582,
+          "wake_text": [
+            "\"In how many hours shall I wake thee up, hexen?\"",
+            "\"Pleasant dreams.\"",
+            "\"Arise, hexen. Time to continue the quest.\""
+          ],
+          "bridge_observed_rest": true,
+          "movement_refused_during_native_advance": true
+        }
+      ],
+      "host_sha256": "a1cf388d17ded9f3fbcc9c35669545e2cd4de2c022596782a49499c68f66d698",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\side-result.json",
+        "sha256": "c8cd7b5a447294cf7a9c3f158a1b577199a872064e2b99df895ede54835d6f56"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\frontend-commands.jsonl",
+        "sha256": "eb2749aef8ea9607404de0dd03cb1433b0caa7c3de8a9a927db139b091d07102"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\native-setup.jsonl",
+        "sha256": "aadf9c470c1b24c19fd5af075cc5e95def44286a62262cf35258c5e1d4d78219"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\prepared.U7",
+        "sha256": "c6a6bfe1b1ff3a35b971690e26058c2bbe604a23b5606d0b0a9a45186021c166"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\side-00.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\side-01.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\side-02.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\side-03.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\side-04.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-20261115-l\\side-05.png"
+      ]
+    },
+    {
+      "case": "shop",
+      "status": "passed",
+      "run": "side-shop-20261115-c",
+      "seconds": 36.04,
+      "checks": [
+        {
+          "case": "Dell sells two dozen arrows",
+          "price": 20,
+          "arrows": 24
+        },
+        {
+          "case": "Dell provisions",
+          "price": 2,
+          "buckets": 1
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-20261115-c\\side-result.json",
+        "sha256": "417546c5e29b80889836047b5209427d80a22b0ce6b5b8369175be4e18c21e45"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-20261115-c\\frontend-commands.jsonl",
+        "sha256": "91a18baa45b752dd5682f3f3e37fc0383a9d2e228f130180228b7778cf004daf"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-20261115-c\\native-setup.jsonl",
+        "sha256": "10c1ae60b26b40b1594cc47984bea98a8b01f0cb02b5ea99702d30f9d85e008f"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-20261115-c\\prepared.U7",
+        "sha256": "02a4d9bfe4ec75246ea26a3e1d31c045ba2b71f35a2950f82ac72a6b8a1c4f00"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-20261115-c\\side-00.png"
+      ]
+    },
+    {
+      "case": "training",
+      "status": "passed",
+      "run": "side-training-20261115-d",
+      "seconds": 28.32,
+      "checks": [
+        {
+          "case": "training updates native combat and points",
+          "gold_spent": 20,
+          "combat": [
+            14,
+            16
+          ],
+          "training": [
+            3,
+            2
+          ]
+        },
+        {
+          "case": "training decline and no student recover"
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-20261115-d\\side-result.json",
+        "sha256": "408a01097b8635a4cc929a0d922c00a9afbd90a8ff14070957556742564d0b35"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-20261115-d\\frontend-commands.jsonl",
+        "sha256": "6771873cd9cb79cdbcf7b5eb89a50921e30a149e4fa8422562b7bdbcf28d886d"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-20261115-d\\native-setup.jsonl",
+        "sha256": "852fc67ca70bb3d857cf4be8f1f4c0962ed1a4f5c1af008670b339bd185197c1"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-20261115-d\\prepared.U7",
+        "sha256": "a93b7d8f976ac5e33600387ca202118d3aabdc9210b659516f6485b9ee8e75ec"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-20261115-d\\side-00.png"
+      ]
+    },
+    {
+      "case": "ship",
+      "status": "passed",
+      "run": "side-ship-20261115-c",
+      "seconds": 27.87,
+      "checks": [
+        {
+          "case": "Scaly Eel deed",
+          "price": 600,
+          "flag": 88
+        },
+        {
+          "case": "second ship purchase refused"
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-20261115-c\\side-result.json",
+        "sha256": "a9ca090e829bcc5399b7f7060fc29c38fdd072fa57474fae8f75151399a79c73"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-20261115-c\\frontend-commands.jsonl",
+        "sha256": "c365851c53dd0c03575c64c2f7877d785e75ac829aa4cf3290d265996b5275f1"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-20261115-c\\native-setup.jsonl",
+        "sha256": "cd49905d7291220116ab1d5158c4a0b173828afbe23ae6433aac4fb22b25a496"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-20261115-c\\prepared.U7",
+        "sha256": "d8bcdeafa5a63ca428a9812068cf03a9c928671e42f5699400af9f9e7058691b"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-20261115-c\\side-00.png"
+      ]
+    },
+    {
+      "case": "sextant",
+      "status": "passed",
+      "run": "side-sextant-20261115-f",
+      "seconds": 24.94,
+      "checks": [
+        {
+          "case": "native sextant sale and activation",
+          "quoted_price": 80,
+          "original_charge": 0,
+          "native_output": "\"'Twill not function under a roof!\""
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-sextant-20261115-f\\side-result.json",
+        "sha256": "fb2d168911d815cebae8bb7f2726a555fb9248467b96aa61fcfe2a27623668e8"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-sextant-20261115-f\\frontend-commands.jsonl",
+        "sha256": "c3bc6d69d2e7ca55def45bb577fe6de155e39c5c1f01d8df15417fcc08a0e747"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-sextant-20261115-f\\native-setup.jsonl",
+        "sha256": "11b510937d2434668941e2d3ee8b61cad57e55cd9d434f4570372222ab7e0b4d"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-sextant-20261115-f\\prepared.U7",
+        "sha256": "109b961bb0fdd41de5a55075d7013eb0ae598a1ca92e16cfdf27566412eebe02"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-sextant-20261115-f\\side-00.png"
+      ]
+    },
+    {
+      "case": "carriage",
+      "status": "passed",
+      "run": "side-carriage-20261115-e",
+      "seconds": 20.47,
+      "checks": [
+        {
+          "case": "horse and carriage title",
+          "price": 60
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-20261115-e\\side-result.json",
+        "sha256": "9400a1153016ce61bdb28fd0f61be3d37b35a54d93d47fb930076a1aebba96cb"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-20261115-e\\frontend-commands.jsonl",
+        "sha256": "128f0460862b4710376b5d1f7035155d55472b6a8c944604dd728619f7427030"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-20261115-e\\native-setup.jsonl",
+        "sha256": "a9a548ac90486a3cc2858a67c56865a75f119cd2ce716ecd4023471d5c2feac2"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-20261115-e\\prepared.U7",
+        "sha256": "2e8e44fb35e2b0bbce0baf200bd6efc0a55579f9dd7010924a18041eaa1100ac"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "closed",
+      "status": "passed",
+      "run": "side-closed-20261115-c",
+      "seconds": 14.22,
+      "checks": [
+        {
+          "case": "Dell Fellowship meeting refusal recovers",
+          "gold_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-closed-20261115-c\\side-result.json",
+        "sha256": "1d498b16fa7797ddd6045cf0456c922fc27e18a7b62b1a9eddfb768d0981e090"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-closed-20261115-c\\frontend-commands.jsonl",
+        "sha256": "5d5ee76c91fee1bd8e44d0c7f78be9326331d3c4dedbca646bfd2de000f871a4"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-closed-20261115-c\\native-setup.jsonl",
+        "sha256": "6cf443d8982a416910261fd29985a5c06b2c887dfbae8d1c90b9671db40d146f"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-closed-20261115-c\\prepared.U7",
+        "sha256": "61ab11802e5d2a04c4d2e7bbc0065750bb4a261325a32e9e47bd692901014bf3"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-closed-20261115-c\\side-00.png"
+      ]
+    },
+    {
+      "case": "resurrection",
+      "status": "passed",
+      "run": "side-resurrection-20261115-e",
+      "seconds": 30.3,
+      "checks": [
+        {
+          "case": "resurrection price refusal preserves corpse and gold"
+        },
+        {
+          "case": "Chantu paid companion resurrection",
+          "price": 400,
+          "health": 18,
+          "possessions_retained": true,
+          "native_work": 31
+        },
+        {
+          "case": "resurrected companion persists through load"
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-resurrection-20261115-e\\side-result.json",
+        "sha256": "978b623535622e42382c426034847148f1306a5a5cb5584b398264ac26ba65dd"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-resurrection-20261115-e\\frontend-commands.jsonl",
+        "sha256": "a4ae61738a4e3091de6d584a8900fae60eed041213900d2d173601e556bbede7"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-resurrection-20261115-e\\native-setup.jsonl",
+        "sha256": "25e5b302118ca32fa69a59693a90dab7d97e689ee60ac643ae72972b5a13dbc4"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-resurrection-20261115-e\\prepared.U7",
+        "sha256": "9b3551c1852000c6aa7276bf4c64282044da8f44d818fdb618ae3e33de589c8b"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-resurrection-20261115-e\\side-00.png",
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-resurrection-20261115-e\\side-01.png"
+      ]
+    },
+    {
+      "case": "cleanup",
+      "status": "passed",
+      "run": "side-cleanup-20261115-d",
+      "seconds": 27.17,
+      "checks": [
+        {
+          "case": "native post-investigation murder cleanup",
+          "removed_in_uo": true,
+          "original_flag": 87
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-cleanup-20261115-d\\side-result.json",
+        "sha256": "eb2e5ab8a5dfe785a7a72ba6de82bd334a338c3779b1c9b8b7a89827abcae908"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-cleanup-20261115-d\\frontend-commands.jsonl",
+        "sha256": "b61986016f48c72a953bcddbd5153ab34906def67a6c6ba56d521c2c5bd71cf9"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-cleanup-20261115-d\\native-setup.jsonl",
+        "sha256": "422a7ee8767902a16b936501d22c18173fdf41b2183676e48893b16b96cc158b"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-cleanup-20261115-d\\prepared.U7",
+        "sha256": "e5962af72a075cb195fd9864566e039679a7c5212f86e18f23e2b682ff4c7af4"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-cleanup-20261115-d\\side-00.png"
+      ]
+    },
+    {
+      "case": "training-untrained",
+      "status": "passed",
+      "run": "side-training-untrained-20261115-e",
+      "seconds": 18.14,
+      "checks": [
+        {
+          "case": "training-untrained",
+          "gold_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-untrained-20261115-e\\side-result.json",
+        "sha256": "d503c1fa60b6d27cc063f98f489e3844dae89c6d1b38df424d8cb3f7a836a926"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-untrained-20261115-e\\frontend-commands.jsonl",
+        "sha256": "33e335b3f46e856d8296426d2e8a8441736162fbd0938338ce50f6e49797cd51"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-untrained-20261115-e\\native-setup.jsonl",
+        "sha256": "c5640a1d2ee765e73f5913f40fde99f46ed4953c34216e5d39d68a48edad8061"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-untrained-20261115-e\\prepared.U7",
+        "sha256": "f46eea04fdd4e4c2b3c74e972231cfc0d07a76ee8cc737fa43a3f75b0fd54f6a"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-untrained-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "training-capped",
+      "status": "passed",
+      "run": "side-training-capped-20261115-e",
+      "seconds": 18.47,
+      "checks": [
+        {
+          "case": "training-capped",
+          "gold_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-capped-20261115-e\\side-result.json",
+        "sha256": "7e191177079de903aad0ad57c2f944fab76c7a6710089c0bdf46072895f9b238"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-capped-20261115-e\\frontend-commands.jsonl",
+        "sha256": "ebe9cd3005983506f8d75e284682e1520d51ec0d68a9a8c8c66efb1ef8120baf"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-capped-20261115-e\\native-setup.jsonl",
+        "sha256": "86c7320db360706ff7ab5f6bf570e544a58d02ae4994ba58826fc2a0533d5126"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-capped-20261115-e\\prepared.U7",
+        "sha256": "95d9078dbcd5a386683fc517a99a8929d6ee87fa6df839001ef027f6040862cd"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-capped-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "inn-full",
+      "status": "passed",
+      "run": "side-inn-full-20261115-e",
+      "seconds": 16.21,
+      "checks": [
+        {
+          "case": "inn overloaded party refusal",
+          "inventory_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-full-20261115-e\\side-result.json",
+        "sha256": "9e3dd3aff83f585614f6eaa88fd2046adc58db1072d2540edaff811c1c2daeb6"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-full-20261115-e\\frontend-commands.jsonl",
+        "sha256": "fa6df8a5f5ee95f3468f1facd81bb1422e28db0df01a66d3bbde63f3f1eb6363"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-full-20261115-e\\native-setup.jsonl",
+        "sha256": "c668031c093ed3cfcc4e84f20cf4ac535d7743fe248d89d495d77657a03c2e21"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-full-20261115-e\\prepared.U7",
+        "sha256": "3afde9986b34ae96f957294cb4cf7b5c905d6fc466eaba2f93d7bf71a4356f2b"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-full-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "speech-house",
+      "status": "passed",
+      "run": "side-speech-house-20261115-e",
+      "seconds": 19.37,
+      "checks": [
+        {
+          "case": "Guardian speech 31 native text fallback",
+          "expected": "Ha ha ha ha ha ha!"
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-20261115-e\\side-result.json",
+        "sha256": "a79efdf10ba80464d18478e02e33f8c981d9761d135c47773f8784ac4041f0b3"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-20261115-e\\frontend-commands.jsonl",
+        "sha256": "610c2b3694c2ea8fe309210107de5babdc80ff88e871a90412b24b697b25e0d5"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-20261115-e\\native-setup.jsonl",
+        "sha256": "fae06b7189b2027f8349877c169b33bcdb4837b12f0ea35e9b190db64085955c"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-20261115-e\\prepared.U7",
+        "sha256": "6f3160dd2f3ee309fdcbc02b2c7bf931efaa157756c3cc828ba104ac67fb20da"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "speech-south",
+      "status": "passed",
+      "run": "side-speech-south-20261115-f",
+      "seconds": 16.28,
+      "checks": [
+        {
+          "case": "Guardian speech 24 native text fallback",
+          "expected": "wrong direction"
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-20261115-f\\side-result.json",
+        "sha256": "b872f0ecd406f594366f39eaa78209679bdf6a3a770bf271737587f52df1d4dc"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-20261115-f\\frontend-commands.jsonl",
+        "sha256": "7a68845e9022bc26237a3639a7867dfca54677aafe2fb3b1fdf9352a2294af16"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-20261115-f\\native-setup.jsonl",
+        "sha256": "9fdfc2a83c15a602c4af010cbad51258f0b1e7920875c8e4b2cce61da175bd79"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-20261115-f\\prepared.U7",
+        "sha256": "8c13a2c50a620eccc4cdcb54f522ff4a8ab6fb50a8e983b227694ae61d2779e8"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-20261115-f\\side-00.png"
+      ]
+    },
+    {
+      "case": "music",
+      "status": "passed",
+      "run": "side-music-20261115-g",
+      "seconds": 41.28,
+      "checks": [
+        {
+          "case": "original regional music",
+          "tracks": [
+            6,
+            27,
+            35
+          ],
+          "expected": [
+            27,
+            35
+          ],
+          "rms": 384.286,
+          "pcm_start": 1912832
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-20261115-g\\side-result.json",
+        "sha256": "97a0043d276bbe1121d7adfde3d992f4de2b7800cf4f09716fc683aeff01e002"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-20261115-g\\frontend-commands.jsonl",
+        "sha256": "8b03fb0b57bd5ab2a7f3a0a8433b96819a261797fe3c1bfb8f9093473adb3405"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-20261115-g\\native-setup.jsonl",
+        "sha256": "7253d375ee89bceba31c0f4ec213bdbf793b6d08510c796dcf7df88347f34a58"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-20261115-g\\prepared.U7",
+        "sha256": "0d26198ca2166eca8445e4a77829db42a9e2e3e5fa4be060e4ebe2b9e12224ea"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-20261115-g\\side-00.png"
+      ]
+    },
+    {
+      "case": "music-pub",
+      "status": "passed",
+      "run": "side-music-pub-20261115-h",
+      "seconds": 16.02,
+      "checks": [
+        {
+          "case": "original regional music",
+          "tracks": [
+            6,
+            19
+          ],
+          "expected": [
+            19
+          ],
+          "rms": 176.988,
+          "pcm_start": 1998848
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-pub-20261115-h\\side-result.json",
+        "sha256": "07aa4af93a7fd8d53f02de3f4f843511b7864f76e1f9f68b2d17b689d600bd95"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-pub-20261115-h\\frontend-commands.jsonl",
+        "sha256": "7a1d11d462e0b21959402f5d5ef1107dd3aa46537ece60c28edca599cb351f67"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-pub-20261115-h\\native-setup.jsonl",
+        "sha256": "d6e826e8ca76825f248576dc8f161896169ab86a90201175cd7cb8e50ebc917d"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-pub-20261115-h\\prepared.U7",
+        "sha256": "e43f7d25a84621e5f87c013ba1fb7758eb9bb64a5150cb35e1c337b13049fcc4"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-music-pub-20261115-h\\side-00.png"
+      ]
+    },
+    {
+      "case": "bucket",
+      "status": "known-native-issue",
+      "run": "side-bucket-20261115-h",
+      "seconds": 31.93,
+      "checks": [
+        {
+          "case": "blood bucket refuses drinking through native target"
+        },
+        {
+          "case": "east well native path refusal is presented and releases movement",
+          "known_issue": true,
+          "well": [
+            1076,
+            2236,
+            0
+          ],
+          "scripted_standing_point": [
+            1071,
+            2235,
+            0
+          ],
+          "reason": "Original standing point intersects the neighboring wall; no frontend or map bypass applied"
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-bucket-20261115-h\\side-result.json",
+        "sha256": "af481f5935c396a47f24349f4906f485bc14f4512cfd535b7922e88362c5fb95"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-bucket-20261115-h\\frontend-commands.jsonl",
+        "sha256": "2c227ce4cb605b6ac798790c38ae516b401f86f014f69cd63003833d333104fe"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-bucket-20261115-h\\native-setup.jsonl",
+        "sha256": "ed453019312cd7f5ecb07f6dc2117db01fc1cd4bf7168c5abb24a298f4f4dcd1"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-bucket-20261115-h\\prepared.U7",
+        "sha256": "58a8cd54aaf35e6847d0cc196abfa9553d8b1d5acaa887348f4636ceaad6c04d"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-bucket-20261115-h\\side-00.png"
+      ]
+    },
+    {
+      "case": "forge",
+      "status": "passed",
+      "run": "side-forge-20261115-f",
+      "seconds": 15.59,
+      "checks": [
+        {
+          "case": "native bellows heating and cooldown in UO",
+          "frames": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-forge-20261115-f\\side-result.json",
+        "sha256": "0f933634183d5ec2031744d16066ca0290d2c940f4de204a08de19af98ac1b89"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-forge-20261115-f\\frontend-commands.jsonl",
+        "sha256": "e58f91d9a0e3a0d6a91f193f6186b8665017759b47f771e689ae4714b7f546f1"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-forge-20261115-f\\native-setup.jsonl",
+        "sha256": "bcbc8e77dc6e1a77c4a011a1de8683bccbb56cb40df5aae95e1ffcc7c05c8a28"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-forge-20261115-f\\prepared.U7",
+        "sha256": "632676cfe822d37b3089684a8ee7c80265c9bcaa33ef599bca697e5d32b0adf7"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-forge-20261115-f\\side-00.png"
+      ]
+    },
+    {
+      "case": "speech-house-audio",
+      "status": "passed",
+      "run": "side-speech-house-audio-20261115-g",
+      "seconds": 24.76,
+      "checks": [
+        {
+          "case": "Guardian speech 31 original audio",
+          "expected": "Ha ha ha ha ha ha!",
+          "rms": 2543.211,
+          "bytes": 1806336,
+          "pcm_start": 2260992
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-audio-20261115-g\\side-result.json",
+        "sha256": "920ece9a593be9d022ca5c98f0840f59429004a4ecafcbe7b027bca47fbd1865"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-audio-20261115-g\\frontend-commands.jsonl",
+        "sha256": "7fcd3bddf5795f41092ef8890ec64b3aad00a2effea5554f4c9fa025c7c1955e"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-audio-20261115-g\\native-setup.jsonl",
+        "sha256": "fae06b7189b2027f8349877c169b33bcdb4837b12f0ea35e9b190db64085955c"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-audio-20261115-g\\prepared.U7",
+        "sha256": "6f3160dd2f3ee309fdcbc02b2c7bf931efaa157756c3cc828ba104ac67fb20da"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-house-audio-20261115-g\\side-00.png"
+      ]
+    },
+    {
+      "case": "speech-south-audio",
+      "status": "passed",
+      "run": "side-speech-south-audio-20261115-g",
+      "seconds": 21.72,
+      "checks": [
+        {
+          "case": "Guardian speech 24 original audio",
+          "expected": "wrong direction",
+          "rms": 4203.731,
+          "bytes": 1306624,
+          "pcm_start": 2203648
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-audio-20261115-g\\side-result.json",
+        "sha256": "aa2b532db118aa4d2f8b37b206c192c2392a2bb41cf3773e123c0650641a2a3b"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-audio-20261115-g\\frontend-commands.jsonl",
+        "sha256": "c77cf845aa9ad052532601d6ef168b59f3f411d80489023902d55ed8f9d2a0cf"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-audio-20261115-g\\native-setup.jsonl",
+        "sha256": "9fdfc2a83c15a602c4af010cbad51258f0b1e7920875c8e4b2cce61da175bd79"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-audio-20261115-g\\prepared.U7",
+        "sha256": "8c13a2c50a620eccc4cdcb54f522ff4a8ab6fb50a8e983b227694ae61d2779e8"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-speech-south-audio-20261115-g\\side-00.png"
+      ]
+    },
+    {
+      "case": "well-west",
+      "status": "passed",
+      "run": "side-well-west-20261115-h",
+      "seconds": 17.47,
+      "checks": [
+        {
+          "case": "UO targeting and native walk fill bucket, then drink water",
+          "well": [
+            987,
+            2303
+          ]
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-west-20261115-h\\side-result.json",
+        "sha256": "c6f48c624bc388e6e1d099cc9be5cdb4fe17c98be29be01dfa804711513db246"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-west-20261115-h\\frontend-commands.jsonl",
+        "sha256": "571863959d5ab571a7d23ecf5ea4439aa58bcca1fbf23353835a6dca4cd3c55d"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-west-20261115-h\\native-setup.jsonl",
+        "sha256": "cefe70dfb6460a52257c4c12d3693f80391ef183fb0b88397c9b76c95a282413"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-west-20261115-h\\prepared.U7",
+        "sha256": "2fb0571e33e2d969f3d82e14d6822e86a194901c0f30086456fc6fcb24fade61"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-west-20261115-h\\side-00.png"
+      ]
+    },
+    {
+      "case": "well-north",
+      "status": "passed",
+      "run": "side-well-north-20261115-h",
+      "seconds": 17.09,
+      "checks": [
+        {
+          "case": "UO targeting and native walk fill bucket, then drink water",
+          "well": [
+            1005,
+            2131
+          ]
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-north-20261115-h\\side-result.json",
+        "sha256": "1babb3e1131f9eced79aad63c13117ade8c6cc3ff1b6d4d5a120dfb01c4084d2"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-north-20261115-h\\frontend-commands.jsonl",
+        "sha256": "2ed6e805d3cca26efc5570a5d9716abcc136a6717e33654da72a44c521f714df"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-north-20261115-h\\native-setup.jsonl",
+        "sha256": "ec09e6b57300174af60a748eac1927c56cdc791a51d261aeaaaf2e80ce406cbf"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-north-20261115-h\\prepared.U7",
+        "sha256": "d9fd791de8c362e27ac6b46e8850509f82405583fb488ec52a74b850980d0a46"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-north-20261115-h\\side-00.png"
+      ]
+    },
+    {
+      "case": "well-south",
+      "status": "passed",
+      "run": "side-well-south-20261115-h",
+      "seconds": 17.35,
+      "checks": [
+        {
+          "case": "UO targeting and native walk fill bucket, then drink water",
+          "well": [
+            1023,
+            2287
+          ]
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-south-20261115-h\\side-result.json",
+        "sha256": "4d0e4726d857df456c81e0ebc1a362e8175a3fe04ca910d79b219d05b1fdf9bd"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-south-20261115-h\\frontend-commands.jsonl",
+        "sha256": "dddeb6934e8ee27f300a00a2745f273239f55367631639f66cbc0042e7b26350"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-south-20261115-h\\native-setup.jsonl",
+        "sha256": "f7caeda027fc042891cc60e329684e72725061c8c26d71a3b3f0cc1d9f9772f8"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-south-20261115-h\\prepared.U7",
+        "sha256": "54377b95a8ba81f207e7358fc3e204da0037c2a5afb7390561a910cf6397b23c"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-well-south-20261115-h\\side-00.png"
+      ]
+    },
+    {
+      "case": "shop-closed",
+      "status": "passed",
+      "run": "side-shop-closed-20261115-e",
+      "seconds": 18.38,
+      "checks": [
+        {
+          "case": "shop outside business hours",
+          "native_work": 14
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-closed-20261115-e\\side-result.json",
+        "sha256": "951b6d7f93588ed036678aca194117d6901ec77014b0cef50d438fdfecc55dd1"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-closed-20261115-e\\frontend-commands.jsonl",
+        "sha256": "676e1d6c1d5415ec4dfc8d27cb7aa031f5c873367940e009bc578da9636cd0d4"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-closed-20261115-e\\native-setup.jsonl",
+        "sha256": "be3ed27e51b0892d9b4b4c7becc550659c66f92fdf94decb8f9333741423cd4f"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-closed-20261115-e\\prepared.U7",
+        "sha256": "037c0a718b9aa6a1fa7dfb98fe7b5010477b5fd885305f131221f754ead784dc"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-closed-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "inn-closed",
+      "status": "passed",
+      "run": "side-inn-closed-20261115-f",
+      "seconds": 25.36,
+      "checks": [
+        {
+          "case": "inn outside business hours",
+          "native_work": 11
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-closed-20261115-f\\side-result.json",
+        "sha256": "52b5f8b8fe0819fd902e725ffb457dfa5bcb4d7e84a5abf9e476daa1b9f959a0"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-closed-20261115-f\\frontend-commands.jsonl",
+        "sha256": "5b617eb90c0367c2db13e31347e9710833cf9db718ea673f2a7b1c2a4d5afa2b"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-closed-20261115-f\\native-setup.jsonl",
+        "sha256": "8e215a7e88bea860e4ec8b2c5b640d5164ec71d44d349cf7019dd736b6103042"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-closed-20261115-f\\prepared.U7",
+        "sha256": "86a7c83b6f29224149f97ca8eb7af1b732cb08bb4ba6863fc93b639a2c178105"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-closed-20261115-f\\side-00.png"
+      ]
+    },
+    {
+      "case": "training-closed",
+      "status": "passed",
+      "run": "side-training-closed-20261115-e",
+      "seconds": 16.01,
+      "checks": [
+        {
+          "case": "training outside business hours",
+          "native_work": 14
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-closed-20261115-e\\side-result.json",
+        "sha256": "cc9e273ce9f30219eff260188dfa7d0f935c5d448b1a88deb36255dcab275de6"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-closed-20261115-e\\frontend-commands.jsonl",
+        "sha256": "41250e11c0d52b7c7ba904c969d4618e5035cce7a484fc31236ded38673bb8f8"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-closed-20261115-e\\native-setup.jsonl",
+        "sha256": "d720db964a11253fa5b57de7d336f7521a4a88394b366b9c63a15c2aad153b83"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-closed-20261115-e\\prepared.U7",
+        "sha256": "6a507b39609a36cef1e39705fb050fbcae819aa2f687f169f76e55983e91ed5b"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-closed-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "ship-closed",
+      "status": "passed",
+      "run": "side-ship-closed-20261115-e",
+      "seconds": 19.02,
+      "checks": [
+        {
+          "case": "ship outside business hours",
+          "native_work": 14
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-closed-20261115-e\\side-result.json",
+        "sha256": "83ca2368068e9e9a31ce096e5031892eae1a163f3ae13ce5fd4a18184f3543b2"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-closed-20261115-e\\frontend-commands.jsonl",
+        "sha256": "e0c5cb8f4cc945d401002957bcb1adacd04a48a238bd9db340a52bb7b99fbe80"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-closed-20261115-e\\native-setup.jsonl",
+        "sha256": "9f41276bfb494c159a06a8b0ea173da492450e9e2473f2578f64b2a84f7b4195"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-closed-20261115-e\\prepared.U7",
+        "sha256": "588192a8af3831daa90ee31f5834ab33ab087c58dbefa4edb9e671710c7af2a4"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-closed-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "healer-poor",
+      "status": "passed",
+      "run": "side-healer-poor-20261115-e",
+      "seconds": 19.91,
+      "checks": [
+        {
+          "case": "healer insufficient funds refusal",
+          "inventory_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-poor-20261115-e\\side-result.json",
+        "sha256": "4583a09b238aefbcf78b52814bcbab048a831f39bad028341d99fa57ef7632b7"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-poor-20261115-e\\frontend-commands.jsonl",
+        "sha256": "aeb6404bc5525e7dc23a7f3b6e80d7f2b08da68fce907cf3d47cb6c86ea088cb"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-poor-20261115-e\\native-setup.jsonl",
+        "sha256": "87673238eed75316f4c0ea5a898ba936f6c4069effec0fa95bb69e126bc23287"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-poor-20261115-e\\prepared.U7",
+        "sha256": "a6dfa7f83b2d00125d82bf1759f58290e4cda7de8d46d71da4e808468daa5498"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-healer-poor-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "inn-poor",
+      "status": "passed",
+      "run": "side-inn-poor-20261115-e",
+      "seconds": 20.44,
+      "checks": [
+        {
+          "case": "inn insufficient funds refusal",
+          "inventory_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-poor-20261115-e\\side-result.json",
+        "sha256": "94d7158fc8173b3e0e2af36873d147327d50166d6ee54a50e2bffdeca27e26d7"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-poor-20261115-e\\frontend-commands.jsonl",
+        "sha256": "35c8dde20df3159b0999033528f7d8bc4ba7d866ea819ef05d7b23b8fe90c088"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-poor-20261115-e\\native-setup.jsonl",
+        "sha256": "c7870e2ae277baf80568d8703b143cc6a0b8e29b04910810c24ec64978557e3b"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-poor-20261115-e\\prepared.U7",
+        "sha256": "bfed27b16a5773b66a016259383116068d14217e5827a19ae0804da9ff50eed8"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-inn-poor-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "shop-poor",
+      "status": "passed",
+      "run": "side-shop-poor-20261115-e",
+      "seconds": 25.85,
+      "checks": [
+        {
+          "case": "shop insufficient funds refusal",
+          "inventory_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-poor-20261115-e\\side-result.json",
+        "sha256": "480bafd70c7db6451b4b12fc79df24e8bc97f812feb7f619ebdf980a954f831f"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-poor-20261115-e\\frontend-commands.jsonl",
+        "sha256": "225609293ed16289b43676e046e40f05fd23b382c62a77726e1cd25c1a67cbea"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-poor-20261115-e\\native-setup.jsonl",
+        "sha256": "ae6120c0d637bb46bf679639694b3a449df5efdb4d0595911e65b378dd0cb5c9"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-poor-20261115-e\\prepared.U7",
+        "sha256": "3338a42c9a63f338bb7fba07324533c34669fdf33a697dbda96832d978f686e9"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-shop-poor-20261115-e\\side-00.png"
+      ]
+    },
+    {
+      "case": "training-poor",
+      "status": "passed",
+      "run": "side-training-poor-20261115-f",
+      "seconds": 18.9,
+      "checks": [
+        {
+          "case": "training insufficient funds refusal",
+          "inventory_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-poor-20261115-f\\side-result.json",
+        "sha256": "4f160f5538b1b373b672f3d3e8330c7b560ceb7116db7cf8b4760c38038852a3"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-poor-20261115-f\\frontend-commands.jsonl",
+        "sha256": "504b621857145399b161f34e8e1f8f635305f5a0edcc3336693d95f8026a2dd7"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-poor-20261115-f\\native-setup.jsonl",
+        "sha256": "c06ed88076906e9533f88da61291d15946214ce299b82392223f594dd3da3897"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-poor-20261115-f\\prepared.U7",
+        "sha256": "6345820662aa37b2ff480ad2bac0b046df602d2c2afcf17b2371e6c464789683"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-training-poor-20261115-f\\side-00.png"
+      ]
+    },
+    {
+      "case": "ship-poor",
+      "status": "passed",
+      "run": "side-ship-poor-20261115-f",
+      "seconds": 19.96,
+      "checks": [
+        {
+          "case": "ship insufficient funds refusal",
+          "inventory_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-poor-20261115-f\\side-result.json",
+        "sha256": "c4ddab2375328ccd8c1b81f58ef79b6f3e3aac6cda2ec1f2fc48800505551a1c"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-poor-20261115-f\\frontend-commands.jsonl",
+        "sha256": "f2abf6bfca5ba97c5f3bcef4be674411339929e86b3d1766e738b7243ed8123c"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-poor-20261115-f\\native-setup.jsonl",
+        "sha256": "cd6ddc29b120cbf52b075c0f76d33523b2bdbf3a698e13a0bf6ae58ac41a2e34"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-poor-20261115-f\\prepared.U7",
+        "sha256": "4d80c1e91f2021f1f085a379cdcc6e056649ed12425a8d1183a0aa3b7279a4da"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-ship-poor-20261115-f\\side-00.png"
+      ]
+    },
+    {
+      "case": "carriage-poor",
+      "status": "passed",
+      "run": "side-carriage-poor-20261115-f",
+      "seconds": 21.03,
+      "checks": [
+        {
+          "case": "carriage insufficient funds refusal",
+          "inventory_unchanged": true
+        }
+      ],
+      "host_sha256": "9f93cb8c37ebea4d4e48115693cd9f28d554c5af7a357f05c274dd6a3e2f863a",
+      "client_sha256": "51ba9f6d0779a5dc5396a380904037adfe3e61a86dbe279ba50cce2ff5a176af",
+      "result": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-poor-20261115-f\\side-result.json",
+        "sha256": "256db719287119bc9383f0e7648ef5f6d6da8fb2c9ee2d15cb4d9cb163c757b1"
+      },
+      "commands": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-poor-20261115-f\\frontend-commands.jsonl",
+        "sha256": "f12b6b9f373c0f0e6195c9beea08c60049460101da4be3db209f5bc9312c9ac0"
+      },
+      "setup": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-poor-20261115-f\\native-setup.jsonl",
+        "sha256": "1db834664c9fca6b2a987ab0148d5a8b04c0a6251c6adbbdba9ca761793ef118"
+      },
+      "prepared_save": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-poor-20261115-f\\prepared.U7",
+        "sha256": "11e48bf6fc9580703c2582bf873721559086bf5e9a84398331d0b3f7d071ccd4"
+      },
+      "images": [
+        "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-carriage-poor-20261115-f\\side-00.png"
+      ]
+    }
+  ],
+  "regression_groups": [
+    {
+      "results": [
+        {
+          "case": "world-effects",
+          "status": "passed",
+          "seconds": 12.73,
+          "log": "20261115-132224-world-effects.log"
+        },
+        {
+          "case": "commerce-training",
+          "status": "passed",
+          "seconds": 11.48,
+          "log": "20261115-132224-commerce-training.log"
+        },
+        {
+          "case": "rest-potions",
+          "status": "passed",
+          "seconds": 12.06,
+          "log": "20261115-132224-rest-potions.log"
+        },
+        {
+          "case": "forge-effects",
+          "status": "passed",
+          "seconds": 9.11,
+          "log": "20261115-132224-forge-effects.log"
+        },
+        {
+          "case": "audit-boundaries",
+          "status": "passed",
+          "seconds": 5.92,
+          "log": "20261115-132224-audit-boundaries.log"
+        }
+      ],
+      "evidence": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\results-audit-boundaries-commerce-training-forge-effects-rest-potions-world-effects.json",
+        "sha256": "ef0c4dcb71235544cd392cc390fcd89264fa17e397ba0ad30603be82699c8c46"
+      }
+    },
+    {
+      "results": [
+        {
+          "case": "spellbook",
+          "status": "passed",
+          "seconds": 43.05,
+          "log": "20261115-135458-spellbook.log"
+        },
+        {
+          "case": "creatures-combat",
+          "status": "passed",
+          "seconds": 23.73,
+          "log": "20261115-135458-creatures-combat.log"
+        },
+        {
+          "case": "companions-keys",
+          "status": "passed",
+          "seconds": 96.42,
+          "log": "20261115-135458-companions-keys.log"
+        },
+        {
+          "case": "inventory-mouse",
+          "status": "passed",
+          "seconds": 32.0,
+          "log": "20261115-135458-inventory-mouse.log"
+        },
+        {
+          "case": "panels",
+          "status": "passed",
+          "seconds": 24.75,
+          "log": "20261115-135458-panels.log"
+        }
+      ],
+      "evidence": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\results-companions-keys-creatures-combat-inventory-mouse-panels-spellbook.json",
+        "sha256": "b2a13679a568899f1539ed885bd1d67bd8f07010bae6726c8823eeee57c10965"
+      }
+    },
+    {
+      "results": [
+        {
+          "case": "spellbook",
+          "status": "passed",
+          "seconds": 42.89,
+          "log": "20261115-141526-spellbook.log"
+        },
+        {
+          "case": "rest-potions",
+          "status": "passed",
+          "seconds": 12.47,
+          "log": "20261115-141526-rest-potions.log"
+        },
+        {
+          "case": "audit-boundaries",
+          "status": "passed",
+          "seconds": 5.7,
+          "log": "20261115-141526-audit-boundaries.log"
+        },
+        {
+          "case": "companions-keys",
+          "status": "passed",
+          "seconds": 95.39,
+          "log": "20261115-141526-companions-keys.log"
+        }
+      ],
+      "evidence": {
+        "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\results-audit-boundaries-companions-keys-rest-potions-spellbook.json",
+        "sha256": "c1fcb8688e4234b6184630584b8a35110649d1be959e665c30b8354c564dbacb"
+      }
+    }
+  ],
+  "logs": [
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\build-native-final.log",
+      "sha256": "4d206f1d81b2abd278580138c89105da17536f5f956c9ac5d2fc5d036209796e"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\build-client-final.log",
+      "sha256": "6abab7129b55ebef658054a029703e70ea7319debeb484f205fa7cd1aa2f57aa"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\wand-live-hp.log",
+      "sha256": "ab756148ac2ca7fec55e85d0935e272aeb2835f8be9e991bc26d12def678be45"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\native-regressions.log",
+      "sha256": "12b64a23d09321e670c11a6da1799ad52c05e8114923b8121fcc6f399ce5ca9d"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\client-regressions.log",
+      "sha256": "a7e1a133408382919e3faed6a8299600434642fd0f4622b711f243a969a26317"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\progress-regressions.log",
+      "sha256": "7ddfe937176513f074c0d321b23f1227eb1fb9db906d0489d628e9fe9f9e76bd"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\spell-effects-client.log",
+      "sha256": "95a172d5f60cc1c7713541bd2dfb68f7e636479e58d7261501f9e796d1d55f0f"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\spell-effects-parity.log",
+      "sha256": "95a172d5f60cc1c7713541bd2dfb68f7e636479e58d7261501f9e796d1d55f0f"
+    }
+  ],
+  "native_wand_regression": "Passed; edits/refill/duplicate HP explicitly compared with live combat/status records.",
+  "spell_effect_regression": "Client effects and native observer-on/off gameplay parity passed.",
+  "known_issue": {
+    "well": [
+      1076,
+      2236,
+      0
+    ],
+    "scripted_standing_point": [
+      1071,
+      2235,
+      0
+    ],
+    "finding": "Target reaches native Usecode, but the prescribed standing point intersects the neighboring wall. Native reach/collision rejects it; movement recovers.",
+    "boundary": "The other three wells complete native walking/filling/drinking through UO. No original map, Usecode or collision exception was introduced. Retail DOS comparison remains open."
+  },
+  "methodology": [
+    "Each case owns a disposable save; native setup is logged and finishes before the client takes the only pipe connection.",
+    "Actions use existing UO handlers/widgets/targeting; the bed and bellows additionally use visible-pixel double-clicks. This is not OS mouse automation for every action.",
+    "Haunted stress attributes are low; all eleven original eggs were consumed, temporary fear and return to follow were observed, and nausea rendered. Native rolls are unchanged; future runs allow at most four attempts.",
+    "Audio samples exclude startup/settings output. Guardian audio is tested with music/SFX disabled, separately from original text fallback.",
+    "Carriage and cleanup use copies of an earned investigation checkpoint; no quest flags are granted.",
+    "Cases were qualified during candidate iteration; each result retains its actual binary hashes. The final human-pose restriction was rechecked with haunted/combat tests; the later read-only rest progress fix was rechecked with inn/rest/prompt/audit regressions.",
+    "Vehicle travel beyond the town, every spell, all random spawn/party-remark outcomes and special-palette weather/global lighting are not certified by this matrix.",
+    "The earlier native-only eastern well test placed its observer on the blocked standing point; it did not establish walkable access. This matrix records that limitation explicitly."
+  ],
+  "deployment": {
+    "saves_changed": false,
+    "assets_changed": false,
+    "dependency_check": "All client dependency DLL hashes match",
+    "date": "2026-11-15T11:31:46.2653638Z",
+    "files": [
+      {
+        "after_sha256": "a1cf388d17ded9f3fbcc9c35669545e2cd4de2c022596782a49499c68f66d698",
+        "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\deployed-before\\host\\Ultima7.exe",
+        "before_sha256": "a329a1c0ddbdba362a77bb8720d12efae24f187133a770d90f4ad71f65bc6d07",
+        "source": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\build-side-20261115\\bin\\Ultima7.exe",
+        "target": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\build-host\\playtest-avatar-inventory\\Ultima7.exe"
+      },
+      {
+        "after_sha256": "ffddbe3e12538e389d2a1ee6e7a2f7326debc7be2d7e7d828d3299f109b5e557",
+        "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\deployed-before\\client\\cuo.dll",
+        "before_sha256": "22535040e547bfe26f5859ddb6f6f3ce15bf97e715756f8163ec9c439717cad9",
+        "source": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Trinsic-Sides-20261115\\cuo.dll",
+        "target": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Release-Trinsic-Avatar-Sheet\\net10.0\\cuo.dll"
+      },
+      {
+        "after_sha256": "9d5407ef0d5cd87d6e4c7aa8702a0483623e7ac8750d892f9caa4cbf7a08c071",
+        "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-qualification-20261115\\deployed-before\\client\\cuo.pdb",
+        "before_sha256": "40f840839902ba56342bb3ec467c8038715221a7ac2afe630a061a7307242665",
+        "source": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Trinsic-Sides-20261115\\cuo.pdb",
+        "target": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Release-Trinsic-Avatar-Sheet\\net10.0\\cuo.pdb"
+      }
+    ]
+  },
+  "installed_smoke": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\side-installed-smoke-20261115\\client-installed.json",
+    "sha256": "1dd5d3e9954bac87a1655751d0cb109bdf2505425a789261b7ed07bcd506e9ac"
+  }
+}

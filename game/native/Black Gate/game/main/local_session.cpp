@@ -58,6 +58,7 @@ extern uint8_t TheftReported;
 extern "C" void CopyScreenPalette(uint8_t *rgb);
 extern uint8_t DialogState;
 extern int8_t UsableRunning;
+extern int16_t TimeAdvanceRate;
 
 extern objref AvatarRef;
 extern "C" uint8_t AvatarDontMove;
@@ -316,7 +317,7 @@ static std::string snapshot(int seq,const std::string &outcome) {
     auto avatar=GetNpcBufferForIbo(&AvatarRef);
     s<<"H "<<activeItem<<" "<<activeShape<<" "<<(activeItem?uint32_t(plat_milliseconds()-activeSince):0)
      <<" "<<int(AvatarDontMove)<<" "<<GameTime.hold<<" "<<int(UsableRunning)<<" "<<int(DialogState)
-     <<" "<<int(PlayerActionSuspended)<<"\n";
+     <<" "<<int(PlayerActionSuspended)<<" "<<TimeAdvanceRate<<"\n";
     if(mode==5) {s<<"U "<<displayKind;if(interactiveDisplay) s<<" "<<controlLeft<<" "<<controlTop;s<<"\n";}
     if(mode==6) {
         objref book(spellbookObject);
@@ -332,7 +333,7 @@ static std::string snapshot(int seq,const std::string &outcome) {
     }
     if(refusalReason>=0) s<<"R "<<refusalSequence<<" "<<refusalReason<<"\n";
     s<<"N "<<hexText(std::string(avatar->name,strnlen(avatar->name,sizeof avatar->name)))<<"\n";
-    s<<"V "<<int(Npc_getStrength(&AvatarRef))<<" "<<int(Npc_getDexterity(&AvatarRef))<<" "<<int(Npc_getIntelligence(&AvatarRef))<<" "<<int(avatar->hitPoints)<<" "<<int(avatar->mana)<<" "<<int(avatar->magic)<<"\n";
+    s<<"V "<<int(Npc_getStrength(&AvatarRef))<<" "<<int(Npc_getDexterity(&AvatarRef))<<" "<<int(Npc_getIntelligence(&AvatarRef))<<" "<<int(Item_getHitPoints(&AvatarRef))<<" "<<int(avatar->mana)<<" "<<int(avatar->magic)<<"\n";
     if(town()) {
         const int weight=DetermineWeightOfContents(AvatarRef);
         s<<"P "<<int((int8_t)Item_getHitPoints(&AvatarRef))<<" "<<int(avatar->combat)<<" "<<avatar->experience
@@ -456,7 +457,7 @@ bool LocalSpellbookInput(short book,short caster,int8_t *selected) {
     spellbookSelection=nullptr;
     return spellbookCast;
 }
-static void poll(uint8_t *steps);
+static void poll(uint8_t *steps, bool observeOnly=false);
 void LocalPrompt(bool answers) {
     if(!LocalEnabled()) return;
     ++promptId; mode=answers?2:1; choices.clear(); chosen=-1;
@@ -585,7 +586,7 @@ static std::string transfer(const Row &src,const Row *dst,int requested,int x,in
     return split?"split-"+std::to_string(wireId((uint16_t)item.off)):"ok";
 }
 
-static void poll(uint8_t *steps) {
+static void poll(uint8_t *steps, bool observeOnly) {
     if(!LocalEnabled()) return;
     if(steps && auditSpell>=0) {
         int spell=auditSpell; auditSpell=-1;
@@ -626,6 +627,10 @@ static void poll(uint8_t *steps) {
     input>>a>>b;
     if(op=="SCREEN") { reply(mode==5?displayFrame:"ERROR no-display\n"); return; }
     if(op=="SYNC") { reply(snapshot(0,"sync")); return; }
+    // Time advancement can wait for original speech for several seconds. Keep
+    // observations alive, but leave mutations and their sequence unconsumed
+    // until the native operation reaches an ordinary input boundary.
+    if(observeOnly) { reply(snapshot(seq,"busy")); return; }
     if(gen!=generation) { reply(snapshot(seq,"stale"));return; }
     if(auto it=history.find(seq);it!=history.end()){if(op.rfind("DBG",0)==0)LocalDebugReplay(seq);reply(snapshot(seq,it->second));return;}
     if(seq!=lastSeq+1){reply(snapshot(seq,"sequence"));return;}
@@ -835,5 +840,6 @@ static void poll(uint8_t *steps) {
     reply(response);
 }
 void LocalPoll(uint8_t *steps){poll(steps);}
+void LocalProgress(){poll(nullptr,true);}
 
 

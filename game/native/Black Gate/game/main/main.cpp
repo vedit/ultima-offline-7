@@ -53,10 +53,12 @@ void AdvanceTime(void)
 		GameTime.tick();
 		RunActionQueue();
 		SpeechPlayer.continuePlaying();
+		LocalProgress();
 	}
 	while (SpeechPlayer.isPlaying()) {
 		plat_yield();
 		SpeechPlayer.continuePlaying();
+		LocalProgress();
 	}
 	TimeAdvanceRate = 0;
 }

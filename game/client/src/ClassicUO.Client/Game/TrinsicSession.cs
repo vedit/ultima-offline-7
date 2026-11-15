@@ -445,12 +445,15 @@ namespace ClassicUO.Game
         private static void PresentAction(Mobile mobile,int nativeFrame,bool reset)
         {
             int pose=nativeFrame&15;
-            int group=pose switch { >=4 and <=6=>1, >=7 and <=9=>2, >=14=>3, _=>0 };
+            int group=pose switch { >=4 and <=6=>1, >=7 and <=9=>2, >=14=>3, 11 or 12 when mobile.IsHuman=>4, _=>0 };
             if(!reset && actorActions.TryGetValue(mobile.Serial,out int old) && group!=0 && group!=old) {
-                byte action=mobile.IsHuman ? (byte)(group==1?9:group==2?12:16) :
+                // Stock UO's bow is the closest living bend/kneel animation.
+                // The native frame and posted recovery still own the action.
+                byte action=mobile.IsHuman ? (byte)(group==1?9:group==2?12:group==4?32:16) :
                     TrinsicCreatures.Attack(mobile.Graphic);
                 mobile.SetAnimation(action,repeatCount:1,forward:true,fromServer:true);
                 PresentedActions++;
+                if(group==4) TrinsicReplay.Record("NATIVEPOSE "+mobile.Serial+" "+pose+" "+action,"native frame "+nativeFrame);
             }
             actorActions[mobile.Serial]=group;
         }

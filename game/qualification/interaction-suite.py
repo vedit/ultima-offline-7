@@ -29,6 +29,7 @@ CASES=[
  ('trigger-branches','trinsic-triggers.py',['--branches','--completed-run','full-interaction-investigation',
     '--output',str(ROOT/'runs/full-interaction-suite/trinsic-branches.json')]),
  ('report-retries','trinsic-report-retry.py',['--checkpoint',str(ROOT/'runs/full-frontend-journey/Gilberto-witness.U7')]),
+ ('trinsic-sides','trinsic-side-activities.py',['--all','--checkpoint',str(ROOT/'runs/full-frontend-journey/GAME00.U7')]),
 ]
 if __name__=='__main__':
     selected=set(sys.argv[1:])

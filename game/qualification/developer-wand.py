@@ -28,6 +28,15 @@ def stats(p):
           'effective_strength','effective_dexterity','effective_intelligence','effective_combat','level','max_hp','max_mana','status','extra_flags')
     return dict(zip(keys,map(int,lines(p,'DS')[0][1:])))
 
+def live_health(p):
+    """Debug inspection must agree with live combat/status HP, not an NPC cache."""
+    inspected=stats(p)
+    combat=next(row for row in lines(p,'C') if int(row[1])==inspected['id'])
+    assert int(combat[2])==inspected['hp'],(combat,inspected)
+    if inspected['id']==56:
+        assert int(lines(p,'V')[0][4])==int(lines(p,'P')[0][1])==inspected['hp']
+    return inspected
+
 
 class Checks:
     def __init__(self,p):self.p=p;self.evidence=[];self.last=''
@@ -46,7 +55,7 @@ class Checks:
     def setstats(self,id=56,**changes):
         current=self.actor(id);current.update(changes)
         values=' '.join(str(current[k]) for k in ('strength','dexterity','intelligence','combat','magic','hp','mana','xp','training','food'))
-        self.send('DBGSET',id,extra=values);return stats(self.p)
+        self.send('DBGSET',id,extra=values);return live_health(self.p)
     def create(self,shape,frame=0,quantity=1,destination=-1,point=(0,0,0)):
         self.send('DBGI',shape,frame,f'{quantity} {destination} '+' '.join(map(str,point)))
         return created(self.p)[0]
@@ -204,7 +213,8 @@ def native():
         unchanged=q.actor();assert all(changed[k]==unchanged[k] for k in ('strength','magic','xp','training'))
         changed=q.setstats(strength=5,magic=3);assert changed['hp']==5 and changed['mana']==3
         q.setstats(strength=30,hp=1,magic=30,mana=1)
-        q.send('DBGREFILL',56);assert stats(p)['hp']==stats(p)['max_hp'] and stats(p)['mana']==stats(p)['max_mana']
+        q.send('DBGREFILL',56);live_health(p)
+        assert stats(p)['hp']==stats(p)['max_hp'] and stats(p)['mana']==stats(p)['max_mana']
         for condition,mask in ((0,0x80),(1,0x2000),(2,0x1000),(3,0x200),(4,0x4000)):
             q.send('DBGCOND',56,condition,'1');assert stats(p)['status']&mask
             if condition==3:assert stats(p)['effective_strength']==stats(p)['strength']-3
@@ -362,15 +372,15 @@ def equipment():
         pirate=q.creature(401,(1090,2214));original_ids=created(p)
         original={id&0xffff:q.inspect(id) for id in original_ids}
         assert len(original)>5
-        source_stats=q.actor(pirate)
+        source_stats=q.setstats(pirate,hp=1)
         q.send('DBGCOND',pirate,3,'1')
         clone=q.creature(401,(1090,2214),source=pirate);clone_ids=created(p)
         copied={id&0xffff:q.inspect(id) for id in clone_ids}
         assert len(copied)==len(original) and not original.keys()&copied.keys()
         signature=lambda data:Counter((r['shape'],r['frame'],r['quantity'],r['quality']) for r in data.values() if r['npc']<0)
         assert signature(original)==signature(copied)
-        target_stats=q.actor(clone)
-        assert all(source_stats[k]==target_stats[k] for k in ('strength','dexterity','intelligence','combat','magic','xp','training'))
+        q.inspect(clone);target_stats=live_health(p)
+        assert all(source_stats[k]==target_stats[k] for k in ('strength','dexterity','intelligence','combat','magic','hp','xp','training'))
         assert not target_stats['status']&0x7380
         source_npc=original[pirate&0xffff]['npc'];copy_npc=copied[clone&0xffff]['npc']
         assert source_npc!=copy_npc

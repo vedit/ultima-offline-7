@@ -56,6 +56,12 @@ its offered choices.
 10. For optional town checks, buy food/provisions, rent a room, visit the healer,
     train, use a bed, fill a bucket, try the forge and test witnessed theft. Record
     the NPC's work hours and the exact refusal text when an action is unavailable.
+11. Explore the haunted smithy by the west wall. Watch its chairs and door, and
+    let any party sickness/fear finish before moving on. These depend on original
+    saving throws; every party is not guaranteed to become sick. Save/reload there.
+12. Return to the murder scene after completing the investigation and opening a
+    gate. Its original cleanup trigger should remove the victims and evidence.
+    Buying a ship/cart title is covered below; campaign vehicle travel is separate.
 
 For a bug report, retain the run name, active slot, screenshot, object/NPC name,
 last action and whether Escape restores movement. The run's `host.log`,
@@ -79,6 +85,11 @@ state by granting flags or forcibly clearing a native movement hold.
 | All town speakers | All 16 non-player placed/scheduled speakers responded and returned control. This is initial-topic coverage, not exhaustive traversal of their dialogue graphs. |
 | Item dispatch | 26 starting inventory items and all 65 placed scripted/container families dispatched native use and recovered control; no unreachable family in this run. |
 | Other interaction regressions | All 21 pre-existing suites passed: targeting, spellbook, theft/witnesses, creatures/combat, bucket effects, commerce/training, rest/potions, forge, companions, inventory, labels, panels, stacks, map/sign and audit isolation. |
+| Haunted smithy | All eleven original script eggs consumed during a UO traversal: seven chair triggers, two door triggers, nausea and fear. Observed changed furniture, temporary blood, overhead reactions and bend/kneel animation; Iolo returns to native Follow Avatar work. Save/load and movement recover. |
+| Healer | Paid healing (30), poison cure (50) and real companion resurrection (400); possessions and living state survive load. Healthy targets, absent corpses, price refusal, cancellation and insufficient funds are covered. |
+| Shops, training and titles | Quantity-based food/arrows, drink and provisions, room key, original combat training, ship deed and carriage title. Insufficient funds, business hours, full inventory, missing training points, capped combat and repeat ship purchase are checked. |
+| Inn and world objects | Rented key unlocks the room; double-clicking the visible bed blanket reaches original rest controls. Bucket/well and bellows/fire checks exercise UO targeting and world picking. |
+| After the investigation | Resume the earned gate-exit save, return to the stables and observe original cleanup removing the victims, blood and bucket. No quest flags are supplied. |
 
 The continuous UO proof invokes the same client actions, widgets and target manager
 as play. It is not OS-level mouse automation for every input. Existing mouse
@@ -103,11 +114,11 @@ use native transfer/equipment/combat operations without needing a Usecode handle
 | --- | ---: | --- |
 | Iolo arrival | 1 | Native action queue → dialogue/overhead channels; full arrival passed. |
 | Stable clue eggs | 2 | Native movement/egg processing → quest state; route through the front entrance passed. Rear entrance is source-audited, not separately walked in this pass. |
-| Murder cleanup | 1 | Original cleanup script removes bodies/blood after its native prerequisites. Snapshot removal is shared with other object deletion; the delayed departure/return scenario was not run. |
+| Murder cleanup | 1 | Completed investigation → return to stables → native deletions disappear from UO. The script uses gate flag 87 and area activation; it does not enforce a separate 24-hour timer. |
 | Party remarks | 4 | Original speaker selection → native bark → UO mobile text. Shared channel passed; not all four probabilistic remarks were individually forced. |
-| Haunted-house scripts | 11 | Seven chair turns, two door actions, nausea and fear; native posted actions, frames, statuses and barks are exported. Full haunted-house traversal and fear recovery remain a manual scenario. |
-| Music | 7 | Original music cues and native audio / optional local Exult playback. Prior audio-option qualification applies; this pass did not listen to every regional cue. |
-| Speech | 2 | Original speech tracks 31 and 24 use native audio. Listening to both exact area-triggered lines remains a manual check. |
+| Haunted-house scripts | 11 | All eleven original one-time eggs consumed. Furniture changes, nausea poses/blood/barks, fear recovery, save/load and subsequent movement passed. Low native attributes are a logged stress-test precondition; random rolls and scripts are unchanged. |
+| Music | 7 | These placements select three original tracks (19, 27, 35). Regional trigger observations and music-only PCM output are checked; this does not certify every approach to all seven placements or local Exult recordings. |
+| Speech | 2 | Both area-triggered Guardian lines (31 and 24) passed with original audio enabled, and separately with the original text fallback. Speech-only PCM output was non-silent. |
 | Weather | 9 | Original weather state reaches `TrinsicEffects`. UO rain/snow exist; special-palette weather and general day/night lighting do not yet have complete UO presentation. |
 | Creature spawns | 7 | Native spawn → lifetime-qualified actor snapshot → UO body/costume. Horse/rat and body-animation regressions passed; every placed spawn probability/timetable was not replayed. |
 | Teleports | 4 | Native party teleport updates the snapshot. Three destinations are outside the town atlas; those destinations are not part of this playable-town qualification. The fourth is local. |
@@ -126,6 +137,15 @@ proof of all those actions. No frontend quest-state replacement was added.
 
 ## Remaining issues and boundaries
 
+- **Well east of the pub:** UO accepts the bucket target, but the original script
+  requests standing at native `(1071, 2235, 0)`, in the neighboring wall. Current
+  native collision/pathfinding rejects that point. Refusal is displayed and
+  movement recovers. The other three Trinsic wells complete their original walk,
+  fill and drink sequence. This is a native path/data issue, not a lost UO target;
+  no coordinate exception or collision bypass was added. A retail DOS comparison
+  is still needed before deciding whether to change that original behavior.
+  The earlier native-only well test positioned the observer on this blocked cell;
+  it proved the animation/contents changes but overstated walking access.
 - **Spark's sling:** the currently installed mapping for shape 474/frame 0 points
   at custom art 49213, which appears as a purple placeholder in his backpack.
   The parallel armory review records an approved replacement, not yet installed
@@ -136,23 +156,60 @@ proof of all those actions. No frontend quest-state replacement was added.
 - **Teleport destinations and vehicle travel:** the native operations can leave
   the rendered town. Boat/cart travel and the destination areas are not certified
   for this town playtest.
-- **Optional outcomes still need direct play:** full haunted-house sequence,
-  delayed murder cleanup, every business-hours/insufficient-funds branch,
-  Chantu's paid resurrection, pub rentals and vehicle purchases, death/revival,
-  every spell, and all routes through the dialogue graph. Shared dispatch is
-  wired; these outcomes are not being labelled as exhaustively tested.
+- **Remaining campaign coverage:** every spell, every path through all dialogue,
+  every probabilistic party remark, creature-spawn timetable and special weather
+  outcome still need campaign tests. The optional Trinsic service/haunting matrix
+  below covers the previously listed local activities, with the well exception
+  above; it does not certify the rest of Britannia or all possible random outcomes.
 
 Original rules to expect: shop services depend on NPC work schedules; several
 Fellowship members refuse conversation at their evening meeting. Spark joins
 after the Hook account even if the Avatar answers No. Wrong report answers and
 an unsuccessful geography quiz can be retried. These are original Usecode rules.
+Apollonia works overnight and sleeps from 03:00 to 06:00. Gargan's original
+sextant script checks for 80 gold but omits charging it; that original script behavior is
+preserved rather than replaced with a frontend transaction.
+
+## Side-activity fixes and evidence
+
+`receipts/trinsic-side-activities.json` records the additional disposable-save
+cases, screenshots, binary hashes and regressions. Setup may supply money or
+set native attributes/time/observer position before the client connects. The
+client then owns the pipe, and actions under test use its normal widgets,
+targeting and movement. Bed/forge checks additionally use visible pixel picking.
+No original quest flags, scripts, schedules or saving throws are replaced.
+
+Three shared connections were corrected. Developer's Wand HP editing/refill/copy and
+the avatar stat snapshot now read/write live native item HP, matching combat,
+healing and resurrection, instead of the separate NPC cache. Original bend/kneel
+poses for humans now invoke stock UO's living bow animation; native posted actions still
+control their timing and recovery. Native time advancement now serves read-only
+bridge observations while waiting for original speech; resting no longer causes
+a false disconnect warning. Gameplay commands remain refused during that wait,
+and the existing connection timeout still detects an unresponsive engine. These
+fixes add no item-specific gameplay rules.
 
 ## Repeating the qualification
 
 `interaction-suite.py` now also includes `trigger-census`,
-`frontend-murder-to-gate`, `trigger-branches` and `report-retries`, after the
+`frontend-murder-to-gate`, `trigger-branches`, `report-retries` and `trinsic-sides`, after the
 pre-existing cases. Running the full suite provides their prerequisite saves.
 The longer frontend journey takes roughly nine minutes on the tested machine.
+
+For only the optional matrix, run:
+
+```powershell
+py -3 -B game/qualification/trinsic-side-activities.py --all --checkpoint <completed-native-save>
+```
+
+The checkpoint must come from an
+earned murder-to-gate run; it is used only for carriage/cleanup prerequisites.
+Other cases start from their own fresh investigation saves. Use `--case haunted`
+(or another case name) for a focused repeat. Haunted nausea/fear and the inn's
+random sleep speech allow at most four independent native attempts per invocation,
+never a forced result. If the required random outcome is absent, qualification
+reports it rather than silently counting that branch as covered; repeat the case
+with a fresh run name.
 
 The live replay mode is opt-in through `TRINSIC_REPLAY` plus
 `TRINSIC_REPLAY_LIVE=1`. Input batches execute existing UO action handlers and
