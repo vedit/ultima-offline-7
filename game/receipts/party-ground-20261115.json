@@ -1,0 +1,148 @@
+{
+  "date": "2026-11-15",
+  "status": "installed-and-qualified",
+  "scope": "Party controls and concealed ground in the compact Trinsic landscape",
+  "base_commit": "10439e5",
+  "client": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Release-Trinsic-Avatar-Sheet\\net10.0\\cuo.dll",
+    "sha256": "68adf64f9863546fb11226dbf49500ad01ee9fe41b1ac3f460f148c2469b7c7d"
+  },
+  "native_host_unchanged": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\build-host\\playtest-avatar-inventory\\Ultima7.exe",
+    "sha256": "a1cf388d17ded9f3fbcc9c35669545e2cd4de2c022596782a49499c68f66d698"
+  },
+  "party": {
+    "stock_gumps": [
+      "0x07e2",
+      "0x07e3",
+      "0x07e4"
+    ],
+    "caption": "PARTY",
+    "composition": "Stock blue oval caps and a clean blue strip; client text. No replacement image files.",
+    "frame_clearance_px": 44,
+    "row_spacing_px": 56,
+    "verification": "Mouse-opened roster, companion paperdoll/backpack, reconnect/load and movement passed."
+  },
+  "ground": {
+    "native_bounds": [
+      832,
+      1984,
+      1216,
+      2448
+    ],
+    "rule": "Use original footprint coverage to replace concealed uniform near-black filler and scenery anchors with nearest native surface. Never use donor-facet terrain.",
+    "repairs_by_reason": {
+      "scenery anchor": 6370,
+      "concealed filler": 3246
+    },
+    "concealed_filler_inside_trinsic": 3045,
+    "comparison": {
+      "repairs": 9616,
+      "changed_compact_tiles": 2193,
+      "unrelated_changes": [],
+      "black_town_tiles": [],
+      "unchanged_nonland_files": 2782,
+      "outside_landscape_unchanged": true,
+      "outside_land_ids": 916
+    },
+    "uncovered_dark_ground": "preserved",
+    "native_geometry_collision_saves": "unchanged",
+    "provenance": {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\town-battlement-data\\native-ground.tsv",
+      "sha256": "acd0a3c77b8fdc2565b98b4ab7ef0b9bebed4acb77df6d234da6cc4c1c9a5914"
+    }
+  },
+  "original_inputs": {
+    "U7MAP": {
+      "path": "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\U7MAP",
+      "sha256": "3266419b2123cc57b18ad5a3bb70a056cffe31a6e64ec6b0844b51d93e15fe89"
+    },
+    "U7CHUNKS": {
+      "path": "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\U7CHUNKS",
+      "sha256": "4159dc33246e6ea4f6540c156cb28618745ec3362a27afda32b3afee3b0771a0"
+    },
+    "TFA.DAT": {
+      "path": "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\TFA.DAT",
+      "sha256": "300143ff7790bbffa8002727dd9c354dba11e22bfaee7c530b7d05095b51d39b"
+    },
+    "SHAPES.VGA": {
+      "path": "E:\\UltimaOffline\\Assets\\UltimaVII-Steam\\STATIC\\SHAPES.VGA",
+      "sha256": "193df5e56326adb5b695f0781b760fa81bf6c2f17af761cac95d4e449dcb5fd4"
+    }
+  },
+  "tests": {
+    "terrain_unit_tests": {
+      "command": "py -3 -B -m unittest tests.test_native_ground tests.test_terrain tests.test_shore",
+      "passed": 13
+    },
+    "independent_HEAD_patch_new_unit_tests": 5,
+    "client_build": {
+      "errors": 0,
+      "warnings": 15,
+      "log": {
+        "path": "C:\\Users\\veditoid\\AppData\\Local\\Temp\\uo7-party-terrain-20261115\\build-client-blue.log",
+        "sha256": "38bc888145da1da1d0acdf5b65e3cfb4df76266c003cbd9cd62304373abc5095"
+      }
+    },
+    "paperdoll": {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\paperdoll-controls\\client-u7-controls.json",
+      "sha256": "c0c33d6815b31ab4e21a87f762fd68e338d4c8f12f102dc4cc1a41e5b9b2cea7"
+    },
+    "options": {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\u7-options\\client-options.json",
+      "sha256": "0459ba789bac5dccd32572864ddb0f7c933fba62c9cc7330b806e5e77ca401fc"
+    },
+    "options_restart": {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\u7-options\\client-restart.json",
+      "sha256": "a719c1bdd94c0b8c3f8db9819173c0b8858f794da857cdeabe3ed77b04ebfe16"
+    },
+    "installed_runtime": {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\party-ground-installed-20261115\\client-installed.json",
+      "sha256": "6e800b0717ef1fc3bc94d0823e77ddaa00f15f91a8a8978cb044d4d50368aff9"
+    }
+  },
+  "captures": [
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\party-ground-blue-verified-20261115\\final-1.png",
+      "sha256": "95e2b06a46ff7d96344ce4d2b7554ba49f97417b6a571de16dea3ba6688cd7b9"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\party-ground-blue-verified-20261115\\final-2.png",
+      "sha256": "4971033cfc60a091a97159ce4b8b7e8c2df22373c15cc1cf1b2c0a12490baf96"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\party-ground-installed-20261115\\installed-0.png",
+      "sha256": "4b710b6cf8d95909a338bf788cd3026d9b7d0840bfaddb998b6a8d16e1b88659"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\party-ground-after-east-20261115\\after-0.png",
+      "sha256": "c90581a23ad50d1c5d4b9e4a2d86a00618c06cc782334e8a2b2dd2cc805dedbb"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\party-ground-after-west-20261115\\after-0.png",
+      "sha256": "ffed53be152531e9ddc5bdb73945c500e17483758ad8674e6aeada3ea426a4ef"
+    }
+  ],
+  "deployment": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\party-ground-deployment-20261115\\deployment.json",
+    "sha256": "920ab844c77494bc85ef409dabdf271e15ab1123b61b8fca624e035e2643b79d"
+  },
+  "replaced_files": 2718,
+  "rollback_directory": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\party-ground-deployment-20261115",
+  "preservation": "Only task hunks are committed. Runtime migration retained every unaffected installed compact tile by pixel/metadata/radar signature and kept 2782 non-land files byte-identical. All map bytes and 916 referenced land IDs outside the landscape are unchanged.",
+  "qualification_limit": "Captured north/east/west and scanned the full rendered landscape. This does not certify all of Britannia. Companion and options regressions used disposable saves.",
+  "migration_evidence": {
+    "comparison": {
+      "path": "C:\\Users\\veditoid\\AppData\\Local\\Temp\\uo7-party-terrain-20261115\\ground-comparison-final.json",
+      "sha256": "86403ae802a28c385bc0b17bb46640c385d889da773d0b19a864bcd39af4af23"
+    },
+    "installed_before": {
+      "path": "C:\\Users\\veditoid\\AppData\\Local\\Temp\\uo7-party-terrain-20261115\\installed-data-before.json",
+      "sha256": "2caafd516dc5f97f2d4f28d22ba9c2d2e863413a2471588d4d94deeee81ac572"
+    },
+    "scoped_migration_source": {
+      "path": "C:\\Users\\veditoid\\AppData\\Local\\Temp\\uo7-party-terrain-20261115\\land-migration-source.py",
+      "sha256": "b5e39eb2c07f679f0ecc592d99695928a31c7eb7130ad9f12ebdc95dd3b51951"
+    }
+  }
+}

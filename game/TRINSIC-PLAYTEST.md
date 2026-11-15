@@ -223,3 +223,29 @@ The source census and branch tests keep reusable game-specific assertions while
 the session's shell handles process execution. Computer-use capabilities and
 current official documentation were checked before extending this existing
 domain replay. No separate service, agent orchestrator or WSL workflow was added.
+
+## Party controls and concealed ground
+
+The paperdoll's Party button uses the stock blue oval end caps and blue fill,
+with a client-rendered caption and the native normal/pressed/hover states. Its
+click area covers the relabelled surface. The companion roster keeps its text
+and actions 44 pixels clear of the frame, with more space between members.
+
+The compact-ground converter now resolves hidden underlays from original U7
+map footprints and neighbouring native surfaces. All 3,045 near-black filler
+cells found inside Trinsic were covered by original fortress footprints. Their
+exposure after compression caused the black patches. Unmapped scenery anchors
+also previously inherited unrelated donor-facet paving, including sandstone.
+Neither case now falls back to donor-map pixels. This is a shared conversion
+rule, with no house or gate coordinate exceptions. Genuine mapped floors,
+roads, shoreline and uncovered dark ground remain intact. Inferred underlays
+affect presentation only; native geometry, collision, schedules and saves are
+unchanged. `native-ground.tsv` records source coordinates, shape/frame, reason,
+donor coordinates and selected land graphic for each inferred cell.
+
+`receipts/party-ground-20261115.json` records the rebuilt-map comparison, UI
+captures and deployment. The installed update preserves unaffected existing
+floor pixels and all scenery/equipment assets. The qualification covers the
+rendered Trinsic landscape, not all of Britannia. Repeat the pure checks with
+`py -3 -B -m unittest tests.test_native_ground tests.test_terrain tests.test_shore`
+and the existing `game/qualification/paperdoll-controls.py` replay for the UI.

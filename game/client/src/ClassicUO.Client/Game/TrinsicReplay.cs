@@ -508,14 +508,14 @@ namespace ClassicUO.Game
                 case "U7SHEET":
                     var u7sheet=UIManager.GetGump<PaperDollGump>(world.Player.Serial);
                     var ids=u7sheet.Children.OfType<Button>().Where(b=>!b.IsDisposed).Select(b=>b.ButtonID).Order().ToArray();
-                    if(!ids.SequenceEqual(new[]{1,2,3,7,8}))throw new InvalidOperationException("Unrelated paperdoll buttons remain: "+string.Join(",",ids));
-                    if(!u7sheet.Children.OfType<NiceButton>().Any(b=>b.ButtonParameter==9 && b.TextLabel.Text=="Party") ||
+                    if(!ids.SequenceEqual(new[]{1,2,3,7,8,9}))throw new InvalidOperationException("Unrelated paperdoll buttons remain: "+string.Join(",",ids));
+                    if(!u7sheet.Children.OfType<TrinsicPartyButton>().Any(b=>b.ButtonID==9 && b.ButtonGraphicNormal==0x07e2 && b.ButtonGraphicPressed==0x07e3) ||
                         u7sheet.Children.OfType<GumpPic>().Any(p=>!p.IsDisposed && p.Graphic==0x7d2))
                         throw new InvalidOperationException("Party button missing or old scroll remains");
                     break;
                 case "PARTYOPEN":
                     var rosterSheet=UIManager.GetGump<PaperDollGump>(world.Player.Serial);
-                    var partyButton=rosterSheet.Children.OfType<NiceButton>().Single(b=>b.ButtonParameter==9);
+                    var partyButton=rosterSheet.Children.OfType<Button>().Single(b=>b.ButtonID==9);
                     UIManager.MakeTopMostGump(rosterSheet);
                     Mouse.Position=new Point(partyButton.ScreenCoordinateX+30,partyButton.ScreenCoordinateY+12);
                     Mouse.ButtonPress(MouseButtonType.Left);UIManager.OnMouseButtonDown(MouseButtonType.Left);

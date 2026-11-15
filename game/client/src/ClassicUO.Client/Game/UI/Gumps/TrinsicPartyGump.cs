@@ -30,23 +30,22 @@ namespace ClassicUO.Game.UI.Gumps
             string next = string.Join("|", actors.Select(m => $"{m.Serial}:{m.Name}:{m.Hits}:{m.HitsMax}:{m.FindItemByLayer(Layer.Backpack)?.Serial}"));
             if (signature == next) return;
             signature = next; members = actors.Select(m => m.Serial).ToArray(); Clear();
-            Width = 420; Height = 100 + actors.Length * 48; WantUpdateSize = false;
+            Width = 420; Height = 120 + actors.Length * 56; WantUpdateSize = false;
             Add(new ResizePic(0x0a28) { Width = Width, Height = Height });
-            Add(new Label("Party", false, 0x288, font: 6) { X = 25, Y = 18 });
+            Add(new Label("Party", false, 0x288, font: 6) { X = 44, Y = 44 });
             for (int i = 0; i < actors.Length; i++)
             {
-                var actor = actors[i]; int y = 56 + i * 48;
-                Add(new Label(actor.Name, false, 0x288, 175, 9) { X = 25, Y = y });
-                Add(new Label($"HP {actor.Hits}/{actor.HitsMax}", false, 0x288, 175, 9) { X = 25, Y = y + 18 });
-                Add(new Button(100 + i * 2, 0x837, 0x838, 0x837) { X = 205, Y = y, ButtonAction = ButtonAction.Activate });
-                Add(new Label("Paperdoll", false, 0x288, font: 9) { X = 229, Y = y + 1 });
+                var actor = actors[i]; int y = 88 + i * 56;
+                Add(new Label(actor.Name, false, 0x288, 156, 9) { X = 44, Y = y });
+                Add(new Label($"HP {actor.Hits}/{actor.HitsMax}", false, 0x288, 156, 9) { X = 44, Y = y + 18 });
+                Add(new Button(100 + i * 2, 0x837, 0x838, 0x837) { X = 224, Y = y, ButtonAction = ButtonAction.Activate });
+                Add(new Label("Paperdoll", false, 0x288, 128, font: 9) { X = 248, Y = y + 1 });
                 if (actor.FindItemByLayer(Layer.Backpack) != null)
                 {
-                    Add(new Button(101 + i * 2, 0x837, 0x838, 0x837) { X = 205, Y = y + 22, ButtonAction = ButtonAction.Activate });
-                    Add(new Label("Backpack", false, 0x288, font: 9) { X = 229, Y = y + 23 });
+                    Add(new Button(101 + i * 2, 0x837, 0x838, 0x837) { X = 224, Y = y + 22, ButtonAction = ButtonAction.Activate });
+                    Add(new Label("Backpack", false, 0x288, 128, font: 9) { X = 248, Y = y + 23 });
                 }
             }
-            Add(new Label("Party membership follows U7 conversations.", false, 0x288, 370, 9) { X = 25, Y = Height - 30 });
         }
         public override void OnButtonClick(int id)
         {

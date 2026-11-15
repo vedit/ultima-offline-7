@@ -1,6 +1,7 @@
 """Convert a 2x2 patch of original ground into one ClassicUO land diamond."""
 import struct
 import zlib
+from collections import deque
 from functools import lru_cache
 from PIL import Image, ImageChops
 
@@ -10,8 +11,55 @@ LANDSCAPE=(832,1984,1216,2448)
 def map_offset(x,y):
     return ((x//8)*512+y//8)*196+4+3*((y%8)*8+x%8)
 
+def native_ground(terrain,tfa,land,floors,source_land,is_filler,bounds=LANDSCAPE):
+    """Recover concealed ground from U7 footprints and adjacent U7 surfaces.
+
+    Large map shapes own their southeast anchor and cover preceding cells.
+    Uniform dark tiles under those footprints are hidden filler, not paving.
+    Reconstruct only their presentation; native collision and elevation stay native.
+    """
+    x0,y0,x1,y1=bounds
+    # TFA footprints are at most eight cells wide/deep. Include neighbouring
+    # ground and anchors outside the view whose footprints reach into it.
+    cells={(x,y):terrain.tile(x,y) for y in range(y0-8,y1+16)
+           for x in range(x0-8,x1+16)}
+    covered=set()
+    for (x,y),cell in cells.items():
+        shape,frame=cell['shape'],cell['frame']
+        flags,_,footprint=tfa[shape*3:shape*3+3]
+        if shape<150 or not flags>>5:continue
+        w,d=(footprint&7)+1,((footprint>>3)&7)+1
+        if frame&32:w,d=d,w
+        covered.update((x-dx,y-dy) for dy in range(d) for dx in range(w))
+    ground={};donors={};pending=deque();missing={}
+    for y in range(y0-8,y1+8):
+        for x in range(x0-8,x1+8):
+            pos=x,y;cell=cells[pos];shape,frame=cell['shape'],cell['frame']
+            hidden=pos in covered and shape<150 and is_filler(shape,frame)
+            graphic=land.get((shape,frame),land.get((shape,frame&31)))
+            if graphic is None and shape in (2,19,20,30,64,65):graphic=0xaa
+            if graphic is None and shape in (49,50,51,63):graphic=0x75+frame%4
+            graphic,z=source_land.get(pos,(graphic,0))
+            graphic=floors.get(pos,graphic)
+            if hidden or graphic is None:
+                missing[pos]=(shape,frame,'concealed filler' if hidden else 'scenery anchor')
+            else:
+                ground[pos]=(graphic,z);donors[pos]=pos;pending.append(pos)
+    # Stable multi-source distance fill; no coordinate exceptions and no donor
+    # UO map pixels. Actual floors, roads, shoreline and uncovered void survive.
+    while pending:
+        x,y=pending.popleft()
+        for pos in ((x,y-1),(x-1,y),(x+1,y),(x,y+1)):
+            if pos not in missing or pos in ground:continue
+            ground[pos]=(ground[x,y][0],0);donors[pos]=donors[x,y];pending.append(pos)
+    assert all(pos in ground for pos in missing),'Native scenery has no surrounding ground'
+    repairs=[(x,y,*missing[x,y],*donors[x,y],ground[x,y][0]) for x,y in sorted(missing)
+             if x0<=x<x1 and y0<=y<y1]
+    return ground,repairs
+
+
 def reduce_land(facet,source_land,output,tiledata,land):
-    from source import D,TerrainSource,archive,art_key,entries
+    from source import D,TerrainSource,archive,art_key,entries,u7,member,shapes
     from u7uo.shore import PROJECTION
     art=output/'Art/Land'
     radar=bytearray((output/'radarcol.mul').read_bytes())
@@ -55,31 +103,24 @@ def reduce_land(facet,source_land,output,tiledata,land):
         struct.pack_into('<H',radar,i*2,avg)
         return i
     terrain=TerrainSource((D/'U7MAP').read_bytes(),(D/'U7CHUNKS').read_bytes())
-    def outside(x,y):
-        cell=terrain.tile(x,y)
-        shape,frame=cell['shape'],cell['frame']
-        graphic=land.get((shape,frame),land.get((shape,frame&31)))
-        if graphic is not None:return graphic,0
-        if shape in (2,19,20,30,64,65):return 0xAA,0
-        if shape in (49,50,51,63):return 0x75+frame%4,0
-        # Under non-flat map shapes use the surrounding original ground.
-        for dx,dy in ((0,-1),(-1,0),(1,0),(0,1),(-1,-1),(1,1)):
-            near=terrain.tile(x+dx,y+dy)
-            graphic=land.get((near['shape'],near['frame']))
-            if graphic is not None:return graphic,0
-        return 3+frame%4,0
-    def cell(x,y):
-        if BOUNDS[0]<=x<BOUNDS[2] and BOUNDS[1]<=y<BOUNDS[3]:
-            return source_land.get((x,y)) or struct.unpack_from('<Hb',facet,map_offset(x,y))
-        return outside(x,y)
+    @lru_cache(None)
+    def is_filler(shape,frame):
+        # Some original map records carry the reflected-frame bit even when
+        # a flat shape has only 32 frames; native rendering uses the base frame.
+        if (frame+1)*64>len(member(shapes,shape)):frame&=31
+        colors=u7(shape,frame)[0].convert('RGB').getcolors(1)
+        return colors is not None and max(colors[0][1])<=8
+    ground,repairs=native_ground(terrain,(D/'TFA.DAT').read_bytes(),land,{},source_land,is_filler)
+    (output/'native-ground.tsv').write_text(''.join('\t'.join(map(str,r))+'\n' for r in repairs),encoding='ascii')
     x0,y0,x1,y1=LANDSCAPE
     for y in range(y0,y1,2):
         for x in range(x0,x1,2):
-            patch=[cell(x+dx,y+dy)
+            patch=[ground[x+dx,y+dy]
                    for dy in (0,1) for dx in (0,1)]
             ids=tuple(i for i,z in patch)
             struct.pack_into('<Hb',facet,map_offset(x//2,y//2),diamond(ids),max(z for i,z in patch))
     (output/'radarcol.mul').write_bytes(radar)
+    return repairs
 
 def rampart_statics(refs,rows,channels):
     # Stock wall faces run along the south/east edges of their UO tile.

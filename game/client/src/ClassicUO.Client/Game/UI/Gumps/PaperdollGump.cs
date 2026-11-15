@@ -329,12 +329,10 @@ namespace ClassicUO.Game.UI.Gumps
                 {
                     if (!Children.OfType<Button>().Any(b => !b.IsDisposed && b.ButtonID == (int)Buttons.Journal))
                         Add(new Button((int)Buttons.Journal, 0x7dc, 0x7dd, 0x7de) { X = 185, ButtonAction = ButtonAction.Activate });
+                    Add(new TrinsicPartyButton((int)Buttons.Party) { X = 185 });
                     var order = new[] { Buttons.Options, Buttons.LogOut, Buttons.Journal, Buttons.Party, Buttons.PeaceWarToggle, Buttons.Status };
                     foreach (var button in Children.OfType<Button>().Where(b => !b.IsDisposed))
                         button.Y = 44 + 27 * Array.IndexOf(order, (Buttons)button.ButtonID);
-                    Add(new ResizePic(0x0a28) { X = 185, Y = 125, Width = 64, Height = 24, AcceptMouseInput = false });
-                    Add(new NiceButton(185, 125, 64, 24, ButtonAction.Activate, "Party", hue: 0x386, unicode: false, font: 1)
-                    { ButtonParameter = (int)Buttons.Party, IsSelectable = false });
                 }
             }
 
