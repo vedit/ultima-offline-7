@@ -1,5 +1,5 @@
 {
-  "published_at": "2026-11-15T23:41:25.830718+00:00",
+  "published_at": "2026-11-15T23:46:06.847012+00:00",
   "source_updated_at": "2026-11-15T14:12:47.759405+00:00",
   "rows": 7141,
   "pages": [
@@ -15,7 +15,7 @@
     "stock-study.html"
   ],
   "files": 12337,
-  "bytes": 113107129,
+  "bytes": 113106780,
   "landing_page": "armory.html",
   "review_snapshot": {
     "recipe": "atlas-reviews-2026-11-16",
@@ -136,7 +136,7 @@
   "source_catalog_sha256": "79fb3f725c6433a861a44f2bacc9e1418307fd1148adc745174f0557de2f624e",
   "scope": "Linked review galleries and catalog thumbnails; runtime files and unlinked old revisions excluded",
   "output_sha256": {
-    "armory.html": "a88a87378344c18a9cac922bd892459e495998245b0c5501d468e1da7273e480",
+    "armory.html": "f7df1a4ef528346a38c59e62cea93bfeffee235b2a04ccecc1b9a3cf3d3c521b",
     "atlas.html": "7a10c8203ba430bbd44fb2c7ca1d640e95e4436c250bfc0aee671ef7fd0b3948",
     "catalog.js": "79fb3f725c6433a861a44f2bacc9e1418307fd1148adc745174f0557de2f624e",
     "custom-art.csv": "2844efb7faef9c0971955a92a456eb89d4e2560d4fb5f8552a02110894408ea6",
@@ -146,11 +146,11 @@
     "gargoyles.html": "25e92ae9a0dba177a23b20e0544295da5d699adfd986d439abcec9b0b6f60e0f",
     "homes.html": "b3fe777235e614fccbb7a591c6857b3507b57ad73e585f98ae3818756760691c",
     "inamo.png": "b03aca223b2c382e217dd67f0bb9a61af33313719baecc58e8894acda21335ea",
-    "index.html": "a88a87378344c18a9cac922bd892459e495998245b0c5501d468e1da7273e480",
-    "inn.html": "2608f47f34a565ad971c4d75c65588cfe75aed8bfccdf4223edb657addf79461",
+    "index.html": "f7df1a4ef528346a38c59e62cea93bfeffee235b2a04ccecc1b9a3cf3d3c521b",
+    "inn.html": "72782f3d9651562772ae909b19701ba274061976d3032f3af1ae0da8349f73e8",
     "mapping.csv": "27b983afdcb813cd7d456ff51f08f83d6c7529dfc26a3628a2f31fc4e825efed",
     "outfits.csv": "ae3dcaeb34c50873bf232aa0eba82b8eca3a11e49c977fc5a676dea3114e6664",
-    "public-interiors.html": "a22bd06fcafefa97bff64aec5274285b70c83ac7441dbc0d0306256602a3b62f",
+    "public-interiors.html": "58b7af473cde553ac70f52f326099473d04a2a50dbd672615ff79ec2faccd54f",
     "rake.png": "d67a2733062220d461fbed3fbcf958357b44a0c25c2686026af9a87cece16adf",
     "references.csv": "0b3d3ae305845e431d6047fc868d4de8744768e18aaeb9ab59ea61efb1673e88",
     "revised-dishes.png": "b08444b28495d95b492c99536d4176a5d770a8aec4cdd25b163d9429cf357487",
@@ -158,8 +158,8 @@
     "revised-lights.png": "b0f79a6f63190931acc31617a21c1850c7e7cfd95c28b9a3a60d0de4fd5479fa",
     "revised-matches.html": "33e6ea3ae0660997791cce09feee7b844ad471a9b26e678e48dc863d87c7f518",
     "shields.html": "03cda62725ac1b3f4c8617fc8bbb17788738d83b8f089abfe574392c49daba82",
-    "sources.json": "10974dd4aa3d83e1c73fdb95f1f87678042e01c8afbc1f5d70730fbd1194e0a9",
-    "stock-sources.json": "25fbc05b68e794df5e0a9c4e77986d8544fd81980f8ab45f91c8cc978ba8b1be",
+    "sources.json": "a3bbaf01bb9e33d35159b0dd09c8a65491328f7dddf003054dd508f06ba58ccc",
+    "stock-sources.json": "caaaa66fe5aef7618e6a5f19aaae033a03c1bbc9f2ee29417e7dd2be87a4da2d",
     "stock-study.html": "d7105cae967a6b87e81e22dc400b6bccbb046c9ffd99aaf643208fb2eae70c34"
   }
 }
