@@ -45,7 +45,7 @@ def html_data(records,inputs):
         target_id=idtext(spec) if spec[0] not in ('outfit','layout','wearable','scene','remains','revised','rake') else describe(spec)[0]
         if spec[0] in ('outfit','layout','wearable','scene','remains','revised','rake'):label=describe(spec)[1]
         if spec[0]=='outfit':family_label=WARDROBES[s][0]
-        if spec[0]=='remains':family_label=label.split(' · ')[0]
+        if spec[0]=='remains' or method=='Pinned gargoyle':family_label=label.split(' · ')[0]
         if s==249:family_label=['Green top','Orange dress','Blue dress'][f&31]
         witness=refs[0] if refs else None
         row=dict(shape=s,frame=f,source_name=names[s],name=family_label,category=family,status=grade,evidence=ev,refs=len(refs),
@@ -94,9 +94,11 @@ if __name__=='__main__':
     revised_gallery.build(OUT,rows)
     from rake_card import build as build_rake_card
     build_rake_card(OUT)
+    import gargoyle_study
+    gargoyle_study.build(OUT)
     receipt['input_sha256'][str(EXULT.with_name('paperdol_info.txt'))]=digest(EXULT.with_name('paperdol_info.txt'))
     receipt['input_sha256'][str(EXULT.with_name('bodies.txt'))]=digest(EXULT.with_name('bodies.txt'))
-    for name in (*revised_gallery.FILES,'rake.png','equipment.csv','stock-study.html','stock-sources.json','outfits.csv','preview.png','extent.png','index.html'):
+    for name in (*revised_gallery.FILES,*gargoyle_study.FILES,'rake.png','equipment.csv','stock-study.html','stock-sources.json','outfits.csv','preview.png','extent.png','index.html'):
         receipt['output_sha256'][name]=digest(OUT/name)
     (OUT/'sources.json').write_text(json.dumps(receipt,indent=2)+'\n','utf8')
     print({k:v for k,v in receipt.items() if 'sha256' not in k})

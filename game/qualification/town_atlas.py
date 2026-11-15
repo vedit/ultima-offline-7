@@ -21,6 +21,7 @@ BASE = RELEASE/'assets'
 OUT = ROOT/'town-stables-data'
 HEIGHT_BLOCKS = 512
 TILE_START = 512 * 964
+TRANSLUCENT = 0x08
 
 def table(name):
     with (ATLAS/name).open(encoding='utf-8-sig',newline='') as stream:
@@ -153,7 +154,9 @@ def build(output=OUT,compact=False):
     # Sort displaced art at its painted ground contact. A split is measured in
     # sprite columns, so both the renderer and pixel picker can use the same cut.
     depth_profiles={}
-    def private_art(sig,template,name,height,parts=(),pixels=None,digest=None):
+    def private_art(sig,template,name,height,parts=(),pixels=None,digest=None,*,clear_flags=0):
+        if clear_flags:
+            sig=(sig,clear_flags)
         if sig not in private:
             graphic=next(spare)
             private[sig]=graphic
@@ -167,7 +170,7 @@ def build(output=OUT,compact=False):
             addr=address(graphic)
             base=address(template)
             tiledata[addr:addr+41]=tiledata[base:base+41]
-            flags=int.from_bytes(tiledata[addr:addr+8],'little') & ~(1<<24)
+            flags=int.from_bytes(tiledata[addr:addr+8],'little') & ~((1<<24) | clear_flags)
             tiledata[addr:addr+8]=flags.to_bytes(8,'little')
             tiledata[addr+20]=int(height)*4
             tiledata[addr+21:addr+41]=name.encode('ascii','replace')[:19].ljust(20,b'\0')
@@ -254,8 +257,10 @@ def build(output=OUT,compact=False):
         else:
             pixels=None
             signature=('atlas',row['target_image'])
+        # Inamo's first recipe layer is blood. Its tile would make the whole body translucent.
+        clear_flags=TRANSLUCENT if key in ((414,26),(414,58)) else 0
         sig=signature,template,row['native_height']
-        graphic=private_art(sig,template,row['name'],row['native_height'],parts,pixels,row['target_image'])
+        graphic=private_art(sig,template,row['name'],row['native_height'],parts,pixels,row['target_image'],clear_flags=clear_flags)
         catalog[key]=graphic
     assert sum(r['method']=='Approved stock rake' for r in rows)==10
     assert sum(r['method'] in ('Approved stock match','Approved stock treatment','Empty plate fragments') for r in rows)==18

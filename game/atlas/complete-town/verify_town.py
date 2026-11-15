@@ -37,7 +37,17 @@ def verify(root):
                                 (349,1,'plaster wall'),(355,2,'plaster wall')):
         for frame in (base,base+32):
             assert bykey[shape,frame]['uo_name']==material,(shape,frame,material)
-    assert bykey[414,26]['method']=='Corpse parts' and all(bykey[867,f]['method']=='Corpse parts' for f in (0,32))
+    assert all(bykey[414,f]['method']=='Pinned gargoyle' and bykey[414,f]['name']=='Inamo' for f in (26,58)) and all(bykey[867,f]['method']=='Corpse parts' for f in (0,32))
+    from gargoyles import BODIES
+    from targets import EXULT
+    body_list=EXULT.with_name('bodies.txt').read_text().split('%%section bodylist')[1].split('%%endsection')[0]
+    pairings={tuple(map(int,line.split('#')[0].strip()[1:].split('/')))
+              for line in body_list.splitlines() if line.startswith(':')}
+    assert all((shape,*key) in pairings for shape,(_,key) in BODIES.items())
+    assert bykey[414,26]['witness']=='1066, 2182, 0'
+    with Image.open(root/'images'/(bykey[414,26]['target_image']+'.png')) as pose, Image.open(root/'images'/(bykey[414,58]['target_image']+'.png')) as other:
+        assert pose.height>pose.width and pose.size==other.size
+        assert pose.transpose(Image.Transpose.FLIP_LEFT_RIGHT).tobytes()==other.tobytes()
     with Image.open(root/'images'/(bykey[867,0]['target_image']+'.png')) as floor, Image.open(root/'images'/(bykey[867,32]['target_image']+'.png')) as reflected:
         expected=floor.transpose(Image.Transpose.TRANSPOSE)
         assert expected.size==reflected.size and expected.tobytes()==reflected.tobytes()
