@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-15",
+  "status": "rejected",
+  "scope": "Seven current authored sources, all fifteen packed combinations, and five superseded master/mouth images",
+  "user_feedback": "Nose and mouth perspective is wrong; the head reads as an unserious cartoon",
+  "shared_failures": [
+    "Skull and brow imply a turned head, while the nose does not convincingly project from that same facial plane",
+    "Mouth placement and corner recession do not consistently follow the facial centreline and muzzle volume",
+    "Bulbous brow and cheek forms, rounded block-like chin, glossy highlights and upturned lips create a caricature",
+    "Variant prompts locked the faulty master geometry while changing only local openings"
+  ],
+  "current_sources": {
+    "guardian-bare-master": "Rejected: inconsistent nose/mouth construction and a smirking neutral expression",
+    "mouth-cut-small": "Rejected: preserves the master's misplaced, upturned mouth",
+    "mouth-cut-medium": "Rejected: opening broadens the smile without resolving the face plane or far-corner recession",
+    "mouth-cut-wide": "Rejected: exaggerated grin and insufficiently convincing jaw motion within the fixed silhouette",
+    "mouth-cut-oval": "Rejected: aperture reads as a separate oval on the near cheek, left of the facial centreline",
+    "eyes-half": "Blink patch is technically usable, but the overall head remains rejected and needs a new base",
+    "eyes-closed": "Blink patch is technically usable, but the overall head remains rejected and needs a new base"
+  },
+  "superseded_sources": {
+    "master": "Same construction and tone problems, plus the rejected trophy mount",
+    "small_medium_wide": "Same construction problems; teeth and tongue also violate the user's art requirements",
+    "round": "Especially inconsistent perspective; pursed frontal lips contradict the turned head"
+  },
+  "references_checked": [
+    "Original local U7 Guardian forehead, eye and mouth layers from the intro",
+    "Stock UO stone faces 0x10F5, 0x10F6, 0x10FC, 0x10FD, 0x110F, 0x1110",
+    "Stock UO busts 0x12CA and 0x12CB",
+    "User's marked facial centreline and wrapping mouth guide"
+  ],
+  "next_art_gate": "Rebuild and review one structurally coherent, stern master at native and enlarged scales before producing animation variants",
+  "retain_requirements": ["Transparent mouth openings", "No teeth or tongue", "No trophy mount or hardware", "Stock UO camera and lighting"],
+  "runtime_changes": "None in this review; functional intro and audio tests remain separate from art approval"
+}

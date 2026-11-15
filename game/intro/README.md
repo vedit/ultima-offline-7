@@ -1,5 +1,11 @@
 # Dream opening
 
+**Art status — rejected on 2026-11-15.** The current generated head, all four
+mouth variants and both eyelid variants fail the facial perspective and tone
+review. All 15 packed combinations inherit the same faulty master. Functional
+intro verification is not visual approval. Keep these files as rejected
+development references until the master is rebuilt; see `art/review.json`.
+
 This development-only presentation precedes the original Black Gate Trinsic
 arrival. The bare Guardian relief uses a fixed head with four alternate
 mouth patches and two eyelid patches. Original speech, subtitles and facial
@@ -19,6 +25,15 @@ These are separate development candidates, not replacements for town art.
 The older eye sources contribute only the two cropped eyelid regions; their
 surrounding material is never imported. `art/relief-prompts.json` records the
 prompts and the user's revisions.
+
+Before generating replacement animation, review one master against the original
+U7 Guardian's identity and stock UO stone faces (including 0x110F) for projection.
+The skull, brow, nose bridge/tip, mouth centre and chin must describe one head
+orientation. Check the nose's depth and occlusion, the far side's foreshortening,
+and the mouth wrapping around the muzzle. Keep the expression stern, with
+restrained lips and angular facial planes. Check enlarged and at 104 x 140 before
+making mouth/eyelid patches. Preserve the requested transparent mouth apertures
+and absence of teeth, tongue, trophy plate and hardware.
 
 ## Play
 
