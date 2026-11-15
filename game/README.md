@@ -2,6 +2,8 @@
 
 Run `Play Ultima Offline 7.cmd` at the repository root. It resumes `runs/player-investigation/GAME00.U7` in the existing private installation, or starts with Finnigan's commission at the stables. Use the arrow keys or right mouse button to move, double-click objects and people to use them, and drag items between the world, containers and paperdoll. F2 opens the paperdoll, F3 the backpack, F4 the map and F5 saves. Close the client window to end that session.
 
+The Avatar's backpack includes a [Developer's Wand](developer-wand.md) for native supplies, spawning, inspection, stat editing and world controls. Use `--test-copy <new-run>` for an independent copy of the current saved checkpoint, or `--no-debug` to disable the toolbox.
+
 Short NPC reactions appear over the speaker using ClassicUO's overhead speech. Black Gate supplies the words and decides when each character speaks.
 
 The frozen Trinsic playtest starts at the original moongate arrival and resumes its own save after F5. On the provisioned machine, run `E:\UltimaOffline\Builds\UltimaOffline7\Trinsic-playtest-01\Play Trinsic.cmd`. To play the same opening in the development build, run `"Play Ultima Offline 7.cmd" --from-opening`. [Playtest coverage and build fingerprint](receipts/trinsic-playtest-01.json)

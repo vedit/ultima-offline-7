@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "u7port.h"
 #include "local_effects.h"
+#include "local_debug.h"
 #include "objref.h"
 #include "coord.h"
 #include "item.h"
@@ -72,6 +73,7 @@ static int wireId(int handle) {
 }
 int LocalWireId(short handle) { return wireId((uint16_t)handle); }
 void LocalFreed(short handle) {
+    LocalDebugFreed(handle);
     LocalEffectMissileEnd(handle);
     if(!LocalEnabled()) return;
     auto id=(uint16_t)handle;
@@ -271,6 +273,16 @@ static std::vector<Row> inspect() {
     return rows;
 }
 
+short LocalDebugResolve(int id) {
+    if(id<=0 || id>0x1fffffff) return 0;
+    for(const auto &r:inspect()) if(wireId(r.id)==id) return (short)r.id;
+    return 0;
+}
+int LocalDebugCapabilities(short handle) {
+    objref r(handle);
+    Row row={(uint16_t)handle,r.type(),r.frame(),0,0,0,0,r.isNpc()?Item_getNpcNumber(&r):-1,0};
+    return capabilities(row);
+}
 static bool reachable(objref item) {
     objref owner=GetOuterContainer(item,AvatarRef);
     return owner==AvatarRef || CanAvatarReach(owner,0);
@@ -337,6 +349,7 @@ static std::string snapshot(int seq,const std::string &outcome) {
         s<<"B "<<bark.sequence<<" "<<bark.speaker<<" "<<bark.text<<"\n";
     for(auto &choice:choices) s<<"A "<<hexText(choice)<<"\n";
     s<<LocalEffectsSnapshot();
+    s<<LocalDebugSnapshot();
     return s.str();
 }
 
@@ -590,7 +603,7 @@ static void poll(uint8_t *steps) {
     if(op=="SCREEN") { reply(mode==5?displayFrame:"ERROR no-display\n"); return; }
     if(op=="SYNC") { reply(snapshot(0,"sync")); return; }
     if(gen!=generation) { reply(snapshot(seq,"stale"));return; }
-    if(auto it=history.find(seq);it!=history.end()){reply(snapshot(seq,it->second));return;}
+    if(auto it=history.find(seq);it!=history.end()){if(op.rfind("DBG",0)==0)LocalDebugReplay(seq);reply(snapshot(seq,it->second));return;}
     if(seq!=lastSeq+1){reply(snapshot(seq,"sequence"));return;}
     lastSeq=seq;
     std::string outcome="ok";
@@ -599,7 +612,8 @@ static void poll(uint8_t *steps) {
     const Row *r=findRow(a),*dst=findRow(b);
     if(r && (op=="USE" || op=="LOOK" || op=="EQUIP" || op=="MOVE" || op=="GROUND")) a=r->id;
     if(dst && (op=="TARGET" || op=="EQUIP" || op=="MOVE")) b=dst->id;
-    if(op=="BEGIN" && getenv("TRINSIC_READY")) started=true;
+    if(op.rfind("DBG",0)==0) outcome=LocalDebugCommand(op,a,b,input,steps && !mode && !UsableRunning && !PlayerActionSuspended,seq);
+    else if(op=="BEGIN" && getenv("TRINSIC_READY")) started=true;
     else if(op=="DISMISS" && (mode==5 || mode==6) && a==(int)promptId) mode=0;
     else if((op=="BOOKSELECT" || op=="BOOKCAST") && mode==6 && a==(int)promptId) {
         objref book(spellbookObject);
@@ -766,7 +780,7 @@ static void poll(uint8_t *steps) {
     else if(op=="LOAD") {
         char title[80]={}; SaveGameFiles.getSaveTitle(0,title);
         if(!*title) outcome="empty";
-        else {SaveGameFiles.restoreGame(0);++generation;memset(retired,0,sizeof(retired));memset(lifetimes,0,sizeof lifetimes);history.clear();recentBarks.clear();LocalEffectsReset();lastSeq=0;opened=0;words.clear();}
+        else {SaveGameFiles.restoreGame(0);++generation;memset(retired,0,sizeof(retired));memset(lifetimes,0,sizeof lifetimes);history.clear();recentBarks.clear();LocalEffectsReset();LocalDebugReset();lastSeq=0;opened=0;words.clear();}
     } else if(op=="CLOSE") opened=0;
     else if(op=="QUIT") {reply(snapshot(seq,"bye"));plat_exit(0);return;}
     else outcome="invalid";

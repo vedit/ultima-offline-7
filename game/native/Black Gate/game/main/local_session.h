@@ -26,3 +26,5 @@ void LocalRecovery(short object, int status, int beforeX, int beforeY);
 
 
 int LocalWireId(short handle);
+short LocalDebugResolve(int wireId);
+int LocalDebugCapabilities(short handle);

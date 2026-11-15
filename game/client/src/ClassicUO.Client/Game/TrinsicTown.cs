@@ -126,6 +126,11 @@ namespace ClassicUO.Game
         {
             // Spellbooks may be learned/acquired outside the town's source census.
             if(shape==761) return 0x0efa;
+            // Native TEXT.FLX reagent order; the town census contains no loose reagents.
+            if(shape==842 && frame>=0 && frame<8) return frame switch {
+                0=>0x0f7a,1=>0x0f7b,2=>0x0f88,3=>0x0f86,
+                4=>0x0f84,5=>0x0f85,6=>0x0f8d,_=>0x0f8c
+            };
             if(onGround && IsFittedShutter(shape,x,y,lift)) {
                 var fit=windowFittings[(x,y,lift)];
                 return shape is 290 or 291 ? fit.closed : fit.open;
@@ -136,6 +141,11 @@ namespace ClassicUO.Game
             if(!onGround && carriedGraphics.TryGetValue((shape,frame),out ushort carried))
                 return carried;
             return graphics.GetValueOrDefault((shape,frame));
+        }
+        internal static ushort MappedBody(int shape)
+        {
+            ushort body=TrinsicCreatures.Body(shape);
+            return body!=0?body:outfits.TryGetValue(shape,out var parts) && parts.Count>0?parts[0].body:(ushort)0;
         }
         internal static void AvatarHair(World world,Mobile avatar)
         {

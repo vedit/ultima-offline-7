@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-15",
+  "implementation": "Client-only stock wand and modeless ClassicUO controls backed by an independently gated native U7 development command family.",
+  "verified": [
+    "Exactly one reserved wand after connection/reconnection/load; stock art; cannot drag; no native inventory object or weight.",
+    "Disabled debug capability rejects mutations, catalog and inspection; audit capability remains separate.",
+    "9780 native item catalog entries; name/category/shape search, frame validation, mapped/unmapped filters, item and horse previews.",
+    "Eight native reagent stacks of 30, learned 72-spell book, original reagent consumption, native quantity frames and 127/128 limits.",
+    "Item creation into backpack, actor inventory and native surface elevation; blocked and unsupported targets rejected.",
+    "Recursive copies retain quantities, contents, learned spells/bookmark and marked-stone destination; party/story/linked corpses protected.",
+    "Exact 16-level and 512-object trees copy; 17-level and 513-object trees rejected; actual native record exhaustion/refusal/recovery leaves no partial copies.",
+    "Original pirate equipment and every occupied native equipment slot copied to fresh actor/item identities; base attributes copied, conditions and AI fresh.",
+    "Absolute validated stat batches, effective values, HP/mana clamping, 12 invalid range cases, refill and all 7 condition operations.",
+    "Original combat produces a persistent linked corpse; dead-actor cleanup refused; native resurrection preserves actor/possessions with no helper leak.",
+    "Native clock preserves day, updates schedules; all 7 weather values and party teleport execute through native operations.",
+    "Cleanup protects untracked possessions; load clears registry and rejects stale generations and lifetime IDs.",
+    "Repeated debug sequences do not duplicate mutations; paused catalog/inspection preserves native RNG/clock and spell prompts.",
+    "Native save/reload preserves generated creatures, reagent quantities and stats; copied run saves independently and refuses overwrite.",
+    "Four save-copy boundary tests: independent data, existing destination, corrupt/changing source and path bounds.",
+    "UI replay: all panels, Enter search, creation, typing/movement exclusion, both target cancellation stages, native spell priority, reconnect/load and movement recovery.",
+    "Native and client spell-effect regressions; observer-on/off native outcome parity.",
+    "Installed normal launcher creates wand by default; disposable installed-build smoke and capture pass."
+  ],
+  "regressions": [
+    "inventory-dispatch",
+    "spellbook",
+    "companions-keys",
+    "inventory-mouse",
+    "panels",
+    "stacks-controls"
+  ],
+  "compatibility_notes": [
+    "No UO spell rules, invulnerability or quest-flag editor. Native original gameplay functions remain authoritative.",
+    "Created specimens clear the native temporary flag so they persist and leave identity-linked corpses.",
+    "Nonhuman corpse possessions are moved through a detached native holder around unchanged ResurrectBody: original RefitInventory assumes HUMAN-class actors. Native humans retain the ordinary refit path.",
+    "Unsupported structural/internal shapes remain browseable; unmapped art is identified. Advanced weather presentation and global lighting remain separate.",
+    "Cycle guards and rollback branches were reviewed; tests exercise real allocation exhaustion and blocked placement, not injected mid-operation allocator faults or corrupt cyclic saves.",
+    "Build includes existing parallel renderer/art working state; commit contains only wand/launcher/qualification/documentation deltas."
+  ],
+  "installed": {
+    "native": "build-host/playtest-avatar-inventory/Ultima7.exe",
+    "client": "client/bin/Release-Trinsic-Avatar-Sheet/net10.0/cuo.dll",
+    "native_sha256": "093cba22b9ff99a0d2c2d89bf9811ac7d3e7b025f63fd33b98e4dbeb23c60ac4",
+    "client_sha256": "507e56ca192481a80367c6f215c55c9509dd3e465bac783bd779f3e820ce8e4d",
+    "backup": "archive/before-developer-wand-20261115-040454",
+    "player_save_files_modified": false
+  },
+  "commands": [
+    "py -3 -B game/qualification/developer-wand.py",
+    "py -3 -B game/qualification/developer-wand.py --client",
+    "py -3 -B game/qualification/verify_test_copy.py -v",
+    "py -3 -B game/qualification/interaction-suite.py inventory-dispatch companions-keys inventory-mouse spellbook stacks-controls panels",
+    "py -3 -B game/qualification/spell-effects.py",
+    "py -3 -B game/qualification/spell-effects.py --client",
+    "py -3 -B game/qualification/spell-effects.py --parity",
+    "Play Ultima Offline 7.cmd --run developer-wand-installed-20261115 --capture 35 (owned replay)"
+  ],
+  "evidence": {
+    "runs/developer-wand-disabled/checks.json": "d903e5b6b6abbd46e286d54655c76906abbb810fa3870e18e1fae9f5dcdf88d7",
+    "runs/developer-wand-native/checks.json": "cc402ad2fdc2363dc32f1f9f60c232127f32c558c17659c95afea0d80f08fa3c",
+    "runs/developer-wand-native/copy-check.json": "f2029b025521bfc6e27cb0c80b25d4dedafc9d1de6a37769df0030d136519a22",
+    "runs/developer-wand-copy-1794704530605370000/checks.json": "501df0c1f4402725bfbece13331f4c2302a66d3e44b5bf52004b0da8734564d6",
+    "runs/developer-wand-resurrection/checks.json": "3f7c75b0f7c43844ff893f839f8871a522744b56aaf9c1d07bdcf3d4ec3ac72e",
+    "runs/developer-wand-limits/checks.json": "baaf7b5210a9424ac96677ce23f1c8bcba70f1cb001033177cccbcbf25250341",
+    "runs/developer-wand-equipment/checks.json": "63f2e1a11c0b638027b1841faa2b28e955be3343f72e37542e1b52407481e291",
+    "runs/developer-wand-client/client-wand.json": "6735044ab7bd4a19baaf4865ba5179be6f92370dda009e396f0fe7e566aa4c74",
+    "runs/full-interaction-suite/results-companions-keys-inventory-dispatch-inventory-mouse-panels-spellbook-stacks-controls.json": "96f2a9153965c410d524689185c3e27185a0118f61c88d35465e5d36115e97c8",
+    "runs/spell-effects-native/events.json": "d174a52b3d50999377654cb9da7b6caa349dee3af800d2e2f492519bf2874586",
+    "runs/spell-effects-client/client-effects.json": "450e7edef6f1370a9759da44926cac76ed8751304c7c672bca2e905c87cf71e0",
+    "runs/spell-effects-parity-0/outcomes.json": "03dadabb51e66a2a88681fe797f4b5ec969dcba82ea3911aa6c35e55ec094ffa",
+    "runs/spell-effects-parity-1/outcomes.json": "03dadabb51e66a2a88681fe797f4b5ec969dcba82ea3911aa6c35e55ec094ffa",
+    "runs/developer-wand-installed-20261115/installed-controls.txt.log": "0eadb7be4056310271bd9ba687858721903e871f747dc5ae049c3a649f14f797",
+    "runs/developer-wand-installed-20261115/test-copy-unit.log": "074b4618fddce9dec69d4fb6a90e9a018a44e950a1241b1030f50a17d1efd08d",
+    "archive/before-developer-wand-20261115-040454/installation.json": "bd6147556c56adfbb54d0247cd83f0259dfcb72d026ba48d09a2bc16e9b37d20"
+  }
+}

@@ -305,6 +305,7 @@ namespace ClassicUO.Game
         public static void DoubleClick(World world, uint serial)
         {
             if (TrinsicSession.Enabled) {
+                if(serial==TrinsicDebug.WandSerial){TrinsicDebug.Open(world);return;}
                 if(!TrinsicSession.OpenPlayerWindow(serial) && !TrinsicSession.ActivateItem(serial)) TrinsicSession.Send("USE", (int)(serial & 0x1fffffff));
                 return;
             }
@@ -336,7 +337,9 @@ namespace ClassicUO.Game
         {
             if(TrinsicSession.Enabled && SerialHelper.IsItem(serial)) {
                 Point click = clickPosition ?? Mouse.Position;
-                if ((serial & 0x20000000u) != 0 && world.Items.Get(serial) is Item appearance)
+                if (serial==TrinsicDebug.WandSerial)
+                    ItemClickLabelGump.Show(world,TrinsicDebug.WandName,click,serial);
+                else if ((serial & 0x20000000u) != 0 && world.Items.Get(serial) is Item appearance)
                     ItemClickLabelGump.Show(world, StringHelper.GetPluralAdjustedString(appearance.ItemData.Name, false), click, serial);
                 else
                     TrinsicSession.Send("LOOK",(int)(serial & 0x1fffffff), clickPosition: click);

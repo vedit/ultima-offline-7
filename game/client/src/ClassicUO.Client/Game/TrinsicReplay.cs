@@ -143,6 +143,12 @@ namespace ClassicUO.Game
                 if(Environment.TickCount64-effectWaitStart>6000) throw new InvalidOperationException("No native "+wait[1]+" effect; HP="+world.Player.Hits+" "+TrinsicSession.Header);
                 return;
             }
+            if(actions.Peek()=="WANDWAITCAT") {
+                if(!TrinsicDebug.Loading){actions.Dequeue();effectWaitStart=0;return;}
+                if(effectWaitStart==0)effectWaitStart=Environment.TickCount64;
+                if(Environment.TickCount64-effectWaitStart>60000)throw new InvalidOperationException("Developer catalog did not finish loading");
+                return;
+            }
             if((actions.Peek().StartsWith("STEP ") || actions.Peek().StartsWith("CONFLICT ")) && !TrinsicSession.WalkReady) return;
             string command=actions.Dequeue();
             string[] a=command.Split(' ');
@@ -355,6 +361,42 @@ namespace ClassicUO.Game
                 case "TURN": TrinsicSession.Send("TURN",Arg()); break;
                 case "USE": GameActions.DoubleClick(world,world.Mobiles.Get((uint)Arg())!=null?(uint)Arg():Item(1)); break;
                 case "FXCAST": TrinsicSession.Send("AUDITCAST",Arg());break;
+                case "WANDOPEN": GameActions.DoubleClick(world,TrinsicDebug.WandSerial);break;
+                case "WANDCHECK":
+                    var wand=world.Items.Get(TrinsicDebug.WandSerial);
+                    if(!TrinsicDebug.Enabled || wand==null || wand.Graphic!=0x0df2 || wand.Container==0 || TrinsicSession.CanDrag(wand.Serial))throw new InvalidOperationException("Developer wand missing or draggable");
+                    if(world.Items.Values.Count(i=>i.Serial==TrinsicDebug.WandSerial)!=1)throw new InvalidOperationException("Duplicate developer wand");
+                    break;
+                case "WANDCLICK":
+                case "WANDSELECT":
+                    var toolbox=UIManager.GetGump<DeveloperWandGump>();
+                    if(toolbox==null || toolbox.IsDisposed)throw new InvalidOperationException("Developer toolbox missing");
+                    Mouse.Position=a[0]=="WANDCLICK"?toolbox.ButtonPoint(command.Substring(10)):toolbox.EntryPoint(Arg(1),Arg(2));
+                    Mouse.ButtonPress(MouseButtonType.Left);UIManager.OnMouseButtonDown(MouseButtonType.Left);
+                    Mouse.ButtonRelease(MouseButtonType.Left);UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                    break;
+                case "WANDFIELD":
+                    var editor=UIManager.GetGump<DeveloperWandGump>();
+                    if(editor==null || editor.IsDisposed)throw new InvalidOperationException("Developer toolbox missing");
+                    editor.EnterField(a[1],string.Join(" ",a.Skip(2)));break;
+                case "WANDTYPING":
+                    if(!TrinsicDebug.Typing)throw new InvalidOperationException("Wand textbox does not own keyboard focus");
+                    if(TrinsicSession.Walk(Direction.North))throw new InvalidOperationException("Typing allowed movement");
+                    break;
+                case "WANDTAB":
+                    if(UIManager.GetGump<DeveloperWandGump>()?.Tab!=Arg())throw new InvalidOperationException("Wrong developer panel");break;
+                case "WANDCREATED":
+                    if(TrinsicDebug.NativeCreatedCount!=Arg())throw new InvalidOperationException("Unexpected debug-created count: "+TrinsicDebug.NativeCreatedCount);break;
+                case "WANDUSELAST":
+                    if(TrinsicDebug.Created.Length==0)throw new InvalidOperationException("No created debug object");
+                    uint lastDebug=(uint)TrinsicDebug.Created.Last();
+                    GameActions.DoubleClick(world,world.Mobiles.Get(lastDebug)!=null?lastDebug:0x40000000u|lastDebug);break;
+                case "WANDUSEROOT":
+                    if(TrinsicDebug.Created.Length==0)throw new InvalidOperationException("No created debug object");
+                    uint rootDebug=(uint)TrinsicDebug.Created.First();
+                    GameActions.DoubleClick(world,world.Mobiles.Get(rootDebug)!=null?rootDebug:0x40000000u|rootDebug);break;
+                case "WANDRESULT":
+                    if(TrinsicDebug.LastOutcome!=a[1])throw new InvalidOperationException("Developer command result: "+TrinsicDebug.LastOutcome+" "+TrinsicDebug.Message);break;
                 case "FXSTATE": TrinsicSession.Send("AUDITFXSTATE",Arg(1),Arg(2)," "+(a.Length>3?a[3]:"0"));break;
                 case "FXCOUNT":
                     if(TrinsicEffects.Counts.GetValueOrDefault(a[1])!=Arg(2)) throw new InvalidOperationException("Effect count "+a[1]+": "+TrinsicEffects.Counts.GetValueOrDefault(a[1]));

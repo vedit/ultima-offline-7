@@ -40,13 +40,14 @@ namespace ClassicUO.Game
         internal static string LastCommand { get; private set; }
         internal static void Close()
         {
+            TrinsicDebug.Close();
             TrinsicEffects.Clear();
             observationTimeout?.Cancel(); observationTimeout?.Dispose(); observationTimeout=null;
             pipe?.Dispose(); pipe=null; observation=null; walkingCommand=null; heldArrows=0; pending.Clear();
             if(targetPrompt!=0) world.TargetManager.Reset();
             targetPrompt=prompt=0;
         }
-        internal static void Reconnect() { if(FinishObservation()) Apply(Connect(true)); }
+        internal static void Reconnect() { TrinsicDebug.Disconnected();if(FinishObservation()) Apply(Connect(true)); }
         internal static void Duplicate() { Apply(Read(LastCommand)); }
         internal static void Stale() { Apply(Read("1 0 USE 824")); }
         internal static bool InventoryVisible => UIManager.GetGump<PaperDollGump>(world.Player.Serial)!=null;
@@ -58,6 +59,7 @@ namespace ClassicUO.Game
         private static readonly Dictionary<uint,(uint owner,Point position)> placements=new();
         internal static bool ActivateItem(uint serial)
         {
+            if(serial==TrinsicDebug.WandSerial){TrinsicDebug.Open(world);return true;}
             var item=world.Items.Get(serial);
             if(item==null) return false;
             if(usable.Contains(serial)){Send("USE",(int)(serial & 0x1fffffff));return true;}
@@ -156,9 +158,9 @@ namespace ClassicUO.Game
             } while(!stream.IsMessageComplete);
             return Encoding.ASCII.GetString(message.ToArray());
         }
-        private static string Read(string command)
+        private static string Read(string command, int timeoutSeconds=2)
         {
-            using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(2));
+            using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
             return Exchange(command,timeout.Token).GetAwaiter().GetResult();
         }
         private static string Connect(bool waitForDisconnect=false)
@@ -175,6 +177,7 @@ namespace ClassicUO.Game
         }
         public static void Start(World target)
         {
+            TrinsicDebug.Close();
             world = target;
             TrinsicEffects.Start(world);
             lastBark = 0;
@@ -227,7 +230,7 @@ namespace ClassicUO.Game
         {
             TrinsicEffects.Update();
             if(TrinsicReplay.Active) TrinsicReplay.ObserveWalk(target.Player);
-            if(!Client.Game.IsActive && !TrinsicReplay.Active) heldArrows=0;
+            if((!Client.Game.IsActive && !TrinsicReplay.Active) || TrinsicDebug.Typing) heldArrows=0;
             try
             {
                 if(observation!=null)
@@ -238,7 +241,8 @@ namespace ClassicUO.Game
                     if (TrinsicReplay.Active) TrinsicReplay.Next(world,chestWindow,dialog);
                     if (capture && ++updates==14) { Client.Game.TakeScreenshot(); capture=false; }
                 }
-                if(TrinsicTown.Compact && heldArrows!=0 && prompt==0) WalkHeld();
+                TrinsicDebug.Update();
+                if(TrinsicTown.Compact && heldArrows!=0 && prompt==0 && !TrinsicDebug.Typing) WalkHeld();
                 if(observation!=null || Environment.TickCount64<nextPoll) return;
                 nextPoll=Environment.TickCount64+110;
                 if(pipe==null) Apply(Connect());
@@ -308,9 +312,12 @@ namespace ClassicUO.Game
                     Observe(command);
                     return;
                 }
-                string frame = Read(command);
+                // Native checkpoint I/O can exceed the ordinary interaction budget,
+                // especially while another development build is using the disk.
+                string frame = Read(command,op is "SAVE" or "DBGSAVE" or "LOAD" ? 30 : 2);
                 LastCommand=command; TrinsicReplay.Record(command,frame);
                 string outcome=frame.Split(' ')[5];
+                if(op.StartsWith("DBG",StringComparison.Ordinal))TrinsicDebug.LastOutcome=outcome;
                 if(op=="MOVE" && (outcome=="ok" || outcome=="same" || outcome.StartsWith("split-"))) {
                     int moved=outcome.StartsWith("split-")?int.Parse(outcome.Substring(6)):a;
                     string[] xy=extra.Trim().Split(' ');
@@ -340,6 +347,7 @@ namespace ClassicUO.Game
         internal static bool WalkReady => Environment.TickCount64>=nextWalk && world.Player.Steps.Count<=1;
         public static bool Walk(Direction dir,bool run=false)
         {
+            if(TrinsicDebug.Typing)return false;
             if (!WalkReady) return false;
             if(TrinsicTown.Compact && prompt!=0) {
                 if(Environment.TickCount64-lastBlockedNotice>3000) {
@@ -358,6 +366,8 @@ namespace ClassicUO.Game
         public static bool Key(SDL.SDL_KeyboardEvent e)
         {
             var key=(SDL.SDL_Keycode)e.key;
+            if(key==SDL.SDL_Keycode.SDLK_ESCAPE && TrinsicDebug.Targeting){TrinsicDebug.CancelTarget();return true;}
+            if(TrinsicDebug.Typing){heldArrows=0;return false;}
             switch(key)
             {
                 case SDL.SDL_Keycode.SDLK_ESCAPE when targetPrompt!=0: Send("TARGET",targetPrompt,0);return true;
@@ -650,6 +660,7 @@ namespace ClassicUO.Game
             TrinsicEffects.Apply(world,lines,gen);
             foreach(var sheet in UIManager.Gumps.OfType<PaperDollGump>().Where(g=>g.LocalSerial!=world.Player.Serial).ToArray())
                 if(!partyMembers.Contains(sheet.LocalSerial)) sheet.Dispose();
+            TrinsicDebug.Apply(world,lines,gen,backpack);
             if (Client.Game.Scene is GameScene) ShowBarks(lines);
             if(oldBackpack!=0 && oldBackpack!=backpack) {
                 UIManager.GetGump<ContainerGump>(oldBackpack)?.Dispose();
