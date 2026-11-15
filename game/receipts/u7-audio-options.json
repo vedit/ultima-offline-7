@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-15",
+  "scope": "Desktop U7 options, native audio controls, optional external Exult recordings and original save slots",
+  "status": "passed and installed",
+  "native_run": "audio-options-2fc8ac5e",
+  "native_checks": [
+    "Audio validation is atomic; invalid values do not alter settings",
+    {
+      "native_track": [
+        1,
+        6,
+        1
+      ],
+      "rms": {
+        "full": 77.064,
+        "zero": 0.0,
+        "external_muted": 0.0,
+        "restored": 19.062
+      }
+    },
+    "Native music/effects/speech switches persisted; repeated sequence is idempotent",
+    "Native slots validate bounds/titles; F5/wand active slot, load generation and audio resync verified",
+    "Launcher resumes active slot; test-copy uses its checkpoint and refuses overwrite"
+  ],
+  "client_run": "audio-options-6dac1273",
+  "images": [
+    "options-0.png",
+    "options-1.png",
+    "options-2.png",
+    "options-3.png",
+    "options-4.png",
+    "options-5.png"
+  ],
+  "restart_images": [
+    "restart-0.png"
+  ],
+  "client_checks": [
+    "stock UO controls and layout capture",
+    "music/effects/speech toggles and independent volumes",
+    "native settings acknowledgment",
+    "Exult 06bg.ogg playback from locally installed folder",
+    "missing track falls back to native and releases synth mute",
+    "text input suppresses movement",
+    "reconnect",
+    "slot 3 save/load, F5 active-slot save and quit cancellation",
+    "full process restart restores volume, folder and active slot"
+  ],
+  "regressions": [
+    "audio-options 0",
+    "u7-options 0",
+    "inventory-interactions 0",
+    "companion-items 0",
+    "spellbook-controls 0",
+    "spell-effects 0"
+  ],
+  "native_spell_parity": "passed; heal, cure, protection and invisibility outcomes identical with effects observer enabled/disabled",
+  "builds": {
+    "client": "Release; 0 errors, 15 pre-existing warnings",
+    "native": "Release clang-cl/Ninja; linked successfully"
+  },
+  "installation": {
+    "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\archive\\before-u7-audio-20261115-063954",
+    "changes": [
+      {
+        "source": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\build-host\\audio-options-20261115\\Ultima7.exe",
+        "target": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\build-host\\playtest-avatar-inventory\\Ultima7.exe",
+        "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\archive\\before-u7-audio-20261115-063954\\build-host\\playtest-avatar-inventory\\Ultima7.exe",
+        "before": "093cba22b9ff99a0d2c2d89bf9811ac7d3e7b025f63fd33b98e4dbeb23c60ac4",
+        "after": "a329a1c0ddbdba362a77bb8720d12efae24f187133a770d90f4ad71f65bc6d07"
+      },
+      {
+        "source": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Audio-20261115\\cuo.dll",
+        "target": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Release-Trinsic-Avatar-Sheet\\net10.0\\cuo.dll",
+        "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\archive\\before-u7-audio-20261115-063954\\client\\bin\\Release-Trinsic-Avatar-Sheet\\net10.0\\cuo.dll",
+        "before": "88b350364b2e873ff495c37b424d419927798391a654f7e23db08fc600c8f782",
+        "after": "22535040e547bfe26f5859ddb6f6f3ce15bf97e715756f8163ec9c439717cad9"
+      },
+      {
+        "source": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Audio-20261115\\cuo.pdb",
+        "target": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Release-Trinsic-Avatar-Sheet\\net10.0\\cuo.pdb",
+        "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\archive\\before-u7-audio-20261115-063954\\client\\bin\\Release-Trinsic-Avatar-Sheet\\net10.0\\cuo.pdb",
+        "before": "6cc7bc0387ef6c6f2a70e7de44391ce97b16c00502f23d3ba227c9ee95c3d692",
+        "after": "40f840839902ba56342bb3ec467c8038715221a7ac2afe630a061a7307242665"
+      }
+    ],
+    "player_save_sha256": null,
+    "player_save_unchanged": true
+  },
+  "boundaries": [
+    "No music recordings copied or bundled",
+    "No native save-format changes",
+    "Per-run profile preferences and active-slot.txt metadata",
+    "Only this task delta staged; parallel rendering, assets, browser and sleeping changes preserved"
+  ],
+  "limits": [
+    "Desktop only; browser audio integration not qualified",
+    "MT-32 ROM synthesis not tested on this machine; native AdLib output measured",
+    "Native music waveform and controls tested; not every recorded track, speech clip or audio device individually auditioned"
+  ],
+  "source_notes": "Four existing provisioned native audio implementation files are imported into the tracked overlay so their output-layer hooks can be reproduced. Native clock, song selection and gameplay logic stay native."
+}

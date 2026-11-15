@@ -590,6 +590,36 @@ namespace ClassicUO.Game
                     dialogue.OnKeyboardReturn(0,input.Text);
                     break;
                 case "ANSWER": if(dialogue==null) throw new InvalidOperationException("no prompt"); dialogue.OnButtonClick(Arg());break;
+                case "U7AUDIO":
+                    UIManager.GetGump<TrinsicOptionsGump>()?.OnButtonClick(5);break;
+                case "U7AUDIOSET":
+                    var audioPanel=UIManager.GetGump<TrinsicAudioGump>() ?? throw new InvalidOperationException("No audio panel");
+                    var audioChecks=audioPanel.Children.OfType<Checkbox>().ToArray();
+                    var audioSliders=audioPanel.Children.OfType<HSliderBar>().ToArray();
+                    for(int i=0;i<3;i++){audioChecks[i].IsChecked=Arg(1+i)!=0;audioSliders[i].Value=Arg(4+i);}
+                    break;
+                case "U7AUDIOFOLDER":
+                    if(!TrinsicAudio.SetFolder(world,string.Join(" ",a.Skip(1)),out string folderResult))throw new InvalidOperationException(folderResult);
+                    break;
+                case "U7AUDIOACK":
+                    if(TrinsicAudio.Acknowledged!=string.Join(" ",a.Skip(1)))throw new InvalidOperationException("Native audio preferences: "+TrinsicAudio.Acknowledged);break;
+                case "U7AUDIOCREDITS":UIManager.GetGump<TrinsicAudioGump>().OnButtonClick(4);break;
+                case "U7CREDITSCLOSE":UIManager.GetGump<MessageBoxGump>()?.Dispose();break;
+                case "U7AUDIOCHECK":
+                    if(!TrinsicAudio.Status.Contains(string.Join(" ",a.Skip(1))))throw new InvalidOperationException(TrinsicAudio.Status);
+                    break;
+                case "U7AUDIOTYPING":
+                    UIManager.KeyboardFocusControl=UIManager.GetGump<TrinsicAudioGump>().Children.OfType<StbTextBox>().Single();
+                    if(TrinsicSession.Walk((Direction)0,false) || TrinsicSession.Key(new SDL3.SDL.SDL_KeyboardEvent{key=(uint)SDL3.SDL.SDL_Keycode.SDLK_LEFT}))throw new InvalidOperationException("Audio typing moved the player");
+                    UIManager.KeyboardFocusControl=null;break;
+                case "U7AUDIOCLOSE":UIManager.GetGump<TrinsicAudioGump>()?.Dispose();break;
+                case "U7SAVES":UIManager.GetGump<TrinsicOptionsGump>()?.OnButtonClick(6);break;
+                case "U7SAVEBUTTON":UIManager.GetGump<TrinsicSavesGump>().OnButtonClick(Arg());break;
+                case "U7SAVEACTIVE":if(TrinsicAudio.ActiveSlot!=Arg())throw new InvalidOperationException("Wrong active save");break;
+                case "U7SAVECLOSE":UIManager.GetGump<TrinsicSavesGump>()?.Dispose();break;
+                case "U7SAVEKEY":TrinsicSession.Key(new SDL3.SDL.SDL_KeyboardEvent{key=(uint)SDL3.SDL.SDL_Keycode.SDLK_F5});break;
+                case "U7AUDIOWIRE":
+                    TrinsicSession.Send("AUDIO",Arg(1),Arg(2)," "+string.Join(" ",a.Skip(3)));break;
                 case "RECONNECT":TrinsicSession.Reconnect();break;
                 case "DUP":TrinsicSession.Duplicate();break;
                 case "STALE":TrinsicSession.Stale();break;

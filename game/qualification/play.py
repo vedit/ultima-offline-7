@@ -5,6 +5,11 @@ from reference import ROOT, SOURCE, stage, members
 BIN = Path(os.environ.get('TRINSIC_CLIENT_BIN',str(ROOT/'client/bin/Release-Trinsic-Avatar-Sheet/net10.0')))
 HOST = Path(os.environ.get('TRINSIC_HOST_EXECUTABLE',str(ROOT/'build-host/playtest-avatar-inventory/Ultima7.exe')))
 RELEASE = SOURCE/'Builds/BritanniaChairRouteFacet/releases/50f99d0c53594314f443902201e3a2312aa43764c7d35fede5f252da601ec4f1'
+def active_slot(folder):
+    try: value=int((folder/"active-slot.txt").read_text().strip())
+    except (OSError,ValueError): return 0
+    return value if 0<=value<10 else 0
+
 @contextlib.contextmanager
 def session(name,fixture,reset=False,extra=None,*,original_opening=False):
     folder=ROOT/'runs'/name
@@ -15,7 +20,8 @@ def session(name,fixture,reset=False,extra=None,*,original_opening=False):
         lock.seek(0)
         msvcrt.locking(lock.fileno(),msvcrt.LK_NBLCK,1)
         seed=ROOT/'fixtures'/(fixture+'.U7')
-        slot=folder/'GAME00.U7'
+        slot=folder/f'GAME{active_slot(folder):02d}.U7'
+        if reset: (folder/'active-slot.txt').write_text('0\n');slot=folder/'GAME00.U7'
         if reset and slot.exists(): slot.replace(folder/('previous-'+uuid.uuid4().hex+'.U7'))
         parts=members(slot if slot.exists() else seed)
         for f in (folder/'GAMEDAT').iterdir():
@@ -74,7 +80,8 @@ def copy_test_save(source_run,new_run):
         if not re.fullmatch(r'[a-zA-Z0-9_-]+',name):
             raise ValueError('Run names may contain only letters, numbers, hyphens and underscores')
     runs=(ROOT/'runs').resolve()
-    source=(runs/source_run/'GAME00.U7').resolve()
+    source_slot=active_slot(runs/source_run)
+    source=(runs/source_run/f'GAME{source_slot:02d}.U7').resolve()
     destination=(runs/new_run).resolve()
     if source.parent.parent!=runs or destination.parent!=runs:
         raise ValueError('Test copies must stay within the native runs directory')
@@ -94,7 +101,7 @@ def copy_test_save(source_run,new_run):
     with (destination/'GAME00.U7').open('xb') as output:
         output.write(data)
     (destination/'test-copy.json').write_text(json.dumps({
-        'source_run':source_run,'source_sha256':hashlib.sha256(data).hexdigest(),
+        'source_run':source_run,'source_slot':source_slot,'source_sha256':hashlib.sha256(data).hexdigest(),
         'destination_run':new_run,'members':len(saved),
     },indent=2)+'\n')
     return destination
@@ -131,7 +138,7 @@ if __name__=='__main__':
         try: copy_test_save(slot,a.test_copy)
         except (ValueError,OSError,RuntimeError) as error: p.error(str(error))
         slot=a.test_copy
-    launch_extra={'TRINSIC_DEBUG':'0' if a.no_debug else '1'}
+    launch_extra={'U7_ENABLE_AUDIO':'1','TRINSIC_DEBUG':'0' if a.no_debug else '1'}
     if fixture.startswith('Iolo-'): launch_extra['TRINSIC_READY']='1'
     with session(slot,fixture,a.reset,launch_extra,original_opening=a.from_opening) as (folder,env,host):
         if a.capture: env['TRINSIC_CAPTURE']='1'

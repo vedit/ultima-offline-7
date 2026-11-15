@@ -11,6 +11,8 @@
 #include "u7port.h"
 #include "local_effects.h"
 #include "local_debug.h"
+#include "local_audio.h"
+#include <fstream>
 #include "objref.h"
 #include "coord.h"
 #include "item.h"
@@ -288,6 +290,26 @@ static bool reachable(objref item) {
     return owner==AvatarRef || CanAvatarReach(owner,0);
 }
 
+static int activeSave=-1;
+static std::string saveTitles[10];
+int LocalActiveSave() {
+    if(activeSave<0) {activeSave=0;std::ifstream f("active-slot.txt");int n;if(f>>n && n>=0 && n<10)activeSave=n;}
+    return activeSave;
+}
+static void refreshSaves() {
+    LocalActiveSave();
+    for(int i=0;i<10;++i){char title[80]={};SaveGameFiles.getSaveTitle(i,title);saveTitles[i]=title;}
+}
+static void selectSave(int slot) {activeSave=slot;std::ofstream("active-slot.txt")<<slot<<"\n";refreshSaves();}
+void LocalSaveWorld() {
+    int slot=LocalActiveSave();char title[80]={};SaveGameFiles.getSaveTitle(slot,title);
+    SaveGameFiles.saveGame(slot,*title?title:(char*)"Ultima Offline 7",0);selectSave(slot);
+}
+static std::string saveSnapshot() {
+    std::ostringstream out;out<<"SV "<<LocalActiveSave()<<"\n";
+    for(int i=0;i<10;++i)out<<"SL "<<i<<" "<<(saveTitles[i].empty()?"-":hexText(saveTitles[i]))<<"\n";
+    return out.str();
+}
 static std::string snapshot(int seq,const std::string &outcome) {
     std::ostringstream s;
     s<<"S "<<seq<<" "<<generation<<" "<<GameTime.ticks<<" "<<lastSeq<<" "<<outcome<<" "<<gCamera.getCenterX().value<<" "<<gCamera.getCenterY().value<<" "<<wireId(opened)<<" "<<mode<<" "<<promptId<<" "<<face<<" "<<GetRandomSeed()<<" "<<int(GameFlags.get(60))<<" "<<int(GameFlags.get(72))<<"\n";
@@ -350,6 +372,8 @@ static std::string snapshot(int seq,const std::string &outcome) {
     for(auto &choice:choices) s<<"A "<<hexText(choice)<<"\n";
     s<<LocalEffectsSnapshot();
     s<<LocalDebugSnapshot();
+    s<<LocalAudioSnapshot();
+    s<<saveSnapshot();
     return s.str();
 }
 
@@ -613,6 +637,8 @@ static void poll(uint8_t *steps) {
     if(r && (op=="USE" || op=="LOOK" || op=="EQUIP" || op=="MOVE" || op=="GROUND")) a=r->id;
     if(dst && (op=="TARGET" || op=="EQUIP" || op=="MOVE")) b=dst->id;
     if(op.rfind("DBG",0)==0) outcome=LocalDebugCommand(op,a,b,input,steps && !mode && !UsableRunning && !PlayerActionSuspended,seq);
+    else if(op=="AUDIO") outcome=steps && !mode && !UsableRunning && !PlayerActionSuspended ? LocalAudioCommand(a,b,input) : "busy";
+    else if(op=="SAVES") refreshSaves();
     else if(op=="BEGIN" && getenv("TRINSIC_READY")) started=true;
     else if(op=="DISMISS" && (mode==5 || mode==6) && a==(int)promptId) mode=0;
     else if((op=="BOOKSELECT" || op=="BOOKCAST") && mode==6 && a==(int)promptId) {
@@ -776,11 +802,31 @@ static void poll(uint8_t *steps) {
             objref item((short)it->id);
             if(!Item_forceMove(&item,Coord(v[3]),Coord(v[4]),0)){outcome="placement";break;}
         }
-    } else if(op=="SAVE") SaveGameFiles.saveGame(0,(char*)"Trinsic local",0);
+    } else if(op=="SAVE") {
+        int slot=a==-1?LocalActiveSave():a;std::string encoded,title;
+        if(slot<0 || slot>9)outcome="invalid";
+        else {
+            input>>encoded;
+            if(!encoded.empty()) {
+                if(encoded.size()>120 || encoded.size()%2)outcome="invalid";
+                for(size_t i=0;outcome=="ok" && i<encoded.size();i+=2) {
+                    auto digit=[](char c){return c>='0'&&c<='9'?c-'0':c>='a'&&c<='f'?c-'a'+10:c>='A'&&c<='F'?c-'A'+10:-1;};
+                    int x=digit(encoded[i]),y=digit(encoded[i+1]);
+                    if(x<0 || y<0 || x*16+y<32)outcome="invalid";else title+=char(x*16+y);
+                }
+            }
+            if(outcome=="ok") {
+                if(title.empty()){char old[80]={};SaveGameFiles.getSaveTitle(slot,old);title=*old?old:"Ultima Offline 7";}
+                SaveGameFiles.saveGame(slot,(char*)title.c_str(),0);selectSave(slot);
+            }
+        }
+    }
     else if(op=="LOAD") {
-        char title[80]={}; SaveGameFiles.getSaveTitle(0,title);
-        if(!*title) outcome="empty";
-        else {SaveGameFiles.restoreGame(0);++generation;memset(retired,0,sizeof(retired));memset(lifetimes,0,sizeof lifetimes);history.clear();recentBarks.clear();LocalEffectsReset();LocalDebugReset();lastSeq=0;opened=0;words.clear();}
+        int slot=a==-1?LocalActiveSave():a;char title[80]={};
+        if(slot<0 || slot>9)outcome="invalid";
+        else SaveGameFiles.getSaveTitle(slot,title);
+        if(outcome=="ok" && !*title) outcome="empty";
+        if(outcome=="ok") {SaveGameFiles.restoreGame(slot);selectSave(slot);LocalAudioLoaded();++generation;memset(retired,0,sizeof(retired));memset(lifetimes,0,sizeof lifetimes);history.clear();recentBarks.clear();LocalEffectsReset();LocalDebugReset();lastSeq=0;opened=0;words.clear();}
     } else if(op=="CLOSE") opened=0;
     else if(op=="QUIT") {reply(snapshot(seq,"bye"));plat_exit(0);return;}
     else outcome="invalid";

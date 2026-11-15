@@ -12,7 +12,7 @@ result=run('u7-options','Investigation',[
     'STEP 0','WAIT 350','STEP 2','WAIT 350','STEP 4','WAIT 350','STEP 6','WAIT 350','WALKCHECK','EXIT',
 ],True,scenario='options')
 for operation in ('SAVE','LOAD'):
-    events=[e for e in result['events'] if f' {operation} 0 0 -> ' in e]
+    events=[e for e in result['events'] if f' {operation} -1 0 -> ' in e]
     assert len(events)==1 and ' ok ' in events[0], (operation,events)
 run('u7-options','Investigation',[
     'WAIT 900','U7PREFERENCES 0 0 1','U7OPTIONS','U7TOGGLE 0','U7TOGGLE 1','U7TOGGLE 2',

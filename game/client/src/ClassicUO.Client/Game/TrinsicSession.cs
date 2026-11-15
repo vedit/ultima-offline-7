@@ -41,6 +41,7 @@ namespace ClassicUO.Game
         internal static void Close()
         {
             TrinsicDebug.Close();
+            TrinsicAudio.Close();
             TrinsicEffects.Clear();
             observationTimeout?.Cancel(); observationTimeout?.Dispose(); observationTimeout=null;
             pipe?.Dispose(); pipe=null; observation=null; walkingCommand=null; heldArrows=0; pending.Clear();
@@ -239,7 +240,7 @@ namespace ClassicUO.Game
         {
             TrinsicEffects.Update();
             if(TrinsicReplay.Active) TrinsicReplay.ObserveWalk(target.Player);
-            if((!Client.Game.IsActive && !TrinsicReplay.Active) || TrinsicDebug.Typing) heldArrows=0;
+            if((!Client.Game.IsActive && !TrinsicReplay.Active) || (TrinsicDebug.Typing || TrinsicAudio.Typing)) heldArrows=0;
             try
             {
                 if(observation!=null)
@@ -251,7 +252,8 @@ namespace ClassicUO.Game
                     if (capture && ++updates==14) { Client.Game.TakeScreenshot(); capture=false; }
                 }
                 TrinsicDebug.Update();
-                if(TrinsicTown.Compact && heldArrows!=0 && prompt==0 && !TrinsicDebug.Typing) WalkHeld();
+                if(observation==null && prompt==0) TrinsicAudio.Update();
+                if(TrinsicTown.Compact && heldArrows!=0 && prompt==0 && !(TrinsicDebug.Typing || TrinsicAudio.Typing)) WalkHeld();
                 if(observation!=null || Environment.TickCount64<nextPoll) return;
                 nextPoll=Environment.TickCount64+110;
                 if(pipe==null) Apply(Connect());
@@ -356,7 +358,7 @@ namespace ClassicUO.Game
         internal static bool WalkReady => Environment.TickCount64>=nextWalk && world.Player.Steps.Count<=1;
         public static bool Walk(Direction dir,bool run=false)
         {
-            if(TrinsicDebug.Typing)return false;
+            if((TrinsicDebug.Typing || TrinsicAudio.Typing))return false;
             if (!WalkReady) return false;
             if(TrinsicTown.Compact && prompt!=0) {
                 if(Environment.TickCount64-lastBlockedNotice>3000) {
@@ -376,7 +378,7 @@ namespace ClassicUO.Game
         {
             var key=(SDL.SDL_Keycode)e.key;
             if(key==SDL.SDL_Keycode.SDLK_ESCAPE && TrinsicDebug.Targeting){TrinsicDebug.CancelTarget();return true;}
-            if(TrinsicDebug.Typing){heldArrows=0;return false;}
+            if((TrinsicDebug.Typing || TrinsicAudio.Typing)){heldArrows=0;return false;}
             switch(key)
             {
                 case SDL.SDL_Keycode.SDLK_ESCAPE when targetPrompt!=0: Send("TARGET",targetPrompt,0);return true;
@@ -393,8 +395,8 @@ namespace ClassicUO.Game
                     }
                     return true;
                 case SDL.SDL_Keycode.SDLK_F8: Overlay=!Overlay; return true;
-                case SDL.SDL_Keycode.SDLK_F5: Send("SAVE"); return true;
-                case SDL.SDL_Keycode.SDLK_F9: Send("LOAD"); return true;
+                case SDL.SDL_Keycode.SDLK_F5: Send("SAVE",-1); return true;
+                case SDL.SDL_Keycode.SDLK_F9: Send("LOAD",-1); return true;
                 case SDL.SDL_Keycode.SDLK_UP: case SDL.SDL_Keycode.SDLK_RIGHT:
                 case SDL.SDL_Keycode.SDLK_DOWN: case SDL.SDL_Keycode.SDLK_LEFT:
                     int d = key==SDL.SDL_Keycode.SDLK_UP ? 0 : key==SDL.SDL_Keycode.SDLK_RIGHT ? 2 : key==SDL.SDL_Keycode.SDLK_DOWN ? 4 : 6;
@@ -670,6 +672,7 @@ namespace ClassicUO.Game
             foreach(var sheet in UIManager.Gumps.OfType<PaperDollGump>().Where(g=>g.LocalSerial!=world.Player.Serial).ToArray())
                 if(!partyMembers.Contains(sheet.LocalSerial)) sheet.Dispose();
             TrinsicDebug.Apply(world,lines,gen,backpack);
+            TrinsicAudio.Apply(lines,gen);
             if (Client.Game.Scene is GameScene) ShowBarks(lines);
             if(oldBackpack!=0 && oldBackpack!=backpack) {
                 UIManager.GetGump<ContainerGump>(oldBackpack)?.Dispose();

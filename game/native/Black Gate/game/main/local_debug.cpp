@@ -1,3 +1,5 @@
+extern int LocalActiveSave();
+extern void LocalSaveWorld();
 // Explicit development operations on the original engine. No alternate gameplay rules.
 #include "u7port.h"
 #include "local_debug.h"
@@ -203,7 +205,7 @@ std::string LocalDebugCommand(const std::string &op,int a,int b,std::istream &in
  else if(op=="DBGWEATHER"){if(a<0||a>6)fail("Unknown weather type");else{SetWeather(&CurrentWeather,(uint8_t)a);message="Native weather updated";}}
  else if(op=="DBGTELEPORT"){int z;if(!(input>>z)||!coordinate(a,b,z))fail("Invalid destination");else if(!CanTypeMoveTo(a,b,z,TypeFrame(AvatarRef.ptr()->typeFrame)))fail("Teleport destination is blocked","blocked");else{TeleportParty(a,b,(int8_t)z);message="Teleported Avatar and party";}}
  else if(op=="DBGCLEAN"){std::vector<int> ids;if(a)ids.push_back(a);else ids.assign(made.begin(),made.end());int removed=0,blocked=0,dead=0;for(int id:ids){if(!made.count(id))continue;objref r=resolve(id);if(!r.valid())continue;if(r.isNpc()&&IsDead(&r)){dead++;continue;}std::vector<Tree> t;std::set<short> seen;std::string why;if(!tree(r,t,seen,1,-1,-1,why,false)||std::any_of(t.begin(),t.end(),[](Tree &e){return !made.count(LocalWireId(e.source.off));})){blocked++;continue;}removed+=(int)t.size();for(auto it=t.rbegin();it!=t.rend();++it){objref child=it->source;Item_delete(&child);}}message="Removed "+std::to_string(removed)+" created objects; protected "+std::to_string(blocked)+" containers with untracked contents; "+std::to_string(dead)+" dead actors require native resurrection before cleanup";if(a&&!removed)fail(message,"blocked");}
- else if(op=="DBGSAVE"){SaveGameFiles.saveGame(0,(char*)"Ultima Offline 7 development",0);const char *run=getenv("TRINSIC_RUN");message="Saved run "+std::string(run?run:"current").substr(0,128)+" to GAME00.U7";}
+ else if(op=="DBGSAVE"){LocalSaveWorld();const char *run=getenv("TRINSIC_RUN");message="Saved run "+std::string(run?run:"current").substr(0,128)+" to slot "+std::to_string(LocalActiveSave()+1);}
  else fail("Unknown development operation");
  out<<"DM "<<hex(message)<<"\n";payload=out.str();replies[sequence]=payload;while(replies.size()>128)replies.erase(replies.begin());if(op!="DBGCAT"&&op!="DBGINSPECT"){history.push_back(op+": "+message);if(history.size()>16)history.pop_front();}return status;
 }
