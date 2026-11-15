@@ -253,7 +253,18 @@ namespace ClassicUO.Game.Intro
         internal static void Replay(string[] args)
         {
             if(!TrinsicReplay.Active)throw new InvalidOperationException("Replay is disabled");
+            if(Client.Game.Scene is U7CharacterCreationScene creation){creation.Replay(args);return;}
             var scene=Client.Game.Scene as U7DreamIntroScene;
+            if(args[1]=="IDENTITY") {
+                var native=Client.Game.UO.World.Player;
+                bool female=args[3]=="1";
+                string expected=System.Text.CodePagesEncodingProvider.Instance.GetEncoding(437).GetString(Convert.FromHexString(args[2]));
+                if(native.Name!=expected || native.IsFemale!=female || native.Graphic!=(female?0x191:0x190))
+                    throw new InvalidOperationException($"Wrong native identity: {native.Name}/{native.Graphic:x}");
+                if(scene!=null && (scene.room.Player.Name!=native.Name || scene.room.Player.Graphic!=native.Graphic))
+                    throw new InvalidOperationException("Dream identity differs from native Avatar");
+                return;
+            }
             if(args[1]=="GAME"){if(scene!=null || Client.Game.Scene is not GameScene)throw new InvalidOperationException($"Dream did not hand off at {scene?.room.Player.X-Origin},{scene?.room.Player.Y-Origin}, phase {scene?.Timeline.Phase}");return;}
             if(scene==null)throw new InvalidOperationException("Expected dream world scene");
             switch(args[1]) {

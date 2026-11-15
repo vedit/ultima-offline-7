@@ -1,8 +1,8 @@
 @echo off
 setlocal
 title Ultima Offline 7 - Dream opening
-set "TRINSIC_CLIENT_BIN=%~dp0game\intro\bin\painted-client"
-set "TRINSIC_HOST_EXECUTABLE=%~dp0game\intro\bin\native-arrival\Ultima7.exe"
+set "TRINSIC_CLIENT_BIN=%~dp0game\intro\bin\creation-client"
+set "TRINSIC_HOST_EXECUTABLE=%~dp0game\intro\bin\native-creation\Ultima7.exe"
 set "TRINSIC_INTRO_ASSETS=%~dp0game\intro\bin\painted-assets"
 set "TRINSIC_READY="
 if not exist "%TRINSIC_CLIENT_BIN%\cuo.dll" (

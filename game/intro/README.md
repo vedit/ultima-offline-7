@@ -42,6 +42,18 @@ development save. `--run another-name` selects another private run. `--reset`
 starts again and retains the previous checkpoint using the existing launcher.
 
 Space pauses/resumes the scene and voice. Esc skips the speech and wakes the Avatar; it never skips the walk to the portal.
+New games first show a native UO-style name and gender panel. Enter a name of
+1–14 characters and select male or female, then click Begin or press Enter.
+The name uses the original game's CP437 character set; unsupported characters
+produce a message. Typing and arrow keys do not move the Avatar or advance
+native time on this screen. Quit leaves without creating a world save.
+
+The native `CREATEAVATAR` command is available only at the fresh, off-map
+opening boundary. It uses the same NPC name buffer and sex operations as
+`LoadGameArgs`, retaining sequence/generation checks and rejecting later
+renames. The chosen identity supplies the dream, dialogue, paperdoll and
+native saves. Existing saved worlds bypass both setup and the dream.
+
 After waking, hold right mouse or use arrow keys to enter the red moongate.
 Mouse distance selects walking/running. Speech uses the existing U7 speech
 enable/volume preferences; captions remain available when muted or when audio
@@ -59,7 +71,7 @@ robocopy E:/UltimaOffline/PoCs/ClassicUO-U7-Local/client game/intro/bin/source /
 robocopy game/client/src game/intro/bin/source/src /E /NFL /NDL /NJH /NJS /NP /R:0 /W:0
 $env:DOTNET_CLI_HOME = Join-Path $PWD 'game/intro/bin/cache/dotnet'
 $env:NUGET_PACKAGES = Join-Path $PWD 'game/intro/bin/cache/packages'
-$output = Join-Path $PWD 'game/intro/bin/painted-client/'
+$output = Join-Path $PWD 'game/intro/bin/creation-client/'
 & E:/UltimaOffline/Tools/dotnet/dotnet.exe build game/intro/bin/source/src/ClassicUO.Client/ClassicUO.Client.csproj -c Release -p:PublishAot=false -p:UseSharedCompilation=false -p:NuGetAudit=false '-p:RestoreFallbackFolders=E:/UltimaOffline/Cache/NuGet' --source E:/UltimaOffline/Cache/NuGet --disable-build-servers "-p:OutputPath=$output"
 ```
 
@@ -79,6 +91,11 @@ py -3.13 game/intro/verify.py skip
 py -3.13 game/intro/verify.py resume
 py -3.13 game/intro/verify.py muted
 py -3.13 game/intro/verify.py silent
+py -3.13 game/intro/verify_character.py
+py -3.13 game/intro/verify.py creation
+py -3.13 game/intro/verify.py creation-male
+py -3.13 game/intro/verify.py creation-cancel
+py -3.13 game/intro/verify.py creation-resume
 ```
 
 The integration checks use the existing `TrinsicReplay` and `client-proof.py`
@@ -133,13 +150,13 @@ three steps west, and runs Iolo/Petre/Finnigan's opening. This ends at
 observer emits the existing travel effect when the Avatar actually appears.
 No inventory, spell costs, quest flags, dialogue or Usecode is replaced.
 
-The launcher now uses the separate native build at `bin/native-arrival/Ultima7.exe`.
+The launcher now uses the separate native build at `bin/native-creation/Ultima7.exe`.
 To reproduce it, copy the private `native` dependency tree into `bin/native-source`,
 then overlay `game/native`. From a Visual Studio x64 developer command prompt:
 
 ```bat
 set "PATH=E:\UltimaOffline\PoCs\ClassicUO-U7-Local\toolchain\bin;%PATH%"
-cmake -S "game/intro/bin/native-source/Black Gate" -B "game/intro/bin/native-build" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="%CD%/game/intro/bin/native-arrival"
+cmake -S "game/intro/bin/native-source/Black Gate" -B "game/intro/bin/native-build" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="%CD%/game/intro/bin/native-creation"
 cmake --build "game/intro/bin/native-build" --target u7 --parallel 4
 ```
 

@@ -317,6 +317,7 @@ static std::string snapshot(int seq,const std::string &outcome) {
     std::ostringstream s;
     s<<"S "<<seq<<" "<<generation<<" "<<GameTime.ticks<<" "<<lastSeq<<" "<<outcome<<" "<<gCamera.getCenterX().value<<" "<<gCamera.getCenterY().value<<" "<<wireId(opened)<<" "<<mode<<" "<<promptId<<" "<<face<<" "<<GetRandomSeed()<<" "<<int(GameFlags.get(60))<<" "<<int(GameFlags.get(72))<<"\n";
     auto avatar=GetNpcBufferForIbo(&AvatarRef);
+    s<<"NEWCHAR "<<int(!started && LocalCharacterPending())<<"\n";
     s<<"H "<<activeItem<<" "<<activeShape<<" "<<(activeItem?uint32_t(plat_milliseconds()-activeSince):0)
      <<" "<<int(AvatarDontMove)<<" "<<GameTime.hold<<" "<<int(UsableRunning)<<" "<<int(DialogState)
      <<" "<<int(PlayerActionSuspended)<<" "<<TimeAdvanceRate<<"\n";
@@ -645,6 +646,10 @@ static void poll(uint8_t *steps, bool observeOnly) {
     if(dst && (op=="TARGET" || op=="EQUIP" || op=="MOVE")) b=dst->id;
     if(op.rfind("DBG",0)==0) outcome=LocalDebugCommand(op,a,b,input,steps && !mode && !UsableRunning && !PlayerActionSuspended,seq);
     else if(op=="AUDIO") outcome=steps && !mode && !UsableRunning && !PlayerActionSuspended ? LocalAudioCommand(a,b,input) : "busy";
+    else if(op=="CREATEAVATAR") {
+        std::string encoded,excess; input>>encoded;
+        outcome=started ? "unavailable" : (b!=0 || (input>>excess)) ? "invalid-character" : LocalCreateCharacter(a,encoded);
+    }
     else if(op=="SAVES") refreshSaves();
     else if(op=="BEGIN" && getenv("TRINSIC_READY")) {
         if(a==1 && !started && !LocalDreamBegin()) outcome="blocked";

@@ -223,12 +223,30 @@ namespace ClassicUO.Game
             world.CreatePlayer((uint)avatar[0]);
             world.MapIndex = 0;
             Apply(data);
+            if(Environment.GetEnvironmentVariable("TRINSIC_INTRO_ASSETS")!=null && data.Contains("\nNEWCHAR 1\n")) {
+                Client.Game.SetScene(new Intro.U7CharacterCreationScene(world,BeginCreatedCharacter));
+                return;
+            }
+            StartOpening(data);
+        }
+        private static void StartOpening(string data)
+        {
             if(Intro.U7DreamIntroScene.TryCreate(world,()=>BeginAfterDream(data),out var dream)) {
                 Client.Game.SetScene(dream);
                 return;
             }
             BeginPresentation(data,false);
         }
+        internal static async Task<string> CreateCharacterAsync(string encoded,bool female,CancellationToken cancel)
+        {
+            using var timeout=CancellationTokenSource.CreateLinkedTokenSource(cancel);
+            timeout.CancelAfter(TimeSpan.FromSeconds(5));
+            string command=$"{last+1} {generation} CREATEAVATAR {(female?1:0)} 0 {encoded}";
+            string frame=await Exchange(command,timeout.Token).ConfigureAwait(false);
+            return frame;
+        }
+        internal static string CharacterResult(string data) {TrinsicReplay.Record("CREATEAVATAR",data);Apply(data);return data.Split(' ')[5];}
+        private static void BeginCreatedCharacter(string data) {heldArrows=0;StartOpening(data);}
         private static void BeginAfterDream(string data)
         {
             heldArrows=0;
@@ -236,7 +254,7 @@ namespace ClassicUO.Game
         }
         internal static string DreamCheckpoint()
         {
-            if(Client.Game.Scene is not Intro.U7DreamIntroScene) throw new InvalidOperationException("No active dream");
+            if(Client.Game.Scene is not (Intro.U7DreamIntroScene or Intro.U7CharacterCreationScene)) throw new InvalidOperationException("No active opening");
             return Read("0 0 SYNC");
         }
         private static void BeginPresentation(string data,bool afterDream)
@@ -515,7 +533,7 @@ namespace ClassicUO.Game
             var iolo=rows.FirstOrDefault(r=>r[7]==1);
             if(iolo!=null){IoloX=iolo[3]; IoloY=iolo[4];}
             var keep=new HashSet<uint>();
-            string avatarName=Encoding.Latin1.GetString(Convert.FromHexString(lines.First(l=>l.StartsWith("N ")).Substring(2)));
+            string avatarName=gameTextEncoding.GetString(Convert.FromHexString(lines.First(l=>l.StartsWith("N ")).Substring(2)));
             if(string.IsNullOrWhiteSpace(avatarName)) avatarName="Avatar";
             world.Player.Title=TrinsicTown.Enabled ? $"{avatarName}, Avatar of Legend" : avatarName;
             var stats=Array.ConvertAll(lines.First(l=>l.StartsWith("V ")).Substring(2).Split(' '),ushort.Parse);

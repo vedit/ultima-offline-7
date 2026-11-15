@@ -351,6 +351,12 @@ namespace ClassicUO.Game.UI.Gumps
 
         public void UpdateTitle(string text)
         {
+            bool unicode=TrinsicSession.Enabled && text.Any(c=>c>127);
+            if(_titleLabel.Unicode!=unicode) {
+                var old=_titleLabel;
+                _titleLabel=new Label("",unicode,old.Hue,185,font:1){X=old.X,Y=old.Y};
+                old.Dispose();Add(_titleLabel);
+            }
             _titleLabel.Text = text;
         }
 

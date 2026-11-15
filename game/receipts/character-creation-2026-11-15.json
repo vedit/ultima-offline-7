@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-15",
+  "feature": "Name and gender before the playable dream opening",
+  "build": {
+    "client": "game/intro/bin/creation-client",
+    "client_sha256": "c3758e715f05cb2da6eb442e4bd0edc7b461a7b9fe3e05e84f184a9e07e220d0",
+    "native": "game/intro/bin/native-creation/Ultima7.exe",
+    "native_sha256": "de6754ece2297bdb55b604a3601dc125d8393ecc0ca6be84c596eaffa9654410",
+    "client_errors": 0,
+    "client_warnings": 15
+  },
+  "behaviour": [
+    "Fresh intro runs show stock UO controls for a 1–14 character name and male/female selection",
+    "Creation uses a separate Scene; typing does not run GameScene movement or native time",
+    "Native CREATEAVATAR applies the original NPC name buffer and Npc_setMale/Npc_setFemale operations before arrival",
+    "Native validation rejects malformed, empty, overlong and control-character names; commands retain sequence and generation handling",
+    "Native identity supplies the dream, paperdoll, original dialogue and saved world",
+    "Original CP437 names decode correctly; non-ASCII paperdoll titles use a Unicode font fallback",
+    "Existing saves bypass setup and dream; later renaming through CREATEAVATAR is rejected",
+    "Quit before beginning leaves no new world save"
+  ],
+  "validation": {
+    "native": "Both Éowyn/female and Avatar12345678/male passed validation, stale/repeated command handling, reconnect, original commission, save/load and fresh-process resume",
+    "native_time_and_randomness": "Unchanged while validating or assigning character identity",
+    "female_client": "Passed form editing, blank rejection, Enter submission, dream body/name, arrival and exactly one travel effect",
+    "male_client": "Passed maximum-length name, male body/name, dream and arrival",
+    "cancel": "Passed Escape retaining form, no native advancement and no new save on exit",
+    "dream": "Passed movement, running, collision, pause, full speech and original stable-door arrival",
+    "resume": "Passed generic save/load and actual named female save with reconnect and reload; setup did not reopen",
+    "visual_review": ["dream-creation-proof/dream-1.png", "dream-creation-proof/dream-3.png"]
+  },
+  "evidence": "game/intro/bin/proof-character-native.json, proof-creation*.json, proof-world.json, proof-full.json and proof-resume.json; captures in private runs",
+  "parallel_work": "Only character-creation hunks staged in shared session and paperdoll files; independent client/native output directories"
+}

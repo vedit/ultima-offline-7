@@ -7,14 +7,22 @@ import shutil
 import sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
-os.environ.setdefault('TRINSIC_CLIENT_BIN',str(HERE/'bin/painted-client'))
-os.environ.setdefault('TRINSIC_HOST_EXECUTABLE',str(HERE/'bin/native-arrival/Ultima7.exe'))
+os.environ.setdefault('TRINSIC_CLIENT_BIN',str(HERE/'bin/creation-client'))
+os.environ.setdefault('TRINSIC_HOST_EXECUTABLE',str(HERE/'bin/native-creation/Ultima7.exe'))
 sys.path.insert(0,str(HERE.parent/'qualification'))
 spec=importlib.util.spec_from_file_location('client_proof',HERE.parent/'qualification/client-proof.py')
 proof=importlib.util.module_from_spec(spec);spec.loader.exec_module(proof)
 extra={'TRINSIC_INTRO_ASSETS':os.environ.get('TRINSIC_INTRO_ASSETS',str(HERE/'bin/painted-assets')),'U7_ENABLE_AUDIO':'1'}
 
 def run(mode):
+    if mode=='creation-resume':
+        encoded='Éowyn'.encode('cp437').hex()
+        r=proof.run('character-native-female','Investigation',
+            ['WAIT 1800','INTRO GAME',f'INTRO IDENTITY {encoded} 1','RECONNECT','WAIT 700','INTRO GAME',
+             f'INTRO IDENTITY {encoded} 1','LOAD','WAIT 700','INTRO GAME',f'INTRO IDENTITY {encoded} 1','CAPTURE','EXIT'],
+            False,original_opening=True,extra=extra,scenario='creation-resume')
+        (HERE/'bin/proof-creation-resume.json').write_text(json.dumps(r,indent=2)+'\n')
+        print(json.dumps({'run':r['run'],'images':r['images'],'named_save_bypasses_creation':True}));return
     if mode=='arrival':
         from play import session,Pipe
         from investigation import Walkthrough
@@ -47,7 +55,19 @@ def run(mode):
         (HERE/'bin/proof-arrival.json').write_text(json.dumps(results,indent=2)+'\n')
         print(json.dumps(results));return
     options=dict(extra)
-    if mode=='world':
+    if mode in ('creation','creation-male'):
+        name,sex=('Éowyn',1) if mode=='creation' else ('Avatar12345678',0)
+        encoded=name.encode('cp437').hex()
+        commands=['WAIT 500','INTRO FORM','INTRO HELD','CAPTURE','INTRO NAME','INTRO SUBMIT','INTRO INVALID',
+                  'INTRO KEY ESCAPE','INTRO KEY RIGHT','WAIT 300','INTRO FORM','INTRO HELD',
+                  f'INTRO NAMEHEX {encoded}',f'INTRO SEX {sex}','CAPTURE','INTRO KEY RETURN','WAIT 3000',
+                  f'INTRO IDENTITY {encoded} {sex}','INTRO APPEARANCE','CAPTURE',
+                  'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO PORTAL','WAIT 20000','INTRO GAME',
+                  f'INTRO IDENTITY {encoded} {sex}','FXCOUNT travel 1','CAPTURE','EXIT']
+    elif mode=='creation-cancel':
+        commands=['WAIT 500','INTRO FORM','INTRO HELD','INTRO NAME Unfinished','INTRO SEX 1','INTRO KEY ESCAPE',
+                  'WAIT 700','INTRO FORM','INTRO HELD','CAPTURE','EXIT']
+    elif mode=='world':
         commands=['WAIT 3000','INTRO WORLD','INTRO APPEARANCE','INTRO HELD','CAPTURE',
                   'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO WORLD','INTRO APPEARANCE','INTRO COLLISION','INTRO HELD','CAPTURE',
                   'WAIT 1800','INTRO PHASE Portal','INTRO RECORDPOS',
@@ -86,7 +106,14 @@ def run(mode):
         commands=['WAIT 2500','INTRO PHASE Speech','INTRO '+mode.upper(),'INTRO HELD','CAPTURE',
                   'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO HELD','INTRO PORTAL','WAIT 10000','INTRO GAME','EXIT']
     else:raise ValueError(mode)
+    if mode!='resume' and not mode.startswith('creation'):
+        commands=['WAIT 500','INTRO FORM','INTRO NAME Avatar','INTRO SEX 0','INTRO SUBMIT','WAIT 500']+commands
     r=proof.run('dream-'+mode+'-proof','Investigation',commands,True,original_opening=mode!='resume',extra=options,scenario='dream')
+    if mode.startswith('creation'):
+        if mode=='creation-cancel':
+            assert not (proof.ROOT/'runs'/r['run']/'GAME00.U7').exists()
+            r['cancelled_without_save']=True
+        else:r['identity']={'name':name,'female':bool(sex),'dream_and_trinsic':True}
     if mode=='world':
         last=next(e for e in reversed(r['events']) if e.startswith('INTRO GAME |'))
         if 'sync 1071 2210 0 1 ' not in last:raise RuntimeError('Arrival did not reach the original greeting at the stable entrance')
@@ -119,4 +146,4 @@ def run(mode):
     print(json.dumps({'run':r['run'],'images':r['images'],'events':len(r['events'])}))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('mode',choices=['arrival','world','preview','full','skip','resume','muted','silent']);run(p.parse_args().mode)
+    p=argparse.ArgumentParser();p.add_argument('mode',choices=['creation','creation-male','creation-cancel','creation-resume','arrival','world','preview','full','skip','resume','muted','silent']);run(p.parse_args().mode)
