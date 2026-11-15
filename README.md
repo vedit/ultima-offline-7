@@ -4,6 +4,8 @@ Ultima Offline 7 plays the original Black Gate investigation through ClassicUO. 
 
 On the provisioned Windows machine, double-click **Play Ultima Offline 7.cmd** to start or resume at Trinsic. The investigation begins outside the stables after Finnigan has asked for help. Follow the key through the estate, question the witnesses and earn passage through the eastern gate. F5 saves. [Launcher](Play%20Ultima%20Offline%207.cmd) · [Source, controls and build instructions](game/README.md)
 
+For the current desktop playtest, open **Play Trinsic Playtest.cmd**. The frozen playtest 02 includes Avatar creation, the Guardian dream, and the walk through the portal to the Trinsic stables. It keeps its own saves. [Package and validation](game/receipts/trinsic-playtest-02.json)
+
 For current milestones, the tested limits of the renderer and the work needed beyond Trinsic, see the [roadmap](docs/roadmap.md) and [rendering audit](docs/rendering-audit.md).
 
 ## Run the archived ModernUO conversion

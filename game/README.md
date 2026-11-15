@@ -6,7 +6,7 @@ The Avatar's backpack includes a [Developer's Wand](developer-wand.md) for nativ
 
 Short NPC reactions appear over the speaker using ClassicUO's overhead speech. Black Gate supplies the words and decides when each character speaks.
 
-The frozen Trinsic playtest starts at the original moongate arrival and resumes its own save after F5. On the provisioned machine, run `E:\UltimaOffline\Builds\UltimaOffline7\Trinsic-playtest-01\Play Trinsic.cmd`. To play the same opening in the development build, run `"Play Ultima Offline 7.cmd" --from-opening`. [Playtest coverage and build fingerprint](receipts/trinsic-playtest-01.json)
+Open **Play Trinsic Playtest.cmd** for frozen playtest 02. New games include name/gender selection, the Guardian dream and a player-controlled portal walk to the stable entrance. F5 saves; relaunching resumes the saved world and skips setup and the dream. Its independent saves live under `E:\UltimaOffline\Builds\UltimaOffline7\Trinsic-playtest-02\PoCs\ClassicUO-U7-Local\runs\player-trinsic-opening`. Use `--run another-name` for another playthrough. The original playtest 01 remains available. [Playtest 02 package and validation](receipts/trinsic-playtest-02.json)
 
 The default installation is `E:\UltimaOffline`. Set `ULTIMA_OFFLINE_HOME` to use another installation with the same layout. The historical folder name `PoCs\ClassicUO-U7-Local` identifies the private runtime and its save slots. Use a separate slot to try a new investigation.
 

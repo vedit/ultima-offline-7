@@ -1,0 +1,67 @@
+{
+  "edition": "Steam Black Gate with Forge of Virtue, Windows desktop",
+  "date": "2026-11-16",
+  "source_branch": "master",
+  "intro_source_commit": "97641a3",
+  "source_tag": "playtest/trinsic-02",
+  "private_build": "Builds/UltimaOffline7/Trinsic-playtest-02",
+  "launcher": "Play Trinsic Playtest.cmd",
+  "package_launcher": "Play Trinsic.cmd",
+  "player_slot": "player-trinsic-opening",
+  "new_game": "Avatar creation -> Guardian dream and original audio -> player walks into red portal -> Trinsic stable-door arrival -> original investigation",
+  "resume": "F5 saves to the package run; relaunch, reconnect and load preserve native identity and skip character setup/dream",
+  "build": {
+    "manifest": "build-sha256.json",
+    "verified_files": 7285,
+    "sources_still_match": 7282,
+    "manifest_sha256": "e8013c36ab346c509804335fb70d7d30f4a0e5a2c650e7211191f793b3c54c81",
+    "player_slot_absent": true,
+    "native_host_sha256": "de6754ece2297bdb55b604a3601dc125d8393ecc0ca6be84c596eaffa9654410",
+    "classicuo_sha256": "734a8a1b4fbf03bf0ca1dc70143fa69eaa249d225b9298b65810b538d1e73f8d",
+    "bytes": 2883432516,
+    "intro": {
+      "guardian.png": "ae6b396e0171d0fffa770f10c6c51e6c485bbe7911c1d2738a2f609fce3b89dc",
+      "blue-static.png": "2053ece66afd9b1d6889159c504411038f39d47bffc70f7d2230da9e3c3cfa72",
+      "guardian.wav": "b0268306b20b8f396f87b2e014a778d47dbf59393ab29ed51a3006f676006d9f",
+      "intro.json": "415d800e8ee2cca24f40cba3ab2d6aa617c332197382b0aabba84f39cd502634"
+    }
+  },
+  "checks": {
+    "actual_shortcut": "Play Trinsic Playtest.cmd --run package-launch-smoke --capture 12 reached the native-held name screen without errors",
+    "packaged_world": "Existing world replay passed setup, native hold, appearance, bed/void collision, keyboard movement, running, pause recovery, portal entry, stable arrival and centered dialogue; 51 events",
+    "packaged_native_identity": {
+      "character-native-female": {
+        "name": "\u00c9owyn",
+        "female": true,
+        "validation": true,
+        "no_time_or_random_advance": true,
+        "deduplication": true,
+        "reconnect": true,
+        "original_commission": true,
+        "native_save_reload": true,
+        "fresh_process_resume": true
+      },
+      "character-native-male": {
+        "name": "Avatar12345678",
+        "female": false,
+        "validation": true,
+        "no_time_or_random_advance": true,
+        "deduplication": true,
+        "reconnect": true,
+        "original_commission": true,
+        "native_save_reload": true,
+        "fresh_process_resume": true
+      }
+    },
+    "packaged_client_resume": "Named female native save reopened in ClassicUO; identity survived reconnect and load; setup/dream absent",
+    "artifact_integrity": "All manifest files rehashed after testing; all copied source inputs still match",
+    "independence": "New package only; prior playtest and development runs preserved; default player slot remains uncreated"
+  },
+  "evidence": [
+    "PoCs/ClassicUO-U7-Local/runs/dream-world-proof/client-dream.json",
+    "PoCs/ClassicUO-U7-Local/runs/character-native-female/client-creation-resume.json",
+    "PoCs/ClassicUO-U7-Local/runs/package-launch-smoke/client.log",
+    "verification/package-inputs.json"
+  ],
+  "scope": "Packages the accepted intro and its tested local client/native dependency baseline. Parallel uncommitted rendering/asset source edits remain unstaged; this is a private binary/data snapshot, not a claim that every build dependency is represented by the source tag. Packaging acceptance covers opening and saves, not a new exhaustive town audit."
+}
