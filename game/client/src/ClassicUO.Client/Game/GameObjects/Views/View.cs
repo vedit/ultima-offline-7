@@ -38,10 +38,30 @@ namespace ClassicUO.Game.GameObjects
             int y = Y;
             int z = PriorityZ;
 
+            // The smithy's east/south exterior faces enclose same-cell props.
+            // Sorting them as back-wall supports exposed crates and furniture
+            // through the front masonry. Normal interior cutaway still applies.
+            if (TrinsicTown.Compact && this is Static &&
+                ((X==487 && Y>=1144 && Y<=1159) || (Y==1159 && X>=480 && X<=487)) &&
+                Graphic is 0x1a or 0x1b or 0x1c or 0x1d or 0x22 or 0x23 or 0x2a or 0x2b)
+                return x+y+(127+Z)*0.01f+0.49f;
+
+            // Spark's south exterior face and the inside edge of its stairs
+            // share a compact row (native y=2141 and y=2140). The wall is
+            // in front of that flight, including its raised treads. Giving
+            // this face the usual interior-support depth exposes the stairs
+            // through the outside of the house. Keep each tread's own depth
+            // for actors climbing it; only order the enclosing wall last.
+            if (TrinsicTown.Compact && this is Static &&
+                Y == 1070 && X >= 482 && X <= 487 &&
+                Graphic is 6 or 7 or 8 or 9 or 14 or 15)
+                return x+y+(127+Z)*0.01f+0.49f;
+
             // Stock house walls and fitted windows carry a hanging on the room
             // side. Give the support its own depth below same-cell floor objects.
             if (TrinsicTown.Compact && this is Static &&
-                Graphic is 0x12a or 0x132 or 0x133 or 0x134 or 0x13a or 0x13b)
+                Graphic is 6 or 7 or 8 or 9 or 14 or 15 or 0x1a or 0x1b or 0x1c or 0x1d or 0x22 or 0x23
+                    or 0x12a or 0x132 or 0x133 or 0x134 or 0x13a or 0x13b)
                 return x+y+(127+Z)*0.01f-0.08f;
 
             if(this is Entity entity && entity.NativePosition.HasValue)
@@ -49,7 +69,14 @@ namespace ClassicUO.Game.GameObjects
                 // Within a UO cell use subtile Y to break ties at the same height.
                 // A higher surface or an overhead object must retain its depth rank.
                 float depth=x+y+(127+z)*0.01f+Math.Clamp(Offset.Y/44f,-0.49f,0.49f)*0.009f;
+                if (this is Mobile { NativeLyingDown:true, NativeBedAnchor:Point bed })
+                    return bed.X+bed.Y+(127+Z)*0.01f-0.008f;
                 if (this is Item item) {
+                    // A tabletop can span several compact cells. Its contents
+                    // share its draw depth, while retaining their native tile
+                    // for interaction and their own elevation and screen position.
+                    if (item.WorkSurface is Point surface)
+                        depth += surface.X + surface.Y - x - y;
                     var profile=TrinsicTown.ArtDepth(item.DisplayedGraphic);
                     depth+=item.FittedFaceDepth+(profile.cut==0 ? profile.left : 0);
                 }

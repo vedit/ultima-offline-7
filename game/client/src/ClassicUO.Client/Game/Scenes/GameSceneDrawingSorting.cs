@@ -720,7 +720,8 @@ namespace ClassicUO.Game.Scenes
                 {
                     int x = SelectedObject.TranslatedMousePositionByViewport.X;
                     int dx = x-item.RealScreenPosition.X-22;
-                    if (item.FurnitureWall!=0) return item.FurnitureDepth(dx);
+                    if (item.FurnitureWall!=0 || item.EaselAxis!=0) return item.FurnitureDepth(dx);
+                    if (item.NativeWallAxis!=0) return item.WallDepthAt(dx);
                     return item.CalculateDepthZ()+item.DoorDepthAt(x);
                 }
                 return target.CalculateDepthZ();
@@ -791,6 +792,20 @@ namespace ClassicUO.Game.Scenes
 
                 int screenY = obj.RealScreenPosition.Y;
                 int maxObjectZ = obj.PriorityZ;
+
+                if (TrinsicTown.Compact && obj is Static scenery && TrinsicTown.BedroomCutaway(scenery) != 0)
+                {
+                    // The chunk mesh contains the full exterior sprite. Queue
+                    // its indoor art individually for both drawing and picking.
+                    if (scenery.AllowedToDraw && screenY >= _minPixel.Y && screenY <= _maxPixel.Y)
+                    {
+                        // A freshly loaded static starts transparent. Its low
+                        // course or stump is solid as soon as the room is shown.
+                        scenery.AlphaHue = byte.MaxValue;
+                        PushToRenderQueue(scenery, false, true);
+                    }
+                    continue;
+                }
 
                 // Fast path: meshed objects (statics, multis, land) skip type-switch entirely
                 if (obj.InChunkMesh)

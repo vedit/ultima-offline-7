@@ -8,18 +8,29 @@ namespace ClassicUO.Game.GameObjects
 {
     internal partial class Item
     {
+        internal int TrinsicShape;
+        internal int TrinsicFrame;
         internal float FittedFaceDepth;
         internal int FurnitureWall;
+        internal Point? WorkSurface;
+        internal int WorkSurfaceDrop;
+        internal int EaselAxis;
 
         // The opaque sprite may span the preceding wall bay. Both drawing and
         // picking use that bay's depth for the part of the tabletop behind it.
         private int FurnitureBay(int dx)
         {
+            if (EaselAxis != 0)
+            {
+                // The canvas can cross into the next back-wall bay while its
+                // feet remain on the interior subtile. Keep both sides visible.
+                return System.Math.Max(0,(int)System.Math.Ceiling((EaselAxis*dx)/22.0));
+            }
             int along = FurnitureWall switch { 1 => dx, 2 => -dx-1, _ => System.Math.Min(dx,-dx-1) };
             return System.Math.Min(0,(int)System.Math.Floor((along+22)/22.0));
         }
 
-        internal float FurnitureDepth(int dx) => X+Y+FurnitureBay(dx)+(127+Z)*0.01f-0.3f;
+        internal float FurnitureDepth(int dx) => X+Y+FurnitureBay(dx)+(127+Z)*0.01f+(EaselAxis!=0 ? 0.02f : -0.3f);
 
         private void DrawFurniture(UltimaBatcher2D batcher,int x,int y,Vector3 hue)
         {

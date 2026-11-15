@@ -64,7 +64,8 @@ namespace ClassicUO.Game
                     at=new Point(source.X+x,source.Y+y);
                     Control hit=null;
                     source.HitTest(at,ref hit);
-                    if(hit?.LocalSerial==serial && (source is not PaperDollGump || hit.Parent is PaperDollInteractable))
+                    if(hit?.LocalSerial==serial && (source is not PaperDollGump || hit.Parent is PaperDollInteractable ||
+                       TrinsicTown.WearingMantle(source.World.Player)))
                         icon=hit;
                 }
             if(icon==null) throw new InvalidOperationException($"No clickable pixels for {serial} in {source.GetType().Name}");
@@ -113,6 +114,30 @@ namespace ClassicUO.Game
                 return;
             }
             throw new InvalidOperationException("No visible scenery to click");
+        }
+
+        private static void CheckWallOverlap(World world,Point wallAt,Point objectAt)
+        {
+            var hanging=world.Items.Values.Single(i=>i.NativeWallAxis!=0 && i.NativePosition==wallAt);
+            var floorItem=world.Items.Values.Single(i=>i.NativeWallAxis==0 && i.NativePosition==objectAt);
+            Rectangle BoundsOf(GameObjects.Item item)
+            {
+                var art=Client.Game.UO.Arts.GetArt(item.DisplayedGraphic).UV;
+                return new Rectangle(item.RealScreenPosition.X+(int)item.Offset.X+22-art.Width/2,
+                    item.RealScreenPosition.Y+(int)item.Offset.Y+44-art.Height,art.Width,art.Height);
+            }
+            var wall=BoundsOf(hanging);
+            var floor=BoundsOf(floorItem);
+            var overlap=Rectangle.Intersect(wall,floor);
+            var scene=Client.Game.GetScene<Scenes.GameScene>();
+            for(int y=overlap.Top;y<overlap.Bottom;y++)
+                for(int x=overlap.Left;x<overlap.Right;x++)
+                {
+                    if(!Client.Game.UO.Arts.PixelCheck(hanging.DisplayedGraphic,x-wall.X,y-wall.Y) ||
+                       !Client.Game.UO.Arts.PixelCheck(floorItem.DisplayedGraphic,x-floor.X,y-floor.Y))continue;
+                    if(scene.PickReplayPixel(new Point(x,y))==floorItem)return;
+                }
+            throw new InvalidOperationException($"No foreground object pixel at {objectAt} over hanging at {wallAt}");
         }
 
         private static long effectWaitStart;
@@ -174,6 +199,39 @@ namespace ClassicUO.Game
             switch(a[0])
             {
                 case "INTRO": Intro.U7DreamIntroScene.Replay(a);break;
+                case "SLEEPCHECK":
+                    var sleeper=world.Mobiles.Get((uint)Arg(1));
+                    bool expectedRest=Arg(2)!=0;
+                    if(sleeper==null || sleeper.NativeLyingDown!=expectedRest || sleeper.IsDead || sleeper.NativeBedAnchor.HasValue!=(Arg(3)!=0))
+                        throw new InvalidOperationException($"Unexpected native sleeping state: {command}; found {sleeper?.Name}, lying {sleeper?.NativeLyingDown}, dead {sleeper?.IsDead}, bed {sleeper?.NativeBedAnchor}; mobiles {string.Join(",",world.Mobiles.Values.Select(m=>$"{m.Serial}:{m.Name}:{m.NativeLyingDown}:{m.NativeBedAnchor}"))}");
+                    var restPicker=Client.Game.GetScene<Scenes.GameScene>();
+                    var restOrigin=sleeper.RealScreenPosition+new Point((int)sleeper.Offset.X+22,(int)(sleeper.Offset.Y-sleeper.Offset.Z)+19)+sleeper.NativeRestDrawOffset;
+                    var restBounds=new Rectangle(restOrigin.X-sleeper.FrameInfo.X,restOrigin.Y-sleeper.FrameInfo.Y,sleeper.FrameInfo.Width,sleeper.FrameInfo.Height);
+                    int restHits=0;
+                    for(int ry=restBounds.Top;ry<restBounds.Bottom;ry+=2)
+                        for(int rx=restBounds.Left;rx<restBounds.Right;rx+=2)
+                            if(restPicker.PickReplayPixel(new Point(rx,ry))==sleeper)restHits++;
+                    if(expectedRest && restHits==0)throw new InvalidOperationException("Resting mobile has no visible selectable pixels: "+command);
+                    File.AppendAllText(path+".log",$"{command} {sleeper.Name} lying {sleeper.NativeLyingDown} alive {!sleeper.IsDead} bed {sleeper.NativeBedAnchor} visible hits {restHits}\n");
+                    break;
+                case "ITEMPIXELS":
+                    var subject=world.Items.Values.Single(i=>i.NativePosition==new Point(Arg(1),Arg(2)) && i.Z==Arg(3));
+                    var uv=Client.Game.UO.Arts.GetArt(subject.DisplayedGraphic).UV;
+                    var pos=subject.RealScreenPosition+new Point((int)subject.Offset.X+22-uv.Width/2,(int)subject.Offset.Y+44-uv.Height);
+                    var hits=new Dictionary<string,int>();
+                    var picker=Client.Game.GetScene<Scenes.GameScene>();
+                    for(int sy=0;sy<uv.Height;sy+=3)
+                        for(int sx=0;sx<uv.Width;sx+=3) {
+                            if(!Client.Game.UO.Arts.PixelCheck(subject.DisplayedGraphic,sx,sy))continue;
+                            var picked=picker.PickReplayPixel(pos+new Point(sx,sy));
+                            string key=picked==subject?"self":picked==null?"none":$"{picked.Graphic:X}@{picked.X},{picked.Y},{picked.Z}";
+                            hits[key]=hits.GetValueOrDefault(key)+1;
+                        }
+                    File.AppendAllText(path+".log",$"{command} pixels {pos} {uv.Width}x{uv.Height} {string.Join(" ",hits.OrderByDescending(h=>h.Value))} surface {subject.WorkSurface} drop {subject.WorkSurfaceDrop}\n");
+                    break;
+                case "WALLFLOORCHECK":
+                    CheckWallOverlap(world,new Point(Arg(1),Arg(2)),new Point(Arg(3),Arg(4)));
+                    break;
                 case "RIGHTMOVE":
                     var bounds=Client.Game.Scene.Camera.Bounds;
                     int distance=a[1]=="edge"?bounds.Width/2-16:60;
@@ -320,6 +378,19 @@ namespace ClassicUO.Game
                     if(paper==null || paper.X<Client.Game.ClientBounds.Width/2 || UIManager.GetGump<MiniMapGump>()==null ||
                        bag==null || pack==null || !pack.Children.OfType<ItemGump>().Any() || world.Player.FindItemByLayer(Layer.Torso)==null)
                         throw new InvalidOperationException("Missing native player panels or equipment");
+                    break;
+                case "MANTLE":
+                    GameActions.DoubleClick(world,TrinsicTown.MantleSerial);
+                    break;
+                case "MANTLECHECK":
+                    var mantle=world.Items.Get(TrinsicTown.MantleSerial);
+                    bool dressed=Arg()!=0;
+                    var owner=dressed ? world.Player.Serial : world.Player.FindItemByLayer(Layer.Backpack).Serial;
+                    if(mantle?.Container!=owner || TrinsicTown.WearingMantle(world.Player)!=dressed ||
+                       TrinsicTown.VisibleLayer(world.Player,Layer.Hair)?.Hue!=0x0460 ||
+                       (dressed ? TrinsicTown.VisibleLayer(world.Player,Layer.Torso)?.Graphic!=0x13bf
+                                : TrinsicTown.VisibleLayer(world.Player,Layer.Torso)!=world.Player.FindItemByLayer(Layer.Torso)))
+                        throw new InvalidOperationException("Avatar mantle appearance or owner mismatch");
                     break;
                 case "DRAGICON":
                     Gump Window(string key) {

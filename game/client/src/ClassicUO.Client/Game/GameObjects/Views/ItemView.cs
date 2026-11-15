@@ -18,6 +18,36 @@ namespace ClassicUO.Game.GameObjects
     internal partial class Item
     {
         private static EquipConvData? _equipConvData;
+        internal int NativeWallAxis;
+
+        // A hanging spans several compact wall tiles. Sort every 22-pixel bay
+        // with its supporting wall; a single depth would hide objects at the far end.
+        private int WallBay(int dx)
+        {
+            int along = NativeWallAxis > 0 ? dx : -dx-1;
+            return Math.Min(0, (int)Math.Floor((along+22)/22.0));
+        }
+
+        internal float WallDepthAt(int dx) => X+Y+WallBay(dx)+(127+Z)*0.01f-0.04f;
+
+        private void DrawWallArt(UltimaBatcher2D batcher, int x, int y, Vector3 hue)
+        {
+            ref readonly var art = ref Client.Game.UO.Arts.GetArt(DisplayedGraphic);
+            if (art.Texture == null) return;
+            int start = (int)Offset.X-art.UV.Width/2;
+            int top = y+44-art.UV.Height;
+            for (int col=0; col<art.UV.Width;)
+            {
+                int dx=start+col;
+                int bay=WallBay(dx), end=col+1;
+                while (end<art.UV.Width && WallBay(start+end)==bay) end++;
+                var source=new Rectangle(art.UV.X+col,art.UV.Y,end-col,art.UV.Height);
+                var dest=new Vector2(x+22-art.UV.Width/2+col,top);
+                batcher.Draw(art.Texture,dest,source,hue,0f,Vector2.Zero,Vector2.One,
+                             SpriteEffects.None,WallDepthAt(dx)+0.5f);
+                col=end;
+            }
+        }
 
         public override bool Draw(UltimaBatcher2D batcher, int posX, int posY, float depth)
         {
@@ -137,9 +167,15 @@ namespace ClassicUO.Game.GameObjects
             if (NativePosition.HasValue && DrawDoorLeaves(batcher,posX,posY,hueVec,depth))
                 return true;
 
-            if (FurnitureWall != 0 && NativePosition.HasValue)
+            if ((FurnitureWall != 0 || EaselAxis != 0) && NativePosition.HasValue)
             {
                 DrawFurniture(batcher,posX,posY,hueVec);
+                return true;
+            }
+
+            if (NativeWallAxis != 0 && OnGround)
+            {
+                DrawWallArt(batcher,posX,posY,hueVec);
                 return true;
             }
 

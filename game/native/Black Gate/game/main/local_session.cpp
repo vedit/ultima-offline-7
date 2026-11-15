@@ -496,7 +496,13 @@ static bool accessible(const Row &r) {
 }
 
 static int equipSlot(int shape) {
-    // Only gear with a matching wearable ClassicUO graphic in this room.
+    if(town()) {
+        int index=ReadyLookup.get(shape);
+        if(!index) return -1;
+        const auto *record=ReadyRecords.get(index);
+        if(record->spell) return -1;
+        return record->slot;
+    }
     switch(shape) {
     case 569: case 574: case 587: case 594: case 595: case 599: case 701:
         return ReadyRecords.get(ReadyLookup.get(shape))->slot;
@@ -508,7 +514,11 @@ static void restoreItem(objref item,const Row &r) {
     if(!r.parent) PlaceItemDirect(&item,Coord(r.x),Coord(r.y),r.z);
     else {
         PlaceItemInContainer(&item,objref((short)r.parent));
-        if(r.slot>=0) EquipItem(item,objref((short)r.parent),r.slot,0);
+        if(r.slot>=0) {
+            int preferred=equipSlot(r.shape);
+            int slot=(preferred==20 || preferred==21) ? preferred : r.slot;
+            EquipItem(item,objref((short)r.parent),slot,0);
+        }
     }
 }
 
@@ -605,6 +615,7 @@ static void poll(uint8_t *steps, bool observeOnly) {
             else RunUsable(1,item.off,-1);
         }
     }
+    char buffer[400];
     if(channel==INVALID_HANDLE_VALUE) {
         std::string name=getenv("TRINSIC_PIPE");
         if(name.empty() || name.size()>80 || name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-")!=std::string::npos) return;
@@ -617,7 +628,7 @@ static void poll(uint8_t *steps, bool observeOnly) {
         if(!ok && GetLastError()!=ERROR_PIPE_CONNECTED) return;
         connected=true;
     }
-    char buffer[400]; DWORD n=0;
+    DWORD n=0;
     if(!ReadFile(channel,buffer,sizeof(buffer)-1,&n,nullptr)) {
         if(GetLastError()!=ERROR_NO_DATA) {DisconnectNamedPipe(channel); connected=false;}
         else {DWORD available; if(!PeekNamedPipe(channel,nullptr,0,nullptr,&available,nullptr)){DisconnectNamedPipe(channel);connected=false;}}
@@ -732,7 +743,9 @@ static void poll(uint8_t *steps, bool observeOnly) {
         else if(r->slot>=0 && r->parent==dst->id) outcome="same";
         else {
             // The native game allows a torch in either hand. The UO torch art uses the off hand.
-            if(r->shape==595 || r->shape==701) slot=2;
+            if(r->shape==595 || r->shape==701 || (town() &&
+                (r->shape==543 || r->shape==545 || r->shape==572 || r->shape==578 || r->shape==609 || r->shape==663))) slot=2;
+            if(town() && slot==1 && !CanEquipInSlot(item,wearer,1,0) && CanEquipInSlot(item,wearer,2,0)) slot=2;
             if(!CanEquipInSlot(item,wearer,slot,0)) outcome="occupied";
             else if(!Item_detach(&item)) outcome="unavailable";
             else if(!CanCarryWeight(wearer,item)) {restoreItem(item,*r);outcome="refused1";}

@@ -168,7 +168,9 @@ namespace ClassicUO.Assets
             var buf = new byte[raw.Length - 8];
             Array.Copy(raw, 8, buf, 0, buf.Length);
 
-            return Runs(buf, width, height);
+            var pixels=Runs(buf,width,height);
+            ArtOpacity.Apply(path,pixels);
+            return pixels;
         }
 
         /// <summary>One land tile of ours: 1,012 pixels of diamond and nothing else.</summary>

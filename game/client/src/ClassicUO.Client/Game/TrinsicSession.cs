@@ -64,6 +64,32 @@ namespace ClassicUO.Game
             if (roster == null) UIManager.Add(new TrinsicPartyGump(world));
             else UIManager.MakeTopMostGump(roster);
         }
+        internal static bool MoveMantle(uint destination)
+        {
+            if(!TrinsicTown.Enabled || (destination!=world.Player.Serial && (backpack==0 || destination!=backpack)))
+                return false;
+            ProfileManager.CurrentProfile.TrinsicAvatarMantleEquipped=destination==world.Player.Serial;
+            SyncMantle();
+            return true;
+        }
+
+        private static void SyncMantle()
+        {
+            if(!TrinsicTown.Enabled || ProfileManager.CurrentProfile==null) return;
+            TrinsicTown.PrepareMantle(world);
+            bool worn=ProfileManager.CurrentProfile.TrinsicAvatarMantleEquipped;
+            Entity owner=worn ? world.Player : world.Items.Get(backpack);
+            if(owner==null) return;
+            var item=world.GetOrCreateItem(TrinsicTown.MantleSerial);
+            if(item.Container==owner.Serial) return;
+            world.RemoveItemFromContainer(item);
+            owner.PushToBack(item);
+            item.Container=owner.Serial; item.Graphic=0x1f03; item.Hue=0x0026; item.Amount=1;
+            item.Layer=worn ? Layer.Talisman : Layer.Invalid;
+            if(!worn) { item.X=105; item.Y=70; }
+            UIManager.GetGump<PaperDollGump>(world.Player.Serial)?.RequestUpdateContents();
+            UIManager.GetGump<ContainerGump>(backpack)?.RequestUpdateContents();
+        }
         private static int targetPrompt;
         private static readonly HashSet<uint> usable = new();
         private static readonly Dictionary<uint,(uint owner,Point position)> placements=new();
@@ -72,10 +98,14 @@ namespace ClassicUO.Game
             if(serial==TrinsicDebug.WandSerial){TrinsicDebug.Open(world);return true;}
             var item=world.Items.Get(serial);
             if(item==null) return false;
+            if(serial==TrinsicTown.MantleSerial) {
+                MoveMantle(item.Container==world.Player.Serial ? backpack : world.Player.Serial);
+                return true;
+            }
             if(usable.Contains(serial)){Send("USE",(int)(serial & 0x1fffffff));return true;}
             if(!CanDrag(serial)) return false;
             if(item.Graphic==0x14eb) ShowMap();
-            else if(item.ItemData.IsWearable && item.Container!=world.Player.Serial)
+            else if((item.ItemData.IsWearable || TrinsicTown.HasHandArt(item)) && item.Container!=world.Player.Serial)
                 Send("EQUIP",(int)(serial & 0x1fffffff),(int)world.Player.Serial);
             else Send("LOOK",(int)(serial & 0x1fffffff));
             return true;
@@ -112,6 +142,7 @@ namespace ClassicUO.Game
             if(targetPrompt!=0) {Send("TARGET",targetPrompt,(int)(serial & 0x1fffffff));return true;}
             bool requestedPaperdoll=(serial&0x80000000)!=0;
             serial &= 0x7fffffff;
+            if(serial==TrinsicTown.MantleSerial && TrinsicTown.Enabled) return ActivateItem(serial);
             if(serial==world.Player.Serial) { ShowPaperdoll(); return true; }
             if(partyMembers.Contains(serial)) {
                 ShowPaperdoll(serial);
@@ -341,7 +372,7 @@ namespace ClassicUO.Game
             => source!=target && IsStack(source) && IsStack(target);
         internal static int[] AvatarStats { get; private set; }
         internal static bool IsContainer(Item item) => TrinsicTown.Enabled ? nativeContainers.Contains(item.Serial) : item.ItemData.IsContainer;
-        public static bool CanDrag(uint serial) => draggable.Contains(serial);
+        public static bool CanDrag(uint serial) => draggable.Contains(serial) || (TrinsicTown.Enabled && serial==TrinsicTown.MantleSerial);
         public static void Send(string op, int a=0, int b=0, string extra="", Point? clickPosition=null)
         {
             if (pipe == null) return;
@@ -529,6 +560,25 @@ namespace ClassicUO.Game
             generation=gen; last=int.Parse(s[4]); CameraX=int.Parse(s[6]); CameraY=int.Parse(s[7]);
             CameraOnly=Array.IndexOf(lines,"CAMERA_ONLY")>=0;
             int[][] rows=Rows(frame).ToArray();
+            // Match loose items to the surface actually underneath them in this
+            // observation. Moving either object must immediately break the match.
+            var workSurfaces=new Dictionary<(int x,int y,int lift),(Point anchor,int drop)>();
+            if(TrinsicTown.Compact)
+                foreach(var table in rows)
+                {
+                    if(table[6]!=0 || table[7]>=0 || !(table[1] is 407 or 633 or 847 or 890 or 971 or 1000 or 1003 or 1018)) continue;
+                    (int width,int length)=table[1] switch {
+                        407 or 890 => (5,3), 971 => (3,5), 847 => (2,2),
+                        1000 => (3,2), 1003 => (2,4), 1018 => (4,2), _ => (3,3)
+                    };
+                    if((table[2]&32)!=0) (width,length)=(length,width);
+                    // The approved worktables are 12px lower. The stock stand
+                    // between the Fellowship beds retains its existing height.
+                    int drop=table[1]==633 && table[3]==1034 && table[4]==2195 ? 0 : 12;
+                    for(int dy=0;dy<length;dy++)
+                        for(int dx=0;dx<width;dx++)
+                            workSurfaces[(table[3]-dx,table[4]-dy,table[5]+2)]=(new Point(table[3]/2,table[4]/2),drop);
+                }
             int[] avatar=rows.First(r=>r[7]==0);
             var iolo=rows.FirstOrDefault(r=>r[7]==1);
             if(iolo!=null){IoloX=iolo[3]; IoloY=iolo[4];}
@@ -608,7 +658,24 @@ namespace ClassicUO.Game
                     PresentAction(mob,r[2],reset || !visible.Contains(serial));
                     Direction facing=(Direction)(r[8]&7);
                     if(TrinsicTown.Compact) {
-                        mob.SetNativePosition(x,y,(sbyte)z,facing,reset || !visible.Contains(serial),npc==0 && run);
+                        bool lying=mob.IsHuman && (r[2]&15)==13;
+                        bool poseChanged=lying!=mob.NativeLyingDown;
+                        mob.NativeLyingDown=lying;
+                        mob.NativeBedAnchor=null;
+                        mob.NativeRestOffset=Point.Zero;
+                        if(lying) {
+                            // The native sleeper is one lift above its bed.
+                            // Covers share the sleeper's lift, not the bed's.
+                            var bed=rows.Where(b=>b[7]<0 && b[6]==0 && (b[1] is 696 or 1011) && b[5]==r[5]-1 && Math.Abs(b[3]-x)<=1 && Math.Abs(b[4]-y)<=1)
+                                .OrderBy(b=>Math.Abs(b[3]-x)+Math.Abs(b[4]-y)).FirstOrDefault();
+                            if(bed!=null) {
+                                mob.NativeBedAnchor=new Point(bed[3]/2,bed[4]/2);
+                                mob.NativeBedAcrossX=(bed[1]==696)^((bed[2]&32)!=0);
+                                int dx=bed[3]-x,dy=bed[4]-y;
+                                mob.NativeRestOffset=new Point(11*(dx-dy)+(mob.NativeBedAcrossX?-5:5),11*(dx+dy)-17);
+                            }
+                        }
+                        mob.SetNativePosition(x,y,(sbyte)z,facing,reset || poseChanged || !visible.Contains(serial),npc==0 && run);
                         continue;
                     }
                     mob.GetEndPosition(out int endX,out int endY,out sbyte endZ,out Direction endDir);
@@ -626,11 +693,20 @@ namespace ClassicUO.Game
                 else
                 {
                     Item item=world.GetOrCreateItem(serial); entity=item;
+                    int previousShape=item.TrinsicShape;
+                    int previousFrame=item.TrinsicFrame;
+                    item.TrinsicFrame=r[2];
+                    item.TrinsicShape=shape;
+                    item.EaselAxis=parent==0 && TrinsicTown.Compact && shape==837
+                        ? ((r[2]%32>=8) != ((r[2]&32)!=0) ? -1 : 1) : 0;
+                    bool onSurface=workSurfaces.TryGetValue((x,y,r[5]),out var support) && parent==0;
+                    item.WorkSurface=onSurface ? support.anchor : null;
+                    item.WorkSurfaceDrop=onSurface ? support.drop : 0;
                     item.FittedFaceDepth = parent==0 && TrinsicTown.Compact
                         ? TrinsicTown.ShutterDepth(shape,x,y,r[5]) : 0;
                     item.FurnitureWall = parent==0 && TrinsicTown.Compact
                         ? TrinsicTown.FurnitureWall(shape,x,y,r[5]) : 0;
-                    if(parent!=0) { item.NativePosition=null; item.Offset=Vector3.Zero; }
+                    if(parent!=0) { item.NativePosition=null; item.Offset=Vector3.Zero; item.NativeWallAxis=0; }
                     if(fieldGraphic!=0) item.Hue=(ushort)(shape==902?0x0480:0);
                     item.Graphic=fieldGraphic!=0 ? fieldGraphic : TrinsicTown.Enabled ? townGraphic : Art(shape,r[2]); item.Amount=TrinsicTown.Enabled && (r[11]&8)==0 ? (ushort)1 : (ushort)Math.Max(1,r[9]);
                     if(TrinsicTown.Enabled) {
@@ -660,7 +736,7 @@ namespace ClassicUO.Game
                             wearer.PushToBack(item);
                             item.Container = wearer.Serial;
                         }
-                        if (changedOwner || item.Layer != wornLayer)
+                        if (changedOwner || item.Layer != wornLayer || previousShape!=shape || previousFrame!=item.TrinsicFrame)
                         {
                             item.Layer = wornLayer;
                             UIManager.GetGump<PaperDollGump>(wearer.Serial)?.RequestUpdateContents();
@@ -694,9 +770,21 @@ namespace ClassicUO.Game
                     }
                     if(TrinsicTown.Compact) {
                         item.NativePosition=new Point(x,y);
-                        var sub=TrinsicTown.Subtile(x,y);
+                        item.NativeWallAxis=TrinsicTown.WallAxis(shape,r[2]);
+                        // Only the axis across the stock wall face snaps to the outer edge.
+                        var sub=TrinsicTown.Subtile(item.NativeWallAxis<0 ? x|1 : x,
+                                                    item.NativeWallAxis>0 ? y|1 : y);
                         // Buildings and fitted furniture use the baked cell anchor.
                         if(TrinsicTown.FitsGrid(shape,r[2]) || TrinsicTown.IsFittedShutter(shape,x,y,r[5]))sub=Point.Zero;
+                        // The stock tripod's feet sit low on its floor diamond.
+                        // Drawing and pixel picking both use this screen offset.
+                        if(item.EaselAxis!=0) sub.Y+=8;
+                        var artOffset=TrinsicTown.ArtOffset(item.Graphic);
+                        sub.X+=artOffset.X;
+                        sub.Y+=artOffset.Y;
+                        // Keep native lift and interactions, and lower drawing
+                        // and pixel picking together to the visible tabletop.
+                        sub.Y+=item.WorkSurfaceDrop;
                         item.Offset=new Vector3(sub.X,sub.Y,0);
                         x/=2; y/=2;
                     }
@@ -711,6 +799,7 @@ namespace ClassicUO.Game
             TrinsicEffects.Apply(world,lines,gen);
             foreach(var sheet in UIManager.Gumps.OfType<PaperDollGump>().Where(g=>g.LocalSerial!=world.Player.Serial).ToArray())
                 if(!partyMembers.Contains(sheet.LocalSerial)) sheet.Dispose();
+            SyncMantle();
             TrinsicDebug.Apply(world,lines,gen,backpack);
             TrinsicAudio.Apply(lines,gen);
             if (Client.Game.Scene is GameScene) ShowBarks(lines);

@@ -129,6 +129,7 @@ namespace ClassicUO.Configuration
         public int TrinsicMusicVolume { get; set; } = 80;
         public int TrinsicSpeechVolume { get; set; } = 100;
         public string TrinsicExultMusicFolder { get; set; } = "";
+        public bool TrinsicAvatarMantleEquipped { get; set; } = true;
         public bool UseCircleOfTransparency { get; set; }
         public int CircleOfTransparencyRadius { get; set; } = Constants.MAX_CIRCLE_OF_TRANSPARENCY_RADIUS / 2;
         public int CircleOfTransparencyType { get; set; } // 0 = normal, 1 = like original client

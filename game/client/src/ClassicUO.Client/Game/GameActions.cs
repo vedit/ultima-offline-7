@@ -346,6 +346,8 @@ namespace ClassicUO.Game
                 Point click = clickPosition ?? Mouse.Position;
                 if (serial==TrinsicDebug.WandSerial)
                     ItemClickLabelGump.Show(world,TrinsicDebug.WandName,click,serial);
+                else if (serial==TrinsicTown.MantleSerial)
+                    ItemClickLabelGump.Show(world,TrinsicTown.MantleName,click,serial);
                 else if ((serial & 0x20000000u) != 0 && world.Items.Get(serial) is Item appearance)
                     ItemClickLabelGump.Show(world, StringHelper.GetPluralAdjustedString(appearance.ItemData.Name, false), click, serial);
                 else
@@ -539,6 +541,11 @@ namespace ClassicUO.Game
             if (TrinsicSession.Enabled)
             {
                 if(!Client.Game.UO.GameCursor.ItemHold.Enabled) return;
+                if(serial==TrinsicTown.MantleSerial) {
+                    TrinsicSession.MoveMantle(container);
+                    Client.Game.UO.GameCursor.ItemHold.Clear();
+                    return;
+                }
                 if(container==0xffffffff) {
                     var pos=TrinsicTown.Compact?TrinsicTown.NativeGround(x,y):new Point(x,y);
                     TrinsicSession.Send("GROUND",(int)(serial & 0x1fffffff),pos.X,$" {pos.Y} {z/4} {Client.Game.UO.GameCursor.ItemHold.Amount}");
@@ -578,6 +585,11 @@ namespace ClassicUO.Game
             if(TrinsicSession.Enabled) {
                 var held=Client.Game.UO.GameCursor.ItemHold;
                 if(held.Enabled && !held.IsFixedPosition) {
+                    if(held.Serial==TrinsicTown.MantleSerial) {
+                        TrinsicSession.MoveMantle(container==0 ? world.Player.Serial : container);
+                        held.Clear();
+                        return;
+                    }
                     TrinsicSession.Send("EQUIP",(int)(held.Serial & 0x1fffffff),(int)(container==0?world.Player.Serial:container));
                     held.Clear();
                 }

@@ -37,7 +37,8 @@ namespace ClassicUO.Game.GameObjects
                 return false;
             }
 
-            ushort graphic = Graphic;
+            ushort graphic = TrinsicTown.BedroomCutaway(this);
+            if (graphic == 0) graphic = Graphic;
             ushort hue = Hue;
             bool partial = ItemData.IsPartialHue;
 
@@ -102,7 +103,8 @@ namespace ClassicUO.Game.GameObjects
                 )
             )
             {
-                ushort graphic = Graphic;
+                ushort graphic = TrinsicTown.BedroomCutaway(this);
+                if (graphic == 0) graphic = Graphic;
 
                 bool isTree = StaticFilters.IsTree(graphic, out _);
 
