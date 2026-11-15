@@ -1,0 +1,3394 @@
+{
+  "date": "2026-11-15",
+  "scope": "Original Trinsic quest/action wiring; desktop ClassicUO",
+  "status": "core_quest_passed_with_remaining_presentation_and_coverage_gaps",
+  "census": {
+    "bounds": [
+      928,
+      2080,
+      1120,
+      2352
+    ],
+    "inputs": {
+      "INITGAME.DAT": "c1299e499aa1cd7c6bb9d7f14044ec21dc1f98aa45eaac1f6f1a2c473223491a",
+      "USECODE": "49a3fcaf8a763972d0a6006571e8d8eef11eb1602f88898808b520523d0a8576",
+      "LINKDEP1": "7f8c60be31b537cd3d1455b2b5ca290edd654df4e9a5c6c9e1b87dd5ff57a570",
+      "TFA.DAT": "300143ff7790bbffa8002727dd9c354dba11e22bfaee7c530b7d05095b51d39b"
+    },
+    "source_scripts": {
+      "Apollonia.use": "14feb0fa57e97d5f8970560a78f299dc4a37161fbae95d8b7ff75b956db7decb",
+      "BargeType_i.use": "78d3373305d00bf74cc979f108f0cb0d9b581b4ef35cb14ae9cdcfc6a2830d76",
+      "Caroline.use": "07b14d95d4bd91ef2cd5577337884f15c38d7f0fbae8922539f1d766f4db2b97",
+      "ChairHaunt.use": "d9f9338e3cca73ac136448b6c498cb4992a840f89f02b9e940ddde75fee49494",
+      "Chantu.use": "2a3e360aebdb5f79489b209c7b13f2ef761db82e3788c238deb022feaa48a75d",
+      "Dell.use": "0dec10b6cfafc06ce99c794724b23ca2767788e6123ff06464b19d94641650b7",
+      "DoorHaunt.use": "199ace65a05246837c5017fc58423c7005ba1f887a4ed18a8a6179cef0a4aa17",
+      "Ellen.use": "ed9e7bfb37658e42234fe21dcdd17eece481c56ca3f42202b65b776e811a1182",
+      "Fear.use": "f55487574ce662e96d8c60275e65d888ab5527d18320e2a32dec7efe037306c3",
+      "Finnigan.use": "f35956120fdbb12b68e6f1828016fc3478b6a0549c51052e11f081747145191b",
+      "Gargan.use": "40fc18a3559e8be8e2ae56fd6dcc51e4ccd7464170bd131f53da2b10ee18d93a",
+      "Gilberto.use": "cbfc67c7f3218ed6fcf181a6c7a778d80fc8c608ec14a9ee3c8d1c34b88eaa0b",
+      "Guard_0326.use": "459cc427a7dfabfc853d71cb7cff3640333b956e1f65e9a3f3b43fc2e525f3ba",
+      "Iolo.use": "a4d73998723bc340b1304c95c0ea54b9e68cedd2d73fb12a978df202c0aa240a",
+      "Johnson.use": "f0ea21272e00710a2bf593769fe571159be5659fed7866d88b9486fa77f46dfd",
+      "Klog.use": "7dfa2ef72c24c5dd52ec4a8fd0ea667947139838384ffddf678d6e4fefd135e5",
+      "LaunchShip_i.use": "73312b3b1184aa6710b9a76ac91296b211130d0021405c111a03f5a37458bd97",
+      "Markus.use": "2a433d19308044f2dc23e5af25eee235aaf4a43bcff21abfbf256c0e381cd893",
+      "PartyRemarkEgg_i.use": "1c2c94ec8e1693f83a8c4455790e96c1fd3fe8f12cc5ff47933646d71dc713ed",
+      "Petre.use": "12e39dcaf1522788b58e0a4d7f300fcb20eb037f34addfe45fc3a27245b35c7c",
+      "Puke.use": "9f9070a9306b98e91f79b6d18b54498d992ab0fd00a738fe084094470c18f4a3",
+      "Spark.use": "8be5f71cca5418aba520baa8887854168093cf3366887354587c559becd1e378",
+      "StablesKeyEgg_i.use": "b3c7fa3b16818a9a9dd077414c39acd59d6d164df343706e867901c2c6969d87",
+      "TrinsicCleanupEgg_i.use": "9ed94dd95a108fbcfaf9307cf22b01a8499387dc90c6f108725686082f7071d0",
+      "TurnWinch_i.use": "1b787dfc03aa1534a552e89ea0b14de7d01254be486caae02668371818d6cd86"
+    },
+    "npc_count": 17,
+    "npcs": [
+      {
+        "name": "Avatar (NPC 0)",
+        "shape": 721,
+        "slot": 0,
+        "position": [
+          1079,
+          2214,
+          0
+        ],
+        "routine": "player"
+      },
+      {
+        "name": "Iolo (NPC 1)",
+        "shape": 465,
+        "slot": 1,
+        "position": [
+          1069,
+          2212,
+          0
+        ],
+        "routine": "Iolo"
+      },
+      {
+        "name": "Spark (NPC 2)",
+        "shape": 489,
+        "slot": 2,
+        "position": [
+          968,
+          2134,
+          0
+        ],
+        "routine": "Spark"
+      },
+      {
+        "name": "Petre (NPC 11)",
+        "shape": 319,
+        "slot": 11,
+        "position": [
+          1068,
+          2216,
+          0
+        ],
+        "routine": "Petre"
+      },
+      {
+        "name": "Finnigan (NPC 12)",
+        "shape": 451,
+        "slot": 12,
+        "position": [
+          1048,
+          2215,
+          0
+        ],
+        "routine": "Finnigan"
+      },
+      {
+        "name": "Gilberto (NPC 13)",
+        "shape": 720,
+        "slot": 13,
+        "position": [
+          949,
+          2257,
+          0
+        ],
+        "routine": "Gilberto"
+      },
+      {
+        "name": "Johnson (NPC 14)",
+        "shape": 720,
+        "slot": 14,
+        "position": [
+          1093,
+          2215,
+          0
+        ],
+        "routine": "Johnson"
+      },
+      {
+        "name": "Klog (NPC 16)",
+        "shape": 318,
+        "slot": 16,
+        "position": [
+          1031,
+          2216,
+          0
+        ],
+        "routine": "Klog"
+      },
+      {
+        "name": "Chantu (NPC 17)",
+        "shape": 445,
+        "slot": 17,
+        "position": [
+          952,
+          2265,
+          0
+        ],
+        "routine": "Chantu"
+      },
+      {
+        "name": "Dell (NPC 18)",
+        "shape": 455,
+        "slot": 18,
+        "position": [
+          985,
+          2281,
+          0
+        ],
+        "routine": "Dell"
+      },
+      {
+        "name": "Gargan (NPC 21)",
+        "shape": 455,
+        "slot": 21,
+        "position": [
+          1048,
+          2167,
+          0
+        ],
+        "routine": "Gargan"
+      },
+      {
+        "name": "Apollonia (NPC 19)",
+        "shape": 454,
+        "slot": 19,
+        "position": [
+          1049,
+          2281,
+          0
+        ],
+        "routine": "Apollonia"
+      },
+      {
+        "name": "Markus (NPC 20)",
+        "shape": 462,
+        "slot": 20,
+        "position": [
+          1043,
+          2136,
+          0
+        ],
+        "routine": "Markus"
+      },
+      {
+        "name": "Caroline (NPC 22)",
+        "shape": 452,
+        "slot": 22,
+        "position": [
+          1063,
+          2146,
+          0
+        ],
+        "routine": "Caroline"
+      },
+      {
+        "name": "Ellen (NPC 236)",
+        "shape": 452,
+        "slot": 236,
+        "position": [
+          1033,
+          2212,
+          0
+        ],
+        "routine": "Ellen"
+      },
+      {
+        "name": "Doug (NPC 257)",
+        "shape": 806,
+        "slot": 257,
+        "position": [
+          1015,
+          2101,
+          0
+        ],
+        "routine": "Guard_0326"
+      },
+      {
+        "name": "Bob (NPC 258)",
+        "shape": 806,
+        "slot": 258,
+        "position": [
+          1015,
+          2325,
+          0
+        ],
+        "routine": "Guard_0326"
+      }
+    ],
+    "trigger_count": 48,
+    "trigger_kinds": {
+      "weather": 9,
+      "Usecode": 19,
+      "music": 7,
+      "creature": 7,
+      "speech": 2,
+      "teleport": 4
+    },
+    "triggers": [
+      {
+        "position": [
+          937,
+          2089,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 424,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 31,
+        "probability": 25,
+        "data1": 3846,
+        "data2": 0,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      },
+      {
+        "position": [
+          1016,
+          2084,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 491,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 19,
+        "probability": 100,
+        "data1": 3842,
+        "data2": 0,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      },
+      {
+        "position": [
+          1014,
+          2084,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 504,
+        "kind_id": 5,
+        "criteria": 1,
+        "distance": 5,
+        "probability": 100,
+        "data1": 6,
+        "data2": 1569,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "PartyRemarkEgg_i"
+      },
+      {
+        "position": [
+          1015,
+          2082,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 517,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 19,
+        "probability": 20,
+        "data1": 0,
+        "data2": 0,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      },
+      {
+        "position": [
+          1016,
+          2143,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 2383,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 31,
+        "probability": 45,
+        "data1": 3846,
+        "data2": 0,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      },
+      {
+        "position": [
+          1002,
+          2217,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 4645,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 31,
+        "probability": 20,
+        "data1": 6406,
+        "data2": 0,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      },
+      {
+        "position": [
+          1015,
+          2215,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 4813,
+        "kind_id": 2,
+        "criteria": 2,
+        "distance": 8,
+        "probability": 100,
+        "data1": 291,
+        "data2": 0,
+        "once": false,
+        "repeat": true,
+        "nocturnal": false,
+        "kind": "music"
+      },
+      {
+        "position": [
+          956,
+          2253,
+          1
+        ],
+        "member": "u7ireg63",
+        "offset": 5350,
+        "kind_id": 1,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 100,
+        "data1": 3844,
+        "data2": 447,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "creature",
+        "shape": 447,
+        "frame": 0
+      },
+      {
+        "position": [
+          948,
+          2245,
+          1
+        ],
+        "member": "u7ireg63",
+        "offset": 5496,
+        "kind_id": 1,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 100,
+        "data1": 3844,
+        "data2": 447,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "creature",
+        "shape": 447,
+        "frame": 0
+      },
+      {
+        "position": [
+          1012,
+          2261,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 5956,
+        "kind_id": 1,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 35,
+        "data1": 5124,
+        "data2": 496,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "creature",
+        "shape": 496,
+        "frame": 0
+      },
+      {
+        "position": [
+          968,
+          2303,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 6276,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1718,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "ChairHaunt"
+      },
+      {
+        "position": [
+          966,
+          2300,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 6289,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 3,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1717,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "DoorHaunt"
+      },
+      {
+        "position": [
+          973,
+          2295,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 6323,
+        "kind_id": 4,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 31,
+        "data2": 0,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "speech"
+      },
+      {
+        "position": [
+          968,
+          2296,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 6336,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 3,
+        "probability": 100,
+        "data1": 10,
+        "data2": 1722,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "Puke"
+      },
+      {
+        "position": [
+          965,
+          2296,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 6349,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1718,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "ChairHaunt"
+      },
+      {
+        "position": [
+          970,
+          2294,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 6369,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1718,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "ChairHaunt"
+      },
+      {
+        "position": [
+          972,
+          2291,
+          0
+        ],
+        "member": "u7ireg63",
+        "offset": 6410,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1718,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "ChairHaunt"
+      },
+      {
+        "position": [
+          966,
+          2288,
+          6
+        ],
+        "member": "u7ireg63",
+        "offset": 6430,
+        "kind_id": 7,
+        "criteria": 2,
+        "distance": 0,
+        "probability": 100,
+        "data1": 27903,
+        "data2": 34727,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "teleport",
+        "destination": [
+          167,
+          2439,
+          0
+        ],
+        "destination_in_town": false
+      },
+      {
+        "position": [
+          1035,
+          2082,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 311,
+        "kind_id": 1,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 45,
+        "data1": 5124,
+        "data2": 970,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "creature",
+        "shape": 970,
+        "frame": 0
+      },
+      {
+        "position": [
+          1093,
+          2090,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 349,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 31,
+        "probability": 20,
+        "data1": 3846,
+        "data2": 0,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      },
+      {
+        "position": [
+          1070,
+          2147,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 976,
+        "kind_id": 1,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 45,
+        "data1": 2308,
+        "data2": 495,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "creature",
+        "shape": 495,
+        "frame": 0
+      },
+      {
+        "position": [
+          1082,
+          2171,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 1643,
+        "kind_id": 1,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 100,
+        "data1": 5124,
+        "data2": 727,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "creature",
+        "shape": 727,
+        "frame": 0
+      },
+      {
+        "position": [
+          1077,
+          2182,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 2056,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1700,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "StablesKeyEgg_i"
+      },
+      {
+        "position": [
+          1032,
+          2200,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 2369,
+        "kind_id": 2,
+        "criteria": 2,
+        "distance": 6,
+        "probability": 100,
+        "data1": 291,
+        "data2": 0,
+        "once": false,
+        "repeat": true,
+        "nocturnal": false,
+        "kind": "music"
+      },
+      {
+        "position": [
+          1069,
+          2206,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 2489,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 1,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1700,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "StablesKeyEgg_i"
+      },
+      {
+        "position": [
+          1069,
+          2198,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 2558,
+        "kind_id": 5,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1730,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "TrinsicCleanupEgg_i"
+      },
+      {
+        "position": [
+          1071,
+          2192,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 2648,
+        "kind_id": 2,
+        "criteria": 2,
+        "distance": 15,
+        "probability": 100,
+        "data1": 283,
+        "data2": 257,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "music"
+      },
+      {
+        "position": [
+          1115,
+          2203,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 2986,
+        "kind_id": 5,
+        "criteria": 1,
+        "distance": 10,
+        "probability": 100,
+        "data1": 18,
+        "data2": 1569,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "PartyRemarkEgg_i"
+      },
+      {
+        "position": [
+          1031,
+          2215,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 3282,
+        "kind_id": 2,
+        "criteria": 2,
+        "distance": 8,
+        "probability": 100,
+        "data1": 291,
+        "data2": 257,
+        "once": false,
+        "repeat": true,
+        "nocturnal": false,
+        "kind": "music"
+      },
+      {
+        "position": [
+          1076,
+          2214,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 3501,
+        "kind_id": 5,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1025,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "Iolo"
+      },
+      {
+        "position": [
+          1034,
+          2229,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 3979,
+        "kind_id": 2,
+        "criteria": 2,
+        "distance": 0,
+        "probability": 100,
+        "data1": 291,
+        "data2": 0,
+        "once": false,
+        "repeat": true,
+        "nocturnal": false,
+        "kind": "music"
+      },
+      {
+        "position": [
+          1063,
+          2232,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 4141,
+        "kind_id": 2,
+        "criteria": 2,
+        "distance": 8,
+        "probability": 100,
+        "data1": 275,
+        "data2": 0,
+        "once": false,
+        "repeat": true,
+        "nocturnal": false,
+        "kind": "music"
+      },
+      {
+        "position": [
+          1084,
+          2236,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 4225,
+        "kind_id": 1,
+        "criteria": 0,
+        "distance": 0,
+        "probability": 75,
+        "data1": 2820,
+        "data2": 496,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "creature",
+        "shape": 496,
+        "frame": 0
+      },
+      {
+        "position": [
+          1079,
+          2228,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 4287,
+        "kind_id": 5,
+        "criteria": 1,
+        "distance": 5,
+        "probability": 75,
+        "data1": 27,
+        "data2": 1569,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "PartyRemarkEgg_i"
+      },
+      {
+        "position": [
+          1079,
+          2226,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 4300,
+        "kind_id": 5,
+        "criteria": 1,
+        "distance": 5,
+        "probability": 50,
+        "data1": 3,
+        "data2": 1569,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "PartyRemarkEgg_i"
+      },
+      {
+        "position": [
+          1072,
+          2255,
+          0
+        ],
+        "member": "u7ireg64",
+        "offset": 4777,
+        "kind_id": 2,
+        "criteria": 2,
+        "distance": 16,
+        "probability": 100,
+        "data1": 275,
+        "data2": 257,
+        "once": false,
+        "repeat": true,
+        "nocturnal": false,
+        "kind": "music"
+      },
+      {
+        "position": [
+          1049,
+          2267,
+          1
+        ],
+        "member": "u7ireg64",
+        "offset": 5104,
+        "kind_id": 7,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 14335,
+        "data2": 46951,
+        "once": false,
+        "repeat": true,
+        "nocturnal": false,
+        "kind": "teleport",
+        "destination": [
+          1895,
+          1207,
+          0
+        ],
+        "destination_in_town": false
+      },
+      {
+        "position": [
+          967,
+          2311,
+          0
+        ],
+        "member": "u7ireg6f",
+        "offset": 171,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 4,
+        "probability": 100,
+        "data1": 10,
+        "data2": 1723,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "Fear"
+      },
+      {
+        "position": [
+          967,
+          2311,
+          0
+        ],
+        "member": "u7ireg6f",
+        "offset": 184,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 4,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1717,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "DoorHaunt"
+      },
+      {
+        "position": [
+          967,
+          2311,
+          0
+        ],
+        "member": "u7ireg6f",
+        "offset": 197,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 4,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1718,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "ChairHaunt"
+      },
+      {
+        "position": [
+          968,
+          2308,
+          0
+        ],
+        "member": "u7ireg6f",
+        "offset": 252,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1718,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "ChairHaunt"
+      },
+      {
+        "position": [
+          966,
+          2305,
+          0
+        ],
+        "member": "u7ireg6f",
+        "offset": 377,
+        "kind_id": 5,
+        "criteria": 2,
+        "distance": 2,
+        "probability": 100,
+        "data1": 0,
+        "data2": 1718,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "Usecode",
+        "routine": "ChairHaunt"
+      },
+      {
+        "position": [
+          937,
+          2342,
+          0
+        ],
+        "member": "u7ireg6f",
+        "offset": 747,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 31,
+        "probability": 20,
+        "data1": 3846,
+        "data2": 0,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      },
+      {
+        "position": [
+          1017,
+          2346,
+          0
+        ],
+        "member": "u7ireg6f",
+        "offset": 779,
+        "kind_id": 4,
+        "criteria": 2,
+        "distance": 10,
+        "probability": 100,
+        "data1": 24,
+        "data2": 0,
+        "once": true,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "speech"
+      },
+      {
+        "position": [
+          1016,
+          2346,
+          0
+        ],
+        "member": "u7ireg6f",
+        "offset": 799,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 31,
+        "probability": 15,
+        "data1": 3846,
+        "data2": 0,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      },
+      {
+        "position": [
+          1065,
+          2315,
+          1
+        ],
+        "member": "u7ireg70",
+        "offset": 170,
+        "kind_id": 7,
+        "criteria": 2,
+        "distance": 0,
+        "probability": 100,
+        "data1": 13055,
+        "data2": 2056,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "teleport",
+        "destination": [
+          520,
+          1032,
+          0
+        ],
+        "destination_in_town": false
+      },
+      {
+        "position": [
+          1080,
+          2328,
+          6
+        ],
+        "member": "u7ireg70",
+        "offset": 242,
+        "kind_id": 7,
+        "criteria": 2,
+        "distance": 1,
+        "probability": 100,
+        "data1": 28927,
+        "data2": 6200,
+        "once": false,
+        "repeat": true,
+        "nocturnal": false,
+        "kind": "teleport",
+        "destination": [
+          1080,
+          2328,
+          0
+        ],
+        "destination_in_town": true
+      },
+      {
+        "position": [
+          1100,
+          2339,
+          0
+        ],
+        "member": "u7ireg70",
+        "offset": 293,
+        "kind_id": 8,
+        "criteria": 2,
+        "distance": 31,
+        "probability": 20,
+        "data1": 3846,
+        "data2": 0,
+        "once": false,
+        "repeat": false,
+        "nocturnal": false,
+        "kind": "weather"
+      }
+    ],
+    "item_family_count": 65,
+    "item_families": [
+      {
+        "shape": 854,
+        "scripted": true,
+        "container": false,
+        "routine": "Statue",
+        "placements": 1,
+        "frames": [
+          4
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 379,
+        "scripted": true,
+        "container": false,
+        "routine": "Sign",
+        "placements": 24,
+        "frames": [
+          0,
+          1,
+          2,
+          3,
+          7,
+          8,
+          9,
+          10
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 950,
+        "scripted": true,
+        "container": false,
+        "routine": "Winch_03B6",
+        "placements": 2,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 270,
+        "scripted": true,
+        "container": false,
+        "routine": "Door_010E",
+        "placements": 11,
+        "frames": [
+          0,
+          2,
+          8,
+          16
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 377,
+        "scripted": true,
+        "container": false,
+        "routine": "FoodItem",
+        "placements": 9,
+        "frames": [
+          0,
+          1,
+          4,
+          8,
+          17
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 678,
+        "scripted": true,
+        "container": false,
+        "routine": "Curtain_02A6",
+        "placements": 3,
+        "frames": [
+          6,
+          10
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 1011,
+        "scripted": true,
+        "container": false,
+        "routine": "Bed_03F3",
+        "placements": 36,
+        "frames": [
+          0,
+          3,
+          5,
+          7,
+          9,
+          10,
+          13,
+          15
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 873,
+        "scripted": true,
+        "container": false,
+        "routine": "Chair",
+        "placements": 43,
+        "frames": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          10,
+          16,
+          17,
+          19,
+          21
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 944,
+        "scripted": true,
+        "container": false,
+        "routine": "Pot",
+        "placements": 8,
+        "frames": [
+          0,
+          1,
+          2,
+          5
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 810,
+        "scripted": true,
+        "container": false,
+        "routine": "Bucket",
+        "placements": 8,
+        "frames": [
+          0,
+          2
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 802,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 13,
+        "frames": [
+          0,
+          1
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 644,
+        "scripted": true,
+        "container": false,
+        "routine": "GoldCoin",
+        "placements": 14,
+        "frames": [
+          0,
+          1,
+          2,
+          4,
+          6,
+          7
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 642,
+        "scripted": true,
+        "container": false,
+        "routine": "Book",
+        "placements": 20,
+        "frames": [
+          0,
+          1,
+          2,
+          14,
+          17,
+          22,
+          26
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 801,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 627,
+        "scripted": true,
+        "container": false,
+        "routine": "Lockpick",
+        "placements": 3,
+        "frames": [
+          3,
+          4
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 595,
+        "scripted": true,
+        "container": false,
+        "routine": "Torch",
+        "placements": 2,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 889,
+        "scripted": true,
+        "container": false,
+        "routine": "LampPost",
+        "placements": 36,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 291,
+        "scripted": true,
+        "container": false,
+        "routine": "ClosedShutters_0123",
+        "placements": 12,
+        "frames": [
+          0,
+          1
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 376,
+        "scripted": true,
+        "container": false,
+        "routine": "Door_0178",
+        "placements": 16,
+        "frames": [
+          0,
+          8,
+          9,
+          16
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 522,
+        "scripted": true,
+        "container": true,
+        "routine": "LockedChest",
+        "placements": 2,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 797,
+        "scripted": true,
+        "container": false,
+        "routine": "Scroll",
+        "placements": 13,
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 336,
+        "scripted": true,
+        "container": false,
+        "routine": "LightSource",
+        "placements": 32,
+        "frames": [
+          0,
+          4,
+          6,
+          11,
+          12,
+          13
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 696,
+        "scripted": true,
+        "container": false,
+        "routine": "Bed_02B8",
+        "placements": 15,
+        "frames": [
+          0,
+          2,
+          5,
+          7,
+          9,
+          11,
+          13,
+          14,
+          15
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 675,
+        "scripted": true,
+        "container": false,
+        "routine": "DeskItem",
+        "placements": 13,
+        "frames": [
+          0,
+          1,
+          2,
+          6,
+          9,
+          10,
+          13,
+          16
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 740,
+        "scripted": true,
+        "container": false,
+        "routine": "Well_02E4",
+        "placements": 4,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 470,
+        "scripted": true,
+        "container": false,
+        "routine": "Well_01D6",
+        "placements": 4,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 372,
+        "scripted": true,
+        "container": false,
+        "routine": "OpenShutters_0174",
+        "placements": 9,
+        "frames": [
+          0,
+          1
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 322,
+        "scripted": true,
+        "container": false,
+        "routine": "OpenShutters_0142",
+        "placements": 6,
+        "frames": [
+          0,
+          1
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 804,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 30,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 800,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 8,
+        "frames": [
+          0,
+          1
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 290,
+        "scripted": true,
+        "container": false,
+        "routine": "ClosedShutters_0122",
+        "placements": 8,
+        "frames": [
+          0,
+          1
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 723,
+        "scripted": true,
+        "container": false,
+        "routine": "Bolt",
+        "placements": 3,
+        "frames": [
+          30
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 845,
+        "scripted": true,
+        "container": false,
+        "routine": "Wall_034D",
+        "placements": 2,
+        "frames": [
+          0,
+          16
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 787,
+        "scripted": true,
+        "container": false,
+        "routine": "Lever",
+        "placements": 2,
+        "frames": [
+          0,
+          2
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 657,
+        "scripted": true,
+        "container": false,
+        "routine": "Curtain_0291",
+        "placements": 5,
+        "frames": [
+          0,
+          2,
+          6
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 893,
+        "scripted": true,
+        "container": false,
+        "routine": "PoolOfWater",
+        "placements": 2,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 828,
+        "scripted": true,
+        "container": false,
+        "routine": "Wall_033C",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 338,
+        "scripted": true,
+        "container": false,
+        "routine": "LitLightSource",
+        "placements": 10,
+        "frames": [
+          6,
+          9,
+          15
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 407,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 2,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 435,
+        "scripted": true,
+        "container": false,
+        "routine": "LitSconce",
+        "placements": 11,
+        "frames": [
+          0,
+          1
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 292,
+        "scripted": true,
+        "container": false,
+        "routine": "Seat",
+        "placements": 18,
+        "frames": [
+          8,
+          10,
+          11
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 798,
+        "scripted": true,
+        "container": true,
+        "routine": "SealedBox",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 616,
+        "scripted": true,
+        "container": false,
+        "routine": "Bottle",
+        "placements": 7,
+        "frames": [
+          3,
+          4,
+          5,
+          9,
+          14
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 340,
+        "scripted": true,
+        "container": false,
+        "routine": "Potion",
+        "placements": 5,
+        "frames": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 827,
+        "scripted": true,
+        "container": false,
+        "routine": "Bandage",
+        "placements": 2,
+        "frames": [
+          2
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 991,
+        "scripted": true,
+        "container": false,
+        "routine": "Anvil",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 668,
+        "scripted": true,
+        "container": false,
+        "routine": "SwordBlank",
+        "placements": 4,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 431,
+        "scripted": true,
+        "container": false,
+        "routine": "Bellows",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 623,
+        "scripted": true,
+        "container": false,
+        "routine": "Hammer",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 739,
+        "scripted": true,
+        "container": false,
+        "routine": "Firepit",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 719,
+        "scripted": true,
+        "container": false,
+        "routine": "WaterTrough_02CF",
+        "placements": 2,
+        "frames": [
+          0,
+          2
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 823,
+        "scripted": true,
+        "container": false,
+        "routine": "ArtistsEquipment",
+        "placements": 2,
+        "frames": [
+          1,
+          2
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 837,
+        "scripted": true,
+        "container": false,
+        "routine": "Easel",
+        "placements": 3,
+        "frames": [
+          0,
+          2,
+          15
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 863,
+        "scripted": true,
+        "container": false,
+        "routine": "KitchenItems",
+        "placements": 3,
+        "frames": [
+          0,
+          13
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 650,
+        "scripted": true,
+        "container": false,
+        "routine": "Sextant",
+        "placements": 4,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 803,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 646,
+        "scripted": true,
+        "container": false,
+        "routine": "GoldBar",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 414,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 1,
+        "frames": [
+          26
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 641,
+        "scripted": true,
+        "container": false,
+        "routine": "Key",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 949,
+        "scripted": true,
+        "container": false,
+        "routine": "Winch_03B5",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 799,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 760,
+        "scripted": true,
+        "container": false,
+        "routine": "Gem",
+        "placements": 2,
+        "frames": [
+          3,
+          4
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 848,
+        "scripted": true,
+        "container": false,
+        "routine": "Mirror",
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 851,
+        "scripted": true,
+        "container": false,
+        "routine": "Cloth",
+        "placements": 3,
+        "frames": [
+          1,
+          3,
+          5
+        ],
+        "unmapped_frames": []
+      },
+      {
+        "shape": 416,
+        "scripted": false,
+        "container": true,
+        "routine": null,
+        "placements": 1,
+        "frames": [
+          0
+        ],
+        "unmapped_frames": []
+      }
+    ]
+  },
+  "branch_tests": [
+    {
+      "case": "town-speaker",
+      "npc": 1,
+      "choices": [
+        "name",
+        "job",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 2,
+      "choices": [
+        "Avatar",
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 11,
+      "choices": [
+        "No"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 12,
+      "choices": [
+        "No"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 13,
+      "choices": [
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 14,
+      "choices": [
+        "name",
+        "job",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 16,
+      "choices": [
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 17,
+      "choices": [
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 18,
+      "choices": [
+        "Avatar",
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 19,
+      "choices": [
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 20,
+      "choices": [
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 21,
+      "choices": [
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 22,
+      "choices": [
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 236,
+      "choices": [
+        "name",
+        "job",
+        "murder",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 257,
+      "choices": [
+        "name",
+        "job",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "town-speaker",
+      "npc": 258,
+      "choices": [
+        "name",
+        "job",
+        "bye"
+      ],
+      "returned_control": true
+    },
+    {
+      "case": "password-refused",
+      "npc": 14,
+      "gates": [
+        [
+          11672,
+          271,
+          0,
+          1102,
+          2217,
+          0
+        ]
+      ]
+    },
+    {
+      "case": "password-refused",
+      "npc": 257,
+      "gates": [
+        [
+          80144,
+          272,
+          0,
+          1017,
+          2097,
+          0
+        ]
+      ]
+    },
+    {
+      "case": "password-refused",
+      "npc": 258,
+      "gates": [
+        [
+          22440,
+          272,
+          0,
+          1017,
+          2334,
+          0
+        ]
+      ]
+    },
+    {
+      "case": "password-accepted",
+      "npc": 257,
+      "gates": [
+        [
+          14608,
+          272,
+          0,
+          1017,
+          2097,
+          3
+        ]
+      ]
+    },
+    {
+      "case": "password-accepted",
+      "npc": 258,
+      "gates": [
+        [
+          24560,
+          272,
+          0,
+          1017,
+          2334,
+          2
+        ]
+      ]
+    },
+    {
+      "case": "Fellowship-leads",
+      "choices": [
+        "murder",
+        "Christopher",
+        "argument",
+        "companions",
+        "gold",
+        "medallion",
+        "scroll",
+        "Crown Jewel",
+        "Hook",
+        "bye"
+      ],
+      "flags": [
+        63,
+        65
+      ]
+    },
+    {
+      "case": "Spark-leave-rejoin",
+      "native_party": true
+    }
+  ],
+  "regression_suites": [
+    {
+      "case": "inventory-dispatch",
+      "status": "passed",
+      "seconds": 57.33,
+      "log": "20261115-064412-inventory-dispatch.log"
+    },
+    {
+      "case": "town-dispatch",
+      "status": "passed",
+      "seconds": 181.27,
+      "log": "20261115-064412-town-dispatch.log"
+    },
+    {
+      "case": "world-targets",
+      "status": "passed",
+      "seconds": 23.19,
+      "log": "20261115-064412-world-targets.log"
+    },
+    {
+      "case": "spellbook",
+      "status": "passed",
+      "seconds": 42.54,
+      "log": "20261115-064412-spellbook.log"
+    },
+    {
+      "case": "theft",
+      "status": "passed",
+      "seconds": 6.84,
+      "log": "20261115-064412-theft.log"
+    },
+    {
+      "case": "theft-witness",
+      "status": "passed",
+      "seconds": 5.28,
+      "log": "20261115-064412-theft-witness.log"
+    },
+    {
+      "case": "creatures-combat",
+      "status": "passed",
+      "seconds": 23.48,
+      "log": "20261115-064412-creatures-combat.log"
+    },
+    {
+      "case": "world-effects",
+      "status": "passed",
+      "seconds": 12.7,
+      "log": "20261115-064412-world-effects.log"
+    },
+    {
+      "case": "commerce-training",
+      "status": "passed",
+      "seconds": 12.28,
+      "log": "20261115-064412-commerce-training.log"
+    },
+    {
+      "case": "rest-potions",
+      "status": "passed",
+      "seconds": 12.65,
+      "log": "20261115-064412-rest-potions.log"
+    },
+    {
+      "case": "forge-effects",
+      "status": "passed",
+      "seconds": 8.89,
+      "log": "20261115-064412-forge-effects.log"
+    },
+    {
+      "case": "audit-boundaries",
+      "status": "passed",
+      "seconds": 5.77,
+      "log": "20261115-064412-audit-boundaries.log"
+    },
+    {
+      "case": "companions-keys",
+      "status": "passed",
+      "seconds": 97.64,
+      "log": "20261115-064412-companions-keys.log"
+    },
+    {
+      "case": "inventory-mouse",
+      "status": "passed",
+      "seconds": 31.09,
+      "log": "20261115-064412-inventory-mouse.log"
+    },
+    {
+      "case": "panels",
+      "status": "passed",
+      "seconds": 24.47,
+      "log": "20261115-064412-panels.log"
+    },
+    {
+      "case": "stacks-controls",
+      "status": "passed",
+      "seconds": 29.2,
+      "log": "20261115-064412-stacks-controls.log"
+    },
+    {
+      "case": "item-labels",
+      "status": "passed",
+      "seconds": 19.02,
+      "log": "20261115-064412-item-labels.log"
+    },
+    {
+      "case": "npc-overhead",
+      "status": "passed",
+      "seconds": 8.52,
+      "log": "20261115-064412-npc-overhead.log"
+    },
+    {
+      "case": "reported-interactions",
+      "status": "passed",
+      "seconds": 33.49,
+      "log": "20261115-064412-reported-interactions.log"
+    },
+    {
+      "case": "map-sign-client",
+      "status": "passed",
+      "seconds": 18.71,
+      "log": "20261115-064412-map-sign-client.log"
+    },
+    {
+      "case": "murder-to-gate",
+      "status": "passed",
+      "seconds": 207.12,
+      "log": "20261115-064412-murder-to-gate.log"
+    }
+  ],
+  "frontend_journey": {
+    "run": "trigger-frontend-20261115",
+    "status": "passed",
+    "seconds": 507.62,
+    "original_opening": true,
+    "debug": false,
+    "audit": false,
+    "host_sha256": "a329a1c0ddbdba362a77bb8720d12efae24f187133a770d90f4ad71f65bc6d07",
+    "client_sha256": "0e47000606f94289445ca08fb5af46dcacca0d6f377af2d299f249bfdd60936b",
+    "batches": 3211,
+    "milestones": [
+      [
+        "opening choice",
+        [
+          1076,
+          2214,
+          0
+        ],
+        {
+          "60": 0,
+          "61": 0,
+          "62": 0,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 0,
+          "90": 0
+        },
+        "Thou shalt be handsomely rewarded if thou dost discover the name of the killer. Dost thou accept?\"",
+        [
+          "Yes",
+          "No"
+        ],
+        "Yes"
+      ],
+      [
+        "opening choice",
+        [
+          1076,
+          2214,
+          0
+        ],
+        {
+          "60": 0,
+          "61": 0,
+          "62": 0,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 0,
+          "90": 0
+        },
+        "The Mayor continues. \"Hast thou searched the stables?\"",
+        [
+          "Yes",
+          "No"
+        ],
+        "No"
+      ],
+      [
+        "opening commission",
+        [
+          1076,
+          2214,
+          0
+        ],
+        {
+          "60": 0,
+          "61": 0,
+          "62": 0,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 0,
+          "90": 1
+        }
+      ],
+      [
+        "stables and key",
+        [
+          1069,
+          2197,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 0,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 0,
+          "90": 1
+        }
+      ],
+      [
+        "answer",
+        [
+          1068,
+          2213,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 0,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 0,
+          "90": 1
+        },
+        12,
+        "Yes"
+      ],
+      [
+        "answer",
+        [
+          1068,
+          2213,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 0,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 0,
+          "90": 1
+        },
+        12,
+        "a key"
+      ],
+      [
+        "answer",
+        [
+          1068,
+          2213,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 0,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "bye"
+      ],
+      [
+        "key reported",
+        [
+          1068,
+          2213,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 0,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        }
+      ],
+      [
+        "estate scroll",
+        [
+          971,
+          2133,
+          6
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        },
+        "\"Thou hast received payment. Make the delivery tonight.\""
+      ],
+      [
+        "estate unlocked",
+        [
+          971,
+          2133,
+          6
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        }
+      ],
+      [
+        "answer",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        },
+        2,
+        "Avatar"
+      ],
+      [
+        "answer",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        },
+        2,
+        "murder"
+      ],
+      [
+        "answer",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        },
+        2,
+        "find"
+      ],
+      [
+        "answer",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        },
+        2,
+        "something"
+      ],
+      [
+        "answer",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        },
+        2,
+        "man"
+      ],
+      [
+        "answer",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 0,
+          "72": 1,
+          "90": 1
+        },
+        2,
+        "hook"
+      ],
+      [
+        "answer",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        2,
+        "No"
+      ],
+      [
+        "answer",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        2,
+        "bye"
+      ],
+      [
+        "Spark witness",
+        [
+          972,
+          2145,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        }
+      ],
+      [
+        "answer",
+        [
+          951,
+          2255,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        13,
+        "murder"
+      ],
+      [
+        "answer",
+        [
+          951,
+          2255,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        13,
+        "knocked"
+      ],
+      [
+        "answer",
+        [
+          951,
+          2255,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        13,
+        "blow"
+      ],
+      [
+        "answer",
+        [
+          951,
+          2255,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 0,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        13,
+        "Crown Jewel"
+      ],
+      [
+        "answer",
+        [
+          951,
+          2255,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        13,
+        "bye"
+      ],
+      [
+        "Gilberto witness",
+        [
+          951,
+          2255,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        }
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "murder"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "report"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "Yes"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "blacksmith"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "a key"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "a chest"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "all of these"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "Yes"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "hook"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 0,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "Crown Jewel"
+      ],
+      [
+        "answer",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 1,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        12,
+        "Yes"
+      ],
+      [
+        "geography",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 1,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        "\"What latitude runs through the center of Skara Brae?\"",
+        30
+      ],
+      [
+        "geography",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 1,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        "\"What is the latitude of the northern-most point of the island Spektran?\"",
+        120
+      ],
+      [
+        "geography",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 0,
+          "62": 1,
+          "64": 1,
+          "66": 1,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        "\"What latitude runs through the center of the Deep Forest?\"",
+        60
+      ],
+      [
+        "password earned",
+        [
+          985,
+          2205,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 1,
+          "62": 1,
+          "64": 1,
+          "66": 1,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        }
+      ],
+      [
+        "answer",
+        [
+          1092,
+          2217,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 1,
+          "62": 1,
+          "64": 1,
+          "66": 1,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        14,
+        "password"
+      ],
+      [
+        "answer",
+        [
+          1092,
+          2217,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 1,
+          "62": 1,
+          "64": 1,
+          "66": 1,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        },
+        14,
+        "Blackbird"
+      ],
+      [
+        "outside east gate",
+        [
+          1107,
+          2214,
+          0
+        ],
+        {
+          "60": 1,
+          "61": 1,
+          "62": 1,
+          "64": 1,
+          "66": 1,
+          "67": 1,
+          "72": 1,
+          "90": 1
+        }
+      ]
+    ],
+    "images": [
+      "journey-00.png",
+      "journey-01.png",
+      "journey-02.png",
+      "journey-03.png",
+      "journey-04.png",
+      "journey-05.png",
+      "journey-06.png",
+      "journey-07.png",
+      "journey-08.png"
+    ],
+    "limits": "Uses frontend action/widget handlers; not OS pointer automation for every input."
+  },
+  "report_recovery": {
+    "status": "passed",
+    "source": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\trigger-frontend-20261115\\Gilberto-witness.U7",
+    "wrong_report_rejected": true,
+    "partial_report_saved": true,
+    "wrong_quiz_answers": [
+      5,
+      0,
+      0
+    ],
+    "password_retry": true,
+    "reward_gold": 100,
+    "reward_not_repeated": true,
+    "load_and_movement": true
+  },
+  "spark_panels": {
+    "run": "trigger-spark-panels-20261115",
+    "zoom": "1",
+    "images": [
+      "spark-0.png",
+      "spark-1.png"
+    ],
+    "events": [
+      "1 1 AUDIO 1 1 1 80 100 100 0 -> S 1 1 13419 1 ok 1107 2214 0 0 0 0 2058692997 1 1",
+      "WAIT 1000 | S 0 1 13420 1 sync 1107 2214 0 0 0 0 839932449 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "SELF | S 0 1 13431 1 sync 1107 2214 0 0 0 0 883044757 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "PARTYOPEN | S 0 1 13434 1 sync 1107 2214 0 0 0 0 210888969 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "PARTYSELECT 312 doll | S 0 1 13438 1 sync 1107 2214 0 0 0 0 2079893417 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "PARTYSELECT 312 pack | S 0 1 13441 1 sync 1107 2214 0 0 0 0 -1783664860 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "CAPTURE | S 0 1 13444 1 sync 1107 2214 0 0 0 0 609782061 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "WAIT 300 | S 0 1 13451 1 sync 1107 2214 0 0 0 0 1352293020 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "CAPTURE | S 0 1 13455 1 sync 1107 2214 0 0 0 0 -1953955284 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue ",
+      "EXIT | S 0 1 13461 1 sync 1107 2214 0 0 0 0 2017957381 1 1 | display 553 1107 0 iolo 1105 2212 zoom 1 cursor False parent 4294967295 chest  dialogue "
+    ]
+  },
+  "installed_host": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\build-host\\playtest-avatar-inventory\\Ultima7.exe",
+    "sha256": "a329a1c0ddbdba362a77bb8720d12efae24f187133a770d90f4ad71f65bc6d07"
+  },
+  "installed_client": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Release-Trinsic-Avatar-Sheet\\net10.0\\cuo.dll",
+    "sha256": "22535040e547bfe26f5859ddb6f6f3ce15bf97e715756f8163ec9c439717cad9"
+  },
+  "candidate_client": {
+    "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\client\\bin\\Trinsic-Triggers-20261115\\cuo.dll",
+    "sha256": "0e47000606f94289445ca08fb5af46dcacca0d6f377af2d299f249bfdd60936b"
+  },
+  "evidence": [
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\full-interaction-suite\\results.json",
+      "sha256": "f6aa90215f4215a666c879a9acd04866cf45e3cd78e6dac427bcfbc47f81cc2f"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\trigger-report-20261115-c\\report-retry.json",
+      "sha256": "9df14098e653efe49b348d1c1324dbbc492e4acc0e88dd08a8d1f32dcf9d691e"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\trigger-spark-panels-20261115\\client-spark.json",
+      "sha256": "fc0f0ecba7d537df3df5264455ba34baeefd0c25d114584d2d8534e4f8a53b69"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\trigger-frontend-20261115\\frontend-journey.json",
+      "sha256": "f0844dc065739e5eedfc46ef8923ca8a4b7a41c6e51271933c5bf54ab079226f"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\trigger-frontend-20261115\\frontend-commands.jsonl",
+      "sha256": "9b05225096aa3e9dbfdf72a0a23e680372ea786b093461d6e8286d84957dc309"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\trigger-frontend-20261115\\controls.txt.log",
+      "sha256": "aaaeea09d1a1be9722fd5822c2e8d6d2e68006447452744b91f7e034615775ce"
+    },
+    {
+      "path": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\trigger-opening-20261115\\investigation.jsonl",
+      "sha256": "5515e5c53b915ddf081a19a635caf9bfdd77d5af50cde1315f2a2fcf91a5d2fb"
+    }
+  ],
+  "boundaries": [
+    "Core UO route uses player action/widget/target handlers, not OS pointer input for every action.",
+    "Main quest has no debug/audit positioning or quest-flag grants; branch cases use qualification observer positioning.",
+    "Party widgets were additionally verified in a focused continuation from the completed UO save; that check is now included in future full journeys.",
+    "No U7 gameplay or Usecode changes; no player saves modified; candidate adds opt-in qualification controls.",
+    "Mapped entries do not certify final art. Spark sling 474/0 currently shows a purple placeholder; parallel approved art is not installed.",
+    "Special-palette weather/global lighting incomplete; three original teleports exit the available town atlas.",
+    "Haunted-house sequence, delayed cleanup, paid resurrection, all shop/time branches and vehicle travel are not exhaustively qualified."
+  ]
+}

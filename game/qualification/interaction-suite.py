@@ -24,6 +24,11 @@ CASES=[
  ('reported-interactions','player-feedback.py',[]),
  ('map-sign-client','item-use-audit.py',['--client']),
  ('murder-to-gate','investigation.py',['--run','full-interaction-investigation']),
+ ('trigger-census','trinsic-triggers.py',['--output',str(ROOT/'runs/full-interaction-suite/trinsic-census.json')]),
+ ('frontend-murder-to-gate','trinsic-playtest.py',['--run','full-frontend-journey']),
+ ('trigger-branches','trinsic-triggers.py',['--branches','--completed-run','full-interaction-investigation',
+    '--output',str(ROOT/'runs/full-interaction-suite/trinsic-branches.json')]),
+ ('report-retries','trinsic-report-retry.py',['--checkpoint',str(ROOT/'runs/full-frontend-journey/Gilberto-witness.U7')]),
 ]
 if __name__=='__main__':
     selected=set(sys.argv[1:])

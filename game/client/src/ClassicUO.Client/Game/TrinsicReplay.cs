@@ -29,6 +29,12 @@ namespace ClassicUO.Game
         private static Point mouseStart;
         private static bool sawWalk,sawRun;
         private static int testBook,testCreature;
+        // Optional acknowledged input batches let long journeys react to native
+        // schedules and prompts. They still execute the normal replay/UI actions.
+        private static readonly bool live=Environment.GetEnvironmentVariable("TRINSIC_REPLAY_LIVE")=="1";
+        private static long batch;
+        private static string observedFrame,resultFrame;
+        internal static void Observe(string frame) { if(Active && live) observedFrame=frame; }
         internal static void ObserveWalk(PlayerMobile player)
         {
             if(rightMousePoint is Point point) {
@@ -45,6 +51,7 @@ namespace ClassicUO.Game
         internal static bool Active => !string.IsNullOrEmpty(path);
         internal static void Record(string cmd,string frame)
         {
+            if(live && frame.StartsWith("S ",StringComparison.Ordinal)) resultFrame=frame;
             if(Active) File.AppendAllText(path+".log",cmd+" -> "+frame.Split('\n')[0]+"\n");
         }
         // Exercise the same hit test, pickup threshold and mouse-release routing as a live drag.
@@ -113,6 +120,14 @@ namespace ClassicUO.Game
         {
             if(Environment.TickCount64<due) return;
             actions??=new Queue<string>(File.ReadAllLines(path));
+            if(live && actions.Count==0 && File.Exists(path+".request")) {
+                var request=File.ReadAllLines(path+".request");
+                if(request.Length>1 && long.TryParse(request[0],out long id) && id>batch) {
+                    batch=id;
+                    resultFrame=null;
+                    actions=new Queue<string>(request.Skip(1));
+                }
+            }
             if(actions.Count==0) return;
             if (actions.Peek().StartsWith("WAITBARK ", StringComparison.Ordinal))
             {
@@ -155,7 +170,7 @@ namespace ClassicUO.Game
             string[] a=command.Split(' ');
             int Arg(int i=1)=>int.Parse(a[i]);
             uint Item(int i)=>0x40000000u|(uint)Arg(i);
-            due=Environment.TickCount64+260;
+            due=Environment.TickCount64+(live?20:260);
             switch(a[0])
             {
                 case "RIGHTMOVE":
@@ -589,7 +604,19 @@ namespace ClassicUO.Game
                     input.SetText(answer.ToString());
                     dialogue.OnKeyboardReturn(0,input.Text);
                     break;
+                case "NUMBER":
+                    var numberInput=dialogue?.Children.OfType<StbTextBox>().Single() ?? throw new InvalidOperationException("No native number prompt");
+                    numberInput.SetText(Arg().ToString());
+                    dialogue.OnKeyboardReturn(0,numberInput.Text);
+                    break;
                 case "ANSWER": if(dialogue==null) throw new InvalidOperationException("no prompt"); dialogue.OnButtonClick(Arg());break;
+                case "REPLY":case "REPLYSYNC":
+                    if(!live || Arg()!=batch) throw new InvalidOperationException("Unexpected live replay acknowledgement");
+                    string reply=a[0]=="REPLYSYNC"?observedFrame:resultFrame;
+                    if(reply==null) throw new InvalidOperationException("Replay action did not reach the native engine");
+                    File.WriteAllText(path+".reply.tmp",batch+"\n"+reply);
+                    File.Move(path+".reply.tmp",path+".reply."+batch);
+                    break;
                 case "U7AUDIO":
                     UIManager.GetGump<TrinsicOptionsGump>()?.OnButtonClick(5);break;
                 case "U7AUDIOSET":
@@ -618,6 +645,7 @@ namespace ClassicUO.Game
                 case "U7SAVEACTIVE":if(TrinsicAudio.ActiveSlot!=Arg())throw new InvalidOperationException("Wrong active save");break;
                 case "U7SAVECLOSE":UIManager.GetGump<TrinsicSavesGump>()?.Dispose();break;
                 case "U7SAVEKEY":TrinsicSession.Key(new SDL3.SDL.SDL_KeyboardEvent{key=(uint)SDL3.SDL.SDL_Keycode.SDLK_F5});break;
+                case "U7LOADKEY":TrinsicSession.Key(new SDL3.SDL.SDL_KeyboardEvent{key=(uint)SDL3.SDL.SDL_Keycode.SDLK_F9});break;
                 case "U7AUDIOWIRE":
                     TrinsicSession.Send("AUDIO",Arg(1),Arg(2)," "+string.Join(" ",a.Skip(3)));break;
                 case "RECONNECT":TrinsicSession.Reconnect();break;

@@ -39,3 +39,10 @@ The broad town matrix positions an observer near source objects, then uses origi
 The spellbook uses a structured mode-6 prompt instead of the U7 raster view. `K` identifies the book and bookmark; `L` carries the 72 original learned flags, reagent cast counts, masks and source-routine display names; `J` supplies original reagent names. `BOOKSELECT` and `BOOKCAST` require the current prompt token and a learned spell index. Original `CanCastSpell` / `TryToCastSpell` retain level, mana, reagent consumption, targeting and Usecode effects. The client only arranges the stock UO book pages; it cannot grant or cast an unlearned spell. Existing mode-5 map and sign displays remain separate.
 
 The native UO spellbook requalification on November 15 is recorded in `receipts/spellbook-controls.json`. It supersedes the raster-book entry in the November 14 full-suite receipt. World targeting, map/sign presentation and audit isolation also passed focused regression runs.
+
+The November 15 [Trinsic playtest audit](TRINSIC-PLAYTEST.md) adds a continuous
+original-arrival-to-east-gate ClassicUO journey, all-town-speaker and gate branch
+checks, report/quiz recovery with an exactly-once reward, and a source census of
+48 area triggers. See `receipts/trinsic-trigger-audit.json` for input hashes,
+evidence and explicit coverage limits. The full suite now includes these cases;
+passing shared dispatch does not imply every optional trigger has been replayed.

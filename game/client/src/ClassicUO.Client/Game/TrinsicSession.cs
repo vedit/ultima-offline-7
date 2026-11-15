@@ -459,6 +459,7 @@ namespace ClassicUO.Game
             string[] lines = frame.Split('\n');
             TrinsicEffects.Prepare(lines);
             Header=lines[0];
+            TrinsicReplay.Observe(frame);
             var actorState=lines.Where(l=>l.StartsWith("C ")).Select(l=>l.Split(' ')).ToDictionary(c=>uint.Parse(c[1]));
             health=lines.FirstOrDefault(l=>l.StartsWith("H "))??"";
             connectionFault=false;
