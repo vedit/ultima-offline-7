@@ -73,8 +73,15 @@ namespace ClassicUO.Game
             }
         }
 
-        public static void OpenSettings(World world, int page = 0)
+        public static void OpenSettings(World world, int page = 0, bool advancedClient = false)
         {
+            if (TrinsicSession.Enabled && !advancedClient)
+            {
+                var menu = UIManager.GetGump<TrinsicOptionsGump>();
+                if (menu == null) UIManager.Add(new TrinsicOptionsGump(world));
+                else { menu.SetInScreen(); menu.BringOnTop(); }
+                return;
+            }
             OptionsGump opt = UIManager.GetGump<OptionsGump>();
 
             if (opt == null)

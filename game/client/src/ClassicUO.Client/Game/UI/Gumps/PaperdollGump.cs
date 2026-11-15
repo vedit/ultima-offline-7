@@ -322,24 +322,26 @@ namespace ClassicUO.Game.UI.Gumps
                 // U7 has no shard help, guilds, UO skills, virtues or public profiles.
                 _profilePic?.Dispose();
                 _virtueMenuPic?.Dispose();
+                _partyManifestPic?.Dispose();
                 foreach (var button in Children.OfType<Button>().ToArray())
                     if (!NativeButton((Buttons)button.ButtonID)) button.Dispose();
                 if (LocalSerial == World.Player)
                 {
                     if (!Children.OfType<Button>().Any(b => !b.IsDisposed && b.ButtonID == (int)Buttons.Journal))
                         Add(new Button((int)Buttons.Journal, 0x7dc, 0x7dd, 0x7de) { X = 185, ButtonAction = ButtonAction.Activate });
-                    var order = new[] { Buttons.Options, Buttons.LogOut, Buttons.Journal, Buttons.PeaceWarToggle, Buttons.Status };
+                    var order = new[] { Buttons.Options, Buttons.LogOut, Buttons.Journal, Buttons.Party, Buttons.PeaceWarToggle, Buttons.Status };
                     foreach (var button in Children.OfType<Button>().Where(b => !b.IsDisposed))
                         button.Y = 44 + 27 * Array.IndexOf(order, (Buttons)button.ButtonID);
-                    _partyManifestPic.X = 25;
-                    _partyManifestPic.SetTooltip("U7 party: paperdolls and backpacks");
+                    Add(new ResizePic(0x0a28) { X = 185, Y = 125, Width = 64, Height = 24, AcceptMouseInput = false });
+                    Add(new NiceButton(185, 125, 64, 24, ButtonAction.Activate, "Party", hue: 0x386, unicode: false, font: 1)
+                    { ButtonParameter = (int)Buttons.Party, IsSelectable = false });
                 }
             }
 
             RequestUpdateContents();
         }
 
-        private static bool NativeButton(Buttons button) => button is Buttons.Options or Buttons.LogOut or Buttons.Journal or Buttons.PeaceWarToggle or Buttons.Status;
+        private static bool NativeButton(Buttons button) => button is Buttons.Options or Buttons.LogOut or Buttons.Journal or Buttons.Party or Buttons.PeaceWarToggle or Buttons.Status;
 
         private void _picBase_MouseDoubleClick(object sender, MouseDoubleClickEventArgs e)
         {
@@ -611,6 +613,9 @@ namespace ClassicUO.Game.UI.Gumps
 
             switch ((Buttons)buttonID)
             {
+                case Buttons.Party:
+                    if (TrinsicSession.Enabled) TrinsicSession.ShowPartyRoster();
+                    break;
                 case Buttons.Help:
                     GameActions.RequestHelp();
 
@@ -725,7 +730,8 @@ namespace ClassicUO.Game.UI.Gumps
             Skills,
             Guild,
             PeaceWarToggle,
-            Status
+            Status,
+            Party
         }
 
         private class EquipmentSlot : Control

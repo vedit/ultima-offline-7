@@ -198,6 +198,7 @@ namespace ClassicUO.Game
                 profile.UseCircleOfTransparency=true;
                 profile.CircleOfTransparencyType=1;
                 profile.TrinsicTransparencyInitialized=true;
+                profile.EnableMousewheelScaleZoom=true;
             }
             profile.GameWindowSize = new Point(920, 640);
             if(TrinsicTown.Enabled && Settings.GlobalSettings.WindowSize is Point requested) {
@@ -216,8 +217,7 @@ namespace ClassicUO.Game
             profile.TopbarGumpIsDisabled = true;
             profile.HideScreenshotStoredInMessage = true;
             if(TrinsicTown.Enabled) profile.DoubleClickToLootInsideContainers=false;
-            profile.EnableMousewheelScaleZoom = true;
-            profile.DefaultScale = float.TryParse(Environment.GetEnvironmentVariable("TRINSIC_ZOOM"), System.Globalization.CultureInfo.InvariantCulture, out float zoom) ? zoom : 1f;
+            if(float.TryParse(Environment.GetEnvironmentVariable("TRINSIC_ZOOM"), System.Globalization.CultureInfo.InvariantCulture, out float zoom)) profile.DefaultScale = zoom;
             int[] avatar = Rows(data).First(r => r[7] == 0);
             world.CreatePlayer((uint)avatar[0]);
             world.MapIndex = 0;

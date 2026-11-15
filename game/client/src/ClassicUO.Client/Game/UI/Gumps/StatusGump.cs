@@ -184,20 +184,19 @@ namespace ClassicUO.Game.UI.Gumps
     internal sealed class TrinsicStatusGump : StatusGumpBase
     {
         private readonly Label[] values=new Label[12];
-        private readonly Label name,conditions;
+        private readonly Label conditions;
         private readonly string[] captions={"Strength","Dexterity","Intelligence","Health","Combat","Magic",
                                             "Mana","Experience","Level","Training","Weight","Gold"};
         public TrinsicStatusGump(World world) : base(world)
         {
-            Add(new ResizePic(0x0A28){Width=372,Height=227});
-            name=Text(20,13,"");
+            Add(new ResizePic(0x0A28){Width=372,Height=202});
             for(int i=0;i<values.Length;i++) {
-                int x=20+i/6*172,y=46+i%6*23;
+                int x=20+i/6*172,y=21+i%6*23;
                 Text(x,y,captions[i]);
                 values[i]=Text(x+95,y,"");
             }
-            conditions=Text(20,193,"");
-            _point=new Point(372,227);
+            conditions=Text(20,168,"");
+            _point=new Point(372,202);
             Refresh();
         }
         private Label Text(int x,int y,string text) {
@@ -209,13 +208,11 @@ namespace ClassicUO.Game.UI.Gumps
             var s=TrinsicSession.AvatarStats;
             if(s==null)return;
             var p=World.Player;
-            name.Text=p.Title;
             string[] current={p.Strength.ToString(),p.Dexterity.ToString(),p.Intelligence.ToString(),
                 $"{s[0]}/{p.HitsMax}",s[1].ToString(),p.ManaMax.ToString(),$"{p.Mana}/{p.ManaMax}",
                 s[2].ToString(),s[3].ToString(),s[4].ToString(),$"{p.Weight}/{p.WeightMax}",p.Gold.ToString()};
             for(int i=0;i<values.Length;i++)if(values[i].Text!=current[i])values[i].Text=current[i];
             var states=new System.Collections.Generic.List<string>();
-            states.Add(p.InWarMode?"War":"Peace");
             if((s[10]&0x0080)!=0) states.Add("Asleep");
             if((s[10]&0x2000)!=0) states.Add("Poisoned");
             if((s[10]&0x0100)!=0) states.Add("Charmed");

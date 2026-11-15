@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-15",
+  "feature": "Party button, compact status and separate U7 Options",
+  "paperdoll": "Party replaces the scroll; single-click opens the actual native companion roster.",
+  "status": "Removed duplicate actor title and War/Peace footer; all twelve existing native values and active condition labels retained.",
+  "options": [
+    "Save world (F5)",
+    "Load last save (F9), with confirmation",
+    "Wall transparency",
+    "Ctrl + wheel zoom",
+    "Always run",
+    "Controls reference",
+    "Advanced ClassicUO settings",
+    "Return to game"
+  ],
+  "preferences": "Toggles apply immediately and persist in the current run profile. Startup preserves the zoom preference and scale unless a test explicitly overrides scale.",
+  "native_logic_changed": false,
+  "validation": {
+    "build": "passed: 0 errors, 15 warnings",
+    "u7-options": "passed; checkbox/button mouse input, exactly one successful native save/load, cancelled load issues no native command, full process restart preserves preferences, advanced routing, movement recovery",
+    "paperdoll-controls": "passed: Party click, companion equipment/backpack, reconnect/load, movement",
+    "panels": "passed",
+    "stacks-controls": "passed",
+    "visual_review": "Options panel, Party button and compact Status captured and reviewed"
+  },
+  "evidence": [
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\u7-options\\client-options.json",
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\u7-options\\client-restart.json",
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\paperdoll-controls\\client-u7-controls.json"
+  ],
+  "screenshots": [
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\u7-options\\options-0.png",
+    "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\runs\\u7-options\\restart-0.png"
+  ],
+  "installed_client_sha256": "be7509ac51fa66562651d43206c0bcea984cd52594db8dabb7a14456f655de56",
+  "backup": "E:\\UltimaOffline\\PoCs\\ClassicUO-U7-Local\\archive\\before-u7-options-20261115-050350",
+  "player_save_unchanged": true,
+  "scope": "Only this UI work is committed; parallel rendering, equipment artwork and browser changes remain separate."
+}

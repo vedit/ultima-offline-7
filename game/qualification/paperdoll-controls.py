@@ -10,4 +10,4 @@ run('paperdoll-controls','Investigation',[
     'PARTYSELECT 184 pack','WAIT 200','PARTYPANELS 184',
     'STEP 0','WAIT 350','STEP 2','WAIT 350','STEP 4','WAIT 350','STEP 6','WAIT 350','WALKCHECK','EXIT',
 ],True,scenario='u7-controls')
-print('U7 paperdoll buttons, actual companion roster, mouse-opened equipment/inventory, reconnect/load and movement passed.')
+print('U7 paperdoll buttons, Party button, actual companion roster, mouse-opened equipment/inventory, reconnect/load and movement passed.')

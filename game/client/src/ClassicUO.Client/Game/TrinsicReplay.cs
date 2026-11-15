@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ClassicUO.Configuration;
 using ClassicUO.Game.GameObjects;
 using ClassicUO.Game.UI.Controls;
 using ClassicUO.Input;
@@ -493,13 +494,56 @@ namespace ClassicUO.Game
                     var u7sheet=UIManager.GetGump<PaperDollGump>(world.Player.Serial);
                     var ids=u7sheet.Children.OfType<Button>().Where(b=>!b.IsDisposed).Select(b=>b.ButtonID).Order().ToArray();
                     if(!ids.SequenceEqual(new[]{1,2,3,7,8}))throw new InvalidOperationException("Unrelated paperdoll buttons remain: "+string.Join(",",ids));
+                    if(!u7sheet.Children.OfType<NiceButton>().Any(b=>b.ButtonParameter==9 && b.TextLabel.Text=="Party") ||
+                        u7sheet.Children.OfType<GumpPic>().Any(p=>!p.IsDisposed && p.Graphic==0x7d2))
+                        throw new InvalidOperationException("Party button missing or old scroll remains");
                     break;
                 case "PARTYOPEN":
                     var rosterSheet=UIManager.GetGump<PaperDollGump>(world.Player.Serial);
-                    Mouse.Position=new Point(rosterSheet.X+30,rosterSheet.Y+201);
+                    var partyButton=rosterSheet.Children.OfType<NiceButton>().Single(b=>b.ButtonParameter==9);
+                    UIManager.MakeTopMostGump(rosterSheet);
+                    Mouse.Position=new Point(partyButton.ScreenCoordinateX+30,partyButton.ScreenCoordinateY+12);
                     Mouse.ButtonPress(MouseButtonType.Left);UIManager.OnMouseButtonDown(MouseButtonType.Left);
-                    UIManager.OnMouseDoubleClick(MouseButtonType.Left);
                     Mouse.ButtonRelease(MouseButtonType.Left);UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                    break;
+                case "U7OPTIONS":
+                    UIManager.GetGump<PaperDollGump>(world.Player.Serial).OnButtonClick(1);
+                    if(UIManager.GetGump<TrinsicOptionsGump>()==null)throw new InvalidOperationException("U7 options missing");
+                    break;
+                case "U7OPTION":
+                    var options=UIManager.GetGump<TrinsicOptionsGump>();
+                    var option=options.Children.OfType<NiceButton>().Single(b=>b.ButtonParameter==Arg());
+                    UIManager.MakeTopMostGump(options);
+                    Mouse.Position=new Point(option.ScreenCoordinateX+30,option.ScreenCoordinateY+12);
+                    Mouse.ButtonPress(MouseButtonType.Left);UIManager.OnMouseButtonDown(MouseButtonType.Left);
+                    Mouse.ButtonRelease(MouseButtonType.Left);UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                    break;
+                case "U7TOGGLE":
+                    var optionMenu=UIManager.GetGump<TrinsicOptionsGump>();
+                    var check=optionMenu.Children.OfType<Checkbox>().ElementAt(Arg());
+                    bool beforeCheck=check.IsChecked;
+                    UIManager.MakeTopMostGump(optionMenu);
+                    Mouse.Position=new Point(check.ScreenCoordinateX+6,check.ScreenCoordinateY+6);
+                    Mouse.ButtonPress(MouseButtonType.Left);UIManager.OnMouseButtonDown(MouseButtonType.Left);
+                    Mouse.ButtonRelease(MouseButtonType.Left);UIManager.OnMouseButtonUp(MouseButtonType.Left);
+                    if(check.IsChecked==beforeCheck)throw new InvalidOperationException("Option did not toggle");
+                    break;
+                case "U7PREFERENCES":
+                    var pref=ProfileManager.CurrentProfile;
+                    if(pref.UseCircleOfTransparency!=(Arg(1)!=0) || pref.EnableMousewheelScaleZoom!=(Arg(2)!=0) || pref.AlwaysRun!=(Arg(3)!=0))
+                        throw new InvalidOperationException("U7 preferences differ");
+                    break;
+                case "U7LOADANSWER":
+                    (UIManager.GetGump<QuestionGump>() ?? throw new InvalidOperationException("Load confirmation missing")).OnButtonClick(Arg());
+                    break;
+                case "U7ADVANCED":
+                    (UIManager.GetGump<OptionsGump>() ?? throw new InvalidOperationException("Advanced settings missing")).Dispose();
+                    break;
+                case "U7STATUS":
+                    var statusLabels=StatusGumpBase.GetStatusGump().Children.OfType<Label>().Select(l=>l.Text).ToArray();
+                    if(statusLabels.Contains(world.Player.Title) || statusLabels.Contains("War") || statusLabels.Contains("Peace") ||
+                        !new[]{"Strength","Dexterity","Intelligence","Health","Combat","Magic","Mana","Experience","Level","Training","Weight","Gold"}.All(statusLabels.Contains))
+                        throw new InvalidOperationException("Status content differs");
                     break;
                 case "PARTYSELECT":
                     var roster=UIManager.GetGump<TrinsicPartyGump>();
