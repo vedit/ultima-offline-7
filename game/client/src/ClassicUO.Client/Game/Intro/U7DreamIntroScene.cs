@@ -250,9 +250,9 @@ namespace ClassicUO.Game.Intro
                             Vector2.Zero,Vector2.One,SpriteEffects.None,depth+bay+1f+bias);
                     }
                 }
-                // Address the bed along the platform's center line. Keep the
-                // entire face above the far floor corner, including the chin.
-                Layer(scene.relief,new Rectangle(scene.Timeline.Mouth*scene.data.Width,scene.Timeline.Eyes*scene.data.Height,scene.data.Width,scene.data.Height),-scene.data.Width/2,-138,.1f);
+                // Left of the far corner, at the user's marked position: the
+                // three-quarter face looks diagonally toward the centered bed.
+                Layer(scene.relief,new Rectangle(scene.Timeline.Mouth*scene.data.Width,scene.Timeline.Eyes*scene.data.Height,scene.data.Width,scene.data.Height),-scene.data.Width/2-148,-42,.1f);
                 return true;
             }
             public override bool CheckMouseSelection()=>false;

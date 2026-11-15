@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-16",
+  "change": "Move Guardian into the user-marked region left of the far platform corner",
+  "relative_pixel_shift": [
+    -148,
+    96
+  ],
+  "client": "game/intro/bin/placement-client",
+  "client_sha256": "734a8a1b4fbf03bf0ca1dc70143fa69eaa249d225b9298b65810b538d1e73f8d",
+  "validation": {
+    "build_errors": 0,
+    "build_warnings": 18,
+    "preview": "Passed existing creation and dream preview replay",
+    "visual": "Full open-mouth face lies inside the marked region, clear of floor; centered bed preserved"
+  },
+  "capture": "game/intro/bin/guardian-placement-20261116.png",
+  "scope": "Dream face drawing offset and separate-build launch paths only; native gameplay unchanged"
+}
