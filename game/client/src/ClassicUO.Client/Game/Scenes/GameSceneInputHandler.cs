@@ -1144,7 +1144,7 @@ namespace ClassicUO.Game.Scenes
 
         internal override void OnKeyDown(SDL.SDL_KeyboardEvent e)
         {
-            if (TrinsicSession.Enabled && TrinsicSession.Key(e)) return;
+            if (TrinsicSession.Enabled && !Intro.U7DreamIntroScene.Active && TrinsicSession.Key(e)) return;
             SDL.SDL_Keycode keycode = (SDL.SDL_Keycode)e.key;
 
             if (keycode == SDL.SDL_Keycode.SDLK_TAB && e.repeat)

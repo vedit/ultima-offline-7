@@ -21,7 +21,7 @@ namespace ClassicUO.Game
         private static readonly Dictionary<int,string> names = new();
         private static readonly Dictionary<int,List<(ushort body,ushort skin,Layer layer,ushort graphic,ushort hue)>> outfits = new();
         private static readonly HashSet<(int,int,int,int,int)> fixedRoofs = new();
-        internal static bool Enabled => !string.IsNullOrEmpty(Folder);
+        internal static bool Enabled => !Intro.U7DreamIntroScene.Active && !string.IsNullOrEmpty(Folder);
 
         private static readonly HashSet<(int,int)> gridFrames=new();
         internal static bool FitsGrid(int shape,int frame) => gridFrames.Contains((shape,frame));
@@ -37,7 +37,8 @@ namespace ClassicUO.Game
             int across = fit.open is 14 or 0x22 or 0x13a ? y : x;
             return (across & 1) != 0 ? 0.25f : -0.25f;
         }
-        internal static bool Compact { get; private set; }
+        private static bool compact;
+        internal static bool Compact { get => compact && !Intro.U7DreamIntroScene.Active; private set => compact=value; }
 
         // The two native positions on either axis are a quarter-tile to either
         // side of the UO centre. Keep both positions individually pickable.

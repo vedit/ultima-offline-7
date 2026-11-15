@@ -11,7 +11,7 @@ Check(t.Seconds==seconds && t.CueIndex==cue,"pause holds captions and facial cue
 t.Paused=false;
 var mouths=new System.Collections.Generic.HashSet<int>();var eyes=new System.Collections.Generic.HashSet<int>();
 while(t.Phase==DreamPhase.Speech) {t.Advance(1.0/120);mouths.Add(t.Mouth);eyes.Add(t.Eyes);}
-Check(mouths.Count==5 && eyes.Count==3,"original cues exercise every authored pose");
+Check(mouths.Count==5 && eyes.Count==3,"original cues exercise every pose selector");
 Check(t.CueIndex==d.Cues.Length,"all original cues consumed in source order");
 t.Advance(3);Check(t.Phase==DreamPhase.Portal && t.FaceAlpha==0,"face gone before portal");
 t.Advance(999);Check(t.Phase==DreamPhase.Portal,"portal waits for player movement");
@@ -20,6 +20,6 @@ foreach(DreamPhase phase in new[]{DreamPhase.Sleep,DreamPhase.Speech,DreamPhase.
  var s=new U7IntroTimeline(d);
  double elapsed=phase switch {DreamPhase.Sleep=>0,DreamPhase.Speech=>2,DreamPhase.Vanish=>1.5+d.Duration+.1,DreamPhase.Wake=>1.5+d.Duration+1.4,_=>1.5+d.Duration+3};
  s.Advance(elapsed);if(phase==DreamPhase.Enter)s.EnterPortal();s.Paused=true;s.Skip();s.Skip();s.Advance(20);
- Check(s.Phase==DreamPhase.Complete && !s.Paused,"skip idempotent from "+phase);
+ Check(s.Phase==(phase==DreamPhase.Enter ? DreamPhase.Complete : DreamPhase.Portal) && !s.Paused,"skip wakes without crossing portal from "+phase);
 }
 try {new U7IntroTimeline(d).Advance(double.NaN);throw new Exception("accepted NaN");}catch(ArgumentOutOfRangeException) {Console.WriteLine("PASS invalid elapsed time rejected");}

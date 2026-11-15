@@ -522,7 +522,9 @@ namespace ClassicUO.Game.GameObjects
 
         public bool Walk(Direction direction, bool run)
         {
-            if (TrinsicSession.Enabled) return TrinsicSession.Walk(direction,run);
+            bool dream = Intro.U7DreamIntroScene.Owns(World);
+            if (dream && !Intro.U7DreamIntroScene.CanWalk) return false;
+            if (!dream && TrinsicSession.Enabled) return TrinsicSession.Walk(direction,run);
             if (Walker.WalkingFailed || Walker.LastStepRequestTime > Time.Ticks || Walker.StepsCount >= Constants.MAX_STEP_COUNT || Client.Game.UO.Version >= ClientVersion.CV_60142 && IsParalyzed)
             {
                 return false;
@@ -666,7 +668,8 @@ namespace ClassicUO.Game.GameObjects
             );
 
 
-            NetClient.Socket.Send_WalkRequest(direction, Walker.WalkSequence, run, Walker.FastWalkStack.GetValue());
+            byte localSequence = Walker.WalkSequence;
+            if (!dream) NetClient.Socket.Send_WalkRequest(direction, Walker.WalkSequence, run, Walker.FastWalkStack.GetValue());
 
             _serverDirection = direction;
 
@@ -681,6 +684,7 @@ namespace ClassicUO.Game.GameObjects
             }
 
             Walker.UnacceptedPacketsCount++;
+            if (dream) Walker.ConfirmWalk(localSequence);
 
             AddToTile();
 

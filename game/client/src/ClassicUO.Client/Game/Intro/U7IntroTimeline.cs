@@ -89,6 +89,6 @@ namespace ClassicUO.Game.Intro
             DreamPhase.Speech=>1,DreamPhase.Vanish=>(float)Math.Clamp(1-Seconds/VanishSeconds,0,1),_=>0};
         internal float FadeAlpha=>Phase==DreamPhase.Enter ? (float)Math.Clamp(Seconds/EnterSeconds,0,1) : 0;
         internal void EnterPortal() {if(Phase==DreamPhase.Portal){Phase=DreamPhase.Enter;Seconds=0;}}
-        internal void Skip() {Paused=false;Phase=DreamPhase.Complete;Seconds=0;}
+        internal void Skip() {Paused=false;if(Phase < DreamPhase.Portal){Phase=DreamPhase.Wake;Seconds=0;Mouth=0;Eyes=0;}}
     }
 }

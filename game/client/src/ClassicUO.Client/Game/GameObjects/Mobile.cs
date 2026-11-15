@@ -838,7 +838,7 @@ namespace ClassicUO.Game.GameObjects
 
                     if (removeStep)
                     {
-                        if (Serial == World.Player && !TrinsicSession.Enabled)
+                        if (Serial == World.Player && (!TrinsicSession.Enabled || Intro.U7DreamIntroScene.Owns(World)))
                         {
                             //if (Position.X != step.X || Position.Y != step.Y || Position.Z != step.Z)
                             //{

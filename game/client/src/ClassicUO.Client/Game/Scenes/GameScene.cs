@@ -278,6 +278,19 @@ namespace ClassicUO.Game.Scenes
                 return;
             }
 
+            // The dream owns a separate client world, but shares the held native connection/profile.
+            if (this is Intro.U7DreamIntroScene) {
+                NetClient.Socket.Disconnected -= SocketOnDisconnected;
+                _world.MessageManager.MessageReceived -= ChatOnMessageReceived;
+                _world.CommandManager.UnRegisterAll();
+                _useItemQueue.Clear();
+                UIManager.Clear();
+                _world.Clear();
+                Map.Chunk.ClearPool();
+                base.Unload();
+                return;
+            }
+
             ProfileManager.CurrentProfile.GameWindowPosition = new Point(
                 Camera.Bounds.X,
                 Camera.Bounds.Y
@@ -723,7 +736,7 @@ namespace ClassicUO.Game.Scenes
 
         public override void Update()
         {
-            if (TrinsicSession.Enabled) TrinsicSession.Update(_world);
+            if (TrinsicSession.Enabled && !Intro.U7DreamIntroScene.Active) TrinsicSession.Update(_world);
             Profile currentProfile = ProfileManager.CurrentProfile;
 
             SelectedObject.TranslatedMousePositionByViewport = Camera.MouseToWorldPosition();

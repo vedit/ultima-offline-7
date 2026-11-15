@@ -24,8 +24,7 @@ ignored `bin/` files; they are not checked in.
 
 This development-only scene precedes the original Black Gate Trinsic arrival.
 Original speech, subtitle strings and facial cues remain unchanged. Native time
-stays behind the existing `TRINSIC_READY` / `BEGIN` boundary until portal entry
-or skipping. An existing save bypasses the intro. The dream allocates no native
+stays behind the existing `TRINSIC_READY` / `BEGIN` boundary until the player walks onto the portal tile. An existing save bypasses the intro. The dream allocates no native
 objects or quest flags.
 
 `art/clay-original-frames/prompts.json` records the image-generation provenance.
@@ -39,7 +38,7 @@ repository root. Its `player-dream-intro` run is independent of the normal
 development save. `--run another-name` selects another private run. `--reset`
 starts again and retains the previous checkpoint using the existing launcher.
 
-Space pauses/resumes the scene and voice. Esc skips to the original arrival.
+Space pauses/resumes the scene and voice. Esc skips the speech and wakes the Avatar; it never skips the walk to the portal.
 After waking, hold right mouse or use arrow keys to enter the red moongate.
 Mouse distance selects walking/running. Speech uses the existing U7 speech
 enable/volume preferences; captions remain available when muted or when audio
@@ -57,7 +56,7 @@ robocopy E:/UltimaOffline/PoCs/ClassicUO-U7-Local/client game/intro/bin/source /
 robocopy game/client/src game/intro/bin/source/src /E /NFL /NDL /NJH /NJS /NP /R:0 /W:0
 $env:DOTNET_CLI_HOME = Join-Path $PWD 'game/intro/bin/cache/dotnet'
 $env:NUGET_PACKAGES = Join-Path $PWD 'game/intro/bin/cache/packages'
-$output = Join-Path $PWD 'game/intro/bin/client/'
+$output = Join-Path $PWD 'game/intro/bin/world-client/'
 & E:/UltimaOffline/Tools/dotnet/dotnet.exe build game/intro/bin/source/src/ClassicUO.Client/ClassicUO.Client.csproj -c Release -p:PublishAot=false -p:UseSharedCompilation=false -p:NuGetAudit=false '-p:RestoreFallbackFolders=E:/UltimaOffline/Cache/NuGet' --source E:/UltimaOffline/Cache/NuGet --disable-build-servers "-p:OutputPath=$output"
 ```
 
@@ -71,6 +70,7 @@ original blue pattern is exported as a separate 78-frame palette-cycle atlas. Na
 
 ```powershell
 & E:/UltimaOffline/Tools/dotnet/dotnet.exe run --project game/intro/tests/TimelineTests.csproj -- game/intro/bin/assets/intro.json
+py -3.13 game/intro/verify.py world
 py -3.13 game/intro/verify.py full
 py -3.13 game/intro/verify.py skip
 py -3.13 game/intro/verify.py resume
@@ -88,3 +88,22 @@ The sleeping figure uses a held stock UO prone animation, rather than custom
 sleeping art. Waking switches to the stock standing/walking animations. This
 is a deliberately small dream scene, not a reconstruction of the original
 Earth bedroom cinematic.
+
+## World-rendered first slice
+
+The opening now uses `U7DreamIntroScene : GameScene` with a separate client
+`World`. Floor, bed, back wall and moongate are ordinary UO world objects;
+the Guardian is a world item drawn through the normal render list and depth
+buffer. Only captions and control hints use the UI layer. No video is played.
+
+The room uses normal ClassicUO tile collision, movement interpolation, turning,
+and mouse-distance running. Local walk acknowledgements apply only to this
+client world; Trinsic still uses the original U7 engine. The Avatar wakes beside
+the bed, then waits indefinitely for player input. Crossing the moongate tile
+releases native BEGIN exactly once and restores the original Trinsic world.
+Escape wakes the Avatar without entering the portal. Closing the client does
+not change a save or allocate native U7 objects. Existing saves skip the room.
+
+The `world` replay checks actual arrow-key motion, world rendering, collision,
+and mouse-driven movement around the bed into the portal. Automated navigation
+exists only in the opt-in replay and never runs in a player session.

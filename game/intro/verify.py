@@ -7,7 +7,7 @@ import shutil
 import sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
-os.environ['TRINSIC_CLIENT_BIN']=str(HERE/'bin/client')
+os.environ['TRINSIC_CLIENT_BIN']=str(HERE/'bin/world-client')
 sys.path.insert(0,str(HERE.parent/'qualification'))
 spec=importlib.util.spec_from_file_location('client_proof',HERE.parent/'qualification/client-proof.py')
 proof=importlib.util.module_from_spec(spec);spec.loader.exec_module(proof)
@@ -15,16 +15,24 @@ extra={'TRINSIC_INTRO_ASSETS':str(HERE/'bin/assets'),'U7_ENABLE_AUDIO':'1'}
 
 def run(mode):
     options=dict(extra)
-    if mode=='preview':
+    if mode=='world':
+        commands=['WAIT 3000','INTRO WORLD','INTRO HELD','CAPTURE',
+                  'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO WORLD','INTRO COLLISION','INTRO HELD','CAPTURE',
+                  'WAIT 1800','INTRO PHASE Portal','INTRO RECORDPOS',
+                  'INTRO KEY RIGHT','WAIT 700','INTRO KEYUP RIGHT','WAIT 800','INTRO MOVED','CAPTURE',
+                  'INTRO KEY SPACE','WAIT 200','INTRO RECORDPOS','INTRO KEY LEFT','WAIT 600','INTRO STILL','INTRO KEYUP LEFT','INTRO KEY SPACE',
+                  'INTRO MOVE 5 7','WAIT 2500','INTRO RAN','INTRO STOP',
+                  'INTRO PORTAL','WAIT 10000','INTRO GAME','CAPTURE','EXIT']
+    elif mode=='preview':
         commands=['WAIT 6000','CAPTURE','WAIT 700','EXIT']
     elif mode=='full':
         commands=['INTRO HELD','WAIT 2300','INTRO PHASE Speech','INTRO AUDIO Playing',
                   'INTRO KEY SPACE','WAIT 100','INTRO PAUSESTART','WAIT 700','INTRO PAUSED','INTRO HELD',
                   'CAPTURE','INTRO KEY SPACE','WAIT 12000','CAPTURE','WAIT 12000','CAPTURE',
                   'WAIT 26000','INTRO PHASE Portal','INTRO AUDIO Stopped','INTRO HELD','CAPTURE',
-                  'INTRO PORTAL','WAIT 2400','INTRO GAME','WAIT 1200','CAPTURE','EXIT']
+                  'INTRO PORTAL','WAIT 10000','INTRO GAME','WAIT 1200','CAPTURE','EXIT']
     elif mode=='skip':
-        commands=['WAIT 2300','INTRO HELD','INTRO KEY ESCAPE','WAIT 2000','INTRO GAME','CAPTURE','EXIT']
+        commands=['WAIT 2300','INTRO HELD','INTRO KEY ESCAPE','WAIT 2000','INTRO PHASE Portal','INTRO HELD','WAIT 1500','INTRO PHASE Portal','INTRO PORTAL','WAIT 10000','INTRO GAME','CAPTURE','EXIT']
     elif mode=='resume':
         # Original source fixture is loaded as a saved world; no READY gate exists.
         commands=['WAIT 1800','INTRO GAME','SAVE','WAIT 400','CAPTURE','EXIT']
@@ -44,9 +52,17 @@ def run(mode):
             for name in ('guardian.png','intro.json','blue-static.png'):shutil.copyfile(HERE/'bin/assets'/name,folder/name)
             options['TRINSIC_INTRO_ASSETS']=str(folder)
         commands=['WAIT 2500','INTRO PHASE Speech','INTRO '+mode.upper(),'INTRO HELD','CAPTURE',
-                  'INTRO KEY ESCAPE','WAIT 1800','INTRO GAME','EXIT']
+                  'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO HELD','INTRO PORTAL','WAIT 10000','INTRO GAME','EXIT']
     else:raise ValueError(mode)
     r=proof.run('dream-'+mode+'-proof','Investigation',commands,True,original_opening=mode!='resume',extra=options,scenario='dream')
+    if mode=='full':
+        # Void must not fade into an opaque foreground over the room.
+        from PIL import Image
+        for name in r['images'][1:3]:
+            with Image.open(proof.ROOT/'runs'/r['run']/name) as shot:
+                visible=sum(max(pixel[:3])>30 for pixel in shot.crop((560,400,650,500)).getdata())
+            if visible<6000:raise RuntimeError('Room floor disappeared during speech')
+        r['floor_visible_during_speech']=True
     if mode=='resume':
         saved=proof.ROOT/'runs/dream-resume-proof/GAME00.U7'
         if not saved.exists():raise RuntimeError('Native save was not written')
@@ -57,4 +73,4 @@ def run(mode):
     print(json.dumps({'run':r['run'],'images':r['images'],'events':len(r['events'])}))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('mode',choices=['preview','full','skip','resume','muted','silent']);run(p.parse_args().mode)
+    p=argparse.ArgumentParser();p.add_argument('mode',choices=['world','preview','full','skip','resume','muted','silent']);run(p.parse_args().mode)

@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: BSD-2-Clause
 using System;
 using System.IO;
+using System.Collections.Generic;
 using ClassicUO.Assets;
 using ClassicUO.Configuration;
+using ClassicUO.Game.Data;
 using ClassicUO.Game.GameObjects;
+using ClassicUO.Game.Map;
 using ClassicUO.Game.Scenes;
+using ClassicUO.Game.Managers;
 using ClassicUO.Input;
 using ClassicUO.Renderer;
 using Microsoft.Xna.Framework;
@@ -14,262 +18,249 @@ using SDL3;
 
 namespace ClassicUO.Game.Intro
 {
-    // An isolated presentation. The native host remains at its existing BEGIN gate.
-    internal sealed class U7DreamIntroScene : Scene
+    // A real GameScene and independent client World. Native U7 remains behind BEGIN.
+    internal sealed class U7DreamIntroScene : GameScene
     {
-        private readonly World world;
+        private static U7DreamIntroScene current;
+        internal static bool Active => current != null;
+        internal static bool Owns(World w) => current?.room == w;
+        internal static bool CanWalk => current != null && !current.Timeline.Paused && current.Timeline.Phase == DreamPhase.Portal;
+        private readonly World nativeWorld, room;
         private readonly Action begin;
         private readonly U7IntroData data;
         internal readonly U7IntroTimeline Timeline;
         private Texture2D relief, blueStatic;
-        private const int BlueWidth=154, BlueHeight=341, BlueColumns=13, BlueFrames=78;
-        private double visualSeconds, pausedVisualAt;
-        private int BlueFrame=>(int)(visualSeconds*20)%BlueFrames;
         private SoundEffect voice;
         private SoundEffectInstance speech;
         private RenderedText caption, hint;
+        private string captionText, hintText, nativeCheckpoint;
         private long lastTick;
-        private bool handedOff, voiceStarted, manuallyPaused, steering;
-        private int arrows, scale=1, originX, originY;
-        private byte direction=4;
-        private Vector2 actor=new(3.5f,3.5f);
-        private static readonly Vector2 Portal=new(.65f,2.8f);
-        private bool walking, running;
-        private double walkTime;
-        private string captionText, hintText;
-        private string nativeCheckpoint;
-        private double pausedAt;
-        private Point? replayPointer;
+        private bool handedOff, voiceStarted, manuallyPaused, awakened;
+        private double visualSeconds, pausedVisualAt, pausedAt;
+        private Item portal;
+        private Point? replayDestination;
+        private readonly Queue<Point> replayRoute=new();
+        private Point replayStart;
+        private bool sawWalk, sawRun;
+        private const int Origin=64;
+        internal static readonly Point PortalTile=new(Origin+1,Origin+5);
+        private const int BlueWidth=154, BlueHeight=341, BlueColumns=13, BlueFrames=78;
+        private int BlueFrame=>(int)(visualSeconds*20)%BlueFrames;
 
-        internal static bool TryCreate(World world, Action begin, out U7DreamIntroScene scene)
+        internal static bool TryCreate(World world,Action begin,out U7DreamIntroScene scene)
         {
             scene=null;
             string folder=Environment.GetEnvironmentVariable("TRINSIC_INTRO_ASSETS");
-            if(string.IsNullOrEmpty(folder) || Environment.GetEnvironmentVariable("TRINSIC_READY")==null) return false;
-            try { scene=new U7DreamIntroScene(world,folder,begin);return true; }
+            if(string.IsNullOrEmpty(folder) || Environment.GetEnvironmentVariable("TRINSIC_READY")==null)return false;
+            try {scene=new U7DreamIntroScene(world,new World(),folder,begin);return true;}
             catch(Exception ex) when(ex is IOException || ex is ArgumentException || ex is InvalidOperationException || ex is System.Text.Json.JsonException)
-            { Console.Error.WriteLine("Dream intro unavailable; continuing to the original opening: "+ex.Message);return false; }
+            { current=null;Console.Error.WriteLine("Dream room unavailable: "+ex.Message);return false; }
         }
-        private U7DreamIntroScene(World world,string folder,Action begin)
+        private U7DreamIntroScene(World native,World room,string folder,Action begin):base(room)
         {
-            this.world=world;this.begin=begin;
-            data=U7IntroData.Read(Path.Combine(folder,"intro.json"));
-            Timeline=new U7IntroTimeline(data);
+            nativeWorld=native;this.room=room;this.begin=begin;
+            data=U7IntroData.Read(Path.Combine(folder,"intro.json"));Timeline=new U7IntroTimeline(data);
             try {
-                using(var stream=File.OpenRead(Path.Combine(folder,"guardian.png"))) relief=Texture2D.FromStream(Client.Game.GraphicsDevice,stream);
-                if(relief.Width!=data.Width*5 || relief.Height!=data.Height*3) throw new InvalidDataException("Invalid relief atlas size");
-                string bluePath=Path.Combine(folder,"blue-static.png");
-                if(File.Exists(bluePath)) {
-                    using var blueStream=File.OpenRead(bluePath);
-                    blueStatic=Texture2D.FromStream(Client.Game.GraphicsDevice,blueStream);
-                    if(blueStatic.Width!=BlueWidth*BlueColumns || blueStatic.Height!=BlueHeight*6)
-                        throw new InvalidDataException("Invalid original blue monitor atlas");
-                }
+                using(var stream=File.OpenRead(Path.Combine(folder,"guardian.png")))relief=Texture2D.FromStream(Client.Game.GraphicsDevice,stream);
+                using(var stream=File.OpenRead(Path.Combine(folder,"blue-static.png")))blueStatic=Texture2D.FromStream(Client.Game.GraphicsDevice,stream);
+                if(relief.Width!=data.Width*5 || relief.Height!=data.Height*3 || blueStatic.Width!=BlueWidth*BlueColumns || blueStatic.Height!=BlueHeight*6)
+                    throw new InvalidDataException("Invalid dream artwork atlas");
                 try {
                     using var stream=File.OpenRead(Path.Combine(folder,"guardian.wav"));
                     voice=SoundEffect.FromStream(stream);speech=voice.CreateInstance();
                     var profile=ProfileManager.CurrentProfile;
-                    speech.Volume=profile.TrinsicSpeechEnabled ? Math.Clamp(profile.TrinsicSpeechVolume/100f,0,1) : 0;
-                } catch(Exception ex) { Console.Error.WriteLine("Dream voice unavailable; captions remain active: "+ex.Message); }
-            } catch { speech?.Dispose();voice?.Dispose();relief?.Dispose();blueStatic?.Dispose();throw; }
+                    speech.Volume=profile.TrinsicSpeechEnabled?Math.Clamp(profile.TrinsicSpeechVolume/100f,0,1):0;
+                } catch(Exception ex) {Console.Error.WriteLine("Dream voice unavailable; captions remain active: "+ex.Message);}
+                current=this;
+                Chunk.ClearPool();
+                room.CreatePlayer(0x7ffe);
+                room.Player.Graphic=native.Player.Graphic;room.Player.Hue=native.Player.Hue;room.Player.Name=native.Player.Name;
+                room.Player.Stamina=room.Player.StaminaMax=30;
+                room.Player.Hits=room.Player.HitsMax=30;
+                room.MapIndex=0;
+                room.Player.SetInWorldTile(Origin+4,Origin+4,5);
+                room.Player.Direction=(Direction)4;
+                uint serial=0x7ffe0100;
+                for(int layer=1;layer<=27;layer++) {
+                    var source=native.Player.FindItemByLayer((Layer)layer);if(source==null)continue;
+                    var item=Item.Create(room,serial++);item.Graphic=source.Graphic;item.Hue=source.Hue;
+                    item.Layer=(Layer)layer;item.Container=room.Player.Serial;item.Amount=1;
+                    room.Items.Add(item);room.Player.PushToBack(item);
+                }
+                room.Player.SetAnimation(21,frameCount:5,fromServer:true);room.Player.ExecuteAnimation=false;
+                var vision=new VisionItem(this) {Serial=0x7ffe0001,Graphic=0x1b,Name="Guardian",Amount=1};
+                room.Items.Add(vision);vision.SetInWorldTile(Origin,Origin,0);
+            } catch {current=null;speech?.Dispose();voice?.Dispose();relief?.Dispose();blueStatic?.Dispose();room.Clear();Chunk.ClearPool();throw;}
+        }
+        internal static bool PopulateChunk(World world,Chunk chunk)
+        {
+            if(!Owns(world))return false;
+            // Black void outside the room. Normal Static surfaces supply the walkable floor.
+            for(int y=0;y<8;y++)for(int x=0;x<8;x++) {
+                ushort wx=(ushort)(chunk.X*8+x),wy=(ushort)(chunk.Y*8+y);
+                var land=Land.Create(world,2);land.AllowedToDraw=false;land.X=wx;land.Y=wy;land.Z=0;land.UpdateScreenPosition();chunk.AddGameObject(land,x,y);
+                void Add(ushort graphic,sbyte z) {
+                    var tile=Static.Create(world,graphic,0,y*8+x);tile.X=wx;tile.Y=wy;tile.Z=z;tile.UpdateScreenPosition();chunk.AddGameObject(tile,x,y);
+                }
+                int rx=wx-Origin,ry=wy-Origin;
+                if(rx>=1 && rx<=8 && ry>=1 && ry<=8)Add(0x519,0);
+                if(rx==0 && ry>=0 && ry<=6){Add(0x1b,0);Add(0x1b,20);}
+                if(rx==4 && ry==3)Add(0xa5d,0);
+                if(rx==4 && ry==4)Add(0xa5c,0);
+            }
+            return true;
         }
         public override void Load()
         {
-            base.Load();
-            Client.Game.Window.AllowUserResizing=true;
-            if(Settings.GlobalSettings.WindowSize is Point size) Client.Game.SetWindowSize(size.X,size.Y);
-            Resize();lastTick=Environment.TickCount64;
-            Console.WriteLine("DREAM START: native BEGIN held");
+            base.Load();lastTick=Environment.TickCount64;
+            Camera.Zoom=1;UpdateDrawPosition=true;
+            Console.WriteLine("DREAM WORLD START: normal GameScene, native BEGIN held");
         }
-        private void Resize()
+        private void Wake()
         {
-            var bounds=Client.Game.Window.ClientBounds;
-            Camera.Bounds=new Rectangle(0,0,Math.Max(640,bounds.Width),Math.Max(480,bounds.Height));
+            if(awakened)return;awakened=true;
+            room.Player.ExecuteAnimation=true;room.Player.SetAnimation(0xff);
+            room.Player.ClearSteps();room.Player.Walker.Reset();room.Player.SetInWorldTile(Origin+5,Origin+5,0);
+            UpdateDrawPosition=true;
         }
         public override void Update()
         {
-            long now=Environment.TickCount64;
-            double dt=Math.Max((now-lastTick)/1000.0,0);lastTick=now;
-            Resize();
+            long now=Environment.TickCount64;double dt=Math.Max((now-lastTick)/1000.0,0);lastTick=now;
             bool pause=manuallyPaused || (!Client.Game.IsActive && !TrinsicReplay.Active);
             if(Timeline.Paused && !pause)dt=0;
             Timeline.Paused=pause;
-            if(pause) {arrows=0;steering=false;if(speech?.State==SoundState.Playing)speech.Pause();}
-            else if(speech?.State==SoundState.Paused) speech.Resume();
-            var previous=Timeline.Phase;
-            Timeline.Advance(dt);
+            if(pause) {ClearDreamInput();room.Player.ClearSteps();room.Player.Walker.Reset();if(speech?.State==SoundState.Playing)speech.Pause();}
+            else if(speech?.State==SoundState.Paused)speech.Resume();
+            var previous=Timeline.Phase;Timeline.Advance(dt);
             if(!pause)visualSeconds+=dt;
-            if(Timeline.Phase==DreamPhase.Speech && !voiceStarted) {voiceStarted=true;speech?.Play();}
-            if(previous==DreamPhase.Speech && Timeline.Phase!=DreamPhase.Speech) speech?.Stop();
-            if(TrinsicReplay.Active && replayPointer is Point pointer)Mouse.Position=pointer;
-            if(!pause && Timeline.Phase==DreamPhase.Portal) Move((float)Math.Min(dt,.1));
-            else walking=false;
-            if(previous!=Timeline.Phase) Console.WriteLine("DREAM "+Timeline.Phase);
-            if(Timeline.Phase==DreamPhase.Complete) {Handoff();return;}
-            if(TrinsicReplay.Active) TrinsicReplay.Next(world,null,null);
+            if(Timeline.Phase==DreamPhase.Speech && !voiceStarted){voiceStarted=true;speech?.Play();}
+            if(previous==DreamPhase.Speech && Timeline.Phase!=DreamPhase.Speech)speech?.Stop();
+            if(Timeline.Phase>=DreamPhase.Wake)Wake();
+            if(Timeline.Phase==DreamPhase.Portal && portal==null) {
+                portal=Item.Create(room,0x7ffe0002);portal.Graphic=0xdda;portal.Amount=1;portal.Name="Red moongate";
+                room.Items.Add(portal);portal.SetInWorldTile((ushort)PortalTile.X,(ushort)PortalTile.Y,0);
+            }
+            if(TrinsicReplay.Active && replayDestination is Point target && CanWalk) {
+                // Aim the ordinary right-button movement control; never set player coordinates.
+                Point centre=new(Camera.Bounds.Center.X,Camera.Bounds.Center.Y);
+                int px=room.Player.X,py=room.Player.Y;
+                if(room.Player.Steps.Count>0) {px=room.Player.Steps.Back().X;py=room.Player.Steps.Back().Y;}
+                int dx=target.X-px,dy=target.Y-py;
+                if(dx==0 && dy==0) {
+                    ClearDreamInput();
+                    if(room.Player.Steps.Count==0)replayDestination=replayRoute.Count>0?replayRoute.Dequeue():null;
+                } else {
+                    BeginDreamMouse();
+                    Mouse.Position=centre+new Point((dx-dy)*44,(dx+dy)*44);
+                }
+            }
+            room.RangeSize=new Point(room.Player.X,room.Player.Y);
+            base.Update();
+            sawWalk |= room.Player.Steps.Count>0 && !room.Player.IsRunning;
+            sawRun |= room.Player.Steps.Count>0 && room.Player.IsRunning;
+            if(CanWalk && room.Player.X==PortalTile.X && room.Player.Y==PortalTile.Y) {
+                ClearDreamInput();room.Player.ClearSteps();room.Player.Walker.Reset();replayDestination=null;Timeline.EnterPortal();
+                Console.WriteLine("DREAM PORTAL: player walked onto gate tile");
+            }
+            if(previous!=Timeline.Phase)Console.WriteLine("DREAM "+Timeline.Phase);
+            if(Timeline.Phase==DreamPhase.Complete){Handoff();return;}
+            if(TrinsicReplay.Active)TrinsicReplay.Next(nativeWorld,null,null);
         }
         private void Handoff()
         {
-            if(handedOff)return;
-            handedOff=true;arrows=0;steering=false;speech?.Stop();
-            Mouse.ButtonRelease(MouseButtonType.Right);
-            Console.WriteLine("DREAM COMPLETE: releasing original native BEGIN");
-            begin();
+            if(handedOff)return;handedOff=true;ClearDreamInput();speech?.Stop();
+            Console.WriteLine("DREAM COMPLETE: releasing original native BEGIN");begin();
         }
-        private void Move(float dt)
-        {
-            Vector2 screen=new((arrows&2)!=0 ? 1:0,(arrows&8)!=0 ? 1:0);
-            if((arrows&1)!=0)screen.X--;if((arrows&4)!=0)screen.Y--;
-            running=false;
-            if(steering) {
-                Vector2 position=Project(actor);
-                screen=new Vector2((Mouse.Position.X-originX)/(float)scale,(Mouse.Position.Y-originY)/(float)scale)-position;
-                running=screen.Length()>80;
-                if(screen.Length()<5) screen=Vector2.Zero;
-            }
-            walking=screen.LengthSquared()>.01f;
-            if(!walking)return;
-            screen.Normalize();
-            Vector2 tile=new(screen.X+screen.Y,screen.Y-screen.X);tile.Normalize();
-            direction=(byte)((((int)Math.Round(Math.Atan2(tile.Y,tile.X)/(Math.PI/4)))+2+8)%8);
-            Vector2 next=actor+tile*(running?4.5f:2.5f)*dt;
-            next.X=Math.Clamp(next.X,.5f,4.5f);next.Y=Math.Clamp(next.Y,.5f,5.2f);
-            // Bed footprint; slide along its edge instead of walking through it.
-            bool Bed(Vector2 p)=>p.X>2.35f && p.X<3.15f && p.Y>1.35f && p.Y<3.15f;
-            if(Bed(next)) {next=new Vector2(actor.X,next.Y);if(Bed(next))next=new Vector2(actor.X,actor.Y);}
-            actor=next;walkTime+=dt;
-            if(Vector2.Distance(actor,Portal)<.6f) Timeline.EnterPortal();
-        }
-        private static Vector2 Project(Vector2 p)=>new((p.X-p.Y)*22,(p.X+p.Y)*22);
-        private Rectangle Rect(float x,float y,int w,int h)=>new(originX+(int)Math.Round(x*scale),originY+(int)Math.Round(y*scale),w*scale,h*scale);
-        public override bool Draw(UltimaBatcher2D batcher,RenderTargets targets)
-        {
-            batcher.GraphicsDevice.SetRenderTarget(targets.WorldRenderTarget);batcher.GraphicsDevice.Clear(Color.Black);
-            batcher.GraphicsDevice.SetRenderTarget(targets.LightRenderTarget);batcher.GraphicsDevice.Clear(Color.Transparent);
-            return true;
-        }
+        // World objects above are drawn by GameScene.Draw/RenderLists. Only captions are UI.
         public override void DrawUI(UltimaBatcher2D batcher)
         {
-            var viewport=batcher.GraphicsDevice.Viewport;
-            scale=Math.Clamp(Math.Min(viewport.Width/400,viewport.Height/440),1,2);
-            originX=viewport.Width/2;originY=viewport.Height/2-27*scale;
-            batcher.SetSampler(SamplerState.PointClamp);
-            batcher.Draw(SolidColorTextureCache.GetTexture(Color.Black),new Rectangle(0,0,viewport.Width,viewport.Height),Vector3.UnitZ,0);
-            for(int sum=0;sum<=9;sum++) for(int x=0;x<5;x++) {int y=sum-x;if(y>=0 && y<6) Art(batcher,0x519,new Vector2(x,y),0);}
-            for(int y=0;y<6;y++) for(int level=0;level<2;level++) Art(batcher,0x1b,new Vector2(0,y),level*80);
-            if(blueStatic!=null && Timeline.FaceAlpha>0) {
-                int frame=BlueFrame;
-                batcher.Draw(blueStatic,Rect(-132,-187,BlueWidth,BlueHeight),
-                    new Rectangle(frame%BlueColumns*BlueWidth,frame/BlueColumns*BlueHeight,BlueWidth,BlueHeight),
-                    new Vector3(0,0,Timeline.FaceAlpha),0);
-            }
-            Art(batcher,0xa5d,new Vector2(2.75f,1.8f),0);
-            Art(batcher,0xa5c,new Vector2(2.75f,2.8f),0);
-            if(Timeline.FaceAlpha>0) batcher.Draw(relief,Rect(-107,-102,data.Width,data.Height),
-                new Rectangle(Timeline.Mouth*data.Width,Timeline.Eyes*data.Height,data.Width,data.Height),new Vector3(0,0,Timeline.FaceAlpha),0);
-            bool sleeping=Timeline.Phase is DreamPhase.Sleep or DreamPhase.Speech or DreamPhase.Vanish;
-            if(Timeline.Phase is DreamPhase.Portal or DreamPhase.Enter) Art(batcher,(uint)(0xdda+(int)(Timeline.Seconds*8)%5),Portal,0);
-            DrawAvatar(batcher,sleeping);
+            base.DrawUI(batcher);
             string text=Timeline.Caption;
-            if(captionText!=text) {caption?.Destroy();captionText=text;caption=Text(text,340);}
-            if(caption?.HasContent==true) caption.Draw(batcher,originX-54*scale-caption.Width/2,originY-119*scale-caption.Height,0);
-            string controls=Timeline.Paused ? "Paused - Space to resume   |   Esc to skip" : Timeline.Phase==DreamPhase.Portal ?
-                "Walk into the red moongate. Hold right mouse or use arrow keys.   |   Esc to skip" : "Space to pause   |   Esc to skip";
-            if(hintText!=controls) {hint?.Destroy();hintText=controls;hint=Text(controls,680);}
-            hint.Draw(batcher,(viewport.Width-hint.Width)/2,viewport.Height-32-hint.Height,0);
-            if(Timeline.FadeAlpha>0) batcher.Draw(SolidColorTextureCache.GetTexture(Color.Black),new Rectangle(0,0,viewport.Width,viewport.Height),new Vector3(0,0,Timeline.FadeAlpha),0);
+            if(captionText!=text){caption?.Destroy();captionText=text;caption=Text(text,440);}
+            if(caption?.HasContent==true)caption.Draw(batcher,Camera.Bounds.Center.X-caption.Width/2,Camera.Bounds.Y+26,0);
+            string controls=Timeline.Paused?"Paused - Space to resume":Timeline.Phase==DreamPhase.Portal?
+                "Walk into the red moongate. Hold right mouse or use arrow keys.":"Space to pause   |   Esc to wake";
+            if(hintText!=controls){hint?.Destroy();hintText=controls;hint=Text(controls,680);}
+            hint.Draw(batcher,Camera.Bounds.Center.X-hint.Width/2,Camera.Bounds.Bottom-32-hint.Height,0);
         }
         private static RenderedText Text(string text,int width)=>RenderedText.Create(text,0x3b2,3,true,FontStyle.BlackBorder,TEXT_ALIGN_TYPE.TS_CENTER,width);
-        private void Art(UltimaBatcher2D batcher,uint id,Vector2 location,int lift)
-        {
-            ref readonly var art=ref Client.Game.UO.Arts.GetArt(id);
-            if(art.Texture==null)return;
-            var p=Project(location);
-            batcher.Draw(art.Texture,Rect(p.X-art.UV.Width/2f,p.Y+22-art.UV.Height-lift,art.UV.Width,art.UV.Height),art.UV,Vector3.UnitZ,0);
-        }
-        private void DrawAvatar(UltimaBatcher2D batcher,bool sleeping)
-        {
-            byte dir=sleeping?(byte)4:direction;bool mirror=false;
-            Client.Game.UO.Animations.GetAnimDirection(ref dir,ref mirror);
-            byte group=sleeping?(byte)21:walking?(byte)(running?2:0):(byte)4;
-            var at=Project(sleeping?new Vector2(2.75f,2.2f):actor);
-            Vector2 restOffset=Vector2.Zero;
-            if(sleeping) {
-                var body=Client.Game.UO.Animations.GetAnimationFrames(world.Player.Graphic,group,dir,out _,out _);
-                if(body.Length>0) {ref var f=ref body[body.Length-1];restOffset=new Vector2(f.Center.X-f.UV.Width/2f-10,f.Center.Y+f.UV.Height/2f-30);}
-            }
-            void Layer(ushort id,ushort hue,bool equip)
-            {
-                var frames=Client.Game.UO.Animations.GetAnimationFrames(id,group,dir,out _,out _,equip);
-                if(frames.Length==0)return;
-                int i=sleeping?frames.Length-1:walking?(int)(walkTime*(running?14:10))%frames.Length:0;
-                ref var f=ref frames[i];if(f.Texture==null)return;
-                var dest=Rect(at.X+restOffset.X-(mirror?f.UV.Width-f.Center.X:f.Center.X),at.Y+22+restOffset.Y-f.UV.Height-f.Center.Y,f.UV.Width,f.UV.Height);
-                batcher.Draw(f.Texture,dest,f.UV,ShaderHueTranslator.GetHueVector(hue,equip,1),0,Vector2.Zero,mirror?SpriteEffects.FlipHorizontally:SpriteEffects.None,0);
-            }
-            Layer(world.Player.Graphic,world.Player.Hue,false);
-            // Cosmetic equipment only: no proxy objects are allocated in World.
-            foreach(byte slot in new byte[]{4,3,7,8,5,13,17,22,19,20,16,11}) {
-                var item=world.Player.FindItemByLayer((ClassicUO.Game.Data.Layer)slot);
-                if(item?.ItemData.AnimID>0)Layer(item.ItemData.AnimID,item.Hue,true);
-            }
-        }
         internal override void OnKeyDown(SDL.SDL_KeyboardEvent e)
         {
-            if(e.key==(uint)SDL.SDL_Keycode.SDLK_ESCAPE) {Timeline.Skip();return;}
-            if(e.key==(uint)SDL.SDL_Keycode.SDLK_SPACE && !e.repeat) {manuallyPaused=!manuallyPaused;return;}
-            if(Timeline.Phase!=DreamPhase.Portal || Timeline.Paused)return;
-            arrows|=Key((SDL.SDL_Keycode)e.key);
+            if(e.key==(uint)SDL.SDL_Keycode.SDLK_SPACE && !e.repeat){manuallyPaused=!manuallyPaused;return;}
+            if(e.key==(uint)SDL.SDL_Keycode.SDLK_ESCAPE){manuallyPaused=false;speech?.Stop();Timeline.Skip();ClearDreamInput();return;}
+            if(CanWalk && e.key is (uint)SDL.SDL_Keycode.SDLK_LEFT or (uint)SDL.SDL_Keycode.SDLK_RIGHT or (uint)SDL.SDL_Keycode.SDLK_UP or (uint)SDL.SDL_Keycode.SDLK_DOWN)base.OnKeyDown(e);
         }
-        internal override void OnKeyUp(SDL.SDL_KeyboardEvent e) {arrows&=~Key((SDL.SDL_Keycode)e.key);}
-        private static int Key(SDL.SDL_Keycode key)=>key switch {
-            SDL.SDL_Keycode.SDLK_LEFT=>1,SDL.SDL_Keycode.SDLK_RIGHT=>2,SDL.SDL_Keycode.SDLK_UP=>4,SDL.SDL_Keycode.SDLK_DOWN=>8,_=>0};
-        internal override bool OnMouseDown(MouseButtonType button) {if(button==MouseButtonType.Right && Timeline.Phase==DreamPhase.Portal && !Timeline.Paused)steering=true;return true;}
-        internal override bool OnMouseUp(MouseButtonType button) {if(button==MouseButtonType.Right)steering=false;return true;}
+        internal override void OnKeyUp(SDL.SDL_KeyboardEvent e)
+        {
+            if(e.key is (uint)SDL.SDL_Keycode.SDLK_LEFT or (uint)SDL.SDL_Keycode.SDLK_RIGHT or (uint)SDL.SDL_Keycode.SDLK_UP or (uint)SDL.SDL_Keycode.SDLK_DOWN)base.OnKeyUp(e);
+        }
+        internal override bool OnMouseDown(MouseButtonType button)=>button==MouseButtonType.Right && CanWalk?base.OnMouseDown(button):true;
+        internal override bool OnMouseUp(MouseButtonType button)=>button==MouseButtonType.Right?base.OnMouseUp(button):true;
         internal override bool OnMouseDoubleClick(MouseButtonType button)=>true;
-        internal override bool OnMouseWheel(bool up)=>true;
         internal override bool OnMouseDragging()=>true;
-        // Runs only under the existing opt-in client replay driver.
+        internal override void OnTextInput(string text) { }
+        public override void Unload()
+        {
+            ClearDreamInput();speech?.Stop();speech?.Dispose();voice?.Dispose();relief?.Dispose();blueStatic?.Dispose();caption?.Destroy();hint?.Destroy();
+            base.Unload();current=null;
+        }
+        private sealed class VisionItem : Item
+        {
+            private readonly U7DreamIntroScene scene;
+            internal VisionItem(U7DreamIntroScene scene):base(scene.room){this.scene=scene;}
+            public override bool Draw(UltimaBatcher2D batcher,int x,int y,float depth)
+            {
+                float alpha=scene.Timeline.FaceAlpha;if(alpha<=0)return true;
+                int phase=scene.BlueFrame;
+                // Each bay shares its supporting wall's world depth, with the head just in front.
+                void Layer(Texture2D texture,Rectangle source,int dx,int dy,float bias) {
+                    for(int col=0;col<source.Width;col++) {
+                        float bay=Math.Max(0,(int)Math.Ceiling((-dx-col)/22f));
+                        batcher.Draw(texture,new Vector2(x+22+dx+col,y+22+dy),
+                            new Rectangle(source.X+col,source.Y,1,source.Height),new Vector3(0,0,alpha),0,
+                            Vector2.Zero,Vector2.One,SpriteEffects.None,depth+bay+1f+bias);
+                    }
+                }
+                Layer(scene.blueStatic,new Rectangle(phase%BlueColumns*BlueWidth,phase/BlueColumns*BlueHeight,BlueWidth,BlueHeight),-132,-187,.05f);
+                Layer(scene.relief,new Rectangle(scene.Timeline.Mouth*scene.data.Width,scene.Timeline.Eyes*scene.data.Height,scene.data.Width,scene.data.Height),-107,-102,.1f);
+                return true;
+            }
+            public override bool CheckMouseSelection()=>false;
+        }
         internal static void Replay(string[] args)
         {
             if(!TrinsicReplay.Active)throw new InvalidOperationException("Replay is disabled");
             var scene=Client.Game.Scene as U7DreamIntroScene;
-            if(args[1]=="GAME") {if(Client.Game.Scene is not GameScene)throw new InvalidOperationException($"Dream did not hand off: {scene?.Timeline.Phase}, {scene?.actor}, steering {scene?.steering}");return;}
-            if(scene==null)throw new InvalidOperationException("Expected dream scene");
+            if(args[1]=="GAME"){if(scene!=null || Client.Game.Scene is not GameScene)throw new InvalidOperationException($"Dream did not hand off at {scene?.room.Player.X-Origin},{scene?.room.Player.Y-Origin}, phase {scene?.Timeline.Phase}");return;}
+            if(scene==null)throw new InvalidOperationException("Expected dream world scene");
             switch(args[1]) {
-                case "PHASE":
-                    if(scene.Timeline.Phase.ToString()!=args[2])throw new InvalidOperationException("Unexpected dream phase "+scene.Timeline.Phase);
-                    break;
-                case "HELD":
-                    string checkpoint=TrinsicSession.DreamCheckpoint();
-                    if(scene.nativeCheckpoint!=null && scene.nativeCheckpoint!=checkpoint)throw new InvalidOperationException("Native state advanced during dream");
-                    scene.nativeCheckpoint=checkpoint;break;
-                case "KEY":
-                    scene.OnKeyDown(new SDL.SDL_KeyboardEvent {key=(uint)Enum.Parse<SDL.SDL_Keycode>("SDLK_"+args[2])});break;
-                case "KEYUP":
-                    scene.OnKeyUp(new SDL.SDL_KeyboardEvent {key=(uint)Enum.Parse<SDL.SDL_Keycode>("SDLK_"+args[2])});break;
+                case "PHASE":if(scene.Timeline.Phase.ToString()!=args[2])throw new InvalidOperationException("Unexpected dream phase "+scene.Timeline.Phase);break;
+                case "WORLD":Console.WriteLine($"DREAM WORLD: body={scene.room.Player.Graphic:x}, pos={scene.room.Player.X-Origin},{scene.room.Player.Y-Origin}, objects={scene.room.Items.Count}");if(scene.room==scene.nativeWorld || scene.RenderedObjectsCount<30)throw new InvalidOperationException("Room was not rendered by GameScene");break;
+                case "COLLISION":
+                    foreach(var start in new[]{new Point(Origin+1,Origin+7),new Point(Origin+5,Origin+4)}) {
+                        int x=start.X,y=start.Y;sbyte z=0;Direction direction=Direction.West;
+                        if(scene.room.Player.Pathfinder.CanWalk(ref direction,ref x,ref y,ref z))throw new InvalidOperationException("Void or bed allowed walking");
+                    }break;
+                case "RAN":if(!scene.sawRun)throw new InvalidOperationException("Mouse-distance running did not occur");break;
+                case "STILL":if(scene.replayStart!=new Point(scene.room.Player.X,scene.room.Player.Y))throw new InvalidOperationException("Player moved while paused");break;
+                case "HELD":string state=TrinsicSession.DreamCheckpoint();if(scene.nativeCheckpoint!=null && scene.nativeCheckpoint!=state)throw new InvalidOperationException("Native state advanced during dream");scene.nativeCheckpoint=state;break;
+                case "KEY":scene.OnKeyDown(new SDL.SDL_KeyboardEvent{key=(uint)Enum.Parse<SDL.SDL_Keycode>("SDLK_"+args[2])});break;
+                case "KEYUP":scene.OnKeyUp(new SDL.SDL_KeyboardEvent{key=(uint)Enum.Parse<SDL.SDL_Keycode>("SDLK_"+args[2])});break;
                 case "PAUSESTART":scene.pausedAt=scene.Timeline.Seconds;scene.pausedVisualAt=scene.visualSeconds;break;
-                case "STATIC":
-                    if(scene.blueStatic==null || scene.BlueFrame!=int.Parse(args[2]))throw new InvalidOperationException("Unexpected blue static frame "+scene.BlueFrame);break;
-                case "PAUSED":
-                    if(!scene.Timeline.Paused || scene.Timeline.Seconds!=scene.pausedAt || scene.visualSeconds!=scene.pausedVisualAt || scene.speech?.State==SoundState.Playing)throw new InvalidOperationException("Dream did not pause");break;
-                case "AUDIO":
-                    if(scene.speech==null || scene.speech.State.ToString()!=args[2])throw new InvalidOperationException("Unexpected dream audio state "+scene.speech?.State);break;
-                case "MUTED":
-                    if(scene.speech?.Volume!=0 || string.IsNullOrEmpty(scene.Timeline.Caption))throw new InvalidOperationException("Muted speech/captions did not follow preferences");break;
-                case "SILENT":
-                    if(scene.speech!=null || string.IsNullOrEmpty(scene.Timeline.Caption))throw new InvalidOperationException("Missing-audio fallback failed");break;
+                case "PAUSED":if(!scene.Timeline.Paused || scene.Timeline.Seconds!=scene.pausedAt || scene.visualSeconds!=scene.pausedVisualAt || scene.speech?.State==SoundState.Playing)throw new InvalidOperationException("Dream did not pause");break;
+                case "AUDIO":if(scene.speech==null || scene.speech.State.ToString()!=args[2])throw new InvalidOperationException("Unexpected audio state");break;
+                case "MUTED":if(scene.speech?.Volume!=0 || string.IsNullOrEmpty(scene.Timeline.Caption))throw new InvalidOperationException("Muted speech/captions failed");break;
+                case "SILENT":if(scene.speech!=null || string.IsNullOrEmpty(scene.Timeline.Caption))throw new InvalidOperationException("Missing-audio fallback failed");break;
                 case "PORTAL":
-                    var point=Project(Portal);Mouse.Position=new Point(scene.originX+(int)(point.X*scene.scale),scene.originY+(int)(point.Y*scene.scale));
-                    scene.replayPointer=Mouse.Position;
-                    scene.OnMouseDown(MouseButtonType.Right);break;
+                    scene.replayRoute.Clear();scene.replayDestination=new Point(Origin+5,Origin+7);
+                    scene.replayRoute.Enqueue(new Point(Origin+1,Origin+7));scene.replayRoute.Enqueue(PortalTile);break;
+                case "MOVE":scene.replayDestination=new Point(Origin+int.Parse(args[2]),Origin+int.Parse(args[3]));scene.BeginDreamMouse();break;
+                case "STOP":scene.replayDestination=null;scene.ClearDreamInput();break;
+                case "POSITION":if(scene.room.Player.X!=Origin+int.Parse(args[2]) || scene.room.Player.Y!=Origin+int.Parse(args[3]))throw new InvalidOperationException($"Position {scene.room.Player.X-Origin},{scene.room.Player.Y-Origin}");break;
+                case "RECORDPOS":scene.replayStart=new Point(scene.room.Player.X,scene.room.Player.Y);break;
+                case "MOVED":if(scene.replayStart==new Point(scene.room.Player.X,scene.room.Player.Y) || !scene.sawWalk && !scene.sawRun)throw new InvalidOperationException("Normal movement did not occur");break;
                 default:throw new InvalidOperationException("Unknown dream replay operation");
             }
-        }
-        public override void Unload()
-        {
-            arrows=0;steering=false;speech?.Stop();speech?.Dispose();voice?.Dispose();relief?.Dispose();blueStatic?.Dispose();caption?.Destroy();hint?.Destroy();
-            base.Unload();
         }
     }
 }

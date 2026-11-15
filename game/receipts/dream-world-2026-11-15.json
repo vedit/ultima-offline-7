@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-15",
+  "feature": "Playable ClassicUO dream room before original U7 arrival",
+  "build": {
+    "client": "game/intro/bin/world-client",
+    "errors": 0,
+    "warnings": 15,
+    "cuo_sha256": "cb2aa9a35879eb66f9ea22e46f6f30a295df4b658b003335a90e5fcf83ddaa20"
+  },
+  "architecture": [
+    "Separate client World rendered by GameScene and stock map/render lists",
+    "Ordinary UO surfaces, walls, bed, player and moongate",
+    "Guardian texture is a world item with world depth, original blue palette cycle and transparent mouths",
+    "Normal UO collision, movement interpolation, turning, arrow keys and mouse-distance running",
+    "U7 native BEGIN remains held until the player steps onto portal tile",
+    "Escape wakes only; no automatic movement in normal play; existing saves bypass room"
+  ],
+  "checks": {
+    "world": {
+      "run": "dream-world-proof",
+      "events": 39,
+      "images": [
+        "dream-0.png",
+        "dream-1.png",
+        "dream-2.png",
+        "dream-3.png"
+      ],
+      "passed": true
+    },
+    "full": {
+      "run": "dream-full-proof",
+      "events": 29,
+      "images": [
+        "dream-0.png",
+        "dream-1.png",
+        "dream-2.png",
+        "dream-3.png",
+        "dream-4.png"
+      ],
+      "passed": true,
+      "floor_visible_during_speech": true
+    },
+    "resume": {
+      "run": "dream-resume-proof",
+      "events": 8,
+      "images": [
+        "dream-0.png"
+      ],
+      "passed": true,
+      "native_save_and_reload": true
+    },
+    "muted": {
+      "run": "dream-muted-proof",
+      "events": 15,
+      "images": [
+        "dream-0.png"
+      ],
+      "passed": true
+    },
+    "silent": {
+      "run": "dream-silent-proof",
+      "events": 15,
+      "images": [
+        "dream-0.png"
+      ],
+      "passed": true
+    }
+  },
+  "timeline_checks": 16,
+  "limits": [
+    "Interim clay animation retains the previously accepted pose limitations",
+    "Small adapted dream room, not a reconstruction of the original Earth bedroom",
+    "The native U7 save begins at Trinsic; dream progress is client-only"
+  ],
+  "parallel_work": "Shared rendering files staged with only dream-specific hunks; other asset and rendering changes excluded"
+}
