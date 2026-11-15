@@ -143,7 +143,7 @@ def export(atlas, output, reviews=None, guard_ground=None):
             payload = scrub(json.loads((atlas / name).read_text(encoding='utf-8-sig')))
             # Exported HTML changes navigation and paths; don't advertise stale hashes.
             payload.pop('output_sha256', None)
-            dest.write_text(json.dumps(payload, indent=2) + '\n', encoding='utf8')
+            dest.write_text(json.dumps(payload, indent=2) + '\n', encoding='utf8', newline='\n')
         else:
             shutil.copyfile(atlas / name, dest)
     # Serve the actual equipment page at the site root, with no redirect or
@@ -159,7 +159,7 @@ def export(atlas, output, reviews=None, guard_ground=None):
                     source_catalog_sha256=sha(atlas / 'catalog.js'),
                     scope='Linked review galleries and catalog thumbnails; runtime files and unlinked old revisions excluded',
                     output_sha256={p:sha(output / p) for p in sorted(exported) if not p.startswith('images/')})
-    (output / 'publication.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf8')
+    (output / 'publication.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf8', newline='\n')
     print(json.dumps({k:v for k,v in metadata.items() if k not in ('output_sha256', 'review_snapshot')}, indent=2))
     return metadata
 

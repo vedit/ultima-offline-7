@@ -50,7 +50,7 @@ def build_reviews(reviews, guard_ground):
         return content
 
     def page(relative):
-        return read(relative).decode('utf-8-sig')
+        return read(relative).decode('utf-8-sig').replace('\r\n', '\n')
 
     def image(relative, root=reviews):
         mime = 'webp' if relative.endswith('.webp') else 'png'
