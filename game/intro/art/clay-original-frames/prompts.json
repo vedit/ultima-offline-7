@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-15",
+  "status": "review-candidates",
+  "method": "Built-in image_gen. Each complete head generated independently using its original U7 mouth pose, the selected first clay study for camera/material, and stock UO stone-face projection reference. No frame derived from another generated open-mouth frame.",
+  "selectedMaster": {
+    "file": "master.png",
+    "originalGeneratedFile": "exec-56699656-f6bc-49fb-b16e-6bc85118e074.png",
+    "prompt": "Use case: stylized-concept. Stage 1 of a game sprite rebuild: make ONE untextured clay construction study of the Guardian's disembodied face, on a truly transparent background.\n\nReferences: image 1 is the original Ultima VII Guardian, for identity and proportions ONLY. Image 2 is stock Ultima Online stone face 0x110F, for the elevated orthographic camera and oblique face direction ONLY. Reconstruct a coherent three-dimensional head; do not skew a frontal portrait or copy image 1's frontal camera. No other previously generated heads should be used.\n\nPose: stock UO isometric world view, looking down on the head; its face points toward screen-right and slightly downward, as reference 2. The near cheek on screen-left is broad and the far cheek/eye on screen-right is foreshortened. The nose must visibly project out toward screen-right from the brow, and occlude part of the far side. Nose bridge, septum, philtrum, centre of the CLOSED mouth, and centre of chin belong to ONE projected facial midline. The mouth wraps around the muzzle with its far corner receding, centred beneath the nose; never a little aperture on the near cheek. Orthographic, no wide-angle portrait perspective.\n\nIdentity: bald broad crown, heavy continuous brow, deep-set eyes, strong projecting blunt wedge nose, broad angular cheek planes and substantial chin. Preserve the original Guardian's solemn, ominous expression. Neutral closed lips, no smile or upturned corners. Eyes look along the head's forward direction. The facial structure should feel like an imposing carved being, not a cute character or a modern superhero. Avoid inflated cheek pads, separate sausage eyebrows, giant shiny lips and an oversized cartoon forehead.\n\nMaterial for THIS study: uniform matte light-grey clay, quiet upper-left light, readable planes and subtle occlusion. No red colour, yellow glow, granular texture, shiny highlights or ornament yet. A clean sculptural form study, not final pixel texture. One complete head, no neck, shoulders, ears, horns, hair, trophy plate, frame or hardware. No wall or ground. No teeth or tongue. Transparent outer background; no cast shadow on the background, captions, diagrams or guides. Large centred head with a modest transparent margin.",
+    "selection": "User selected the first clay pass; later structure and colour passes were rejected."
+  },
+  "frames": [
+    {
+      "file": "u7-frame-03.png",
+      "originalShape": 30,
+      "originalFrame": 3,
+      "role": "wide",
+      "prompt": "Use case: stylized-concept.\nAsset: one new full-head grey clay animation frame of the Guardian for Ultima Offline 7.\n\nREFERENCE ROLES:\nImage 1 is the original Ultima VII cutscene mouth frame 3. It is the primary source for this frame's actual open-jaw pose, lower-face construction and expression.\nImage 2 is the user-approved closed-mouth clay study. It supplies the same character proportions, elevated orthographic three-quarter camera facing screen-right, framing, matte grey material and upper-left lighting. It does NOT supply the mouth pose.\nImage 3 is stock Ultima Online stone-face art, a secondary check on the elevated game-camera projection.\n\nGenerate this frame freshly from the original open-mouth pose in Image 1, reconstructed as a coherent clay head in Image 2's camera. Sculpt the upper muzzle, mouth corners, lower lip, descending jaw and chin as volumes in that same view. Preserve the recognizable broad skull, continuous brow, heavy cheeks and projecting wedge nose from the approved clay form, with eyes open. Match its canvas, head placement and scale, allowing natural jaw descent.\n\nThe original frame has a clearly lowered jaw and substantial speaking aperture. Reconstruct that pose; do not cut or stretch the closed clay mouth seam into a long curved slit, and do not make a smiling crescent. The nose, mouth centre and chin must share the same receding facial centreline; near and far mouth corners must wrap around the muzzle with genuine foreshortening. The far corner is partially concealed by the far facial plane. Show the upper surface of the lower lip appropriately from the elevated camera. Serious, imposing facial anatomy.\n\nOutput the entire isolated clay head, no neck or mount. Monochrome grey, no red texture or eye glow. Both the surrounding background and the open mouth are true transparent alpha, exposing whatever wall is behind the final sprite. Omit all original teeth, tongue, gums and internal mouth fill; no black painted cavity. No plaque, hardware, ears, horns, text, backdrop or extra views.\n\nSpecific refinement for this fresh reconstruction: the original source's jagged teeth must not influence the contour of the lips. Use a continuous smooth upper lip and continuous smooth lower lip, with no tooth-shaped projections, scallops, notches, stumps or gum ridges on either edge. The lips are ordinary restrained clay rims around a transparent opening. Keep the source's lowered-jaw pose, and the approved elevated camera.",
+      "generatedFile": "exec-0397ef20-76ec-4428-8cd7-85ab39fbb8cb.png"
+    },
+    {
+      "file": "u7-frame-05.png",
+      "originalShape": 30,
+      "originalFrame": 5,
+      "role": "medium",
+      "prompt": "Use case: stylized-concept.\nAsset: one new full-head grey clay animation frame of the Guardian for Ultima Offline 7.\n\nREFERENCE ROLES:\nImage 1 is the original Ultima VII cutscene mouth frame 5. It is the primary source for this frame's actual open-jaw pose, lower-face construction and expression.\nImage 2 is the user-approved closed-mouth clay study. It supplies the same character proportions, elevated orthographic three-quarter camera facing screen-right, framing, matte grey material and upper-left lighting. It does NOT supply the mouth pose.\nImage 3 is stock Ultima Online stone-face art, a secondary check on the elevated game-camera projection.\n\nGenerate this frame freshly from the original open-mouth pose in Image 1, reconstructed as a coherent clay head in Image 2's camera. Sculpt the upper muzzle, mouth corners, lower lip, descending jaw and chin as volumes in that same view. Preserve the recognizable broad skull, continuous brow, heavy cheeks and projecting wedge nose from the approved clay form, with eyes open. Match its canvas, head placement and scale, allowing natural jaw descent.\n\nThis original frame has a medium speaking aperture: the upper lip arches up in the middle while the lower lip and jaw remain comparatively high. Reconstruct the specific upper-lip arch and shallower jaw opening shown in this source; this is not the widest lowered-jaw pose. do not cut or stretch the closed clay mouth seam into a long curved slit, and do not make a smiling crescent. The nose, mouth centre and chin must share the same receding facial centreline; near and far mouth corners must wrap around the muzzle with genuine foreshortening. The far corner is partially concealed by the far facial plane. Show the upper surface of the lower lip appropriately from the elevated camera. Serious, imposing facial anatomy.\n\nOutput the entire isolated clay head, no neck or mount. Monochrome grey, no red texture or eye glow. Both the surrounding background and the open mouth are true transparent alpha, exposing whatever wall is behind the final sprite. Omit all original teeth, tongue, gums and internal mouth fill; no black painted cavity. No plaque, hardware, ears, horns, text, backdrop or extra views.\n\nSpecific refinement for this fresh reconstruction: the original source's jagged teeth must not influence the contour of the lips. Use a continuous smooth upper lip and continuous smooth lower lip, with no tooth-shaped projections, scallops, notches, stumps or gum ridges on either edge. The lips are ordinary restrained clay rims around a transparent opening. Keep this source's medium upper-lip arch and comparatively high lower jaw, and the approved elevated camera.",
+      "generatedFile": "exec-0a5ad758-cac6-491a-85cf-8c7bc5ada523.png"
+    },
+    {
+      "file": "u7-frame-06.png",
+      "originalShape": 30,
+      "originalFrame": 6,
+      "role": "small",
+      "prompt": "Use case: stylized-concept.\nAsset: one new full-head grey clay animation frame of the Guardian for Ultima Offline 7.\n\nREFERENCE ROLES:\nImage 1 is the original Ultima VII cutscene mouth frame 6. It is the primary source for this frame's actual open-jaw pose, lower-face construction and expression.\nImage 2 is the user-approved closed-mouth clay study. It supplies the same character proportions, elevated orthographic three-quarter camera facing screen-right, framing, matte grey material and upper-left lighting. It does NOT supply the mouth pose.\nImage 3 is stock Ultima Online stone-face art, a secondary check on the elevated game-camera projection.\n\nGenerate this frame freshly from the original open-mouth pose in Image 1, reconstructed as a coherent clay head in Image 2's camera. Sculpt the upper muzzle, mouth corners, lower lip, descending jaw and chin as volumes in that same view. Preserve the recognizable broad skull, continuous brow, heavy cheeks and projecting wedge nose from the approved clay form, with eyes open. Match its canvas, head placement and scale, allowing natural jaw descent.\n\nThis original frame has a small speaking aperture: a very shallow opening with a restrained central upper-lip arch and an almost closed lower jaw. Reconstruct that specific small opening, subtle lip movement and high chin from the original source; do not use the wider jaw poses. do not cut or stretch the closed clay mouth seam into a long curved slit, and do not make a smiling crescent. The nose, mouth centre and chin must share the same receding facial centreline; near and far mouth corners must wrap around the muzzle with genuine foreshortening. The far corner is partially concealed by the far facial plane. Show the upper surface of the lower lip appropriately from the elevated camera. Serious, imposing facial anatomy.\n\nOutput the entire isolated clay head, no neck or mount. Monochrome grey, no red texture or eye glow. Both the surrounding background and the open mouth are true transparent alpha, exposing whatever wall is behind the final sprite. Omit all original teeth, tongue, gums and internal mouth fill; no black painted cavity. No plaque, hardware, ears, horns, text, backdrop or extra views.\n\nSpecific refinement for this fresh reconstruction: the original source's jagged teeth must not influence the contour of the lips. Use a continuous smooth upper lip and continuous smooth lower lip, with no tooth-shaped projections, scallops, notches, stumps or gum ridges on either edge. The lips are ordinary restrained clay rims around a transparent opening. Keep this source's narrow speaking opening and almost closed jaw, and the approved elevated camera.",
+      "generatedFile": "exec-f62641d5-99f1-4be6-b482-db5be921a374.png"
+    }
+  ],
+  "rejectedAttempt": {
+    "generatedFile": "exec-2a2b7374-d31f-4ea2-9d00-27cf1f3df1e4.png",
+    "prompt": "Use case: stylized-concept.\nAsset: one new full-head grey clay animation frame of the Guardian for Ultima Offline 7.\n\nREFERENCE ROLES:\nImage 1 is the original Ultima VII cutscene mouth frame 3. It is the primary source for this frame's actual open-jaw pose, lower-face construction and expression.\nImage 2 is the user-approved closed-mouth clay study. It supplies the same character proportions, elevated orthographic three-quarter camera facing screen-right, framing, matte grey material and upper-left lighting. It does NOT supply the mouth pose.\nImage 3 is stock Ultima Online stone-face art, a secondary check on the elevated game-camera projection.\n\nGenerate this frame freshly from the original open-mouth pose in Image 1, reconstructed as a coherent clay head in Image 2's camera. Sculpt the upper muzzle, mouth corners, lower lip, descending jaw and chin as volumes in that same view. Preserve the recognizable broad skull, continuous brow, heavy cheeks and projecting wedge nose from the approved clay form, with eyes open. Match its canvas, head placement and scale, allowing natural jaw descent.\n\nThe original frame has a clearly lowered jaw and substantial speaking aperture. Reconstruct that pose; do not cut or stretch the closed clay mouth seam into a long curved slit, and do not make a smiling crescent. The nose, mouth centre and chin must share the same receding facial centreline; near and far mouth corners must wrap around the muzzle with genuine foreshortening. The far corner is partially concealed by the far facial plane. Show the upper surface of the lower lip appropriately from the elevated camera. Serious, imposing facial anatomy.\n\nOutput the entire isolated clay head, no neck or mount. Monochrome grey, no red texture or eye glow. Both the surrounding background and the open mouth are true transparent alpha, exposing whatever wall is behind the final sprite. Omit all original teeth, tongue, gums and internal mouth fill; no black painted cavity. No plaque, hardware, ears, horns, text, backdrop or extra views.",
+    "reason": "Tooth-like scallops from the original teeth appeared along the upper lip; regenerated from the original references with smooth-rim instruction."
+  },
+  "constraints": [
+    "True transparent mouth apertures",
+    "No teeth or tongue",
+    "No mount or hardware",
+    "First clay study camera/material",
+    "No use of the rejected second clay or colour passes"
+  ],
+  "originalReferences": {
+    "source": "Local original U7 ENDSHAPE.FLX and INTROPAL.DAT member 2, extracted in existing guardian-preview-assets.json",
+    "composition": [
+      {
+        "shape": 31,
+        "frame": 0,
+        "anchor": [
+          80,
+          36
+        ]
+      },
+      {
+        "shape": 32,
+        "frame": 0,
+        "anchor": [
+          80,
+          73
+        ]
+      },
+      {
+        "shape": 32,
+        "frame": 4,
+        "anchor": [
+          80,
+          73
+        ]
+      },
+      {
+        "shape": 30,
+        "frame": 0,
+        "anchor": [
+          80,
+          85
+        ]
+      },
+      {
+        "shape": 30,
+        "frame": "requested pose",
+        "anchor": [
+          80,
+          85
+        ]
+      }
+    ],
+    "storage": "Reference extractions and comparisons are private ignored bin/review/original-poses files; original retail pixels are not committed."
+  },
+  "import": {
+    "sourceCanvas": [
+      1122,
+      1402
+    ],
+    "crop": [
+      60,
+      40,
+      1010,
+      1390
+    ],
+    "previewSize": [
+      104,
+      148
+    ],
+    "alphaExportNoise": "Set alpha below 16 to zero for preview only, following existing importer. Source PNGs preserved.",
+    "registration": "Same crop for all frames; no independent recentering, warping or feature patching.",
+    "runtime": "Candidates only; not wired into the game atlas."
+  }
+}

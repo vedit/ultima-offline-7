@@ -1,10 +1,19 @@
 # Dream opening
 
-**Art status — rejected on 2026-11-15.** The current generated head, all four
-mouth variants and both eyelid variants fail the facial perspective and tone
-review. All 15 packed combinations inherit the same faulty master. Functional
-intro verification is not visual approval. Keep these files as rejected
-development references until the master is rebuilt; see `art/review.json`.
+**Art status — frame studies under review on 2026-11-15.** The user selected
+the first grey clay master and rejected the later structure/colour passes.
+Mouth variants made by opening that master's closed seam were also rejected.
+The current approach reconstructs each pose from its corresponding original
+U7 cutscene frame, with the selected clay study supplying camera and material.
+`art/clay-original-frames/` contains the selected master and three initial
+complete-head studies sourced independently from original frames 6, 5 and 3.
+See its `prompts.json` and `review.json` for provenance and measured limits.
+These are review candidates, not a complete animation set or installed art.
+
+The older red head and its 15 packed combinations remain rejected; see
+`art/review.json`. The existing asset recipe still builds that historical set.
+Functional intro verification is not visual approval. No new clay study is
+used by the game launcher yet.
 
 This development-only presentation precedes the original Black Gate Trinsic
 arrival. The bare Guardian relief uses a fixed head with four alternate

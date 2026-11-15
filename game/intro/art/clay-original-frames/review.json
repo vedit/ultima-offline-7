@@ -1,0 +1,107 @@
+{
+  "date": "2026-11-15",
+  "status": "pending-user-visual-review",
+  "scope": "Closed master and three original-frame-derived open-mouth studies. Not a complete animation set. Not installed into runtime.",
+  "crop": [
+    60,
+    40,
+    1010,
+    1390
+  ],
+  "previewSize": [
+    104,
+    148
+  ],
+  "alphaThreshold": 16,
+  "sourceImagesUnmodified": true,
+  "perFrameRegistration": false,
+  "previewSequence": [
+    0,
+    1,
+    2,
+    3,
+    2,
+    1,
+    0
+  ],
+  "loopTiming": "Manual review timing; not original speech synchronization",
+  "frames": [
+    {
+      "file": "master.png",
+      "sha256": "54b8ceab493b229d618c2c68736f5e38c8ac054405f8cd77d7c70a28f1ad9dea",
+      "sourceSize": [
+        1122,
+        1402
+      ],
+      "opaqueBounds": [
+        82,
+        68,
+        986,
+        1312
+      ],
+      "internalTransparentPixels": 0,
+      "fixedRegionMeanAbsoluteRgbDifferenceFromMaster_0_255": {
+        "forehead": 0.0,
+        "nose": 0.0
+      }
+    },
+    {
+      "file": "u7-frame-06.png",
+      "sha256": "6ac2d99840e8b3e2ac8ad334179976bcbf8e5f3adf6c66db1c64c8e3cc044b0c",
+      "sourceSize": [
+        1122,
+        1402
+      ],
+      "opaqueBounds": [
+        74,
+        65,
+        985,
+        1323
+      ],
+      "internalTransparentPixels": 8606,
+      "fixedRegionMeanAbsoluteRgbDifferenceFromMaster_0_255": {
+        "forehead": 4.383,
+        "nose": 5.677
+      }
+    },
+    {
+      "file": "u7-frame-05.png",
+      "sha256": "3d8117248b3320d6c205ec5c9f42a8d1d1f88e16045ccf13576b0aa7208ae135",
+      "sourceSize": [
+        1122,
+        1402
+      ],
+      "opaqueBounds": [
+        73,
+        66,
+        990,
+        1333
+      ],
+      "internalTransparentPixels": 39450,
+      "fixedRegionMeanAbsoluteRgbDifferenceFromMaster_0_255": {
+        "forehead": 6.813,
+        "nose": 6.78
+      }
+    },
+    {
+      "file": "u7-frame-03.png",
+      "sha256": "4b52e855a6d2874fded75618ca34b6b26d10ac1e761fe6bb1f884a33ef4961b1",
+      "sourceSize": [
+        1122,
+        1402
+      ],
+      "opaqueBounds": [
+        76,
+        65,
+        991,
+        1369
+      ],
+      "internalTransparentPixels": 72462,
+      "fixedRegionMeanAbsoluteRgbDifferenceFromMaster_0_255": {
+        "forehead": 5.359,
+        "nose": 10.925
+      }
+    }
+  ],
+  "assessment": "Original poses now drive upper lip and jaw shape. Camera and grey clay material use the first approved clay study. Full-frame regeneration varies fixed facial shading/landmarks; metrics are RGB differences, not proof of identical geometry. Remaining original poses and blink combinations await this method review."
+}
