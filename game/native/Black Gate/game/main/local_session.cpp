@@ -44,6 +44,7 @@ extern void OpenAndLoopItemDialog(objref);
 #include "random.h"
 #include "plat.h"
 #include "local_session.h"
+#include "local_intro.h"
 #include "arena.h"
 #include "palfade.h"
 #include "party.h"
@@ -84,6 +85,7 @@ void LocalFreed(short handle) {
     else retired[id]=true;
 }
 void LocalBeforeStep() {
+    LocalDreamArrival();
     static bool initialized=false;
     if(!initialized){memset(retired,0,sizeof retired); memset(lifetimes,0,sizeof lifetimes); initialized=true;}
     if(!getenv("TRINSIC_READY") || !LocalEnabled() || started) return;
@@ -644,7 +646,10 @@ static void poll(uint8_t *steps, bool observeOnly) {
     if(op.rfind("DBG",0)==0) outcome=LocalDebugCommand(op,a,b,input,steps && !mode && !UsableRunning && !PlayerActionSuspended,seq);
     else if(op=="AUDIO") outcome=steps && !mode && !UsableRunning && !PlayerActionSuspended ? LocalAudioCommand(a,b,input) : "busy";
     else if(op=="SAVES") refreshSaves();
-    else if(op=="BEGIN" && getenv("TRINSIC_READY")) started=true;
+    else if(op=="BEGIN" && getenv("TRINSIC_READY")) {
+        if(a==1 && !started && !LocalDreamBegin()) outcome="blocked";
+        else started=true;
+    }
     else if(op=="DISMISS" && (mode==5 || mode==6) && a==(int)promptId) mode=0;
     else if((op=="BOOKSELECT" || op=="BOOKCAST") && mode==6 && a==(int)promptId) {
         objref book(spellbookObject);

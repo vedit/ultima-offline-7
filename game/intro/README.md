@@ -56,7 +56,7 @@ robocopy E:/UltimaOffline/PoCs/ClassicUO-U7-Local/client game/intro/bin/source /
 robocopy game/client/src game/intro/bin/source/src /E /NFL /NDL /NJH /NJS /NP /R:0 /W:0
 $env:DOTNET_CLI_HOME = Join-Path $PWD 'game/intro/bin/cache/dotnet'
 $env:NUGET_PACKAGES = Join-Path $PWD 'game/intro/bin/cache/packages'
-$output = Join-Path $PWD 'game/intro/bin/world-client/'
+$output = Join-Path $PWD 'game/intro/bin/arrival-client/'
 & E:/UltimaOffline/Tools/dotnet/dotnet.exe build game/intro/bin/source/src/ClassicUO.Client/ClassicUO.Client.csproj -c Release -p:PublishAot=false -p:UseSharedCompilation=false -p:NuGetAudit=false '-p:RestoreFallbackFolders=E:/UltimaOffline/Cache/NuGet' --source E:/UltimaOffline/Cache/NuGet --disable-build-servers "-p:OutputPath=$output"
 ```
 
@@ -107,3 +107,32 @@ not change a save or allocate native U7 objects. Existing saves skip the room.
 The `world` replay checks actual arrow-key motion, world rendering, collision,
 and mouse-driven movement around the bed into the portal. Automated navigation
 exists only in the opt-in replay and never runs in a player session.
+
+## Stable-door arrival revision
+
+The bed now uses matching stock north-facing pieces 0x0A63 and 0x0A5C.
+The sleeper selects the final animation frame explicitly. The floor is 10×10
+UO tiles and the back wall spans 11 bays; the original blue pattern covers the
+wider plane without changing the vertical scale or the head artwork.
+
+Dream handoff sends `BEGIN 1`; ordinary `BEGIN` retains the retail placement.
+The native adapter moves the off-map arrival anchor to (1074,2210,0), then
+restores its off-map state. Original Usecode still spawns the moongate, moves
+three steps west, and runs Iolo/Petre/Finnigan's opening. This ends at
+(1071,2210,0), directly south of the stable door (1071,2207,0). A one-shot
+observer emits the existing travel effect when the Avatar actually appears.
+No inventory, spell costs, quest flags, dialogue or Usecode is replaced.
+
+The launcher now uses the separate native build at `bin/native-arrival/Ultima7.exe`.
+To reproduce it, copy the private `native` dependency tree into `bin/native-source`,
+then overlay `game/native`. From a Visual Studio x64 developer command prompt:
+
+```bat
+set "PATH=E:\UltimaOffline\PoCs\ClassicUO-U7-Local\toolchain\bin;%PATH%"
+cmake -S "game/intro/bin/native-source/Black Gate" -B "game/intro/bin/native-build" -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="%CD%/game/intro/bin/native-arrival"
+cmake --build "game/intro/bin/native-build" --target u7 --parallel 4
+```
+
+`py -3.13 game/intro/verify.py arrival` checks the complete original commission,
+repeated command handling and unchanged ordinary arrival. `world` additionally
+asserts the stable-door coordinates and exactly one rendered travel effect.

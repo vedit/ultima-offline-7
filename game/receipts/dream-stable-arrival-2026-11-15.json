@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-15",
+  "feature": "Larger dream wall, matching stock bed, and arrival outside the stables",
+  "build": {
+    "client": "game/intro/bin/arrival-client",
+    "cuo_sha256": "00f47c464741ca9ed77f43710bff810f56c024cfbc41794b899c3d4eb8ab62a2",
+    "native": "game/intro/bin/native-arrival/Ultima7.exe",
+    "native_sha256": "c9a55b7de104b39849d429520587de2a45822b725eb2ba68a3b0bb2b913301b3",
+    "isolated_from_parallel_builds": true
+  },
+  "room": {
+    "stock_bed": ["0x0A63", "0x0A5C"],
+    "sleep_pose": "Hold the final stock animation frame",
+    "floor_tiles": [10, 10],
+    "wall_bays": 11,
+    "blue_wall_width": 242,
+    "head_size_unchanged": true
+  },
+  "native_arrival": {
+    "stable_door": [1071, 2207, 0],
+    "dream_anchor": [1074, 2210, 0],
+    "after_original_three_steps": [1071, 2210, 0],
+    "ordinary_arrival_unchanged": [1076, 2214, 0],
+    "trigger": "BEGIN 1 after the player enters the dream portal",
+    "effect": "One native travel event when the Avatar first appears on the map",
+    "original_usecode_preserved": true
+  },
+  "checks": {
+    "client_world": "Passed movement, collision, running, pause, held native start, portal crossing, exact final coordinates and FXCOUNT travel 1",
+    "native_arrival": "Passed original Iolo/Finnigan dialogue, commission quest flag 90, save and duplicate BEGIN rejection",
+    "ordinary_arrival": "Passed original position and greeting without dream flag",
+    "full_speech": "Passed audio, pause, full duration, room visibility and portal phase with enlarged room",
+    "resume": "Passed native save/reload with final native binary; existing saves bypass the dream",
+    "visual_review": ["dream-world-proof/dream-0.png", "dream-world-proof/dream-3.png"]
+  },
+  "evidence": "Local proof JSON in game/intro/bin and screenshots under private runs; generated binaries and retail assets are not committed",
+  "limits": [
+    "Guardian uses the previously accepted interim clay frames",
+    "Dream progress remains client-only; native saves begin at Trinsic"
+  ],
+  "parallel_work": "Only arrival-specific hunks staged in shared session files"
+}

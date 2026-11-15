@@ -87,7 +87,7 @@ namespace ClassicUO.Game.Intro
                     item.Layer=(Layer)layer;item.Container=room.Player.Serial;item.Amount=1;
                     room.Items.Add(item);room.Player.PushToBack(item);
                 }
-                room.Player.SetAnimation(21,frameCount:5,fromServer:true);room.Player.ExecuteAnimation=false;
+                room.Player.SetAnimation(21,frameCount:byte.MaxValue,fromServer:true);room.Player.ExecuteAnimation=false;
                 var vision=new VisionItem(this) {Serial=0x7ffe0001,Graphic=0x1b,Name="Guardian",Amount=1};
                 room.Items.Add(vision);vision.SetInWorldTile(Origin,Origin,0);
             } catch {current=null;speech?.Dispose();voice?.Dispose();relief?.Dispose();blueStatic?.Dispose();room.Clear();Chunk.ClearPool();throw;}
@@ -103,9 +103,9 @@ namespace ClassicUO.Game.Intro
                     var tile=Static.Create(world,graphic,0,y*8+x);tile.X=wx;tile.Y=wy;tile.Z=z;tile.UpdateScreenPosition();chunk.AddGameObject(tile,x,y);
                 }
                 int rx=wx-Origin,ry=wy-Origin;
-                if(rx>=1 && rx<=8 && ry>=1 && ry<=8)Add(0x519,0);
-                if(rx==0 && ry>=0 && ry<=6){Add(0x1b,0);Add(0x1b,20);}
-                if(rx==4 && ry==3)Add(0xa5d,0);
+                if(rx>=1 && rx<=10 && ry>=1 && ry<=10)Add(0x519,0);
+                if(rx==0 && ry>=0 && ry<=10){Add(0x1b,0);Add(0x1b,20);}
+                if(rx==4 && ry==3)Add(0xa63,0);
                 if(rx==4 && ry==4)Add(0xa5c,0);
             }
             return true;
@@ -221,8 +221,15 @@ namespace ClassicUO.Game.Intro
                             Vector2.Zero,Vector2.One,SpriteEffects.None,depth+bay+1f+bias);
                     }
                 }
-                Layer(scene.blueStatic,new Rectangle(phase%BlueColumns*BlueWidth,phase/BlueColumns*BlueHeight,BlueWidth,BlueHeight),-132,-187,.05f);
-                Layer(scene.relief,new Rectangle(scene.Timeline.Mouth*scene.data.Width,scene.Timeline.Eyes*scene.data.Height,scene.data.Width,scene.data.Height),-107,-102,.1f);
+                // Widen the wall along its isometric axis, retaining vertical pixel scale.
+                // Sample the same original pattern; mouths still reveal this one wall layer.
+                const int wallWidth=242,wallLeft=-220;
+                for(int col=0;col<wallWidth;col++) {
+                    int sourceCol=col*BlueWidth/wallWidth;
+                    int dy=wallWidth-col-(BlueWidth-sourceCol);
+                    Layer(scene.blueStatic,new Rectangle(phase%BlueColumns*BlueWidth+sourceCol,phase/BlueColumns*BlueHeight,1,BlueHeight),wallLeft+col,-187+dy,.05f);
+                }
+                Layer(scene.relief,new Rectangle(scene.Timeline.Mouth*scene.data.Width,scene.Timeline.Eyes*scene.data.Height,scene.data.Width,scene.data.Height),-151,-58,.1f);
                 return true;
             }
             public override bool CheckMouseSelection()=>false;

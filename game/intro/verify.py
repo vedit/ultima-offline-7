@@ -7,13 +7,45 @@ import shutil
 import sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
-os.environ['TRINSIC_CLIENT_BIN']=str(HERE/'bin/world-client')
+os.environ.setdefault('TRINSIC_CLIENT_BIN',str(HERE/'bin/arrival-client'))
+os.environ.setdefault('TRINSIC_HOST_EXECUTABLE',str(HERE/'bin/native-arrival/Ultima7.exe'))
 sys.path.insert(0,str(HERE.parent/'qualification'))
 spec=importlib.util.spec_from_file_location('client_proof',HERE.parent/'qualification/client-proof.py')
 proof=importlib.util.module_from_spec(spec);spec.loader.exec_module(proof)
 extra={'TRINSIC_INTRO_ASSETS':str(HERE/'bin/assets'),'U7_ENABLE_AUDIO':'1'}
 
 def run(mode):
+    if mode=='arrival':
+        from play import session,Pipe
+        from investigation import Walkthrough
+        import time
+        results={}
+        class DreamPipe(Pipe):
+            def send(self,op,a=0,b=0):
+                result=super().send(op,1 if op=='BEGIN' else a,b)
+                if op=='BEGIN':
+                    first=self.head[6:9]
+                    assert self.raw('1 '+self.head[2]+' BEGIN 1 0')=='ok'
+                    assert self.head[4]=='1' and self.head[6:9]==first,'Repeated BEGIN relocated the Avatar'
+                return result
+        with session('dream-stables-commission','Investigation',True,original_opening=True) as (folder,env,host):
+            pipe=DreamPipe(env['TRINSIC_PIPE'],host);walk=Walkthrough(pipe,folder);walk.opening()
+            avatar=next(r for r in pipe.rows if r[7]==0)
+            assert avatar[3:6]==[1071,2210,0],avatar
+            results['dream']={'position':avatar[3:6],'quest90':bool(walk.flags()[90]),'saved':(folder/'GAME00.U7').exists(),'duplicate_begin':True}
+            pipe.close()
+        with session('dream-original-arrival-regression','Investigation',True,original_opening=True) as (folder,env,host):
+            pipe=Pipe(env['TRINSIC_PIPE'],host);pipe.send('BEGIN');deadline=time.monotonic()+30
+            while time.monotonic()<deadline:
+                pipe.sync()
+                if int(pipe.head[9]):break
+                time.sleep(.1)
+            avatar=next(r for r in pipe.rows if r[7]==0)
+            assert avatar[3:6]==[1076,2214,0] and int(pipe.head[9])==1
+            results['ordinary']={'position':avatar[3:6],'original_greeting':True}
+            pipe.close()
+        (HERE/'bin/proof-arrival.json').write_text(json.dumps(results,indent=2)+'\n')
+        print(json.dumps(results));return
     options=dict(extra)
     if mode=='world':
         commands=['WAIT 3000','INTRO WORLD','INTRO HELD','CAPTURE',
@@ -22,7 +54,7 @@ def run(mode):
                   'INTRO KEY RIGHT','WAIT 700','INTRO KEYUP RIGHT','WAIT 800','INTRO MOVED','CAPTURE',
                   'INTRO KEY SPACE','WAIT 200','INTRO RECORDPOS','INTRO KEY LEFT','WAIT 600','INTRO STILL','INTRO KEYUP LEFT','INTRO KEY SPACE',
                   'INTRO MOVE 5 7','WAIT 2500','INTRO RAN','INTRO STOP',
-                  'INTRO PORTAL','WAIT 10000','INTRO GAME','CAPTURE','EXIT']
+                  'INTRO PORTAL','WAIT 20000','INTRO GAME','FXCOUNT travel 1','CAPTURE','EXIT']
     elif mode=='preview':
         commands=['WAIT 6000','CAPTURE','WAIT 700','EXIT']
     elif mode=='full':
@@ -32,7 +64,7 @@ def run(mode):
                   'WAIT 26000','INTRO PHASE Portal','INTRO AUDIO Stopped','INTRO HELD','CAPTURE',
                   'INTRO PORTAL','WAIT 10000','INTRO GAME','WAIT 1200','CAPTURE','EXIT']
     elif mode=='skip':
-        commands=['WAIT 2300','INTRO HELD','INTRO KEY ESCAPE','WAIT 2000','INTRO PHASE Portal','INTRO HELD','WAIT 1500','INTRO PHASE Portal','INTRO PORTAL','WAIT 10000','INTRO GAME','CAPTURE','EXIT']
+        commands=['WAIT 2300','INTRO HELD','INTRO KEY ESCAPE','WAIT 2000','INTRO PHASE Portal','INTRO HELD','WAIT 1500','INTRO PHASE Portal','INTRO PORTAL','WAIT 20000','INTRO GAME','CAPTURE','EXIT']
     elif mode=='resume':
         # Original source fixture is loaded as a saved world; no READY gate exists.
         commands=['WAIT 1800','INTRO GAME','SAVE','WAIT 400','CAPTURE','EXIT']
@@ -55,6 +87,10 @@ def run(mode):
                   'INTRO KEY ESCAPE','WAIT 1800','INTRO PHASE Portal','INTRO HELD','INTRO PORTAL','WAIT 10000','INTRO GAME','EXIT']
     else:raise ValueError(mode)
     r=proof.run('dream-'+mode+'-proof','Investigation',commands,True,original_opening=mode!='resume',extra=options,scenario='dream')
+    if mode=='world':
+        last=next(e for e in reversed(r['events']) if e.startswith('INTRO GAME |'))
+        if 'sync 1071 2210 0 1 ' not in last:raise RuntimeError('Arrival did not reach the original greeting at the stable entrance')
+        r['stable_arrival']=[1071,2210,0]
     if mode=='full':
         # Void must not fade into an opaque foreground over the room.
         from PIL import Image
@@ -73,4 +109,4 @@ def run(mode):
     print(json.dumps({'run':r['run'],'images':r['images'],'events':len(r['events'])}))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('mode',choices=['world','preview','full','skip','resume','muted','silent']);run(p.parse_args().mode)
+    p=argparse.ArgumentParser();p.add_argument('mode',choices=['arrival','world','preview','full','skip','resume','muted','silent']);run(p.parse_args().mode)

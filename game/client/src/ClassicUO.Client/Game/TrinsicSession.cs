@@ -245,7 +245,7 @@ namespace ClassicUO.Game
             ShowBarks(data.Split('\n'));
             ShowMap(); ShowPaperdoll(); ShowBackpack();
             if(Environment.GetEnvironmentVariable("TRINSIC_READY")!=null && (afterDream || !TrinsicReplay.Active)) {
-                if(TrinsicTown.Enabled) Send("BEGIN");
+                if(TrinsicTown.Enabled) Send("BEGIN",afterDream?1:0);
                 else { Overlay=true; GameActions.Print(world,"Iolo is ready. Ctrl+wheel changes zoom. Press F6 to begin."); }
             }
         }
