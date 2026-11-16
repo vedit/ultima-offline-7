@@ -23,15 +23,98 @@
         });
     }
     const dialog = document.getElementById('screenshot-dialog');
+    const full = document.getElementById('screenshot-image');
+    const comparison = document.getElementById('screenshot-comparison');
+    const stage = document.getElementById('compare-stage');
+    const slider = document.getElementById('compare-slider');
+    const originalImage = document.getElementById('compare-original');
+    const currentImage = document.getElementById('compare-current');
+    const loading = document.getElementById('compare-loading');
+    const error = document.getElementById('compare-error');
+    const pairs = {
+        'barn-overview': {title: 'The murder in Trinsic — Christopher and Inamo', description: 'The barn murder scene with both victims visible'},
+        'barn-detail': {title: 'Christopher — a closer look', description: 'A closer view of Christopher and the evidence on the barn floor'}
+    };
+    let activePair = 'barn-overview';
+    let request = 0;
+    function updateSplit() {
+        stage.style.setProperty('--split', `${slider.value}%`);
+        slider.setAttribute('aria-valuetext', `${slider.value}% Ultima Offline 7; ${100 - slider.value}% original Ultima VII`);
+    }
+    async function showPair(id) {
+        const pair = pairs[id];
+        if (!pair) return;
+        activePair = id;
+        const currentRequest = ++request;
+        full.hidden = true;
+        comparison.hidden = false;
+        slider.value = 50;
+        updateSplit();
+        stage.setAttribute('aria-busy', 'true');
+        loading.hidden = false;
+        error.hidden = true;
+        for (const button of document.querySelectorAll('[data-pair]')) button.setAttribute('aria-pressed', String(button.dataset.pair === id));
+        originalImage.src = `site/${id}-u7.png`;
+        originalImage.alt = `${pair.description} in the original Ultima VII renderer.`;
+        currentImage.src = `site/${id}-uo7.png`;
+        currentImage.alt = `${pair.description} in Ultima Offline 7, with Vedit's paperdoll.`;
+        document.getElementById('compare-u7-link').href = originalImage.src;
+        document.getElementById('compare-uo7-link').href = currentImage.src;
+        document.getElementById('screenshot-caption').textContent = pair.title;
+        try {
+            await Promise.all([originalImage.decode(), currentImage.decode()]);
+        } catch {
+            if (request === currentRequest) error.hidden = false;
+        } finally {
+            if (request === currentRequest) {
+                loading.hidden = true;
+                stage.setAttribute('aria-busy', 'false');
+            }
+        }
+    }
+    slider.addEventListener('input', updateSplit);
+    // Pointer coordinates cover the full picture, including the extreme ends.
+    // The real range input retains native keyboard and screen-reader behavior.
+    function moveDivider(event) {
+        const box = stage.getBoundingClientRect();
+        slider.value = Math.round(Math.max(0, Math.min(100, (event.clientX - box.left) / box.width * 100)));
+        updateSplit();
+    }
+    slider.addEventListener('pointerdown', event => {
+        if (!event.isPrimary || event.button !== 0) return;
+        event.preventDefault();
+        slider.focus({preventScroll: true});
+        slider.setPointerCapture(event.pointerId);
+        moveDivider(event);
+    });
+    slider.addEventListener('pointermove', event => {
+        if (slider.hasPointerCapture(event.pointerId)) moveDivider(event);
+    });
+    for (const type of ['pointerup', 'pointercancel']) slider.addEventListener(type, event => {
+        if (slider.hasPointerCapture(event.pointerId)) slider.releasePointerCapture(event.pointerId);
+    });
+    for (const button of document.querySelectorAll('[data-compare]')) button.addEventListener('click', () => {
+        showPair(button.dataset.compare);
+        dialog.showModal();
+        slider.focus({preventScroll: true});
+    });
+    for (const button of document.querySelectorAll('[data-pair]')) button.addEventListener('click', () => showPair(button.dataset.pair));
+    document.getElementById('compare-retry').addEventListener('click', () => {
+        showPair(activePair);
+        slider.focus({preventScroll: true});
+    });
     for (const button of document.querySelectorAll('[data-zoom]')) {
         button.addEventListener('click', () => {
-            const full = document.getElementById('screenshot-image');
+            ++request;
+            comparison.hidden = true;
+            full.hidden = false;
             full.src = button.dataset.zoom;
             full.alt = button.dataset.caption;
             document.getElementById('screenshot-caption').textContent = button.dataset.caption;
             dialog.showModal();
         });
     }
+    dialog.addEventListener('close', () => { ++request; });
     dialog.addEventListener('click', event => {
         if (event.target === dialog) {
             const box = dialog.getBoundingClientRect();

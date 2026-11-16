@@ -10,7 +10,7 @@
   <meta property="og:description" content="The world of The Black Gate. The feel of Ultima Online. A single-player return to Britannia, starting in Trinsic.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vedit.github.io/ultima-offline-7/">
-  <meta property="og:image" content="https://vedit.github.io/ultima-offline-7/site/trinsic.png">
+  <meta property="og:image" content="https://vedit.github.io/ultima-offline-7/site/barn-overview-uo7.png">
   <link rel="stylesheet" href="site/home.css">
   <script src="site/home.js" defer></script>
 </head>
@@ -32,8 +32,8 @@
       <p class="build-note"><span class="status-dot" aria-hidden="true"></span> In development · Windows · Trinsic is playable</p>
     </div>
     <figure class="hero-shot loadable">
-      <button class="image-open" type="button" data-zoom="site/trinsic.png" data-caption="Trinsic in the ClassicUO development build" aria-label="Enlarge the Trinsic gameplay screenshot"><img src="site/trinsic.png" width="1440" height="900" fetchpriority="high" alt="Trinsic's streets, stables and city gate, with the Avatar's paperdoll and backpack open in ClassicUO."></button>
-      <figcaption><span><b>TRINSIC, BRITANNIA</b>Actual development build</span><button type="button" class="caption-link" data-zoom="site/trinsic.png" data-caption="Trinsic in the ClassicUO development build">View full screenshot <span aria-hidden="true">↗</span></button></figcaption>
+      <button class="image-open" type="button" data-compare="barn-overview" aria-label="Compare the barn murder scene in Ultima VII and Ultima Offline 7"><img src="site/barn-overview-uo7.png" width="1440" height="900" fetchpriority="high" alt="Christopher and Inamo at the Trinsic murder scene, with Vedit's paperdoll and the corrected Party button in ClassicUO."><span class="compare-invitation">U7 <span aria-hidden="true">↔</span> UO7 · Compare the scene</span></button>
+      <figcaption><span><b>THE MURDER IN TRINSIC</b>Two views · Actual gameplay captures</span><button type="button" class="caption-link" data-compare="barn-overview">Drag to compare <span aria-hidden="true">↗</span></button></figcaption>
     </figure>
   </section>
 
@@ -73,6 +73,27 @@
   <section class="wrap questions" aria-label="Common questions"><details><summary>Is this a multiplayer UO shard?</summary><p>No. Ultima Offline 7 is a single-player project. ClassicUO presents the world and sends your actions to the original U7 engine, which runs the game.</p></details><details><summary>Does it use Ultima VII's original rules?</summary><p>Yes. The native U7 engine owns the simulation: dialogue, schedules, inventory, combat, spell rules and saves. The project connects those systems to a modified ClassicUO frontend. Presentation and interaction coverage are still being developed and tested.</p></details><details><summary>Can I play the whole game yet?</summary><p>The current development focus is the opening and Trinsic investigation through the gate. The full campaign and other regions are not ready to be presented as a finished conversion. The roadmap tracks what comes next.</p></details><details><summary>How can I help?</summary><p>Try the development slice, report what happened and what you expected, or contribute to the source. The atlas is also a place to compare artwork and export visual feedback. <a href="https://github.com/vedit/ultima-offline-7/issues">Report an issue on GitHub.</a></p></details></section>
 </main>
 <footer class="footer wrap"><div><a class="footer-brand" href="index.html">ULTIMA OFFLINE 7</a><p>An independent fan project. Made with affection for two classics.</p></div><div class="footer-links"><a href="https://github.com/vedit/ultima-offline-7">Source</a><a href="https://github.com/vedit/ultima-offline-7/blob/main/THIRD_PARTY_NOTICES.md">Credits &amp; notices</a><a href="armory.html">Atlas</a></div><small>Ultima VII and Ultima Online names and artwork belong to their respective rights holders. This project is not affiliated with or endorsed by their owners. Screenshots show development builds.</small></footer>
-<dialog id="screenshot-dialog" aria-labelledby="screenshot-caption"><form method="dialog"><button class="dialog-close" aria-label="Close screenshot">Close ×</button></form><img id="screenshot-image" alt=""><p id="screenshot-caption"></p></dialog>
+<dialog id="screenshot-dialog" aria-labelledby="screenshot-caption">
+  <form method="dialog"><button class="dialog-close" aria-label="Close screenshot">Close ×</button></form>
+  <img id="screenshot-image" alt="" hidden>
+  <div id="screenshot-comparison" hidden>
+    <div class="compare-views" role="group" aria-label="Barn screenshot pairs">
+      <button type="button" data-pair="barn-overview" aria-pressed="true">The murder scene</button>
+      <button type="button" data-pair="barn-detail" aria-pressed="false">Christopher, closer</button>
+    </div>
+    <div class="compare-stage" id="compare-stage" style="--split:50%" aria-busy="true">
+      <img id="compare-current" width="1440" height="900" alt="" draggable="false">
+      <img id="compare-original" class="compare-original" width="320" height="200" alt="" draggable="false">
+      <span class="compare-label current-label">Ultima Offline 7</span><span class="compare-label original-label">Original Ultima VII</span>
+      <input id="compare-slider" type="range" min="0" max="100" value="50" aria-label="Reveal Ultima Offline 7" aria-describedby="compare-help">
+      <span class="compare-divider" aria-hidden="true"><span>↔</span></span>
+      <div id="compare-loading" class="compare-loading" role="status"><span class="compare-spinner" aria-hidden="true"></span>Loading both screenshots…</div>
+      <div id="compare-error" class="compare-error" role="alert" hidden>One screenshot could not load. <button type="button" id="compare-retry">Try again</button></div>
+    </div>
+    <p id="compare-help" class="compare-help">Drag the divider, or use the arrow keys. Same saved scene, different camera perspectives.</p>
+    <div class="compare-originals"><a id="compare-u7-link" target="_blank" rel="noopener">Open U7 capture ↗</a><a id="compare-uo7-link" target="_blank" rel="noopener">Open UO7 capture ↗</a></div>
+  </div>
+  <p id="screenshot-caption"></p>
+</dialog>
 </body>
 </html>

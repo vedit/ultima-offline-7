@@ -1,13 +1,29 @@
 {
   "description": "Actual development screenshots and unchanged review images; no gameplay data",
   "assets": {
-    "site/trinsic.png": {
-      "source": "supplied-client-capture/trinsic.png",
-      "sha256": "53d8d072ad7e6b6eb1c07c09192c87001faef52635b7ac44dd0cea6c5ca666b9"
-    },
     "site/dream.png": {
       "source": "supplied-client-capture/dream.png",
       "sha256": "4627c5db5ac43789183957aa8f2ac51e1534cf08cae960c588e86aafb6146d08"
+    },
+    "site/barn-overview-u7.png": {
+      "source": "supplied-client-capture/barn-overview-u7.png",
+      "sha256": "b1f30c226eb273638b25568fdd0b8f7a3b4d8e2dba40c541b4ab3048387e974a"
+    },
+    "site/barn-overview-uo7.png": {
+      "source": "supplied-client-capture/barn-overview-uo7.png",
+      "sha256": "39087f18cad88850f2bb56a6c798afa11afa7f4bf7ff466a8046052fca8d60a8"
+    },
+    "site/barn-detail-u7.png": {
+      "source": "supplied-client-capture/barn-detail-u7.png",
+      "sha256": "9dab71d40d81ce4fe371bb250f22d4b51281118990d1b5796e501bb4d6e29f5c"
+    },
+    "site/barn-detail-uo7.png": {
+      "source": "supplied-client-capture/barn-detail-uo7.png",
+      "sha256": "91c7a365754cc8d0dfd345b7815105de511c329730999519964d3dd71b0fa08d"
+    },
+    "site/barn-captures.json": {
+      "source": "paired renderer capture receipt",
+      "sha256": "766d42dd87acebe17688fd6d957eb193f2b914f26b39d6d76dc3740ebfb6ea84"
     },
     "site/inn-original.png": {
       "source": "inn.html / inn-dining / original",
@@ -31,15 +47,15 @@
     },
     "site/home.css": {
       "source": "game/site/home.css",
-      "sha256": "8a9170ee84d75a632a1b852fd1f13da8ba8bfbf6b76ea1ddcc788e94b8067947"
+      "sha256": "e81484c0f9e0e519d6400078d75e875759b7d7110ca2a831e1fee5ed2bc69c50"
     },
     "site/home.js": {
       "source": "game/site/home.js",
-      "sha256": "8951b62231e466925e1872efb73c617efc9d2adaf296eb67abb380518b034d3f"
+      "sha256": "fc142cf08af42a63a9cb8d572e0ad27947a01cf9950a939fa7430f40e8ef8ffb"
     },
     "index.html": {
       "source": "game/site/index.html",
-      "sha256": "a0952299f24366e5274ee528f010143400890ba217b44c828f6f009e53de29af"
+      "sha256": "624efb9fee4c872e7a5d27162ff2c173f24c0ec1917943c2310ae76fb1220e0e"
     }
   }
 }
