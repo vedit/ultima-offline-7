@@ -33,7 +33,13 @@
     const error = document.getElementById('compare-error');
     const pairs = {
         'barn-overview': {title: 'The murder in Trinsic — Christopher and Inamo', description: 'The barn murder scene with both victims visible'},
-        'fellowship-interior': {title: 'Inside the Fellowship — Trinsic', description: 'The Fellowship hall interior'}
+        'fellowship-interior': {title: 'Inside the Fellowship — Trinsic', description: 'The Fellowship hall interior'},
+        'guardian-dream': {
+            title: 'The Guardian — original opening and playable dream',
+            originalAlt: 'The Guardian speaking against blue static in the original Ultima VII DOS opening cutscene.',
+            currentAlt: 'The Guardian speaks above the sleeping Avatar in the Ultima Offline 7 in-engine dream.',
+            help: 'Drag the divider, or use the arrow keys. Original opening cutscene and our playable dream adaptation.'
+        }
     };
     let activePair = 'barn-overview';
     let request = 0;
@@ -55,9 +61,10 @@
         error.hidden = true;
         for (const button of document.querySelectorAll('[data-pair]')) button.setAttribute('aria-pressed', String(button.dataset.pair === id));
         originalImage.src = `site/${id}-u7.png`;
-        originalImage.alt = `${pair.description} in the original Ultima VII renderer.`;
+        originalImage.alt = pair.originalAlt || `${pair.description} in the original Ultima VII renderer.`;
         currentImage.src = `site/${id}-uo7.png`;
-        currentImage.alt = `${pair.description} in Ultima Offline 7, with Vedit's paperdoll.`;
+        currentImage.alt = pair.currentAlt || `${pair.description} in Ultima Offline 7, with Vedit's paperdoll.`;
+        document.getElementById('compare-help').textContent = pair.help || 'Drag the divider, or use the arrow keys. Same saved scene, different camera perspectives.';
         document.getElementById('compare-u7-link').href = originalImage.src;
         document.getElementById('compare-uo7-link').href = currentImage.src;
         document.getElementById('screenshot-caption').textContent = pair.title;

@@ -20,14 +20,14 @@ def install_homepage(output, screenshots):
         provenance[name] = {'source': origin, 'sha256': hashlib.sha256(content).hexdigest()}
 
     # Require both sides of each comparison, never substitute an older screenshot.
-    pair_ids = ('barn-overview', 'fellowship-interior')
-    capture_names = ('dream.png', *(f'{pair}-{game}.png' for pair in pair_ids for game in ('u7', 'uo7')))
+    pair_ids = ('barn-overview', 'fellowship-interior', 'guardian-dream')
+    capture_names = tuple(f'{pair}-{game}.png' for pair in pair_ids for game in ('u7', 'uo7'))
     captures = {name: (screenshots / name).read_bytes() for name in capture_names}
     if any(not content.startswith(b'\x89PNG\r\n\x1a\n') for content in captures.values()):
         raise ValueError('Homepage captures must be PNG screenshots')
     paired = json.loads((screenshots / 'scene-captures.json').read_text(encoding='utf8'))
-    if {pair['id'] for pair in paired['pairs']} != set(pair_ids) or len(paired['pairs']) != 2:
-        raise ValueError('Require both saved-scene comparison pairs')
+    if {pair['id'] for pair in paired['pairs']} != set(pair_ids) or len(paired['pairs']) != len(pair_ids):
+        raise ValueError('Require the barn, Fellowship and Guardian comparison pairs')
     for pair in paired['pairs']:
         for game in ('u7', 'uo7'):
             name = f"{pair['id']}-{game}.png"
