@@ -3,7 +3,76 @@
 </style><style>.atlas-site-nav{position:static;max-width:1510px;margin:0 auto;padding:16px clamp(16px,4vw,60px);display:flex;flex-wrap:wrap;gap:10px 20px;font:14px/1.5 system-ui,sans-serif;border-bottom:1px solid #45575a}.atlas-site-nav a{color:#aadad5}.atlas-site-nav strong{color:#edf1e8;margin-right:auto}.atlas-site-note{font:12px/1.5 system-ui,sans-serif;color:#b5c5c2;margin:24px 0}.atlas-site-note a{color:#aadad5}</style><nav class="atlas-site-nav" aria-label="Atlas pages"><strong>Ultima Offline 7</strong><a href="index.html">Weapons & armour</a> <a href="atlas.html">Full catalog</a> <a href="homes.html">Homes</a> <a href="inn.html">Inn</a> <a href="public-interiors.html">Public interiors</a> <a href="shields.html">Shields</a> <a href="https://github.com/vedit/ultima-offline-7">GitHub</a></nav><main><header><h1>Trinsic asset atlas</h1><p id="intro"></p></header>
 <details><summary>Town boundary, frame coverage and sources</summary><p>The gold outline encloses both town gates, all walled districts, and their immediate approaches in the Steam FORGE starting world. Native coordinates run from X 928–1119 and Y 2080–2351. The pink outline marks the earlier atlas.</p><img src="extent.png" alt="Trinsic terrain overview with the complete extent in gold and the previous area in pink"><p>Town records include chunk terrain, fixed objects, world objects, nested contents, NPC bodies and possessions, scheduled visitors, local spawner targets, and local vendor offers verified in the Forge Usecode binary. Dell specifies shapes with wildcard frames. Frame zero illustrates these offers. Apollonia specifies individual frames. Contained items use their owner’s position. Scheduled visitors use the first recorded in-town destination. Spawner and schedule entries identify potential appearances. Their reference counts are independent of how often they appear in play.</p><p>“All frames” also includes every stored frame of the town’s shapes and the reflected object-frame variants supported by the sprite format. “Other frame” identifies an available variant without an initial-state reference. Named door transitions are listed separately. The atlas covers world and inventory sprites from SHAPES.VGA. Runtime scripts can introduce further shapes, and UI, portraits, audio and spell effects use separate assets.</p><p>Source frames use the daytime VGA palette. Each comparison fits its own box. UO land IDs, static IDs and animation bodies are separate namespaces. Body references use stock animation poses. “Custom art” marks a visual distinction the current stock recipe cannot communicate. Wearables match by item type and equipment slot. Their thumbnails identify the UO item. Stock assemblies use existing sprites, tile offsets or hues. Human entries use an equipped stock body. “Review substitute” marks alternate frames or multi-state props where the candidate still needs a visual state check. “Stock candidate” records a proposed substitute. Object alignment, seams, hinges, layering and animations still need an in-client check.</p><p><a href="mapping.csv">Download all mappings</a> · <a href="custom-art.csv">Remaining custom artwork</a> · <a href="equipment.csv">Wearable item IDs and slots</a> · <a href="outfits.csv">Outfit recipes</a> · <a href="stock-study.html">Outfits and dungeon pieces</a> · <a href="references.csv">Source references and coordinates</a> · <a href="sources.json">Input fingerprints and counts</a></p></details>
 <p><a href="homes.html">Homes and interior feedback</a> · <a href="inn.html">Approved Inn</a> · <a href="public-interiors.html">Next interiors and serpentine guard</a> · <a href="armory.html">Weapons, shields and armor</a> · <a href="gargoyles.html">Inamo and the gargoyle bodies</a> · <a href="revised-matches.html">View the 18 approved stock matches</a> · <a href="rake.png">View the approved stock rake</a> · <a href="stock-study.html">View the stock outfits and dungeon construction pieces</a></p><nav><label>Coverage<select id="scope"><option value="town">Town records & door transitions</option><option value="Town records">Town records only</option><option value="Other frame">Other frames only</option><option value="">All frames</option></select></label><label>Category<select id="category"><option value="">All categories</option></select></label><label>Art decision<select id="grade"><option value="">All decisions</option></select></label><label>U7 art<select id="sourceView"><option value="detail">Upscaled 4×</option><option value="source">Original VGA</option></select></label><label>Find asset<input type="search" id="search" placeholder="Name, 453/4, or UO ID"></label></nav>
-<div class="pages"><button id="prev">Previous</button><button id="next">Next</button><output id="count" aria-live="polite"></output></div><section id="cards"></section><div class="pages" id="bottom"><button id="back">Previous</button><button id="forward">Next</button></div><p class="atlas-site-note">Public review snapshot. Candidate and approval labels describe artwork review, not guaranteed in-game coverage. Ultima VII and Ultima Online artwork belongs to its respective rights holders. <a href="publication.json">Snapshot details</a></p></main><script src="catalog.js"></script><script>
+<div class="pages"><button id="prev">Previous</button><button id="next">Next</button><output id="count" aria-live="polite"></output></div><style>.atlas-loading-status{display:flex;align-items:center;gap:10px;min-height:28px;margin:16px 0;color:#c4d1ce;font:14px/1.5 system-ui,sans-serif}
+.atlas-loading-status[hidden]{display:none}
+.atlas-loading-status::before,.stage.atlas-image-loading::after{content:"";width:18px;height:18px;border:2px solid #536b6b;border-top-color:#b5d9bc;border-radius:50%;animation:atlas-loading-spin .85s linear infinite;flex:none}
+.atlas-loading-status.atlas-loading-error::before{display:none}
+.atlas-card-placeholder{height:350px;border:1px solid #4a5b5c;border-radius:8px;padding:18px;background:#263338}
+.atlas-card-placeholder::before,.atlas-card-placeholder::after{content:"";display:block;border-radius:4px;background:linear-gradient(100deg,#334247 20%,#435a5d 45%,#334247 70%);background-size:240% 100%;animation:atlas-loading-sheen 1.8s ease-in-out infinite}
+.atlas-card-placeholder::before{height:22px;width:60%;margin:8px 0 22px}
+.atlas-card-placeholder::after{height:220px}
+.stage.atlas-image-loading,.stage.atlas-image-error{position:relative}
+.stage.atlas-image-loading::after,.stage.atlas-image-error::after{position:absolute;left:50%;top:50%;margin:-10px 0 0 -10px;pointer-events:none}
+.stage.atlas-image-loading img,.stage.atlas-image-error img{opacity:0}
+.stage.atlas-image-error::after{content:"Image unavailable";left:8px;right:8px;top:50%;margin:-10px 0 0;text-align:center;color:#c4d1ce;font:12px/1.5 system-ui,sans-serif}
+@keyframes atlas-loading-spin{to{transform:rotate(360deg)}}
+@keyframes atlas-loading-sheen{from{background-position:100% 0}to{background-position:-100% 0}}
+@media(prefers-reduced-motion:reduce){.atlas-loading-status::before,.atlas-card-placeholder::before,.atlas-card-placeholder::after,.stage.atlas-image-loading::after{animation:none}}
+</style><div id="atlas-loading-status" class="atlas-loading-status" role="status">Loading item cards…</div><section id="cards" aria-busy="true"><div class="atlas-card-placeholder" aria-hidden="true"></div><div class="atlas-card-placeholder" aria-hidden="true"></div><div class="atlas-card-placeholder" aria-hidden="true"></div></section><noscript><style>.atlas-loading-status,.atlas-card-placeholder{display:none}</style><p>Enable JavaScript to view the item cards.</p></noscript><script>// Installed before the large catalog script, so the first paint has feedback.
+(() => {
+    const cards = document.getElementById('cards');
+    const status = document.getElementById('atlas-loading-status');
+    let rendered = false;
+    let scheduled = false;
+    let failedToRender = false;
+
+    function update() {
+        scheduled = false;
+        if (!rendered || failedToRender) return;
+        let pending = 0;
+        for (const stage of cards.querySelectorAll('.stage')) {
+            const images = [...stage.querySelectorAll('img[src]')];
+            const waiting = images.some(image => !image.complete);
+            const failed = !waiting && images.some(image => !image.naturalWidth);
+            stage.classList.toggle('atlas-image-loading', waiting);
+            stage.classList.toggle('atlas-image-error', failed);
+            stage.setAttribute('aria-busy', String(waiting));
+            if (waiting) pending++;
+        }
+        cards.setAttribute('aria-busy', String(pending > 0));
+        status.hidden = pending === 0;
+        if (pending) status.textContent = 'Loading item images…';
+    }
+
+    function schedule() {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(update);
+    }
+
+    // Observe replacement cards, pagination, original-frame changes and the
+    // animation toggle. Cached images need the same check as network images.
+    new MutationObserver(records => {
+        if (records.some(record => record.type === 'childList' && record.target === cards)) {
+            rendered = true;
+        }
+        schedule();
+    }).observe(cards, {childList: true, subtree: true, attributes: true, attributeFilter: ['src']});
+    cards.addEventListener('load', schedule, true);
+    cards.addEventListener('error', schedule, true);
+    document.addEventListener('DOMContentLoaded', () => {
+        if (rendered) return;
+        failedToRender = true;
+        cards.replaceChildren();
+        status.classList.add('atlas-loading-error');
+        status.textContent = 'The item cards could not load. Please reload the page.';
+        // Disconnect the initial placeholder from normal loading completion.
+        rendered = true;
+        status.hidden = false;
+        cards.setAttribute('aria-busy', 'false');
+    }, {once: true});
+})();
+</script><div class="pages" id="bottom"><button id="back">Previous</button><button id="forward">Next</button></div><p class="atlas-site-note">Public review snapshot. Candidate and approval labels describe artwork review, not guaranteed in-game coverage. Ultima VII and Ultima Online artwork belongs to its respective rights holders. <a href="publication.json">Snapshot details</a></p></main><script src="catalog.js"></script><script>
 const el=id=>document.getElementById(id), fields=['scope','category','grade','search'], size=30;let page=0,filtered=[];
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 for(const [id,key] of [['category','category'],['grade','status']])for(const t of [...new Set(CATALOG.map(r=>r[key]))].sort())el(id).add(new Option(t,t));

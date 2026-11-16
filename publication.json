@@ -1,5 +1,5 @@
 {
-  "published_at": "2026-11-15T23:46:06.847012+00:00",
+  "published_at": "2026-11-15T23:57:33.120083+00:00",
   "source_updated_at": "2026-11-15T14:12:47.759405+00:00",
   "rows": 7141,
   "pages": [
@@ -15,7 +15,7 @@
     "stock-study.html"
   ],
   "files": 12337,
-  "bytes": 113106780,
+  "bytes": 113120502,
   "landing_page": "armory.html",
   "review_snapshot": {
     "recipe": "atlas-reviews-2026-11-16",
@@ -136,8 +136,8 @@
   "source_catalog_sha256": "79fb3f725c6433a861a44f2bacc9e1418307fd1148adc745174f0557de2f624e",
   "scope": "Linked review galleries and catalog thumbnails; runtime files and unlinked old revisions excluded",
   "output_sha256": {
-    "armory.html": "f7df1a4ef528346a38c59e62cea93bfeffee235b2a04ccecc1b9a3cf3d3c521b",
-    "atlas.html": "7a10c8203ba430bbd44fb2c7ca1d640e95e4436c250bfc0aee671ef7fd0b3948",
+    "armory.html": "32a87998e40dbeb0774e8159bdbde7f99bc98cab75ec6df49962e80493eb0e3b",
+    "atlas.html": "3a938d8d000f432744a85cd7c4632312f0566acca5e9fe303f03ed6a24cc68ba",
     "catalog.js": "79fb3f725c6433a861a44f2bacc9e1418307fd1148adc745174f0557de2f624e",
     "custom-art.csv": "2844efb7faef9c0971955a92a456eb89d4e2560d4fb5f8552a02110894408ea6",
     "equipment.csv": "4db814baaec83f64d92f3357ca18a0c954f0820fd0fb5e884eed896590983136",
@@ -146,7 +146,7 @@
     "gargoyles.html": "25e92ae9a0dba177a23b20e0544295da5d699adfd986d439abcec9b0b6f60e0f",
     "homes.html": "b3fe777235e614fccbb7a591c6857b3507b57ad73e585f98ae3818756760691c",
     "inamo.png": "b03aca223b2c382e217dd67f0bb9a61af33313719baecc58e8894acda21335ea",
-    "index.html": "f7df1a4ef528346a38c59e62cea93bfeffee235b2a04ccecc1b9a3cf3d3c521b",
+    "index.html": "32a87998e40dbeb0774e8159bdbde7f99bc98cab75ec6df49962e80493eb0e3b",
     "inn.html": "72782f3d9651562772ae909b19701ba274061976d3032f3af1ae0da8349f73e8",
     "mapping.csv": "27b983afdcb813cd7d456ff51f08f83d6c7529dfc26a3628a2f31fc4e825efed",
     "outfits.csv": "ae3dcaeb34c50873bf232aa0eba82b8eca3a11e49c977fc5a676dea3114e6664",
