@@ -1,0 +1,45 @@
+{
+  "description": "Actual development screenshots and unchanged review images; no gameplay data",
+  "assets": {
+    "site/trinsic.png": {
+      "source": "supplied-client-capture/trinsic.png",
+      "sha256": "53d8d072ad7e6b6eb1c07c09192c87001faef52635b7ac44dd0cea6c5ca666b9"
+    },
+    "site/dream.png": {
+      "source": "supplied-client-capture/dream.png",
+      "sha256": "4627c5db5ac43789183957aa8f2ac51e1534cf08cae960c588e86aafb6146d08"
+    },
+    "site/inn-original.png": {
+      "source": "inn.html / inn-dining / original",
+      "sha256": "edbd865522124260db8a6d8cc4afa4672494cf03feea9e72e396ad88c51d13b7"
+    },
+    "site/inn-current.png": {
+      "source": "inn.html / inn-dining / current",
+      "sha256": "a080dd996e34214c62eaf92f76a1885c8911dc2243b0ff88b223d4bb0aab9744"
+    },
+    "site/glass-sword.png": {
+      "source": "armory.html / 604 / ground",
+      "sha256": "0f1aec4256d2209bb9fa3e3a8fcf82e440f8ba273630948720cef83d63aab179"
+    },
+    "site/serpentine-sword.png": {
+      "source": "armory.html / 637 / ground",
+      "sha256": "400bb2e4a8e2c4ff1c9135b199520e66f735a17546dcf6d3ea02029dcbab8fd0"
+    },
+    "site/magic-shield.png": {
+      "source": "armory.html / 663 / ground",
+      "sha256": "b6c7c0a455c493110cd681a3748e0001f1158dad5cffa6cc6a416c6bd7460dfa"
+    },
+    "site/home.css": {
+      "source": "game/site/home.css",
+      "sha256": "8a9170ee84d75a632a1b852fd1f13da8ba8bfbf6b76ea1ddcc788e94b8067947"
+    },
+    "site/home.js": {
+      "source": "game/site/home.js",
+      "sha256": "8951b62231e466925e1872efb73c617efc9d2adaf296eb67abb380518b034d3f"
+    },
+    "index.html": {
+      "source": "game/site/index.html",
+      "sha256": "a0952299f24366e5274ee528f010143400890ba217b44c828f6f009e53de29af"
+    }
+  }
+}
