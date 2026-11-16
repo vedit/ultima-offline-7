@@ -1,5 +1,5 @@
 {
-  "published_at": "2026-11-16T03:55:37.941585+00:00",
+  "published_at": "2026-11-16T04:07:34.422771+00:00",
   "source_updated_at": "2026-11-15T14:12:47.759405+00:00",
   "rows": 7141,
   "pages": [
@@ -17,7 +17,7 @@
     "stock-study.html"
   ],
   "files": 14128,
-  "bytes": 108253818,
+  "bytes": 108253817,
   "landing_page": "index.html",
   "review_snapshot": {
     "recipe": "atlas-reviews-2026-11-16",
@@ -3708,7 +3708,7 @@
     "catalog.js": "79fb3f725c6433a861a44f2bacc9e1418307fd1148adc745174f0557de2f624e",
     "custom-art.csv": "2844efb7faef9c0971955a92a456eb89d4e2560d4fb5f8552a02110894408ea6",
     "documentation-manifest.json": "49e4b1f3a9a6df5514abb7ea41f8650053e4204c3378ad5b539ecd8ce07b0b46",
-    "documentation.css": "ad9701d39547c2be6607a5431e2c541dd5da66abf56860dce2994d289cd6be7c",
+    "documentation.css": "59bc73d1aa61d5224f5b168b45b7de0be267b111666f8b222f70b603dbc025df",
     "documentation.js": "1024d78a5a77a80a2b9230a340b210a1054c58b3a1ea109910bf2154a602855e",
     "equipment.csv": "4db814baaec83f64d92f3357ca18a0c954f0820fd0fb5e884eed896590983136",
     "extent.png": "d5bec0bff06f9deda801c0feeb1b726070421b1eb6cdf06e605e8f8ed950aaf6",
