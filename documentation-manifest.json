@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "approved-documentation-2026-11-16",
+  "version": "approved-documentation-2026-11-16-confirmed",
   "policy": "Pinned approved snapshots; no browser feedback, modification-time selection or game-file writes. Source IDs identify retained variants.",
   "approvals": {
     "armory": {
@@ -47,12 +47,18 @@
     "rake": {
       "source": "atlas/revised-matches.html and atlas/rake.png",
       "evidence": "Existing approved stock-rake gallery; retained unchanged."
+    },
+    "confirmed-2026-11-16": {
+      "conversation": "atlas",
+      "date": "2026-11-16",
+      "evidence": "User confirmed the five withheld equipment entries and revised Fellowship column bottoms: “Those mentioned are all actually approved. so continue with it”. Applies to the existing revisions only; the new chainmail plate-arm proposal is separate."
     }
   },
   "source_sha256": {
     "homes-r5": "02c63e97817027b63d5ae0351eb826fb70d3028cd779f2b15beb4db8e3c82b89",
     "inn-approved": "4db8450fb40674a087adfae259a9733e3c8fe275d33cd1446ae4ca4a9b55aadc",
     "interiors-r4": "fd7a142bedadbf18c75f2a36c35ecd427986bf8ff4011c8c72a05be4ac81d2a0",
+    "interiors-r5": "f6605c5e0713e6884c97eff64b898829b15b9425e9ba9396d1e7453c2487302f",
     "dell/dell-workshop-original.png": "b5d39f11b34f321683369c4f8c57f397d7644021fffe48068f9ee84a53e4442e",
     "dell/dell-corner-lever-current.png": "e88c5131df756bc72bf1c82ee6d7786fd0a4e0cd6d18e617c757e7b35e9ab62b",
     "dell/lever-comparison": "43862ed67a62cbac08e2fbb742a8624fcaf4566f33b1093a2d0a6b4433ae0264"
@@ -4414,17 +4420,18 @@
       "room": "Western main hall",
       "group": "public",
       "category": "Interior",
-      "source": "interiors-r4",
+      "source": "interiors-r5",
       "source_id": "fellowship-hall",
       "approval": [
-        "interiors-r4"
+        "interiors-r4",
+        "confirmed-2026-11-16"
       ],
-      "description": "Deep red furnishings and upholstered benches frame the offering shrine. The wall drapes preserve the original hall’s rich palette.",
+      "description": "Deep red furnishings and upholstered benches frame the offering shrine. The wall drapes preserve the original hall’s rich palette. The muted ivory column bases follow the same projected faces as their capitals.",
       "representation": "Game capture · approved build",
       "capturedAt": "2026-11-15T20:32:21.503168+00:00",
       "images": {
         "original": "c40339e99f8bd0cd6f29e0967a8f3cdbf3fa6fa1971a1c9df3e208b9f6c3d6d2",
-        "current": "c3ad89463c69804720486836724e5e4ab050d46d54869d26bc5f71aba7dd6f97"
+        "current": "b1e503bbdd9c682319e8b5f853fcbadc3c115a5f8b4561cf25eabc5c979c8e2f"
       }
     },
     {
@@ -4434,17 +4441,18 @@
       "room": "Entrance and seating",
       "group": "public",
       "category": "Interior",
-      "source": "interiors-r4",
+      "source": "interiors-r5",
       "source_id": "fellowship-east",
       "approval": [
-        "interiors-r4"
+        "interiors-r4",
+        "confirmed-2026-11-16"
       ],
-      "description": "Matching columns flank the entrance. The benches face the shrine and the wall drapes follow the original arrangement.",
+      "description": "Matching columns flank the entrance. The benches face the shrine and the wall drapes follow the original arrangement. The muted ivory column bases follow the same projected faces as their capitals.",
       "representation": "Game capture · approved build",
       "capturedAt": "2026-11-15T20:32:21.503168+00:00",
       "images": {
         "original": "7f2f4d5965757ac834cbd93ee637aa3c695c58f2ce56afcfa010c0107a9f3b2b",
-        "current": "c91352db0f36342551615c1e73833d1b85b603933ca096535465234d0fb2e6e1"
+        "current": "a1c9346364a173d3d37a599ebade7bd05debc287a2b0e771e5313bd31fb9bb9b"
       }
     },
     {
@@ -4576,38 +4584,141 @@
       "images": {
         "current": "43862ed67a62cbac08e2fbb742a8624fcaf4566f33b1093a2d0a6b4433ae0264"
       }
-    }
-  ],
-  "withheld_reference_entries": [
+    },
     {
       "id": "equipment-638-0",
       "source_id": "638/0",
+      "source": "equipment-reconciled",
+      "shape": "638/0",
+      "type": "equipment",
+      "category": "Armor",
       "name": "Caddellite Helmet",
-      "reason": "Earlier reference entry without a version-specific approval receipt in the selected review set; retained in Technical reference."
+      "description": "Caddellite helmet with its crystalline blue crest, fitted to the UO paperdoll.",
+      "approval": [
+        "confirmed-2026-11-16"
+      ],
+      "images": {
+        "frames": [
+          "408bc043578db8a5f81a4566de9b88a449ea1d073a6c8d0d3562223b18e3408e"
+        ],
+        "detailFrames": [
+          "b6de6f59f63d5505fbced5ee967920f51e01f8ed5d34c2b4d6ff84f09dffe43e"
+        ],
+        "ground": "7742791f2678b03557e79594dcbc7f53cf0a3e90cabdcfc60d4f7c2c5cccccc7",
+        "worn": "77b010f7cc75ca1fbd8d29d0ea40f811b66d3af206b24f53628d1adc9ef87ee4"
+      }
     },
     {
       "id": "equipment-885-0",
       "source_id": "885/0",
+      "source": "equipment-reconciled",
+      "shape": "885/0",
+      "type": "equipment",
+      "category": "Weapons",
       "name": "Fellowship Staff",
-      "reason": "Earlier reference entry without a version-specific approval receipt in the selected review set; retained in Technical reference."
+      "description": "The Fellowship emblem crowns a wooden staff, with matching ground and equipped artwork.",
+      "approval": [
+        "confirmed-2026-11-16"
+      ],
+      "images": {
+        "frames": [
+          "a426df6d6ceca89c7abaf33e74342e74cdaa83a1cc0e30bba8a5484aede9e7fb",
+          "6811729b91013e65498e0be912e1b95fef69b55af05a0e13762f0a3b9118ec03",
+          "dcb7fa7d376a5f57f0786a46a0fa28dba433447b591399068de3c3a172b8cdd5",
+          "7af4690fe25104f8e8b2d809482826852aa11107f3273bc4d43c6b9b74ae6a36",
+          "c6a2789e2f9cef397b43b39ccd443113072caf244b90bb6acdb853a3a792b51c"
+        ],
+        "detailFrames": [
+          "3a0346fa8637c02ec91268130da3ccc89d28e1dc011ef4a4627f8fafd3f2dc41",
+          "c078bd377e7da4cdaf606d9793b068e3e36dda0b3db933be2ff8f30f958e842e",
+          "7a7e0beb66a9e2d5815b30c15e43e7209c411a3c2289d6b208040fa935a6fe0e",
+          "93c27333a4346043cbf052cc9a20e3e6aa22bae639e9456cbfd0c295bfedbf28",
+          "0057321ce1556785406901b49396cef54b196e39f51afaf19b2599e79c01d524"
+        ],
+        "ground": "971d9473e90f852134e0d8c6525847946d93ed87b99296e30d3d03a12218471f",
+        "worn": "bab434c24acb9a45931d5823a349add271493af194adb05f9be7a78b06efcbee"
+      }
     },
     {
       "id": "equipment-541-0",
       "source_id": "541/0",
+      "source": "equipment-reconciled",
+      "shape": "541/0",
+      "type": "equipment",
+      "category": "Armor",
       "name": "great helm",
-      "reason": "Earlier reference entry without a version-specific approval receipt in the selected review set; retained in Technical reference."
+      "description": "Closed steel great helm with a horned silhouette and slit visor.",
+      "approval": [
+        "confirmed-2026-11-16"
+      ],
+      "images": {
+        "frames": [
+          "aec243e144ddc6c0f64e306235a324dd743d87a470d1b42da73ea3af61b704c8"
+        ],
+        "detailFrames": [
+          "c1170953034b252d0f6da392f9515cfae0ddf835a94991d52efee24c3e1033a0"
+        ],
+        "ground": "edadc1c729b9482d095cc9663f095dbc0bf412bab902eba174f75c2422273629",
+        "worn": "012f3cc46cbce005a048c9017bc36c6b8703bb36f224f49a8f9c43bbc6f9b086"
+      }
     },
     {
       "id": "equipment-609-0",
       "source_id": "609/0",
+      "source": "equipment-reconciled",
+      "shape": "609/0",
+      "type": "equipment",
+      "category": "Shields",
       "name": "kite shield",
-      "reason": "Earlier reference entry without a version-specific approval receipt in the selected review set; retained in Technical reference."
+      "description": "The regular stock UO kite shield, retaining its native floor and equipped perspectives.",
+      "approval": [
+        "confirmed-2026-11-16"
+      ],
+      "images": {
+        "frames": [
+          "96acb88440684c4c64b221d321377b29780211313345402064b651eaff0c9732",
+          "dc1da4278a26ad98f42b8b19e0ae8951b4b0e71fa1241e71caccafaffaecd6ec",
+          "4b91c17f3d27fc9b319656be0326574740474d263bb0b476aa125197ead7c5d9"
+        ],
+        "detailFrames": [
+          "7021255e1b6201dfdf3c32176dc903ddf945b330bce1ede768961504b33457c6",
+          "10bdaee522a80bb4ca14da9be0999932efc83dc581a7a93e12c923a2414076bd",
+          "efb65d1bfba38c25fe15e00de011c1824d77cf5b1401bdb41080e807627d455c"
+        ],
+        "ground": "1407be2e3358f116d48d2a014f65c1c9c60e6d3ff96bc6e6554127933bd8feed",
+        "worn": "0f8ada33dae091e25677153c0ef20c4f2e7eff450169638d6291c572fb1539b1"
+      }
     },
     {
       "id": "equipment-591-0",
       "source_id": "591/0",
+      "source": "equipment-reconciled",
+      "shape": "591/0",
+      "type": "equipment",
+      "category": "Weapons",
       "name": "main gauche",
-      "reason": "Earlier reference entry without a version-specific approval receipt in the selected review set; retained in Technical reference."
+      "description": "Main gauche with a swept brass guard, steel blade and brown grip.",
+      "approval": [
+        "confirmed-2026-11-16"
+      ],
+      "images": {
+        "frames": [
+          "8914a7b8c073df2a45d00d24c58ac8c11151771b29a242ad641bc842a8baa875",
+          "cbac6ea49a872ea976d1701e5426e2947c98303e3542f1514e440a24737ac26b",
+          "da063cbc4a0cc83a39a54b8c4c0c14099ddb332fb64af690fe165f89b69bdcbc",
+          "c2e27429292dcb73dee1ee2c9d32ffb2b3c82d719d138bf625ecfdd4fcc1b952",
+          "da98469168b703ec89e98192c9be7a1cf60ca204b787a3a41c9536724e9762a0"
+        ],
+        "detailFrames": [
+          "cce075af88d749b5c6c0a2df2acd14bae610a6ecf5c752aa5e237e76b6e2779e",
+          "14dab6939a3c6c0533c7b19eb2e32e230fa177a4880f69f40603794b3f6424f8",
+          "b563e4235fc9ce853188dbf5b37a0b91b27404e6ab27aa5de3f149e670010b3a",
+          "6d5869a1a1197bd9133b195054f860a2238b11227f46cf7f1bd2f4837cd45cee",
+          "5dad1559b21728b698010ebb42c8b39d26beafbc77a09e489776a4aaf8fdae5e"
+        ],
+        "ground": "2b5104c094f16fc712fbc8a4b42e8654c6873845645f58f448070261ee42c956",
+        "worn": "193d10cbe5da3960210696c8c22efb392e144bf409b8f6f27354d67ae2e217db"
+      }
     }
   ],
   "aliases": {
@@ -4630,5 +4741,6 @@
     "inn.html": "interiors.html?group=inn",
     "public-interiors.html": "interiors.html?group=public",
     "shields.html": "armor.html?category=Shields"
-  }
+  },
+  "withheld_reference_entries": []
 }

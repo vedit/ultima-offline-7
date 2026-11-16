@@ -10,7 +10,7 @@
     const node = (tag, text, cls) => {const n = document.createElement(tag); if(text !== undefined) n.textContent = text; if(cls) n.className = cls; return n;};
     const button = (text, action) => {const b = node('button', text); b.type = 'button'; b.onclick = action; return b;};
     const link = (text, url) => {const a = node('a', text); a.href = url; return a;};
-    const searchable = c => [c.name, c.room, c.shape, c.description, groups[c.group], ...(c.details || []).map(d => d.name+' '+d.description)].join(' ').toLocaleLowerCase();
+    const searchable = c => [c.name, c.family, c.room, c.shape, c.description, groups[c.group], ...(c.details || []).map(d => d.name+' '+d.description)].join(' ').toLocaleLowerCase();
 
     function locationState() {
         const url = new URL(location.href), hash = decodeURIComponent(url.hash.slice(1));
@@ -43,6 +43,7 @@
     function zoom(src, title, trigger) {
         lastFocus = trigger;
         $('zoom-title').textContent = title;
+        $('zoom').classList.toggle('paper-zoom', trigger.classList.contains('paper'));
         const img = $('zoom-image'); img.alt = title; img.src = src;
         img.style.width = ''; img.style.maxWidth = '100%';
         $('zoom').showModal();
@@ -67,7 +68,7 @@
     }
     function equipmentCard(c) {
         const a = node('article'); a.id = c.id;
-        const head = node('header'), title = node('div'); title.append(node('h2', c.name), node('small', c.category));
+        const head = node('header'), title = node('div'); title.append(node('h2', c.name), node('small', c.family || c.category));
         const anchor = link('U7 '+c.shape, '#'+c.id); anchor.className = 'permalink';
         head.append(title, anchor); a.append(head);
         const frameBar = node('div', undefined, 'frame'), comparison = node('div', undefined, 'comparison');
@@ -133,7 +134,12 @@
             for(const section of data.mode === 'armory' ? ['Weapons','Ammunition'] : ['Armor','Shields','Boots','Accessories']) {
                 const list = matches.filter(c=>c.category===section); if(!list.length)continue;
                 const heading = node('h2',section,'section-heading'); heading.id = section.toLowerCase();
-                container.append(heading,...list.map(equipmentCard));
+                container.append(heading);
+                if (section === 'Weapons') {
+                    for (const family of new Set(list.map(c=>c.family))) {
+                        container.append(node('h3', family, 'family-heading'), ...list.filter(c=>c.family===family).map(equipmentCard));
+                    }
+                } else container.append(...list.map(equipmentCard));
             }
         }
         if(!matches.length)container.append(node('p','No matches. Clear the search or choose another category.','empty'));
