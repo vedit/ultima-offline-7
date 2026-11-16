@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Interiors · Trinsic atlas</title><link rel="stylesheet" href="documentation.css"></head><body class="rooms"><a class="skip" href="#main">Skip to content</a><nav class="atlas-site-nav" aria-label="Main navigation"><strong>Ultima Offline 7</strong><a href="index.html">Home</a><a href="armory.html">Weapons &amp; Ammo</a><a href="armor.html">Armor</a><a href="interiors.html" aria-current="page">Interiors</a></nav><div class="secondary"><a href="atlas.html">Technical reference</a> · <a href="https://github.com/vedit/ultima-offline-7">GitHub</a></div><main id="main"><header><h1>Interiors</h1><p>Trinsic rooms in the original Ultima VII and the UO adaptation. Game captures and artwork details are labeled separately.</p></header><nav class="tabs" aria-label="Interior groups" id="groups"></nav><div class="controls"><label>Search all interiors<input id="search" type="search" placeholder="Room, resident or building"></label></div><p id="results" role="status" aria-live="polite"></p><nav id="room-links" class="jump" aria-label="Rooms"></nav><style>.atlas-loading-status{display:flex;align-items:center;gap:10px;min-height:28px;margin:16px 0;color:#c4d1ce;font:14px/1.5 system-ui,sans-serif}
+.atlas-loading-status[hidden]{display:none}
+.atlas-loading-status::before,.atlas-image-loading::after{content:"";width:18px;height:18px;border:2px solid #536b6b;border-top-color:#b5d9bc;border-radius:50%;animation:atlas-loading-spin .85s linear infinite;flex:none}
+.atlas-loading-status.atlas-loading-error::before{display:none}
+.atlas-card-placeholder{height:350px;border:1px solid #4a5b5c;border-radius:8px;padding:18px;background:#263338}
+.atlas-card-placeholder::before,.atlas-card-placeholder::after{content:"";display:block;border-radius:4px;background:linear-gradient(100deg,#334247 20%,#435a5d 45%,#334247 70%);background-size:240% 100%;animation:atlas-loading-sheen 1.8s ease-in-out infinite}
+.atlas-card-placeholder::before{height:22px;width:60%;margin:8px 0 22px}
+.atlas-card-placeholder::after{height:220px}
+.atlas-image-loading,.atlas-image-error{position:relative}
+.image-button.atlas-image-loading,.image-button.atlas-image-error{min-height:220px}
+.atlas-image-loading::after,.atlas-image-error::after{position:absolute;left:50%;top:50%;margin:-10px 0 0 -10px;pointer-events:none}
+.atlas-image-loading img,.atlas-image-error img{opacity:0}
+.atlas-image-error::after{content:"Image unavailable";left:8px;right:8px;top:50%;margin:-10px 0 0;text-align:center;color:#c4d1ce;font:12px/1.5 system-ui,sans-serif}
+@keyframes atlas-loading-spin{to{transform:rotate(360deg)}}
+@keyframes atlas-loading-sheen{from{background-position:100% 0}to{background-position:-100% 0}}
+@media(prefers-reduced-motion:reduce){.atlas-loading-status::before,.atlas-card-placeholder::before,.atlas-card-placeholder::after,.atlas-image-loading::after{animation:none}}
+</style><div id="atlas-loading-status" class="atlas-loading-status" role="status">Loading room comparisons…</div><section id="homes" data-atlas-loading aria-busy="true"><div class="atlas-card-placeholder" aria-hidden="true"></div><div class="atlas-card-placeholder" aria-hidden="true"></div><div class="atlas-card-placeholder" aria-hidden="true"></div></section><noscript><style>.atlas-loading-status,.atlas-card-placeholder{display:none}</style><p>Enable JavaScript to view the item cards.</p></noscript><script>// Installed before the large catalog script, so the first paint has feedback.
+(() => {
+    const cards = document.querySelector('[data-atlas-loading]');
+    const status = document.getElementById('atlas-loading-status');
+    let rendered = false;
+    let scheduled = false;
+    let failedToRender = false;
+
+    function update() {
+        scheduled = false;
+        if (!rendered || failedToRender) return;
+        let pending = 0;
+        for (const stage of cards.querySelectorAll('.stage, .image-button')) {
+            const images = [...stage.querySelectorAll('img[src]')];
+            const waiting = images.some(image => !image.complete);
+            const failed = !waiting && images.some(image => !image.naturalWidth);
+            stage.classList.toggle('atlas-image-loading', waiting);
+            stage.classList.toggle('atlas-image-error', failed);
+            stage.setAttribute('aria-busy', String(waiting));
+            if (waiting) pending++;
+        }
+        cards.setAttribute('aria-busy', String(pending > 0));
+        status.hidden = pending === 0;
+        if (pending) status.textContent = 'Loading preview images…';
+    }
+
+    function schedule() {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(update);
+    }
+
+    // Observe replacement cards, pagination, original-frame changes and the
+    // animation toggle. Cached images need the same check as network images.
+    new MutationObserver(records => {
+        if (records.some(record => record.type === 'childList' && record.target === cards)) {
+            rendered = true;
+        }
+        schedule();
+    }).observe(cards, {childList: true, subtree: true, attributes: true, attributeFilter: ['src']});
+    cards.addEventListener('load', schedule, true);
+    cards.addEventListener('error', schedule, true);
+    document.addEventListener('DOMContentLoaded', () => {
+        if (rendered) return;
+        failedToRender = true;
+        cards.replaceChildren();
+        status.classList.add('atlas-loading-error');
+        status.textContent = 'These previews could not load. Please reload the page.';
+        // Disconnect the initial placeholder from normal loading completion.
+        rendered = true;
+        status.hidden = false;
+        cards.setAttribute('aria-busy', 'false');
+    }, {once: true});
+})();
+</script><footer class="site-note">Ultima VII and Ultima Online artwork belongs to its respective rights holders. <a href="documentation-manifest.json">Selected versions and provenance</a></footer></main><dialog id="zoom" aria-labelledby="zoom-title"><div class="dialog-head"><strong id="zoom-title"></strong><div class="zoom-controls" role="group" aria-label="Image size"><button data-zoom="fit">Fit</button><button data-zoom="1">1×</button><button data-zoom="2">2×</button><button data-zoom="4">4×</button></div><button id="close-zoom">Close</button></div><div class="zoom-stage"><img id="zoom-image" alt=""></div></dialog><script src="interiors-data.js"></script><script src="documentation.js"></script></body></html>

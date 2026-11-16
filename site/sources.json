@@ -38,7 +38,7 @@
       "sha256": "400bb2e4a8e2c4ff1c9135b199520e66f735a17546dcf6d3ea02029dcbab8fd0"
     },
     "site/magic-shield.png": {
-      "source": "armory.html / 663 / ground",
+      "source": "armor.html / 663 / ground",
       "sha256": "b6c7c0a455c493110cd681a3748e0001f1158dad5cffa6cc6a416c6bd7460dfa"
     },
     "site/home.css": {
@@ -51,7 +51,7 @@
     },
     "index.html": {
       "source": "game/site/index.html",
-      "sha256": "338fcfa9ecf13d71abbec838bcfcf42c38f464ec1179c19c8b88c85093fe9be4"
+      "sha256": "3bb5910937d81ec8ed0c9d3bb107d9cf136c29711361cd6477a176aad6745521"
     }
   }
 }
