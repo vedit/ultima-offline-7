@@ -16,9 +16,9 @@
     for (const button of document.querySelectorAll('[data-view]')) {
         button.addEventListener('click', () => {
             const original = button.dataset.view === 'original';
-            image.src = original ? 'site/inn-original.png' : 'site/inn-current.png';
-            image.alt = original ? 'The Honorable Hound Inn dining room in original Ultima VII.' : 'The Honorable Hound Inn dining room recreated in ClassicUO.';
-            caption.textContent = original ? 'The original Ultima VII room. Different camera, familiar details.' : 'The Inn dining room, captured in our development build.';
+            image.src = original ? 'site/fellowship-interior-u7.png' : 'site/fellowship-interior-uo7.png';
+            image.alt = original ? 'The Fellowship hall interior in original Ultima VII.' : 'The Fellowship hall interior recreated in ClassicUO.';
+            caption.textContent = original ? 'The original Ultima VII room. Different camera, familiar details.' : 'The Fellowship hall, captured in our development build.';
             for (const sibling of document.querySelectorAll('[data-view]')) sibling.setAttribute('aria-pressed', String(sibling === button));
         });
     }
@@ -33,7 +33,7 @@
     const error = document.getElementById('compare-error');
     const pairs = {
         'barn-overview': {title: 'The murder in Trinsic — Christopher and Inamo', description: 'The barn murder scene with both victims visible'},
-        'barn-detail': {title: 'Christopher — a closer look', description: 'A closer view of Christopher and the evidence on the barn floor'}
+        'fellowship-interior': {title: 'Inside the Fellowship — Trinsic', description: 'The Fellowship hall interior'}
     };
     let activePair = 'barn-overview';
     let request = 0;

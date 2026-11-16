@@ -44,4 +44,5 @@ dialog{border:1px solid #736c4c;background:#111a17;color:var(--paper);padding:16
 @media(max-width:760px){.compare-label{font-size:9px;top:7px;padding:4px 6px}.current-label{left:7px}.original-label{right:7px}.compare-views button{font-size:12px;padding:9px 12px}.compare-invitation{font-size:10px;bottom:8px;right:8px;padding:6px 9px}.compare-stage{width:min(100%,calc((100dvh - 275px)*1.6))}#screenshot-dialog .compare-help{font-size:11px}.compare-originals{gap:16px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){.compare-spinner{animation:none}}
 body:has(#screenshot-dialog[open]){overflow:hidden}
+.comparison-art .image-open{max-width:640px;background:transparent}.comparison-art .image-open img{width:100%;height:auto;image-rendering:pixelated}.comparison-art figcaption .caption-link{display:inline-block;margin-left:16px;color:#3f4f3b;letter-spacing:0}
 @media(min-width:761px){#screenshot-dialog:has(#screenshot-comparison:not([hidden])) form{position:absolute;top:16px;right:16px;z-index:5;margin:0}.compare-views{margin-inline:100px;min-height:42px}}

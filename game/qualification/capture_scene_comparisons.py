@@ -14,15 +14,17 @@ from baseline import actor
 
 HERE = Path(__file__).resolve().parent
 VIEWS = [('barn-overview', (1070, 2188, 0), '0.7', 3),
-         ('barn-detail', (1068, 2201, 0), '0.5', 2)]
+         ('fellowship-interior', (1016, 2216, 0), '0.7', 6)]
 
 
-def capture(source_run, prefix, output, town):
+def capture(source_run, prefix, output, town, selected=None):
     output.mkdir(parents=True, exist_ok=True)
     debug = runpy.run_path(str(HERE / 'developer-wand.py'))
     replay = runpy.run_path(str(HERE / 'client-proof.py'))['run']
     pairs = []
     for label, position, zoom, direction in VIEWS:
+        if selected and label not in selected:
+            continue
         run = prefix + '-' + label
         copy_test_save(source_run, run)  # Refuses an existing run; never touches the source save.
         with session(run, 'Investigation', False,
@@ -42,7 +44,7 @@ def capture(source_run, prefix, output, town):
         checkpoint = sha(folder / 'GAME00.U7')
         for name, data in members(folder / 'GAME00.U7').items():
             (folder / 'GAMEDAT' / name).write_bytes(data)
-        original_env = dict(os.environ, U7_TEST_INPUT='6000 shot barn-original.ppm; 6500 quit')
+        original_env = dict(os.environ, U7_TEST_INPUT='6000 shot scene-original.ppm; 6500 quit')
         for name in ('TRINSIC_PIPE', 'TRINSIC_TOWN', 'TRINSIC_READY'):
             original_env.pop(name, None)
         with (folder / 'original-render.log').open('w') as log:
@@ -50,7 +52,7 @@ def capture(source_run, prefix, output, town):
                                     cwd=folder, env=original_env, stdout=log, stderr=log, timeout=45)
         assert result.returncode == 0, result.returncode
         original = output / (label + '-u7.png')
-        with Image.open(folder / 'barn-original.ppm') as image:
+        with Image.open(folder / 'scene-original.ppm') as image:
             image.convert('RGB').save(original)  # Lossless encoding only; no crop or retouch.
         result = replay(run, 'Investigation', ['WAIT 3000', 'CAPTURE', 'EXIT'], False,
                         zoom=zoom, scenario=label, extra={'TRINSIC_TOWN': str(town)})
@@ -61,11 +63,11 @@ def capture(source_run, prefix, output, town):
         pair = {'id': label, 'position': position, 'avatar': 'Vedit', 'uo7_zoom': zoom,
                 'shared_checkpoint_sha256': checkpoint,
                 'original_renderer': 'Portable original Ultima VII renderer with original game assets',
-                'current_renderer': 'ClassicUO with approved Christopher artwork and Party button',
+                'current_renderer': 'ClassicUO with approved scene artwork and Party button',
                 'files': {p.name: {'sha256': sha(p), 'size': list(Image.open(p).size)}
                           for p in (original, current)}}
         pairs.append(pair)
-        (output / 'barn-captures.json').write_text(json.dumps({'pairs': pairs}, indent=2) + '\n')
+        (output / 'scene-captures.json').write_text(json.dumps({'pairs': pairs}, indent=2) + '\n')
         print(json.dumps(pair), flush=True)
 
 
@@ -75,5 +77,6 @@ if __name__ == '__main__':
     parser.add_argument('--run-prefix', required=True, help='Unique prefix for two disposable copied saves')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--town', type=Path, default=ROOT / 'town-battlement-data')
+    parser.add_argument('--views', nargs='+', choices=[view[0] for view in VIEWS])
     args = parser.parse_args()
-    capture(args.source_run, args.run_prefix, args.output.resolve(), args.town.resolve())
+    capture(args.source_run, args.run_prefix, args.output.resolve(), args.town.resolve(), args.views)
