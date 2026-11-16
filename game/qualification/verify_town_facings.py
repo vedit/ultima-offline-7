@@ -244,7 +244,19 @@ def verify(output=COMPACT):
         graphic,cut,left,right=map(int,line.split())
         profiles[graphic]=(cut,left,right)
     victim_graphic=placed[867,0,1072,2199,0]
-    assert profiles[victim_graphic]==(0,-2,-2)
+    assert profiles.get(victim_graphic,(0,0,0))==(0,0,0)
+    # A blood underlay must not make an entire corpse translucent/background.
+    tiledata=(output/'tiledata.mul').read_bytes()
+    for graphic in {victim_graphic}|{g for (s,f),g in frames.items() if s==867}:
+        at=512*964+(graphic//32)*1316+4+(graphic%32)*41
+        assert int.from_bytes(tiledata[at:at+8],'little') & 0x09 == 0
+    # Only the placed clue moves on screen; its general/inventory art stays put.
+    clue=placed[641,0,1068,2197,0]
+    offsets={v[0]:tuple(v[1:]) for line in (output/'art-offsets.tsv').read_text().splitlines()
+             if (v:=list(map(int,line.split())))}
+    assert clue!=frames[641,0] and offsets[clue]==(-22,18)
+    assert frames[641,0] not in offsets
+    assert (door_art/f'{clue}.art').read_bytes()==(door_art/f'{frames[641,0]}.art').read_bytes()
     open_graphics=set()
     for (shape,frame),g in frames.items():
         if shape not in (270,376) or frame%4!=1:continue
@@ -268,7 +280,7 @@ def verify(output=COMPACT):
                 x+=n
                 offset+=4+2*n
         assert 0<min(cols)<cut<max(cols)<w and cut-1 not in cols and cut not in cols
-    assert set(profiles)==open_graphics|{victim_graphic}
+    assert set(profiles)==open_graphics
     for family,base_frame in ((0x675,16),(0x6a5,8),(0x6d5,0)):
         # Compare the shipped closed doors pixel for pixel with the two stock leaves.
         for shape,closed_parts,opened in (

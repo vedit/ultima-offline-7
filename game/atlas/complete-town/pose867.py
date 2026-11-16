@@ -6,7 +6,8 @@ from costumes import ramp,match_hue
 # Center offsets in pixels. Draw order goes from ground to foreground.
 PARTS=(
     (0x122a, 0,  4,   0),
-    (0x1d9f, 0, -2,  32),
+    (0x122b, 0,-20,   0),  # Ground pool separates brown hair from the stable floor.
+    (0x1dad, 0, -2,  32),  # Opposite stock torso faces toward the head.
     (0x1cef, 0,  8,   0),
     (0x1ce1, 0,-20,   0),
     (0x1da2,-18,-16,-34),

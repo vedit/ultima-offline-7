@@ -22,6 +22,7 @@ OUT = ROOT/'town-stables-data'
 HEIGHT_BLOCKS = 512
 TILE_START = 512 * 964
 TRANSLUCENT = 0x08
+BACKGROUND = 0x01
 
 def table(name):
     with (ATLAS/name).open(encoding='utf-8-sig',newline='') as stream:
@@ -257,8 +258,9 @@ def build(output=OUT,compact=False):
         else:
             pixels=None
             signature=('atlas',row['target_image'])
-        # Inamo's first recipe layer is blood. Its tile would make the whole body translucent.
+        # Blood is a painted underlay, not the material of the entire corpse.
         clear_flags=TRANSLUCENT if key in ((414,26),(414,58)) else 0
+        if key[0]==867:clear_flags=BACKGROUND | TRANSLUCENT
         sig=signature,template,row['native_height']
         graphic=private_art(sig,template,row['name'],row['native_height'],parts,pixels,row['target_image'],clear_flags=clear_flags)
         catalog[key]=graphic
@@ -277,6 +279,7 @@ def build(output=OUT,compact=False):
     source_land={}
     joins={} if compact else wall_joins(refs,by_key)
     placements=[]
+    art_offsets={}
     for key,position,parts in (*stair_runs(refs,by_key),*fence_joins(refs,by_key)):
         row=by_key[key]
         if compact:parts=compact_parts(parts)
@@ -430,7 +433,15 @@ def build(output=OUT,compact=False):
             pose=stable_victim_sprite(source.convert('RGBA'))
         graphic=private_art(('stable victim',key),catalog[key],row['name'],row['native_height'],pixels=pose)
         placements.append((*key,*anchor,graphic))
-        depth_profiles[graphic]=(0,-2,-2)  # 44 pixels north = two isometric depth rows.
+        # Keep the native object's depth: the old rearward override put nearby
+        # floor blood in front of the body. The painted position stays unchanged.
+        clue=(641,0)
+        clue_row=by_key[clue]
+        template=int(re.search(r'0x([0-9a-fA-F]+)',clue_row['uo_id'])[1],16)
+        clue_graphic=private_art(('murder-scene key',clue),template,clue_row['name'],
+                                 clue_row['native_height'],pixels=key_sprite(template))
+        placements.append((*clue,1068,2197,0,clue_graphic))
+        art_offsets[clue_graphic]=(-22,18)
     for key,(signature,template,pixels) in open_doors.items():
         row=by_key[key]
         catalog[key]=private_art(signature,template,row['name'],row['native_height'],pixels=pixels)
@@ -480,6 +491,7 @@ def build(output=OUT,compact=False):
             struct.pack_into('<iii',idx,block*12,len(data) if items else -1,len(items),0)
             data.extend(items)
     (output/'world-facings.tsv').write_text(''.join('\t'.join(map(str,line))+'\n' for line in placements),encoding='ascii')
+    (output/'art-offsets.tsv').write_text(''.join(f'{g}\t{x}\t{y}\n' for g,(x,y) in sorted(art_offsets.items())),encoding='ascii')
     for name,blob in [('map0.mul',mapfile),('staidx0.mul',idx),('statics0.mul',data),('tiledata.mul',tiledata)]:
         (output/name).write_bytes(blob)
     (output/'carried-graphics.tsv').write_text(''.join(f'{s}\t{f}\t{i}\n' for (s,f),i in carried.items()),encoding='ascii')

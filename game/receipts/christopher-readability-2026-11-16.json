@@ -1,0 +1,78 @@
+{
+  "approved_on": "2026-11-16",
+  "approval": "Ok this looks way better. This needs to be committed",
+  "feature": "Christopher readability and clue visibility",
+  "recipe": {
+    "native_body": [
+      867,
+      0,
+      1072,
+      2199,
+      0
+    ],
+    "stock_torso": "0x1DAD",
+    "head_blood": {
+      "stock": "0x122B",
+      "pose_offset": [
+        0,
+        -20
+      ],
+      "draw_before_body": true
+    },
+    "opaque_corpse_family": 867,
+    "cleared_tile_flags": [
+      "Background (0x01)",
+      "Translucent (0x08)"
+    ],
+    "body_depth_override": "removed rearward -2 override",
+    "native_clue": [
+      641,
+      0,
+      1068,
+      2197,
+      0
+    ],
+    "clue_screen_offset": [
+      -22,
+      18
+    ]
+  },
+  "scope": {
+    "general": "Shape 867 corpse composites no longer inherit blood transparency/background material flags.",
+    "scene_specific": "Christopher pose/ground blood/depth and this placed key screen offset.",
+    "unchanged": [
+      "native identity",
+      "native position/lift",
+      "collision",
+      "Usecode",
+      "quest flags",
+      "inventory key artwork",
+      "other keys",
+      "Inamo pose"
+    ]
+  },
+  "approved_capture": {
+    "file": "christopher-head-pool-0.png",
+    "sha256": "79b659a3f2d382bc8e82c016adb7002b3bfdfaa9d223acf75bdb9393f2906414",
+    "actor_name": "Vedit",
+    "zoom": 0.7
+  },
+  "approved_compiled_body_sha256": "8ceee49b0f1750882d261434bb03132057b848d599a3f7dba15a3252b600c85f",
+  "client_sha256": "5e2dadae785352448d0654366825eb9b2dd870a4489d24bf33ff0a3f9de1ee6d",
+  "validation": [
+    "source stock-part recipe reproduces approved compiled body byte-for-byte",
+    "key recipe reproduces approved key art byte-for-byte",
+    "in-engine preview approved",
+    "shifted key selected through rendered opaque pixels, moved into backpack and persisted after native save/reload",
+    "preview corpse material flags and isolated key screen offset verified",
+    "changed Python sources parse and git diff --check passes"
+  ],
+  "validation_limits": {
+    "quest_flag_60": "The prepared capture save leaves flag 60 unset after pickup both with the approved preview and with the unchanged baseline. This check does not establish the full investigation progression; no native quest logic was changed.",
+    "full_town_regression": "Not rerun against a complete regenerated atlas; validation covers the approved recipe, preview metadata and key interaction/save path."
+  },
+  "rebuild": [
+    "Regenerate the reviewed atlas from game/atlas/complete-town/generate.py, then compile with game/qualification/town_atlas.py.",
+    "Use a separate output while parallel asset work is active. Generated retail art and player saves stay outside source control."
+  ]
+}
