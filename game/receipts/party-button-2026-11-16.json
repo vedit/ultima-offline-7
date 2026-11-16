@@ -1,0 +1,11 @@
+{
+  "approved_on": "2026-11-16",
+  "feature": "Preserve the approved stock blue oval Party button",
+  "source": "game/client/src/ClassicUO.Client/Game/UI/Controls/TrinsicPartyButton.cs",
+  "source_sha256": "a4faa48201fefcea67bac4ca329cdd7b820cd0746580fb74ac12f8cfa045e586",
+  "approved_client_sha256": "5e2dadae785352448d0654366825eb9b2dd870a4489d24bf33ff0a3f9de1ee6d",
+  "rendering": "Use the entire stock oval at native dimensions; replace only CHAT lettering with stock-sized PARTY glyphs.",
+  "validation": "Captured with the installed binary whose hash matches the earlier approved installation; user approved the current screenshot.",
+  "prior_installation_receipt": "party-button-installation-2026-11-15.json in the development checkout",
+  "native_gameplay_changes": false
+}
