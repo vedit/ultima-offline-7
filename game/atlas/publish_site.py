@@ -74,20 +74,27 @@ def sha(path):
 
 def add_card_loading(html):
     """Show the first loading state before the multi-megabyte card data arrives."""
-    marker = '<section id="cards"></section>'
-    if marker not in html or 'id="atlas-loading-status"' in html:
+    match = re.search(r'<section\b([^>]*\bid="(cards|homes)"[^>]*)></section>', html)
+    if not match or 'id="atlas-loading-status"' in html:
         return html
+    marker = match[0]
     web = Path(__file__).with_name('web')
     css = (web / 'loading.css').read_text(encoding='utf8')
     script = (web / 'loading.js').read_text(encoding='utf8')
     placeholders = '<div class="atlas-card-placeholder" aria-hidden="true"></div>' * 3
+    label = 'Loading room comparisons…' if match[2] == 'homes' else 'Loading item cards…'
     loading = ('<style>' + css + '</style>'
-               '<div id="atlas-loading-status" class="atlas-loading-status" role="status">Loading item cards…</div>'
-               '<section id="cards" aria-busy="true">' + placeholders + '</section>'
+               '<div id="atlas-loading-status" class="atlas-loading-status" role="status">' + label + '</div>'
+               '<section' + match[1] + ' data-atlas-loading aria-busy="true">' + placeholders + '</section>'
                '<noscript><style>.atlas-loading-status,.atlas-card-placeholder{display:none}</style>'
                '<p>Enable JavaScript to view the item cards.</p></noscript>'
                '<script>' + script + '</script>')
     return html.replace(marker, loading, 1)
+
+
+def remove_shield_tab(html):
+    """Shields belong in the equipment family filter, not a separate gallery tab."""
+    return re.sub(r'<a\b[^>]*href="shields\.html"[^>]*>.*?</a>', '', html, flags=re.S)
 
 
 def export(atlas, output, reviews=None, guard_ground=None):
@@ -142,7 +149,7 @@ def export(atlas, output, reviews=None, guard_ground=None):
     exported = {('atlas.html' if p == 'index.html' else p) for p in selected} | {'index.html'}
     nav = [('index.html', 'Weapons & armour'), ('atlas.html', 'Full catalog'),
            ('homes.html', 'Homes'), ('inn.html', 'Inn'),
-           ('public-interiors.html', 'Public interiors'), ('shields.html', 'Shields')]
+           ('public-interiors.html', 'Public interiors')]
     links = ' '.join(f'<a href="{url}">{label}</a>' for url, label in nav if url in exported)
     style = '<style>.atlas-site-nav{position:static;max-width:1510px;margin:0 auto;padding:16px clamp(16px,4vw,60px);display:flex;flex-wrap:wrap;gap:10px 20px;font:14px/1.5 system-ui,sans-serif;border-bottom:1px solid #45575a}.atlas-site-nav a{color:#aadad5}.atlas-site-nav strong{color:#edf1e8;margin-right:auto}.atlas-site-note{font:12px/1.5 system-ui,sans-serif;color:#b5c5c2;margin:24px 0}.atlas-site-note a{color:#aadad5}</style>'
     header = style + f'<nav class="atlas-site-nav" aria-label="Atlas pages"><strong>Ultima Offline 7</strong>{links} <a href="{REPO}">GitHub</a></nav>'
@@ -156,6 +163,7 @@ def export(atlas, output, reviews=None, guard_ground=None):
             if not count:
                 raise ValueError(f'No gallery main element in {name}')
             html = html.replace('</main>', note + '</main>', 1)
+            html = remove_shield_tab(html)
             html = add_card_loading(html)
             dest.write_text(html, encoding='utf8', newline='\n')
         elif name.endswith('.json'):

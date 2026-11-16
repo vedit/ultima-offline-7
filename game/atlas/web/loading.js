@@ -1,6 +1,6 @@
 // Installed before the large catalog script, so the first paint has feedback.
 (() => {
-    const cards = document.getElementById('cards');
+    const cards = document.querySelector('[data-atlas-loading]');
     const status = document.getElementById('atlas-loading-status');
     let rendered = false;
     let scheduled = false;
@@ -10,7 +10,7 @@
         scheduled = false;
         if (!rendered || failedToRender) return;
         let pending = 0;
-        for (const stage of cards.querySelectorAll('.stage')) {
+        for (const stage of cards.querySelectorAll('.stage, .image-button')) {
             const images = [...stage.querySelectorAll('img[src]')];
             const waiting = images.some(image => !image.complete);
             const failed = !waiting && images.some(image => !image.naturalWidth);
@@ -21,7 +21,7 @@
         }
         cards.setAttribute('aria-busy', String(pending > 0));
         status.hidden = pending === 0;
-        if (pending) status.textContent = 'Loading item images…';
+        if (pending) status.textContent = 'Loading preview images…';
     }
 
     function schedule() {
@@ -45,7 +45,7 @@
         failedToRender = true;
         cards.replaceChildren();
         status.classList.add('atlas-loading-error');
-        status.textContent = 'The item cards could not load. Please reload the page.';
+        status.textContent = 'These previews could not load. Please reload the page.';
         // Disconnect the initial placeholder from normal loading completion.
         rendered = true;
         status.hidden = false;

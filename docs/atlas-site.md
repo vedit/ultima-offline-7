@@ -4,7 +4,7 @@ The atlas is hosted at **https://vedit.github.io/ultima-offline-7/**.
 
 GitHub Pages serves the root of the independent `gh-pages` branch. The game source stays on `main`. Pages deploys automatically when the site branch changes; `.nojekyll` tells GitHub to serve the already-built static site.
 
-The site opens on **Weapons and armour**, with the Weapon family selected. The **Full catalog** link opens `atlas.html` (7,141 source entries); homes, inn, public interiors, shields and the other galleries remain available. `armory.html` also opens the equipment page. The approved rake is linked from the full catalog. Existing candidate/approval labels remain visible; the site is a review catalog, not a promise that every candidate is installed in the game.
+The site opens on **Weapons and armour**, with the Weapon family selected. The **Full catalog** link opens `atlas.html` (7,141 source entries); homes, inn, public interiors and the other galleries remain available. Shields are included in the equipment page's **Family → Shield** filter (buckler, curved heater, kite, magic, spiked and wooden). There is no separate Shields navigation tab; the old two-shield comparison URL remains available for existing bookmarks. `armory.html` also opens the equipment page. The approved rake is linked from the full catalog. Existing candidate/approval labels remain visible; the site is a review catalog, not a promise that every candidate is installed in the game.
 
 The Atlas chat uses the same game repository, not a second source repository. Its generated review outputs can be newer than the installed atlas. In particular, the installed `armory.html` was an early baseline even after later batches had been approved. The public equipment collection now reconciles those reviews into 109 entries, including frame-specific magical variants, accepted shimmer previews, the redesigned shields and the final serpentine guard.
 
@@ -23,7 +23,7 @@ The exporter follows links from the input `index.html`, copies all images refere
 
 For a future art pass, update this explicit recipe and its sources after checking the Atlas chat's approvals; do not select files just by modification time or regenerate art during publication. Omitting `--reviews` exports the installed baseline only and must not be presented as the latest reviewed equipment. Public visitor feedback stays in that visitor's browser and never changes recorded approval or the source files.
 
-The equipment and full-catalog pages show animated placeholders before their card data loads, then individual image spinners until each preview is ready. Loading also follows filter, page and frame changes. Failed images show an unavailable state; reduced-motion preferences disable the animation.
+The equipment, full-catalog and room-comparison pages (Homes, Inn and public interiors) show animated placeholders before their card data loads, then individual image spinners until each preview is ready. Loading also follows filter, page and frame changes. Failed images show an unavailable state; reduced-motion preferences disable the animation.
 
 Before uploading, verify all pages, images and local links, search/filter behavior, the U7 original/upscaled toggle, pagination and a narrow viewport. This explicit website publication covers review comparisons only. Never copy the entire private runtime or force-add ignored game files.
 
