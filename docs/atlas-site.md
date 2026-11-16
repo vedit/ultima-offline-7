@@ -1,31 +1,41 @@
-# Public Trinsic atlas
+# Project homepage and public Trinsic atlas
 
-The atlas is hosted at **https://vedit.github.io/ultima-offline-7/**.
+The project homepage is hosted at **https://vedit.github.io/ultima-offline-7/**.
 
 GitHub Pages serves the root of the independent `gh-pages` branch. The game source stays on `main`. Pages deploys automatically when the site branch changes; `.nojekyll` tells GitHub to serve the already-built static site.
 
-The site opens on **Weapons and armour**, with the Weapon family selected. The **Full catalog** link opens `atlas.html` (7,141 source entries); homes, inn, public interiors and the other galleries remain available. Shields are included in the equipment page's **Family → Shield** filter (buckler, curved heater, kite, magic, spiked and wooden). There is no separate Shields navigation tab; the old two-shield comparison URL remains available for existing bookmarks. `armory.html` also opens the equipment page. The approved rake is linked from the full catalog. Existing candidate/approval labels remain visible; the site is a review catalog, not a promise that every candidate is installed in the game.
+The site opens on the project homepage: actual gameplay captures, an introduction for U7/UO players, a switchable Inn comparison, current Trinsic scope and build guides. **Weapons and armour** is at `armory.html`, with the Weapon family selected. The **Full catalog** link opens `atlas.html` (7,141 source entries); homes, inn, public interiors and the other galleries remain available. Shields are included in the equipment page's **Family → Shield** filter (buckler, curved heater, kite, magic, spiked and wooden). There is no separate Shields navigation tab; the old two-shield comparison URL remains available for existing bookmarks. `armory.html` also opens the equipment page. The approved rake is linked from the full catalog. Existing candidate/approval labels remain visible; the site is a review catalog, not a promise that every candidate is installed in the game.
 
 The Atlas chat uses the same game repository, not a second source repository. Its generated review outputs can be newer than the installed atlas. In particular, the installed `armory.html` was an early baseline even after later batches had been approved. The public equipment collection now reconciles those reviews into 109 entries, including frame-specific magical variants, accepted shimmer previews, the redesigned shields and the final serpentine guard.
 
-## Export a reviewed atlas
+## Export the homepage and reviewed atlas
 
 Use the existing generated atlas directory you intend to publish. A newly generated baseline atlas and a newer local art review can differ; inspect the source date and pages first. Do not regenerate or overwrite parallel artwork as part of publishing.
 
 ```powershell
-py -3.13 -B game/atlas/publish_site.py --atlas 'D:\path\to\reviewed-atlas' --reviews 'D:\path\to\Atlas-review-root' --guard-ground 'D:\path\to\public-interiors-revision5\guard-ground' --out 'D:\empty\atlas-site'
+py -3.13 -B game/atlas/publish_site.py --atlas 'D:\path\to\reviewed-atlas' --reviews 'D:\path\to\Atlas-review-root' --guard-ground 'D:\path\to\public-interiors-revision5\guard-ground' --screenshots 'D:\path\to\selected-client-captures' --out 'D:\empty\atlas-site'
 py -3.13 -B -m unittest discover -s tests -p test_atlas_site.py -q
 ```
 
-The exporter follows links from the input `index.html`, copies all images referenced by the catalog, fixes local atlas links (including their query and fragment), adds shared navigation and removes machine paths from input fingerprints. It writes that catalog to `atlas.html` and serves the equipment page at the root. It rejects missing/escaping dependencies and refuses a nonempty output directory. It excludes unlinked old revisions, executable content and runtime `.gump`/`.alpha` assets. Existing PNG/WebP review pixels are copied or embedded unchanged. `publication.json` records source hashes, source date, review precedence, pages, sizes and exported page hashes.
+The exporter follows links from the input `index.html`, copies all images referenced by the catalog, fixes local atlas links (including their query and fragment), adds shared navigation and removes machine paths from input fingerprints. It writes that catalog to `atlas.html` and keeps the equipment page at `armory.html`; `index.html` is the project homepage. It rejects missing/escaping dependencies and refuses a nonempty output directory. It excludes unlinked old revisions, executable content and runtime `.gump`/`.alpha` assets. Existing PNG/WebP review pixels are copied or embedded unchanged. `publication.json` records source hashes, source date, review precedence, pages, sizes and exported page hashes.
 
 `--reviews` selects the newer Atlas review collection; `--guard-ground` supplies its five accepted ground facings. `review_snapshot.py` records the specific November 2026 review precedence: eight-batch equipment page → accepted lore variants and shimmer → later shield and guard corrections. It retains ordinary boots separately from magic boots and both Ethereal Ring states. The lore page supplies its existing review controls, including female paperdolls. The current Inn, shield and public-interior pages come directly from that same review root. The Fellowship column-base change remains explicitly labeled a preview.
 
-For a future art pass, update this explicit recipe and its sources after checking the Atlas chat's approvals; do not select files just by modification time or regenerate art during publication. Omitting `--reviews` exports the installed baseline only and must not be presented as the latest reviewed equipment. Public visitor feedback stays in that visitor's browser and never changes recorded approval or the source files.
+For a future art pass, update this explicit recipe and its sources after checking the Atlas chat's approvals; do not select files just by modification time or regenerate art during publication. The public CLI requires the reviewed collection, final guard art and selected screenshots. The lower-level `export()` function can still export minimal review fixtures for tests; those fixtures must not be presented as the published site. Public visitor feedback stays in that visitor's browser and never changes recorded approval or the source files.
 
 The equipment, full-catalog and room-comparison pages (Homes, Inn and public interiors) show animated placeholders before their card data loads, then individual image spinners until each preview is ready. Loading also follows filter, page and frame changes. Failed images show an unavailable state; reduced-motion preferences disable the animation.
 
-Before uploading, verify all pages, images and local links, search/filter behavior, the U7 original/upscaled toggle, pagination and a narrow viewport. This explicit website publication covers review comparisons only. Never copy the entire private runtime or force-add ignored game files.
+Before uploading, verify all pages, images and local links, search/filter behavior, the U7 original/upscaled toggle, pagination and a narrow viewport. This explicit website publication covers the project homepage, the selected gameplay captures and review comparisons. Never copy the entire private runtime or force-add ignored game files.
+
+## Homepage inputs and maintenance
+
+Edit `game/site/index.html`, `home.css` and `home.js` for the landing page. It is static, has no external font or JavaScript dependencies, and works at the repository subpath used by Pages. Keep the copy honest about the unfinished full campaign.
+
+`--screenshots` must point to a local folder containing two selected, actual ClassicUO PNG captures named `trinsic.png` and `dream.png`. Review them for presentation and private information before publication. Do not substitute promotional renders or include save data, audio or other runtime files. Captures belong only to the published site branch, not source `main`.
+
+`game/atlas/homepage.py` copies those captures unchanged and extracts the Inn dining room comparison and three equipment previews byte-for-byte from the reviewed HTML. It does not redraw or regenerate any art. `site/sources.json` records logical sources and SHA-256 hashes without private machine paths. The main `publication.json` also covers these files. Re-export after changing the template or inputs so those receipts stay accurate.
+
+Check the homepage on desktop and a narrow viewport, including the Inn switch, enlarged screenshots, section links and installation links. Galleries retain their shared Home/Weapons navigation and existing loading states; shields remain an equipment filter rather than a separate tab.
 
 ## Publish an update
 

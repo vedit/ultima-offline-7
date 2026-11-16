@@ -1,4 +1,4 @@
-"""Export the linked atlas review pages for GitHub Pages, without runtime data."""
+"""Export the project homepage and reviewed atlas for GitHub Pages."""
 import argparse
 from collections import deque
 from datetime import datetime, timezone
@@ -97,7 +97,7 @@ def remove_shield_tab(html):
     return re.sub(r'<a\b[^>]*href="shields\.html"[^>]*>.*?</a>', '', html, flags=re.S)
 
 
-def export(atlas, output, reviews=None, guard_ground=None):
+def export(atlas, output, reviews=None, guard_ground=None, screenshots=None):
     atlas, output = atlas.resolve(), output.resolve()
     if atlas == output or atlas.is_relative_to(output) or output.is_relative_to(atlas):
         raise ValueError('Export must be separate from the source atlas')
@@ -147,7 +147,7 @@ def export(atlas, output, reviews=None, guard_ground=None):
 
     output.mkdir(parents=True, exist_ok=True)
     exported = {('atlas.html' if p == 'index.html' else p) for p in selected} | {'index.html'}
-    nav = [('index.html', 'Weapons & armour'), ('atlas.html', 'Full catalog'),
+    nav = [('index.html', 'Home'), ('armory.html', 'Weapons & armour'), ('atlas.html', 'Full catalog'),
            ('homes.html', 'Homes'), ('inn.html', 'Inn'),
            ('public-interiors.html', 'Public interiors')]
     links = ' '.join(f'<a href="{url}">{label}</a>' for url, label in nav if url in exported)
@@ -173,10 +173,14 @@ def export(atlas, output, reviews=None, guard_ground=None):
             dest.write_text(json.dumps(payload, indent=2) + '\n', encoding='utf8', newline='\n')
         else:
             shutil.copyfile(atlas / name, dest)
-    # Serve the actual equipment page at the site root, with no redirect or
-    # intermediate catalog flash. Keep armory.html bookmarks working too.
+    # Library callers may export just the review fixtures. The public CLI also
+    # installs the project homepage, leaving equipment at armory.html.
     landing = 'armory.html' if 'armory.html' in pages else 'atlas.html'
     shutil.copyfile(output / landing, output / 'index.html')
+    if screenshots is not None:
+        from homepage import install_homepage
+        exported.update(install_homepage(output, screenshots))
+        landing = 'index.html'
     (output / '.nojekyll').write_text('')
     metadata = dict(published_at=datetime.now(timezone.utc).isoformat(),
                     source_updated_at=datetime.fromtimestamp((atlas / 'index.html').stat().st_mtime, timezone.utc).isoformat(),
@@ -184,7 +188,7 @@ def export(atlas, output, reviews=None, guard_ground=None):
                     bytes=sum((output / p).stat().st_size for p in exported),
                     landing_page=landing, review_snapshot=review_receipt,
                     source_catalog_sha256=sha(atlas / 'catalog.js'),
-                    scope='Linked review galleries and catalog thumbnails; runtime files and unlinked old revisions excluded',
+                    scope=('Project homepage, actual gameplay captures, and reviewed atlas galleries; no runtime files' if screenshots is not None else 'Linked review galleries and catalog thumbnails; runtime files and unlinked old revisions excluded'),
                     output_sha256={p:sha(output / p) for p in sorted(exported) if not p.startswith('images/')})
     (output / 'publication.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf8', newline='\n')
     print(json.dumps({k:v for k,v in metadata.items() if k not in ('output_sha256', 'review_snapshot')}, indent=2))
@@ -195,7 +199,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--atlas', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
-    parser.add_argument('--reviews', type=Path, help='Atlas chat review root; reconcile later equipment reviews')
-    parser.add_argument('--guard-ground', type=Path, help='Final approved 637-0.png through 637-4.png directory')
+    parser.add_argument('--reviews', type=Path, required=True, help='Atlas chat review root; reconcile later equipment reviews')
+    parser.add_argument('--guard-ground', type=Path, required=True, help='Final approved 637-0.png through 637-4.png directory')
+    parser.add_argument('--screenshots', type=Path, required=True, help='Selected client captures: trinsic.png and dream.png for the homepage')
     args = parser.parse_args()
-    export(args.atlas, args.out, args.reviews, args.guard_ground)
+    export(args.atlas, args.out, args.reviews, args.guard_ground, args.screenshots)

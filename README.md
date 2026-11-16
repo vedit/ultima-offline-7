@@ -6,7 +6,7 @@ Play Ultima VII: The Black Gate through a modified ClassicUO desktop client. The
 
 ## Install and build
 
-**[Browse the Trinsic asset atlas](https://vedit.github.io/ultima-offline-7/)** — opens with the reviewed weapons; includes armour, shields, magical shimmer, homes, public interiors and the full searchable U7/UO catalog.
+**[Visit the project homepage](https://vedit.github.io/ultima-offline-7/)** — gameplay captures, the Trinsic introduction, a U7/UO room comparison and getting-started guides. The **[asset atlas](https://vedit.github.io/ultima-offline-7/armory.html)** opens with reviewed weapons and includes armour, shields, magical shimmer, homes, public interiors and the full searchable U7/UO catalog.
 
 You need your own **English Ultima VII: The Black Gate + Forge of Virtue** installation and **Ultima Online Classic** client data. The tested editions are Steam U7 and UO Classic 7.0.118.46. Game files, extracted art, audio, ROMs and saves are not included.
 

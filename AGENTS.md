@@ -12,7 +12,7 @@ Read `README.md`, `docs/agent-install.md`, `docs/build-local.md` and `game/depen
 - Complete verification before claiming success. Report exact commands, versions, input editions, generated outputs, run name and any checks not performed.
 - Do not commit game data, generated retail art/audio, saves, binaries, credentials or machine paths. Do not force-add ignored outputs.
 
-The user-authorized public atlas is a separate exception for review HTML and PNG/WebP comparisons on the `gh-pages` branch. Use `game/atlas/publish_site.py` and [the publishing notes](docs/atlas-site.md). Reconcile the latest Atlas review outputs before publishing; the installed armory baseline can lag behind approved reviews. Runtime assets, source game archives, audio, saves and local paths remain excluded; do not add the atlas export to `main`.
+The user-authorized public website is a separate exception for the project homepage, selected gameplay screenshots, review HTML and PNG/WebP comparisons on the `gh-pages` branch. Use `game/atlas/publish_site.py` and [the publishing notes](docs/atlas-site.md). Reconcile the latest Atlas review outputs before publishing; the installed armory baseline can lag behind approved reviews. Runtime assets, source game archives, audio, saves and local paths remain excluded; do not add the atlas export to `main`.
 
 ## Development
 
