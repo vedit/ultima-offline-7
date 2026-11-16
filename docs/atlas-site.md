@@ -23,6 +23,8 @@ The exporter follows links from the input `index.html`, copies all images refere
 
 For a future art pass, update this explicit recipe and its sources after checking the Atlas chat's approvals; do not select files just by modification time or regenerate art during publication. Omitting `--reviews` exports the installed baseline only and must not be presented as the latest reviewed equipment. Public visitor feedback stays in that visitor's browser and never changes recorded approval or the source files.
 
+The equipment and full-catalog pages show animated placeholders before their card data loads, then individual image spinners until each preview is ready. Loading also follows filter, page and frame changes. Failed images show an unavailable state; reduced-motion preferences disable the animation.
+
 Before uploading, verify all pages, images and local links, search/filter behavior, the U7 original/upscaled toggle, pagination and a narrow viewport. This explicit website publication covers review comparisons only. Never copy the entire private runtime or force-add ignored game files.
 
 ## Publish an update

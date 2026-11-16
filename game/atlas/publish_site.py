@@ -72,6 +72,24 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def add_card_loading(html):
+    """Show the first loading state before the multi-megabyte card data arrives."""
+    marker = '<section id="cards"></section>'
+    if marker not in html or 'id="atlas-loading-status"' in html:
+        return html
+    web = Path(__file__).with_name('web')
+    css = (web / 'loading.css').read_text(encoding='utf8')
+    script = (web / 'loading.js').read_text(encoding='utf8')
+    placeholders = '<div class="atlas-card-placeholder" aria-hidden="true"></div>' * 3
+    loading = ('<style>' + css + '</style>'
+               '<div id="atlas-loading-status" class="atlas-loading-status" role="status">Loading item cards…</div>'
+               '<section id="cards" aria-busy="true">' + placeholders + '</section>'
+               '<noscript><style>.atlas-loading-status,.atlas-card-placeholder{display:none}</style>'
+               '<p>Enable JavaScript to view the item cards.</p></noscript>'
+               '<script>' + script + '</script>')
+    return html.replace(marker, loading, 1)
+
+
 def export(atlas, output, reviews=None, guard_ground=None):
     atlas, output = atlas.resolve(), output.resolve()
     if atlas == output or atlas.is_relative_to(output) or output.is_relative_to(atlas):
@@ -138,6 +156,7 @@ def export(atlas, output, reviews=None, guard_ground=None):
             if not count:
                 raise ValueError(f'No gallery main element in {name}')
             html = html.replace('</main>', note + '</main>', 1)
+            html = add_card_loading(html)
             dest.write_text(html, encoding='utf8', newline='\n')
         elif name.endswith('.json'):
             payload = scrub(json.loads((atlas / name).read_text(encoding='utf-8-sig')))

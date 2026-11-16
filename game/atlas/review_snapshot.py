@@ -5,6 +5,7 @@ are overlays, not complete replacement catalogs. Keep that precedence explicit.
 """
 import base64
 import hashlib
+from html import escape
 import json
 from pathlib import Path
 import re
@@ -16,6 +17,16 @@ def js_data(html, variable):
         raise ValueError(f'Missing review data: {variable}')
     value, length = json.JSONDecoder().raw_decode(html[match.end():])
     return value, (match.end(), match.end() + length)
+
+
+def prepare_review_shell(html, data):
+    """Keep the first paint correct while the embedded equipment data loads."""
+    html = re.sub(r'(<header>.*?<p>).*?(</p>)',
+                  lambda m: m[1] + escape(data['introduction']) + m[2], html, count=1, flags=re.S)
+    html = re.sub(r'(<details><summary>How to read this review</summary><p>).*?(</p>)',
+                  lambda m: m[1] + escape(data['explanation']) + m[2], html, count=1, flags=re.S)
+    html = html.replace('<option value="all">All equipment</option>', '<option value="all" selected>All equipment</option>')
+    return html.replace('<option>Weapon</option>', '<option selected>Weapon</option>')
 
 
 def reconcile_cards(base, lore, guard, shields):
@@ -112,6 +123,7 @@ def build_reviews(reviews, guard_ground):
                         "$('scope').value='all';$('family').value='Weapon';$('animate').onchange=$('scope').onchange=$('family').onchange=$('search').oninput=render;render();")
     if "$('family').value='Weapon'" not in html:
         raise ValueError('Unknown equipment review controls')
+    html = prepare_review_shell(html, data)
     pages = {'armory.html': html,
              'public-interiors.html': page('public-interiors-review/index.html'),
              'shields.html': shield_html.replace('../inn-review/index.html', 'inn.html'),
