@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "approved-documentation-2026-11-16-confirmed",
+  "version": "approved-chain-plate-2026-11-16",
   "policy": "Pinned approved snapshots; no browser feedback, modification-time selection or game-file writes. Source IDs identify retained variants.",
   "approvals": {
     "armory": {
@@ -52,6 +52,11 @@
       "conversation": "atlas",
       "date": "2026-11-16",
       "evidence": "User confirmed the five withheld equipment entries and revised Fellowship column bottoms: “Those mentioned are all actually approved. so continue with it”. Applies to the existing revisions only; the new chainmail plate-arm proposal is separate."
+    },
+    "chain-plate-2026-11-16": {
+      "conversation": "atlas",
+      "date": "2026-11-16",
+      "evidence": "chain + armlets look good. it is approved. Go on and implement this in the game and the paperdoll previews in the atlas. then push it to the github site."
     }
   },
   "source_sha256": {
@@ -169,6 +174,7 @@
       "reviews/armory-shimmer-preview2/564-0-worn-off.png": "f770f22600df3f30cb017ad5d4ebfc6959d97469432a330073666c46e5eb80f4",
       "reviews/armory-shimmer-preview2/564-0-ground.webp": "52f1e2a44b016701f68513646e483955771339828cfe8ae24597f21620d33873",
       "reviews/armory-shimmer-preview2/564-0-worn.webp": "4a64c51e0c20f97fe8ed6f39ca17637cf892239fada37e82316f154581dd9e82",
+      "reviews/chain-plate-installed/paperdolls.json": "a0e7a3cab51fa9398b5e4baaaf5e91f2e9ab900dceddbb91da36c92c4816ca4a",
       "reviews/public-interiors-review/index.html": "f6605c5e0713e6884c97eff64b898829b15b9425e9ba9396d1e7453c2487302f",
       "reviews/inn-review/index.html": "4db8450fb40674a087adfae259a9733e3c8fe275d33cd1446ae4ca4a9b55aadc"
     },
@@ -364,7 +370,8 @@
       "name": "blowgun",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The original U7 ground sprite is paired with a short, pale bamboo-like paperdoll blowgun.",
       "images": {
@@ -383,7 +390,7 @@
           "6643e53383ae46695613e498717bb86244b5ad1b4be491c00344d697222d0954"
         ],
         "ground": "b8e0760ac026fd863318c36b29e6b419dfbd373864a4116a4dda5ecda2397908",
-        "worn": "3e89b1139018989df47e445217423f05725067624f1f34b91a92ecfdae3ee594"
+        "worn": "5858dc89cc46591fa583425b46681cc4d6abc14ae14348c300a779a0fb9b96c5"
       }
     },
     {
@@ -563,7 +570,8 @@
       "name": "boomerang",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A pronounced V-shaped wooden boomerang.",
       "images": {
@@ -620,7 +628,7 @@
           "0e76d107feaac1c91d4b8235d254ad6ca32ce3c7b1d49ca528e56bd20d2c8308"
         ],
         "ground": "77194179c9eb637be2da6676c30523508357bea0f9db1089a094230bc1803424",
-        "worn": "c0017bed46a9f8066425c4351e3e0e71b4e1c7e300dac413e86507e93a230a8a"
+        "worn": "4f3a7bb3ce0fe482370c991d4146352f7bc4517be5eb58d776cc93b358985e3a"
       }
     },
     {
@@ -657,7 +665,8 @@
       "name": "bow",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -676,7 +685,7 @@
           "51a7e83b4b1f2d4fcba6574b361afd07ecd81b4e3c43e2808c81d82dd5a6a7eb"
         ],
         "ground": "dc957393c5f03c31e926d6d56a3fa7fb5db70bd2d5f8faa01352dd64c1d70da5",
-        "worn": "159404a5fd9f18700fcd15d19105540e0c02a6e7b677603082f22ad1472818c0"
+        "worn": "1ffb7c2923b3e234c4916e635cb1d7e3e4412ebbea69b4e49b8a56a6da947c80"
       }
     },
     {
@@ -688,7 +697,8 @@
       "name": "buckler",
       "category": "Shields",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The shield uses UO ground and equipped angles while retaining the original identity.",
       "images": {
@@ -703,7 +713,7 @@
           "0f196875be98740615ccac21b77d1a9cac9bde4bc8ad19b8c50e23a7c87c9ed9"
         ],
         "ground": "5cdb0556f39f4890106c20c71e12908c7e5e7e0048a9be6adc6e119f9527c1d9",
-        "worn": "7b6fd1f4e3acb6f93cd7eaa89c1e8da2f5fecfb3f9adc0a7cbe32091da268596"
+        "worn": "6a28cf8fc3ad9336afd9f0c7b3a8c9a142c3c35c1504bf5c6c322d1d316c757a"
       }
     },
     {
@@ -833,9 +843,10 @@
       "name": "chain armour",
       "category": "Armor",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
-      "description": "The U7 equipment identity is adapted to UO scale, lighting and the paperdoll silhouette.",
+      "description": "Chainmail with stock UO plate shoulders and armlets over the mail sleeves. The arm protection belongs to the chest; gauntlets remain at the wrists.",
       "images": {
         "frames": [
           "481c7cf8b91b08715514d2e21e22ec8ee5143434adfb17fbae57a800f8a3783f"
@@ -844,7 +855,8 @@
           "da7accf65abfa9b5e71a2c124bacdeb28ce255af4f90fbb41d89f3b48135ce25"
         ],
         "ground": "3bf6c640d06247805a96e09179ad31701505af8cc48d7cfa0635f2efc4ce3c4c",
-        "worn": "b05924790a3d5712662339d3608cd9926d1dabc2b039cb6eefe4e2238ac85006"
+        "worn": "da258d327aaf4bf24193597d6570f5aed76b17ed4c5e353d034f861d03946027",
+        "wornFemale": "c68fa088ad93f51f395a0d3ae1583b60a654ed8944062aed5c014eab5c242e42"
       }
     },
     {
@@ -902,7 +914,8 @@
       "name": "cleaver",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -921,7 +934,7 @@
           "9b1727b72db38c51d6e98439e36ccccb3767e78d9fa9423adbdd66f68aab0afc"
         ],
         "ground": "bd81b9513fe02b8729f10a9b1b89c75448228d58121a69d3bf70eff5ad2863c6",
-        "worn": "f832788324ea7a837481ce235dae5d9d0da5e7de5029b089e36c7c1c4ec87561"
+        "worn": "e2837e4c42d902e88ed683ff82bab9c41fd9c45fd2dccbbbf089693a241cbf5c"
       }
     },
     {
@@ -933,7 +946,8 @@
       "name": "club",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -952,7 +966,7 @@
           "51ffceaf31049f41d0e8861c91b3a9c82275dadb422a58682ad3456f846d8b40"
         ],
         "ground": "f07bfc20cedd85605817d05a9d3495278854d3f009fa61ab704261fae2d9926b",
-        "worn": "685021778459bbe90528867fffbecac4b9dc3797ef4bc9b6d4a3592f116dfb09"
+        "worn": "d67ece6e01305d91c408e881dedbece8aa6d562604165b7ffbcd2684c4cce3f5"
       }
     },
     {
@@ -987,7 +1001,8 @@
       "name": "crossbow",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -1006,7 +1021,7 @@
           "b8cc2cf2e5b33bf6de3b7e12414ea28b95f2083400bd6037724f9d1bcaae08da"
         ],
         "ground": "27b20ed30924380cbc7ba4e4b18fc72beafbf13a28b6ecd70c318030f27fbf6a",
-        "worn": "81bf92cdb23c4c55fc48a558c387917890b828d3a9c25df1f9f9d47c5449315a"
+        "worn": "394f6448dfcfcc87dba42dacafcfe36ed5b80c2bfcb31b4b85f25bfe2e39d1aa"
       }
     },
     {
@@ -1018,7 +1033,8 @@
       "name": "curved heater",
       "category": "Shields",
       "approval": [
-        "shield-545"
+        "shield-545",
+        "chain-plate-2026-11-16"
       ],
       "description": "A silver shield with a charcoal serpent and dark steel rim. The compact ground sprite has a smooth, stud-free edge; the paperdoll retains its rivets.",
       "images": {
@@ -1033,7 +1049,7 @@
           "f5998dd206ca2177733bbe2d025ed7ec46cff2b269452cd5e7b1520fd7cbb3ae"
         ],
         "ground": "be96339789fe2ac821b8045b9f8d3f25d280652ed6a572e15eecda8ca9edf20e",
-        "worn": "8c3a8c9ab61bd196d27016d4a8b737b49cae6b5e7fd5ff1c684ea8b92568bf57"
+        "worn": "0b996af452cd41fcef110a6d91038031953d18a09b844640d6eb137cb506b564"
       }
     },
     {
@@ -1045,7 +1061,8 @@
       "name": "custom sword",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -1064,7 +1081,7 @@
           "100816b03c7f6573b658b2b061f7e95b4ac2be3ad7301513bfa4540d87013cf6"
         ],
         "ground": "fbe0f4c8b75236c1ce04f7be48b4710bc9aed90d7e465f2fed398e62b14b358f",
-        "worn": "2f52d6620660161458f45c7effc49fc18b228ec28ec6863dbfea6bf7fd6dc9d3"
+        "worn": "cde94c5ece0daec15e0201b6bd6e04260d55fa1fc67591c917827fbb240f591c"
       }
     },
     {
@@ -1076,7 +1093,8 @@
       "name": "dagger",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -1133,7 +1151,7 @@
           "20c163f82d14575592707b8424222680397eaab3f325fde96a6cc6408fd4a1f6"
         ],
         "ground": "3dce7e68e2386c7e04487e240b6b5b0c7bab113f588e8bf7a0e974aebf0a58f2",
-        "worn": "10828482e1c4e7681f6a3ae75e551ed058b40097647c943a3cdc162ddfb3af6a"
+        "worn": "85e426925b98b156de74939cfce2b98333f272435beb24147522dba0d2df47d3"
       }
     },
     {
@@ -1145,7 +1163,8 @@
       "name": "decorative sword",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A decorative blade seated low in the paperdoll hand.",
       "images": {
@@ -1164,7 +1183,7 @@
           "326322e1a8831a01fffdf5bc5591fdfbdcbaa13a82799c5212e9a026a3526249"
         ],
         "ground": "70195d744f7a0270f1f64b8acbee0d27d14667aba8b84181d04c23766ed0bb74",
-        "worn": "904c53841e34c04eea9f10c84c2aeb2173205a9cba3dc624b1bf7b6826fc74ef"
+        "worn": "acd3f2d31aeff5f454cb49f396e7c16b2aaa1a852a925580cc13b15d55eb3662"
       }
     },
     {
@@ -1176,7 +1195,8 @@
       "name": "fire sword",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The red-orange blade keeps a visible steel edge in both the ground and hand views.",
       "images": {
@@ -1195,9 +1215,9 @@
           "89aba94a7f888f9fb43e21dd57edc72d2d26d98f2aede95d1e39f2f07a55a9ee"
         ],
         "ground": "0b4273acdd48bcb469932bf41dd9d8dbfb24f25236435795b84c2f3281203b43",
-        "worn": "1211215d2ac833666fa5d1e2bc294c9eda97162e832ae911c8c02b206075e857",
+        "worn": "52ea024f2f1d91c7314801f76b6c29b77700cd7d8c02a2262d4810ac32bdbe82",
         "groundMotion": "35694e504220dc9673e686b087d78178837f19c92ddaf9616acd934974d61e2d",
-        "wornMotion": "02b2319dea743c61864c4980fa3bfe7ed3afc28cbe76ec9ca6418bd7d0df8cd8"
+        "wornMotion": "71b9ea75f024c667e3f3690c4c233487f3091a78f6c57efdf8f5ecb45da3f60a"
       }
     },
     {
@@ -1209,7 +1229,8 @@
       "name": "fire wand",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -1228,9 +1249,9 @@
           "e4e8c9da449aedde665d8dfbda1d41e8f04736e1cd48010323fa40a66d79ed63"
         ],
         "ground": "10ea969c641ac78342cc00bfd14c9709fa4efd98e8343c52a91032cda640d754",
-        "worn": "c00ab921c4318f65e03b28b883a48a7c0cdf71684519cdca5ece9fe80610ffaa",
+        "worn": "e8e1297e49b26faf81f7177be133cb64f35c57a2b9f91b84ef3c75d60c931fa7",
         "groundMotion": "5c085f9b1012aecfbb23eddee19e9d507e0e13faa4089e0ff46af9bc43644a72",
-        "wornMotion": "a245c3cf769c53fb7e40dbf0e2c337016277acdebf76487e9727735acf0ca468"
+        "wornMotion": "5c9869aa6debde037271265b48d34d7a34d0d7f32fceff0073077403d016ee11"
       }
     },
     {
@@ -1242,7 +1263,8 @@
       "name": "firedoom staff",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A solid staff held at the pitchfork angle. A human-sized skull sits within the paperdoll flames; the ground version keeps its skull-free silhouette.",
       "images": {
@@ -1261,9 +1283,9 @@
           "ac73b09c9b76d9db223b1a5c4456616fc3c743df7b5e205e207e05e737adc3c1"
         ],
         "ground": "ae41dbe0192e7160803f44333e920f6806f8f115213cb43cc5440da2a55eb381",
-        "worn": "ca8a433beb2f050968a834e45f56f586b9118268f5e205991ca0e14b4d660847",
+        "worn": "8dca35a21b52a497e46cf4328fa2d355891c881a7740a919830171a7939ac426",
         "groundMotion": "09633ab50a6fe410c8848195e0bde505234ef897b16774e47ecc053e5f1ab988",
-        "wornMotion": "151a43f8fced14aba0fd512378ea1ee575d3ced7c058edcec32f119c401f36c0"
+        "wornMotion": "ab216d12825bf2d706293d2d7c7d7d502ccec7636169644e7a599352e242cec9"
       }
     },
     {
@@ -1275,7 +1297,8 @@
       "name": "flaming oil",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A brown potion bottle represents the flaming oil.",
       "images": {
@@ -1332,7 +1355,7 @@
           "5e292f498eb873deb22bc5e782240e2fdd4ad0c69810d284d4b7f0eb9acbcf36"
         ],
         "ground": "c891aed33e03ce8cd69a63a1c9e58ced9619c33e210d4dee4d89eb8e056fdade",
-        "worn": "327c12acdef07e82d1208af20c1777864e4a645929766b126527c87606aa5612"
+        "worn": "072a7333764c3483ceb09e720643972abee92f4ac02ccac96f86d955e7caa31f"
       }
     },
     {
@@ -1367,7 +1390,8 @@
       "name": "Glass Sword",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "An amber glass blade with a black hilt and a red gem pommel, shared across both views.",
       "images": {
@@ -1386,9 +1410,9 @@
           "e9d654c40486fb2d3f55af40a826e70a92aeffaf1a7dc68f1f40e71daf6bfa57"
         ],
         "ground": "0f1aec4256d2209bb9fa3e3a8fcf82e440f8ba273630948720cef83d63aab179",
-        "worn": "91e34f2e45918194a9520ba460b747da52f4883969ff0b962002adb2b5d7253d",
+        "worn": "45fe9071b6af96ac3bec49dc2e9db60b46b2d4d9841ccd49a463c9e777903c9d",
         "groundMotion": "445d4cb5939fd01a6bb55108040f9e2c2dc5ea9daa620ead6809c896ade8c029",
-        "wornMotion": "ba5f846cf5c3b56f30f9389262391e14ceb9bed65f7b314034265d3481bc82cf"
+        "wornMotion": "2ef51fc25e1e5826999b5c43d6f9daefc9f8eda61027dc70bc9e09db2a80d864"
       }
     },
     {
@@ -1446,7 +1470,8 @@
       "name": "halberd",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -1465,7 +1490,7 @@
           "848a224e7715f6f32b206774d4f01e77ace98a0ff3f60d75c69472fb84793c2a"
         ],
         "ground": "51c73e5ba4ee23ed1b28fe1288c12dd4caa3cd05288e7490e5c3f99feb710614",
-        "worn": "ace8c64d48e5f4821859bb3402bd76f820129e48de8e50758e9539bf3aec99af"
+        "worn": "08aa59282c144ac6153416f653f08aa476dd98f7c3d0e423f4a5f9a5d6693f0c"
       }
     },
     {
@@ -1477,7 +1502,8 @@
       "name": "hammer",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -1496,7 +1522,7 @@
           "7f62e54652139645f2ac2c224fcb1694e32f5447b11a20d0bd4979545ddae381"
         ],
         "ground": "7043ea6b5cb579de349aa00f8a84d1f88b6e5a0f3e2e1e474668435bb47571bb",
-        "worn": "bce9705dae474a99abc8fee16fd08a698bf6d7b1a0b995e5ed3be9ec32467a64"
+        "worn": "a8993bc11ed8005cddc3d6f2b92c64e8af019376df7e82b9a07ef0e87295c03b"
       }
     },
     {
@@ -1508,7 +1534,8 @@
       "name": "hawk",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A compact throwing weapon shaped after the U7 hawk, with a readable ground contour.",
       "images": {
@@ -1565,7 +1592,7 @@
           "619281a072c781eb4474932c068d841c01eff1f8e6d57b6e156c02c5efdfb205"
         ],
         "ground": "8a1e99eddd4b7550fe814f75bfc297c47ac4e0da825040778c3d0417a7b40995",
-        "worn": "5fcf8798cf6399b03cbed6395163394b25d9c5c2c1b4fb6fd5a9bfeb7b3e55c0"
+        "worn": "690df3713c07325b9af298c4e74d9e2de57a645fc59c1f57d461c775ba00d480"
       }
     },
     {
@@ -1577,7 +1604,8 @@
       "name": "hoe",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A farming hoe with a continuous wooden shaft and UO tool proportions.",
       "images": {
@@ -1596,7 +1624,7 @@
           "a50179c3d0805074e49691b1ee2e2505138ef4eebf980fe6b79983cc262c3e7f"
         ],
         "ground": "42f16dd187d924189e473a37a81ca9e3f324a775a5e2481b50fdb884a19ace06",
-        "worn": "33d6609f80dc0a05c447f722e66458112527c41ac25056de45134430e788b599"
+        "worn": "14e866b71631c7899eb8c54b468b71aa7c77dfffb39f226031c77cddcaee22dc"
       }
     },
     {
@@ -1608,7 +1636,8 @@
       "name": "Hoe of Destruction",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The farming hoe silhouette carries the original red blade. Its continuous handle follows the pitchfork grip.",
       "images": {
@@ -1627,7 +1656,7 @@
           "52c7ff284f69f50a6fd5939d53e1f1f21fd85c92be20fc78217bc2beb129a048"
         ],
         "ground": "170bcfd5bf992fdf20232cb713545e66bd8f2cb032c4ea3c015d5c223ac06fd8",
-        "worn": "5d64d652a64831b320796a9b8b32b4b0fc08dbbd45d68c041047bd0cfec8c71c"
+        "worn": "838289c066b5049780611f44dc26ef23f2919512adf4a4333b74cbe991e1307e"
       }
     },
     {
@@ -1639,7 +1668,8 @@
       "name": "juggernaut hammer",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A returning-hammer design with a compact head, strong contour and pale blue lightning accents.",
       "images": {
@@ -1696,9 +1726,9 @@
           "6b07ccc4fc8b49689605ff074ac121cb9e533f647127f5ee2710e60adaa22991"
         ],
         "ground": "2b591cce9e02a1dd54b53192ebc4d523e234d1cfe8a66a5cfecdf627934c456c",
-        "worn": "148f259bf6e3055af9220de9da52e66e8c36e75eef4289544d9f3296f38616b5",
+        "worn": "31be105a91cc3950bbfe73f3da1ad0d1bd7fd67d0f9a70c27a219498ffbaf6c1",
         "groundMotion": "4d38cfdc409bc35c484b9728264c2593f6b1bcbc1bf26d1579babb071a6d7807",
-        "wornMotion": "31b2eb9f79515a264bdebbbb0a23db718113d8340c2e1441315839ed877eaca7"
+        "wornMotion": "ce60ab64e6284360b9dc2b52f402b4c4698acf33610008b0147c7b30d41b3467"
       }
     },
     {
@@ -1710,7 +1740,8 @@
       "name": "knife",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -1729,7 +1760,7 @@
           "43399c205a798f07193de7c17888a3a2759a05af3e390470ac48086c60702592"
         ],
         "ground": "26fe58cf73622072e587e77117c74bf654ea1fef0dfb86d948ab6a3ffb35024d",
-        "worn": "70878245e47ce41a69934cc325692953bd558dc06f9343404faafdd65529731b"
+        "worn": "f96441e1d2e947e59440026c3db27d4764aa64ad9cf84e182f64dbc7c3c46359"
       }
     },
     {
@@ -1856,7 +1887,8 @@
       "name": "lightning wand",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -1875,9 +1907,9 @@
           "9286bb3487ecf05c799e9145d3bf3f60050d486d54fe63bc516837f8a92404f9"
         ],
         "ground": "346d9643ca5685c50e77a5248fc81b7f3f207656b59c961d45fa33e3b66f4327",
-        "worn": "e6b2e70e6e3683d681f4c94bdba9e1e0f9f0c2f7d3cd93ff262c42095bbdbe57",
+        "worn": "5d4edba044d8716ebd29daefe166b05b2d06fc2203af3e4fadba91bbcf2bd06c",
         "groundMotion": "e2b7a513f2c88c54b4de251f1dc4e715b6eb7a06a9e30afd0636d26ce8fd11a7",
-        "wornMotion": "da0e4ce01499d004ea20c3efacc5cfbf96275ed14223f4ed8bd8d27d6b54ea52"
+        "wornMotion": "21d78a387d9cfd9c388f0cf82465fec969329a57ef1516810b93e175079e9568"
       }
     },
     {
@@ -1889,7 +1921,8 @@
       "name": "lightning whip",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A yellow whip on the ground, with small lightning flashes around the paperdoll weapon.",
       "images": {
@@ -1908,7 +1941,7 @@
           "7b9acfaceca4cfd8d3a150636b3e8fd82d0538bbd5cf7053f070b20683c9bda5"
         ],
         "ground": "4ea0a858007db2230f17c8192d2b76e23d0724c56ac060158dbe1745a2c7bb6b",
-        "worn": "5560b3d2f86ae33fe646e06dcad4ddb33c3916b745cad135888efe04e6bb123a"
+        "worn": "46c654b1581eed704b61cfd364712cadc6d600139d4932c335cc88c28c622237"
       }
     },
     {
@@ -1920,7 +1953,8 @@
       "name": "lit torch",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The native UO torch with its lit flame.",
       "images": {
@@ -1939,7 +1973,7 @@
           "ded4398e1a40c96cdfda6255bdc842cd22d526648f43f7692a0d6a4f8d0edef8"
         ],
         "ground": "8591d5c5c880ae838f19d5989d784f59a8ea2ac86eca11b6abcd768deddf614d",
-        "worn": "bea1bbde93c735737891c1c52548696d50bfc12348f85952f3aa11a5b659915e"
+        "worn": "eca536f04fe97da10bcc4c63cc36a1431871c62ace31a04ceacbc00278e60be0"
       }
     },
     {
@@ -2119,7 +2153,8 @@
       "name": "mace",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -2138,7 +2173,7 @@
           "bc43a27cf88c8e8031a01956d9e6dfe84f1e63e8cce488458d29a6bfacccad7f"
         ],
         "ground": "0d90e2e5d149a403aad9cd5a1d61a34be4f99a45eb2a3a931547191de758e5f8",
-        "worn": "19c3c026481d06396610697c117c1b041db9c8a885d4a1474c6575abbeea83a8"
+        "worn": "e6b7dea698e6f39eecf162fa2a3364259577e4d2e1b21e8a71aba4935048eb45"
       }
     },
     {
@@ -2150,7 +2185,8 @@
       "name": "Magebane",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A forward-facing curved blade with a split tip and runic engraving.",
       "images": {
@@ -2169,9 +2205,9 @@
           "99cb6c9e77a518a75ddb6b1c3e629e0233332f482586d6a979e0913bc0f67477"
         ],
         "ground": "e36e66a30430a9bd708bb3d04697d0e97ea3b54d58aacc45c37afe791b59c457",
-        "worn": "e2d1dfa7e1b4939110d36616b547e2b354a09c3c40559772728bfe7311beffce",
+        "worn": "8fe6210ea1f9f99265cc41e0192676d28c226dda398aec08cb9a13c217c6922d",
         "groundMotion": "2ace4741255fbf4524f4be3ecaa35fe40c7f1dc1bf190c76e8a66ae2bc63358b",
-        "wornMotion": "665453bd208273288cd815749dc9ace0813014824965e762df26eb9c4a210ad5"
+        "wornMotion": "23356326b872a529ecd4b57cdd1d1cc145088d0cacf7f213dee588996a1e6216"
       }
     },
     {
@@ -2292,7 +2328,8 @@
       "name": "magic axe",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A stock UO axe silhouette with a valorite blade and a bright blue rune.",
       "images": {
@@ -2349,9 +2386,9 @@
           "3c340dc13829bbd3d3aec84a0195556ba54c7d508cb4775f67000d4192099706"
         ],
         "ground": "f18adaf5a7f4ae8a071c5c0d6ea0d806e5dd763c6eebf1e6bef9f8a1a5eb1812",
-        "worn": "6e8270c16ca7ded88a7fdba0e80ff31d5e972eb2ab7e5887cc95d6ed4afe86f9",
+        "worn": "e844f00e7e1676e6b35bf1b3fe664d1955794088b1043178f9b7a2f6a833dcf9",
         "groundMotion": "a1c26756f9b787530017a2e07778eea1b4d77e8c356a27b415d5836cd4f80868",
-        "wornMotion": "9c3efcafa1a180751dbf2726804c5d4995f8c6b315048cc6f2889981e20a5b63"
+        "wornMotion": "4c49f9842afe874db07a44a6ed200f26ece62da056f6c2ba8dd07bfa740948d8"
       }
     },
     {
@@ -2447,7 +2484,8 @@
       "name": "magic boomerang",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A deep V-shaped boomerang with luminous red lightning.",
       "images": {
@@ -2504,9 +2542,9 @@
           "f087591a47fa36905b8fc26d357ffef8ef491478435b70ddf8174a0c865974fa"
         ],
         "ground": "cc0cec0e4cd7bc3af3da084f6da5acf1014182d002fc38b686f1a41454c0e453",
-        "worn": "f752398deca3e655c5b73a6e579ac36fd69fa039dced8e19f4e2b24bf1fce5d3",
+        "worn": "092f42bebe16b5a250dcfb1c972c3a10526206989e29e98095efc3c460b9c562",
         "groundMotion": "5820038fb6a31ab80053583ff60f29f1df4450938a489c95b71204776f43beb2",
-        "wornMotion": "9ec915fa5bd8b29246f17282f44522ef5d2d390edf17aa0b19358806006c501e"
+        "wornMotion": "6ceb20612d790e6a76acf808314d1c19466435e18c6b91e35323f5a72f9fd27f"
       }
     },
     {
@@ -2518,7 +2556,8 @@
       "name": "magic bow",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A magical bow aligned to the normal UO bow grip and hand angle.",
       "images": {
@@ -2537,9 +2576,9 @@
           "ca2e09b76a7613d61441dfac703f46d0f338c92496cbcc33a6c5f2b45cd931c7"
         ],
         "ground": "d1574e6cc41328212f4de62d66c7b9ca57412c22a60b381cd080f8376be6cd08",
-        "worn": "c440fdd06d79b5cab77c6129a2c88f2eb7bfa60cd0dd5cf4619152c0ba293d0b",
+        "worn": "3a2bd03fe7ef316c64d5fe6bf71c4f2acc670e104e9e5afcb07d2a6e6e2b550c",
         "groundMotion": "2d5c9f53fbb48166eef679ac4047f044357bfa55894076f10ef858695e604e61",
-        "wornMotion": "7b6080699e9085df4a5064cb6a270ca61455e53a1df5dddbb89496465f0e4bc8"
+        "wornMotion": "a03f5d8ed98950074df11617067fb35fdf2e58bac61a5d8b59b1fbe0017baf21"
       }
     },
     {
@@ -2651,7 +2690,8 @@
       "name": "magic shield",
       "category": "Shields",
       "approval": [
-        "shield-663"
+        "shield-663",
+        "chain-plate-2026-11-16"
       ],
       "description": "The silver serpent shield keeps its face and charcoal emblem. Only the outer frame is valorite blue, stronger on the ground sprite.",
       "images": {
@@ -2666,7 +2706,7 @@
           "5f47dde93032384db55e189ecb3c3048c0be3821cce3427fac37e325e5b5080c"
         ],
         "ground": "b6c7c0a455c493110cd681a3748e0001f1158dad5cffa6cc6a416c6bd7460dfa",
-        "worn": "0103f9ff51556b456c12e9c3b8279bcdbbd6c55065b39b78ff1e6a657087a188"
+        "worn": "1cad307d844e93b32b9960b227b086c6ddfe3245b796c65f6c9b7f8132f73f89"
       }
     },
     {
@@ -2678,7 +2718,8 @@
       "name": "magic sword",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -2697,9 +2738,9 @@
           "85aaf3d029ffab90dee0119eaf6d0f5025121934b725a8932146c0165814df56"
         ],
         "ground": "2c18495db2cac517bf18f7d5563318a6c7b05d41a69b6ce6817c49c09e636064",
-        "worn": "b98d0eebe23f36d7bdd62c3329c4d64c80a103baeaf0a955effc667e8a3a78cd",
+        "worn": "1f85a7cfb8fce00879e2b7d7bda60eb219d1edd0f64137382be8fb603cd0d3ce",
         "groundMotion": "c16263bf305c21105c8ab90f7e8ec86ef539af8b20cac940a3427ae426c352df",
-        "wornMotion": "4f920e405c181f85cd1fce90d65ddfce8ae1fed773b8099a35ff0beba1ad3d12"
+        "wornMotion": "4f33f796fd757d008aae40ba5a0f240311ae66ec084304cca1ea0a917db289ad"
       }
     },
     {
@@ -2711,7 +2752,8 @@
       "name": "Magician's Wand",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -2730,7 +2772,7 @@
           "7ca839dfcdc4271a412acadb572c7f32fe74eb893b24d3a84fbfd9681774dc5b"
         ],
         "ground": "6c448c4a9a56c106b77c91449b537892f38414254dd7d30413b107fc030fdb47",
-        "worn": "5cfb0d058659bc4597af210ba7e339c3ed7554876f8a43dce12602842b1773d4"
+        "worn": "289ba2b7724024e4460926296c2ca058a29fa525e4d15f68469ec0f9379b65d8"
       }
     },
     {
@@ -2742,7 +2784,8 @@
       "name": "morning star",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -2761,7 +2804,7 @@
           "c717b1ffd326800c4bd84996646f34a6d7afe6d16833569517f6998aea902597"
         ],
         "ground": "6028fc620d2b62dcfe2f1f16a52bdcb2cda268657df51635d86c6078a0df7998",
-        "worn": "699dfe07cd5952c021cb6a5ff3357a4974007cf459d4fc7de00d907b13d04787"
+        "worn": "82b3d07b3d9101d29667f74465c0943e34f4f0cd240987f0a1d9e95064073697"
       }
     },
     {
@@ -2773,7 +2816,8 @@
       "name": "musket",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A wooden blunderbuss with a flared muzzle. Its ground sprite is drawn for UO scale; the upright paperdoll faces the opposite way.",
       "images": {
@@ -2792,7 +2836,7 @@
           "86bda16716f2893c4cef247cfddc3ec7e21cb727669c5d629ceafd90a2a66b0a"
         ],
         "ground": "df114f786e49aa171bead3b7a0e3af80c6e4ed2c3f714d2ae0ef4529d1f96866",
-        "worn": "5b719f2ab28a5fb3f950a829d96c37092889c273fb6e20aea7b54904839aaad2"
+        "worn": "bbe0e67b6caa33b6fc967c391d2e0080a266ff8b8e6edd2248f649f0ae2b21ba"
       }
     },
     {
@@ -2804,7 +2848,8 @@
       "name": "pick",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -2823,7 +2868,7 @@
           "bf9db1da63eb3ab15904a1ae3299ff3aa5216819da93b4c634d9285e45aafe05"
         ],
         "ground": "3a3225e5995e8871f6a8e51575aaf019c4905e8fa0bd628cf92999b219557595",
-        "worn": "d642eaca32b61055c05ae3a34cc34ca5bcc77e5134b3f164532f60f7d93fb42e"
+        "worn": "69f4e3c4a266399cd4af89d3bdaf6cdad0eae1c46e87f5afaa31c4d7d31e6635"
       }
     },
     {
@@ -2835,7 +2880,8 @@
       "name": "pitchfork",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -2854,7 +2900,7 @@
           "0c0eea5976f2f96e51abe734c3f2df2394d1e442d97462b8f3aa4fff2f62162b"
         ],
         "ground": "a0b62739b8e66e60ed62b950af932f4ca7645e6a573f325884f08c639939a19e",
-        "worn": "98b1c83aab0a9c0936bd97d2dfea8b1cae30ba01605ca22f3f367be5bcdc498f"
+        "worn": "a1a11d3a9d5fef64aa8fea7f68eb1ff3d7cfa1be223e4e99e2d6b7ee9af745ce"
       }
     },
     {
@@ -2934,7 +2980,8 @@
       "name": "rake",
       "category": "Weapons",
       "approval": [
-        "rake"
+        "rake",
+        "chain-plate-2026-11-16"
       ],
       "description": "A stock UO rake with matching ground and equipped representations.",
       "images": {
@@ -2953,7 +3000,7 @@
           "826544414f9f640986c48ca71c7939ea48a61f16f524afac66790f0914262c0e"
         ],
         "ground": "b620deb1eb681d5565ea79d1d84932c97c6a47421dee86ecb367e55d62e559aa",
-        "worn": "98b1c83aab0a9c0936bd97d2dfea8b1cae30ba01605ca22f3f367be5bcdc498f"
+        "worn": "a1a11d3a9d5fef64aa8fea7f68eb1ff3d7cfa1be223e4e99e2d6b7ee9af745ce"
       }
     },
     {
@@ -2988,7 +3035,8 @@
       "name": "Rudyom's Wand",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -3007,7 +3055,7 @@
           "e74d5cde3e2eb566647fdf232a9c00e5b6d9782547c9526b91c720a494272b67"
         ],
         "ground": "efeb3b3a218996076f371315d698cdd668d3fb2a9c22d2f24f1703b50903b973",
-        "worn": "6ebf75c3695f9035c4f98846dde091d6ebe4601a66f5de1395323425b2d4567f"
+        "worn": "9d61c1574ea7acc307ec540c19e99d97a866041bd558528529c830ea779e0224"
       }
     },
     {
@@ -3042,7 +3090,8 @@
       "name": "scythe",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -3061,7 +3110,7 @@
           "f546216a2529c97efb76d539655d64213a2035d2eb8109eeec26098847af125d"
         ],
         "ground": "ce7349feb46be701b69d680663a59b4b6849d95260744a93fe8ef8afb92445c2",
-        "worn": "752d49b83fbd748eb8458397a09d1da00c165ae89dd5e40ca7daa2cf566af1fa"
+        "worn": "dc582ce0385365050afc37f14d8ed2305c3ba9672d33ecb786f0b2478c60af5b"
       }
     },
     {
@@ -3073,7 +3122,8 @@
       "name": "serpentine dagger",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A clear undulating blade and warm hilt, oriented like the UO dagger.",
       "images": {
@@ -3092,7 +3142,7 @@
           "0019b15e050be84c8f61cea05af0cfb101392d37aada60777e1a4ac374ef2473"
         ],
         "ground": "7f73f0704b7ad8956c883e7360273c1c4f00571860f7a6bd00fe305dfd50b234",
-        "worn": "0b1db9c3d0c74be1f9ecfa547aa3eea24ab1be232ba746b941857e2cec3ef28d"
+        "worn": "7e0e3cd49c6a6c216412a2a59b6ef1d67a4e77ed29b2904674efeeed97a2754a"
       }
     },
     {
@@ -3104,7 +3154,8 @@
       "name": "serpentine sword",
       "category": "Weapons",
       "approval": [
-        "interiors-r4"
+        "interiors-r4",
+        "chain-plate-2026-11-16"
       ],
       "description": "A short, regular serpentine bend and a swept hand guard. The ground facings retain a continuous contour around blade and hilt.",
       "images": {
@@ -3130,7 +3181,7 @@
           "cc53f66f6eda5839ab793d70ec9d50ed098f24ea654c0a741a2c52075c2cdae4",
           "1531ed09327d9d16d25235de15305e410cb020d2740b7352bce94b78d7fee8de"
         ],
-        "worn": "fa04af0f74ef87cf7c8730b076bca2e0a973224312a6e22a8dc984d50370ea26"
+        "worn": "b9c19659cc1e82118c25b4da323c0d8f96b136c0c56f0366652f4ebf369af45b"
       }
     },
     {
@@ -3142,7 +3193,8 @@
       "name": "shears",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -3169,7 +3221,7 @@
           "434b8075f08201cc82c6a5ed368bb088da38052c05962fc2beabdcb3880f97b2"
         ],
         "ground": "cb0dc7b9a6d6b577334662e58be7f06a4843316ac75afdc82a5406c3c8f27838",
-        "worn": "d0a55302cd7b1b074cf8c6e9e4aa55713814fda9ce61c7e1d2d4b7d822397166"
+        "worn": "017bae59838a10f6c4d1bde4d053257e192645053184495498afbaf19507027b"
       }
     },
     {
@@ -3181,7 +3233,8 @@
       "name": "shovel",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A broad farming shovel with a solid handle and a balanced pitchfork-like grip.",
       "images": {
@@ -3200,7 +3253,7 @@
           "3fa41ab631b23c559e20a7b98e9d1c05ab32f06aa47f87f3db345d045bdb5cd0"
         ],
         "ground": "a59ffbd59fe3c15ae1b7809f25e4ed1a30d205350c8d2048495347f94e8b1e61",
-        "worn": "b8f0dd66b50657e3727d3b3c53b736ab851577122a4f985282cb8ddbb93361c3"
+        "worn": "ae3c6325fee7a619aebf1c96dab208e002bd726c1308691e398e2da11920f19c"
       }
     },
     {
@@ -3212,7 +3265,8 @@
       "name": "sling",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 sling silhouette is retained on the ground, with a separate paperdoll representation.",
       "images": {
@@ -3231,7 +3285,7 @@
           "441dc423b80e0b451d7338d3021967eac8b76b885faedaafe516acda67efe23c"
         ],
         "ground": "e74997b4501fe38bb65dfed4b14173b06a0f30a0f7bb8ddd83f1b9137997b630",
-        "worn": "6c26e1183a576675fa059e2f954aeaea780286dcfd1c026608dfa0b36a2176ec"
+        "worn": "22dd1a00ab89a3fbd79d9662073085cb9cfa91f71f7ea194964715f1a66ee8f8"
       }
     },
     {
@@ -3243,7 +3297,8 @@
       "name": "spear",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -3300,7 +3355,7 @@
           "29844e424cea515a90169179301604df28f37ea979f012e33bc72d2ee3af9e7b"
         ],
         "ground": "b34778da123d9564a23656394f0b53a54d3b4a7b41ade9ae1214b2500289e089",
-        "worn": "e3a04cd04c42d612de0865cc09f63d34248968bb71d3742a81a67964388c04ed"
+        "worn": "d80317187394f482a1d15f0e7f7bcac4cfd8d258adf9795a2606a31dae1187f3"
       }
     },
     {
@@ -3312,7 +3367,8 @@
       "name": "spiked shield",
       "category": "Shields",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The spiked shield retains its distinct silhouette in ground and paperdoll views.",
       "images": {
@@ -3327,7 +3383,7 @@
           "2044fb3760cf94602bad3709bb7dced67cd34a82b2e04a4a2d9512089bf2db64"
         ],
         "ground": "e68c7038bf588e93dbf81e9814c351cc41e780eb12a479373107e860d71faaa8",
-        "worn": "0ee61af8d9d4b13971964143682fb0d14581f3964e2a0af61460c533c978cf87"
+        "worn": "e69f63cce036cf74c09a744f2b705189a1f58263ad8ded79c0b4bc31f4ebf974"
       }
     },
     {
@@ -3339,7 +3395,8 @@
       "name": "starburst",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A blue throwing star with a tilted face and a translucent magical aura.",
       "images": {
@@ -3396,9 +3453,9 @@
           "4c038613637dec2dab5b476047bc7b4aedfa7c17a789a933b7ff46d1e3f17415"
         ],
         "ground": "81e608381ffbfa660c2c3df9c165de7024c60d5227d0ad0210a6c3757a416a06",
-        "worn": "99cd72c9b4a91cf13cd820db0a5f05ae275c185369a3a52bf4ad3a3f57e49511",
+        "worn": "246790c2bd3643dd3e73b9dd1036856526568251b7d670c3dc376f675a8e342d",
         "groundMotion": "69cadf11ebdf9f71c7ef02f2b5c161f32d4ea0934084f88019fdcbc21107f99f",
-        "wornMotion": "90131cd78d9792b676ce8de52c680418878856437cc735649f5643f60bd666d5"
+        "wornMotion": "fe3d2aa734d7d82919d81c2e8dddf5a7dd163124078c3cca220f7af11dde5f58"
       }
     },
     {
@@ -3433,7 +3490,8 @@
       "name": "sword",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A hilt-guarded sword with a readable ground guard and continuous contour.",
       "images": {
@@ -3452,7 +3510,7 @@
           "80c70f8f9e210ad748bcb31afa6e524f993284313f6a58f2f6dacf3cf7a9c17b"
         ],
         "ground": "c6b2ffa3c8374a5752963a049469c4599a15d9da8904f96a3c3125e242e101e7",
-        "worn": "aaa3fcaa2536939990d03e8b1e93996680d607273494de05c89bf6f3d4130917"
+        "worn": "3f54b33e2ad4d1027cc6488b087ca7f2c2d324a73290e0732fd0230ed35491e3"
       }
     },
     {
@@ -3464,7 +3522,8 @@
       "name": "sword of defense",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A short sword with a green grip, bronze pommel and small red gem.",
       "images": {
@@ -3483,9 +3542,9 @@
           "d3234f0b2b567bb756e0e664d402f247ab5d2400002ea10d1669edc4e1afce43"
         ],
         "ground": "6c2bdfcb58c2c676a61132b0c2052b6e9e8526e3c3fc853cce57071a116f1a84",
-        "worn": "065b8719375855d48ecaff8a1a4c83e5d33c9d8888b53f6367b5ad415a6982be",
+        "worn": "b91215e531731505fa33a6157694c907c97c251cd02891650abf5718ccd30243",
         "groundMotion": "a8bb9d02ac3b7051adb00c6164c0b60922a2c1ce08b31e81cf231d64576df034",
-        "wornMotion": "2f15a28c6a8546428a846461d972f56aabe2dd587bcfb9458f421a3f5f1c1c70"
+        "wornMotion": "2de8832f350286922625ff1ac3b02b9ce757203a29ee86fe04df1d609028e31d"
       }
     },
     {
@@ -3497,7 +3556,8 @@
       "name": "The Black Sword",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A dark blade with consistent material and silhouette across the ground and hand views.",
       "images": {
@@ -3516,9 +3576,9 @@
           "a9f57ec3e7ad9998d0d9bc66fe620947f2769a77216f227db3ea6d9b598bdc50"
         ],
         "ground": "f9a3f9e0c0b40334b9d9ff7eb8801198fb6d5fdda7e5f4c2c0c547bdc35e70ea",
-        "worn": "0b49dcc199be64ef006dda723e0dec38f27712727e923315583bd880c5c6335f",
+        "worn": "24507c038e1cda7454e711452901ec5e8cba9475ce993ebaba80995908230e09",
         "groundMotion": "e0130096bd87b71ac64357c535014f896cfd65caa5cc0a871f4fb59ed7aafd99",
-        "wornMotion": "96d319cc45023ed397d75bbe3ab302989c4abd59c58d9d012bae49328678797c"
+        "wornMotion": "7984d8bae5bd87a2d3e0498ac37f89b24fc11718bb827ad5af750549224085c6"
       }
     },
     {
@@ -3530,7 +3590,8 @@
       "name": "The Death Scythe",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The stock UO scythe silhouette, with a dark brown handle and bright red blade.",
       "images": {
@@ -3549,9 +3610,9 @@
           "131b5cb2e0ef988babefc135066285f343eb424dc49816de5aa4d97ef44af6ae"
         ],
         "ground": "1fecce3f34f2fa116496912f6791cd9678f0f2c592b67cefdc73f49569f9910c",
-        "worn": "eb8185214001f809e0b7df59d4da2b7bd8142f03ae8053c4325ac2edbe8c845e",
+        "worn": "23514964d0d9ffc4651346108c6724dae09ce08de98cf50a4176bffc8543eb5a",
         "groundMotion": "da75433bccb87e1af17c9d3820844624f74ef9ebfb61b06724fc1b91c50cb813",
-        "wornMotion": "11c9a9d6021c73321c65d8b81c0ddf3ab8e60fe5852abebbf8cfb2a5273482bf"
+        "wornMotion": "fe7df4dc6d5d0ebd55838dfd0334902093dab33ce5e1bcc13a9ef9c82bd290d4"
       }
     },
     {
@@ -3563,7 +3624,8 @@
       "name": "throwing axe",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A compact throwing axe with a shortened wooden handle and tomahawk-like proportions.",
       "images": {
@@ -3620,7 +3682,7 @@
           "e8fa189bc53dbb24d9ee145d89514e90d72a09ad05d9f435739e4e6723ff2562"
         ],
         "ground": "1ab678e3f27baefcf327dfcf2d390993e1131143d1b8e038d9d4e0a89c66c52f",
-        "worn": "85d831f13f27ea75f86a00063d2f9ae577a453fa17c7630b7c6adf0a5b8cef83"
+        "worn": "f120b656f86ebf7b8e026ae91d8569b3ec3db8f8616b28c90df422034752e354"
       }
     },
     {
@@ -3632,7 +3694,8 @@
       "name": "torch",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The native UO unlit torch silhouette.",
       "images": {
@@ -3651,7 +3714,7 @@
           "a15f37bf1b98e19d04a159a677a76cf26c4d3545fb57db99956e6a25f3d1ea22"
         ],
         "ground": "f0f8a20c020af06396d7321f0809b522312268bea6ec0f9dd1de83e195912bb9",
-        "worn": "f1d360c3def4b742eb872ca7b8fefaa26e91551a66faccd5019fc6da68fee80b"
+        "worn": "84d596111afb4d907f47a7732beaa846862acdfc9feea96b1d9665f4f73a0135"
       }
     },
     {
@@ -3663,7 +3726,8 @@
       "name": "triple crossbow",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A triple crossbow aligned to the paperdoll grip.",
       "images": {
@@ -3682,7 +3746,7 @@
           "ee4e3044e78afccb6cc306f5fbce70676f15b40ca9696b3371d23ebb746c1cba"
         ],
         "ground": "554b3067811a8b7ce17147a19f545981597f6f59f777f6a971b3ce114f78892a",
-        "worn": "cb466b1d3b37cbcc4dbfa54eed1f7f1131f6310ca2083e32b0cd6f0b94dc37a0"
+        "worn": "71bc5240b10b5625e7ffa4000d90357c8bd5b6166a002f9a77eb24e15bfe49f9"
       }
     },
     {
@@ -3778,7 +3842,8 @@
       "name": "two handed axe",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -3797,7 +3862,7 @@
           "78236976cb29f3f20eef4ba85f7333f2282f1a83c4228f05177b3abbf63893ec"
         ],
         "ground": "842ab19d7db37bf18906bc77a4c2018cfe88381a89751d861bc89c4396433c66",
-        "worn": "b35f65eb90d0d6d3a12e41959c43e38456b8269b3a119d740955d071489a37af"
+        "worn": "3886220f1f54444c828f05860e0ca03f7991903fe07e2a686cddd6dfd2808515"
       }
     },
     {
@@ -3809,7 +3874,8 @@
       "name": "two-handed hammer",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -3828,7 +3894,7 @@
           "1844e4f0aabc4caae49407e681eab05a39e8beacfaae04258c2c356cb2b2aced"
         ],
         "ground": "6349aa63c846446be3e317850a9a20d3c4ea90f1c9084331fe3c3e7a4581b820",
-        "worn": "d03d70560a4577d3b1cf4ecad2a626c47baef85e2d32837ea8ccfe00f4e35369"
+        "worn": "6bca5933f8ec07c84f493e0731c896e4f3925411ed73f39daaa7b73722ed859a"
       }
     },
     {
@@ -3840,7 +3906,8 @@
       "name": "two-handed sword",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A long zweihander with an extended grip and guard. Its paperdoll tip reaches spear height.",
       "images": {
@@ -3859,7 +3926,7 @@
           "a9f6a7da87d27d79cc588bf489915b48002f95b58bf247c4ea2d0e249cd14d3b"
         ],
         "ground": "a3e2e0774698d9e83ed9ba3402bcb6df836f8ec36a674bc4699fb983d886d974",
-        "worn": "32924816cfa30130565ba4285886d335f0520259023e80373c8caa12ced80c24"
+        "worn": "522cdf54aaad3907823ed0d61dc0e3052d67d49045b0354edaccc1c65589ef4e"
       }
     },
     {
@@ -3871,7 +3938,8 @@
       "name": "whip",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The U7 weapon is represented at UO ground scale and at the equipped hand angle.",
       "images": {
@@ -3890,7 +3958,7 @@
           "12e947c924005d677c13f694b6a4e8128c843fe414bc133c424c64d7bea9c170"
         ],
         "ground": "8eabc449ca10da1147764cfd6d29df078a8edbfb0c08b0f95f0dfecf12ea0732",
-        "worn": "5ca6a51ac0f08ee9874a6f9e86d259f6d5c98955efded6bbc9195c75e8b53843"
+        "worn": "7b556fa25fb089019077574fa058225e1746f668c949d33f98c7905bc704ba58"
       }
     },
     {
@@ -3902,7 +3970,8 @@
       "name": "wooden shield",
       "category": "Shields",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "The shield uses UO ground and equipped angles while retaining the original identity.",
       "images": {
@@ -3917,7 +3986,7 @@
           "eb16636b6a974cebc6e5a0327641ae68521f10d4b93ae6686b2502cf7c5fa9fd"
         ],
         "ground": "d7edd5ea3723c58c0bed9b7a48e1928f4a71046baf94c18fd6b7a93df4f29117",
-        "worn": "cab658895c6b0c22f274ecc83e4f8a205e2436c766b7f084dc673161db04ef0d"
+        "worn": "1f5a32615d533c2d2dbcfdf59ea2b7f0d458cc2c03c9fb135bec7355ceec9e76"
       }
     },
     {
@@ -4038,7 +4107,8 @@
       "name": "great dagger — red gem",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A long dagger with a red gem in its hilt. The ground and paperdoll versions share the same design.",
       "images": {
@@ -4046,8 +4116,8 @@
           "6087385b83355651f5357300052ced06cfd41501d4dba3d2431c043cc8c4e5d4"
         ],
         "ground": "2f1141b46c4cfb47e79f8b3a273dcf9f4c2eaa28640a61f09c5eee3ac7721af0",
-        "worn": "2ba53cc9f6a4b007f74fd41046cd70028bd63dc2810356a31b49e10d1ff31ed1",
-        "wornFemale": "3f17ba9d8fff3ddab143c934f979a872b2cc74adb79667ee4d16246409025ce8"
+        "worn": "81492af0a0bf016c738291b93c34996d68191ba9f11e042c9c082b2cd743b70e",
+        "wornFemale": "5da9d5b3e7cb7c59d4179e5a451230c36e35a562cc81e5886eca92b9bd8a759d"
       }
     },
     {
@@ -4059,7 +4129,8 @@
       "name": "poison dagger — serpent tooth",
       "category": "Weapons",
       "approval": [
-        "armory"
+        "armory",
+        "chain-plate-2026-11-16"
       ],
       "description": "A serpent-tooth dagger with an ivory ridge and emerald enamel on the UO dagger hilt.",
       "images": {
@@ -4067,10 +4138,10 @@
           "d78e25bd4e69356da12194f00031578ff28c8e5569082d8e5fc1e1dce0260727"
         ],
         "ground": "ce751267d349e9c3f09d9469cdc2bd8a92423f8e77f66d30a364afd312827c16",
-        "worn": "f770f22600df3f30cb017ad5d4ebfc6959d97469432a330073666c46e5eb80f4",
-        "wornFemale": "f840347ce624d2cfdb4658c4784d2a8a63d93bc4f99a04ad2a896ecc30e085fa",
+        "worn": "5e3cf6324ebddef5f23e62b77265f2f98e69072f124529ff3224752bfbf29c95",
+        "wornFemale": "998182889fbbbeda5193ec23d2696289b49f04cdb6ec18e6e6670c2b744b4c83",
         "groundMotion": "52f1e2a44b016701f68513646e483955771339828cfe8ae24597f21620d33873",
-        "wornMotion": "4a64c51e0c20f97fe8ed6f39ca17637cf892239fada37e82316f154581dd9e82"
+        "wornMotion": "8cb4cc5bd497f1d02879955568b9fa4bef21951088f1c914f76a2a66dba25a6b"
       }
     },
     {
@@ -4618,7 +4689,8 @@
       "name": "Fellowship Staff",
       "description": "The Fellowship emblem crowns a wooden staff, with matching ground and equipped artwork.",
       "approval": [
-        "confirmed-2026-11-16"
+        "confirmed-2026-11-16",
+        "chain-plate-2026-11-16"
       ],
       "images": {
         "frames": [
@@ -4636,7 +4708,7 @@
           "0057321ce1556785406901b49396cef54b196e39f51afaf19b2599e79c01d524"
         ],
         "ground": "971d9473e90f852134e0d8c6525847946d93ed87b99296e30d3d03a12218471f",
-        "worn": "bab434c24acb9a45931d5823a349add271493af194adb05f9be7a78b06efcbee"
+        "worn": "dff3fce7e94d716e0f6fc1d3c36c6dea3635cb56f17677e2a8043efc3605e8c9"
       }
     },
     {
@@ -4672,7 +4744,8 @@
       "name": "kite shield",
       "description": "The regular stock UO kite shield, retaining its native floor and equipped perspectives.",
       "approval": [
-        "confirmed-2026-11-16"
+        "confirmed-2026-11-16",
+        "chain-plate-2026-11-16"
       ],
       "images": {
         "frames": [
@@ -4686,7 +4759,7 @@
           "efb65d1bfba38c25fe15e00de011c1824d77cf5b1401bdb41080e807627d455c"
         ],
         "ground": "1407be2e3358f116d48d2a014f65c1c9c60e6d3ff96bc6e6554127933bd8feed",
-        "worn": "0f8ada33dae091e25677153c0ef20c4f2e7eff450169638d6291c572fb1539b1"
+        "worn": "1d29a0c1360e617f52bd0313aa1c7eac6d49032d18b661268ad5b503d4e1cf16"
       }
     },
     {
@@ -4699,7 +4772,8 @@
       "name": "main gauche",
       "description": "Main gauche with a swept brass guard, steel blade and brown grip.",
       "approval": [
-        "confirmed-2026-11-16"
+        "confirmed-2026-11-16",
+        "chain-plate-2026-11-16"
       ],
       "images": {
         "frames": [
@@ -4717,7 +4791,7 @@
           "5dad1559b21728b698010ebb42c8b39d26beafbc77a09e489776a4aaf8fdae5e"
         ],
         "ground": "2b5104c094f16fc712fbc8a4b42e8654c6873845645f58f448070261ee42c956",
-        "worn": "193d10cbe5da3960210696c8c22efb392e144bf409b8f6f27354d67ae2e217db"
+        "worn": "b1908aaecf5c7509d7c81120a5fde10281cc0cbe3ea1e74799dd5f9ee525a19f"
       }
     }
   ],
