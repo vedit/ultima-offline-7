@@ -57,6 +57,31 @@
           ]
         }
       }
+    },
+    {
+      "id": "guardian-dream",
+      "comparison_kind": "original cutscene versus playable dream adaptation",
+      "original_renderer": "Original Ultima VII DOS intro, captured by the existing js-dos video interface",
+      "current_renderer": "ClassicUO in-engine Guardian dream; existing approved homepage capture",
+      "original_capture_elapsed_ms": 56501,
+      "original_program_sha256": "6c7ec86d720f49ba5e47b15e5c26292c950ab002365a6bd43ca967c2309a2587",
+      "dosbox_wasm_sha256": "b33afba80de1a420c123086e5952d135de041f9e85d4444170e29d9249ec049c",
+      "files": {
+        "guardian-dream-u7.png": {
+          "sha256": "463c397404368979d25c79a4cf71878045c8db14e725f3461530d1ca3c0cf0e3",
+          "size": [
+            320,
+            200
+          ]
+        },
+        "guardian-dream-uo7.png": {
+          "sha256": "4627c5db5ac43789183957aa8f2ac51e1534cf08cae960c588e86aafb6146d08",
+          "size": [
+            1440,
+            900
+          ]
+        }
+      }
     }
   ]
 }

@@ -1,10 +1,6 @@
 {
   "description": "Actual development screenshots and unchanged review images; no gameplay data",
   "assets": {
-    "site/dream.png": {
-      "source": "supplied-client-capture/dream.png",
-      "sha256": "4627c5db5ac43789183957aa8f2ac51e1534cf08cae960c588e86aafb6146d08"
-    },
     "site/barn-overview-u7.png": {
       "source": "supplied-client-capture/barn-overview-u7.png",
       "sha256": "b1f30c226eb273638b25568fdd0b8f7a3b4d8e2dba40c541b4ab3048387e974a"
@@ -21,9 +17,17 @@
       "source": "supplied-client-capture/fellowship-interior-uo7.png",
       "sha256": "574815d90e9a5b1c32d9d8676562feb9cabf5f20e3e6345548f84f07da870e3a"
     },
+    "site/guardian-dream-u7.png": {
+      "source": "supplied-client-capture/guardian-dream-u7.png",
+      "sha256": "463c397404368979d25c79a4cf71878045c8db14e725f3461530d1ca3c0cf0e3"
+    },
+    "site/guardian-dream-uo7.png": {
+      "source": "supplied-client-capture/guardian-dream-uo7.png",
+      "sha256": "4627c5db5ac43789183957aa8f2ac51e1534cf08cae960c588e86aafb6146d08"
+    },
     "site/scene-captures.json": {
       "source": "paired renderer capture receipt",
-      "sha256": "cfb721b809acfffbf2f7dfb424f56c3dfe97aff3f8e04f62cb6931f3a743bf8f"
+      "sha256": "d27e16860b59fbacd55e69c6528629f25507c0a5257ac644481cc0e4486cc955"
     },
     "site/glass-sword.png": {
       "source": "armory.html / 604 / ground",
@@ -43,11 +47,11 @@
     },
     "site/home.js": {
       "source": "game/site/home.js",
-      "sha256": "09c19e9c5e28a8ea034724a61ad6096b21e2733abacbcd096bfaa39e66463398"
+      "sha256": "be2535014bc25c75d15b37ee09d8e06a6d6fb3c3eeec75a720109629b06f01be"
     },
     "index.html": {
       "source": "game/site/index.html",
-      "sha256": "5c483b87a9a81b274238a668a382c6b9cbbcf1263ae8fdac62b5d994a3c482a1"
+      "sha256": "338fcfa9ecf13d71abbec838bcfcf42c38f464ec1179c19c8b88c85093fe9be4"
     }
   }
 }
