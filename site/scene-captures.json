@@ -1,0 +1,62 @@
+{
+  "pairs": [
+    {
+      "id": "barn-overview",
+      "position": [
+        1070,
+        2188,
+        0
+      ],
+      "avatar": "Vedit",
+      "uo7_zoom": "0.7",
+      "shared_checkpoint_sha256": "3203038dacd853876e9837cd25fb133f74b7f55b11cae09b5761121f8bfe3cdf",
+      "original_renderer": "Portable original Ultima VII renderer with original game assets",
+      "current_renderer": "ClassicUO with approved Christopher artwork and Party button",
+      "files": {
+        "barn-overview-u7.png": {
+          "sha256": "b1f30c226eb273638b25568fdd0b8f7a3b4d8e2dba40c541b4ab3048387e974a",
+          "size": [
+            320,
+            200
+          ]
+        },
+        "barn-overview-uo7.png": {
+          "sha256": "39087f18cad88850f2bb56a6c798afa11afa7f4bf7ff466a8046052fca8d60a8",
+          "size": [
+            1440,
+            900
+          ]
+        }
+      }
+    },
+    {
+      "id": "fellowship-interior",
+      "position": [
+        1016,
+        2216,
+        0
+      ],
+      "avatar": "Vedit",
+      "uo7_zoom": "0.7",
+      "shared_checkpoint_sha256": "492e78cbc5ee9974f78d3fcb25c2770f2879dd3fe13200badcc2b10e1199e628",
+      "original_renderer": "Portable original Ultima VII renderer with original game assets",
+      "current_renderer": "ClassicUO with approved scene artwork and Party button",
+      "files": {
+        "fellowship-interior-u7.png": {
+          "sha256": "30b5fce19d1c97f868cc4d7841447a26be6bfc93e65d70b6f0ce2ffab9ef00a6",
+          "size": [
+            320,
+            200
+          ]
+        },
+        "fellowship-interior-uo7.png": {
+          "sha256": "574815d90e9a5b1c32d9d8676562feb9cabf5f20e3e6345548f84f07da870e3a",
+          "size": [
+            1440,
+            900
+          ]
+        }
+      }
+    }
+  ]
+}

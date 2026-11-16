@@ -13,25 +13,17 @@
       "source": "supplied-client-capture/barn-overview-uo7.png",
       "sha256": "39087f18cad88850f2bb56a6c798afa11afa7f4bf7ff466a8046052fca8d60a8"
     },
-    "site/barn-detail-u7.png": {
-      "source": "supplied-client-capture/barn-detail-u7.png",
-      "sha256": "9dab71d40d81ce4fe371bb250f22d4b51281118990d1b5796e501bb4d6e29f5c"
+    "site/fellowship-interior-u7.png": {
+      "source": "supplied-client-capture/fellowship-interior-u7.png",
+      "sha256": "30b5fce19d1c97f868cc4d7841447a26be6bfc93e65d70b6f0ce2ffab9ef00a6"
     },
-    "site/barn-detail-uo7.png": {
-      "source": "supplied-client-capture/barn-detail-uo7.png",
-      "sha256": "91c7a365754cc8d0dfd345b7815105de511c329730999519964d3dd71b0fa08d"
+    "site/fellowship-interior-uo7.png": {
+      "source": "supplied-client-capture/fellowship-interior-uo7.png",
+      "sha256": "574815d90e9a5b1c32d9d8676562feb9cabf5f20e3e6345548f84f07da870e3a"
     },
-    "site/barn-captures.json": {
+    "site/scene-captures.json": {
       "source": "paired renderer capture receipt",
-      "sha256": "766d42dd87acebe17688fd6d957eb193f2b914f26b39d6d76dc3740ebfb6ea84"
-    },
-    "site/inn-original.png": {
-      "source": "inn.html / inn-dining / original",
-      "sha256": "edbd865522124260db8a6d8cc4afa4672494cf03feea9e72e396ad88c51d13b7"
-    },
-    "site/inn-current.png": {
-      "source": "inn.html / inn-dining / current",
-      "sha256": "a080dd996e34214c62eaf92f76a1885c8911dc2243b0ff88b223d4bb0aab9744"
+      "sha256": "cfb721b809acfffbf2f7dfb424f56c3dfe97aff3f8e04f62cb6931f3a743bf8f"
     },
     "site/glass-sword.png": {
       "source": "armory.html / 604 / ground",
@@ -47,15 +39,15 @@
     },
     "site/home.css": {
       "source": "game/site/home.css",
-      "sha256": "e81484c0f9e0e519d6400078d75e875759b7d7110ca2a831e1fee5ed2bc69c50"
+      "sha256": "c00431a66eafe3b44aa5ff33df25cfa39ee1a7851e9f45204500941f0725d67c"
     },
     "site/home.js": {
       "source": "game/site/home.js",
-      "sha256": "fc142cf08af42a63a9cb8d572e0ad27947a01cf9950a939fa7430f40e8ef8ffb"
+      "sha256": "09c19e9c5e28a8ea034724a61ad6096b21e2733abacbcd096bfaa39e66463398"
     },
     "index.html": {
       "source": "game/site/index.html",
-      "sha256": "624efb9fee4c872e7a5d27162ff2c173f24c0ec1917943c2310ae76fb1220e0e"
+      "sha256": "5c483b87a9a81b274238a668a382c6b9cbbcf1263ae8fdac62b5d994a3c482a1"
     }
   }
 }

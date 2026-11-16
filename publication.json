@@ -14,8 +14,8 @@
     "shields.html",
     "stock-study.html"
   ],
-  "files": 12352,
-  "bytes": 110905417,
+  "files": 12355,
+  "bytes": 112130892,
   "landing_page": "index.html",
   "review_snapshot": {
     "recipe": "atlas-reviews-2026-11-16",
@@ -146,7 +146,7 @@
     "gargoyles.html": "0be871d6d6abaa706987ff7cedc8facd4439264bd98c61aadaf599a51f94ba06",
     "homes.html": "7afe5f2244aa89d40cdde76ca343a86fc628fc814c7ee79707a3c5a2b9f0c87b",
     "inamo.png": "b03aca223b2c382e217dd67f0bb9a61af33313719baecc58e8894acda21335ea",
-    "index.html": "624efb9fee4c872e7a5d27162ff2c173f24c0ec1917943c2310ae76fb1220e0e",
+    "index.html": "5c483b87a9a81b274238a668a382c6b9cbbcf1263ae8fdac62b5d994a3c482a1",
     "inn.html": "264620de5f7e94a5b5f3ede8b0c3b4da3b87229fbfff49ba06bb9456eb51934c",
     "mapping.csv": "27b983afdcb813cd7d456ff51f08f83d6c7529dfc26a3628a2f31fc4e825efed",
     "outfits.csv": "ae3dcaeb34c50873bf232aa0eba82b8eca3a11e49c977fc5a676dea3114e6664",
@@ -163,19 +163,22 @@
     "stock-study.html": "80740ca8c656ca8860b973436369cc918d1b100983cec43cc0d5f6f0fab516a5",
     "site/inn-current.png": "a080dd996e34214c62eaf92f76a1885c8911dc2243b0ff88b223d4bb0aab9744",
     "site/magic-shield.png": "b6c7c0a455c493110cd681a3748e0001f1158dad5cffa6cc6a416c6bd7460dfa",
-    "site/home.css": "e81484c0f9e0e519d6400078d75e875759b7d7110ca2a831e1fee5ed2bc69c50",
+    "site/home.css": "c00431a66eafe3b44aa5ff33df25cfa39ee1a7851e9f45204500941f0725d67c",
     "site/serpentine-sword.png": "400bb2e4a8e2c4ff1c9135b199520e66f735a17546dcf6d3ea02029dcbab8fd0",
     "site/trinsic.png": "53d8d072ad7e6b6eb1c07c09192c87001faef52635b7ac44dd0cea6c5ca666b9",
     "site/glass-sword.png": "0f1aec4256d2209bb9fa3e3a8fcf82e440f8ba273630948720cef83d63aab179",
-    "site/home.js": "fc142cf08af42a63a9cb8d572e0ad27947a01cf9950a939fa7430f40e8ef8ffb",
-    "site/sources.json": "3b34c6453c07c64e8020645f35050c2a5906415e56dea49f38fc2f96e146f076",
+    "site/home.js": "09c19e9c5e28a8ea034724a61ad6096b21e2733abacbcd096bfaa39e66463398",
+    "site/sources.json": "007f15b02ffaec20ba4c1b5f636c437c02989e8cfd296957322522d8000ed9e9",
     "site/dream.png": "4627c5db5ac43789183957aa8f2ac51e1534cf08cae960c588e86aafb6146d08",
     "site/inn-original.png": "edbd865522124260db8a6d8cc4afa4672494cf03feea9e72e396ad88c51d13b7",
     "site/barn-overview-u7.png": "b1f30c226eb273638b25568fdd0b8f7a3b4d8e2dba40c541b4ab3048387e974a",
     "site/barn-captures.json": "766d42dd87acebe17688fd6d957eb193f2b914f26b39d6d76dc3740ebfb6ea84",
     "site/barn-detail-uo7.png": "91c7a365754cc8d0dfd345b7815105de511c329730999519964d3dd71b0fa08d",
     "site/barn-overview-uo7.png": "39087f18cad88850f2bb56a6c798afa11afa7f4bf7ff466a8046052fca8d60a8",
-    "site/barn-detail-u7.png": "9dab71d40d81ce4fe371bb250f22d4b51281118990d1b5796e501bb4d6e29f5c"
+    "site/barn-detail-u7.png": "9dab71d40d81ce4fe371bb250f22d4b51281118990d1b5796e501bb4d6e29f5c",
+    "site/fellowship-interior-u7.png": "30b5fce19d1c97f868cc4d7841447a26be6bfc93e65d70b6f0ce2ffab9ef00a6",
+    "site/fellowship-interior-uo7.png": "574815d90e9a5b1c32d9d8676562feb9cabf5f20e3e6345548f84f07da870e3a",
+    "site/scene-captures.json": "cfb721b809acfffbf2f7dfb424f56c3dfe97aff3f8e04f62cb6931f3a743bf8f"
   },
-  "homepage_updated_at": "2026-11-16T01:46:08.900406+00:00"
+  "homepage_updated_at": "2026-11-16T01:58:12.146628+00:00"
 }
