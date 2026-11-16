@@ -201,6 +201,6 @@ if __name__ == '__main__':
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--reviews', type=Path, required=True, help='Atlas chat review root; reconcile later equipment reviews')
     parser.add_argument('--guard-ground', type=Path, required=True, help='Final approved 637-0.png through 637-4.png directory')
-    parser.add_argument('--screenshots', type=Path, required=True, help='Selected client captures: trinsic.png and dream.png for the homepage')
+    parser.add_argument('--screenshots', type=Path, required=True, help='dream.png, barn-overview/detail-u7/uo7.png and barn-captures.json for the homepage')
     args = parser.parse_args()
     export(args.atlas, args.out, args.reviews, args.guard_ground, args.screenshots)

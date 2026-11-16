@@ -31,11 +31,13 @@ Before uploading, verify all pages, images and local links, search/filter behavi
 
 Edit `game/site/index.html`, `home.css` and `home.js` for the landing page. It is static, has no external font or JavaScript dependencies, and works at the repository subpath used by Pages. Keep the copy honest about the unfinished full campaign.
 
-`--screenshots` must point to a local folder containing two selected, actual ClassicUO PNG captures named `trinsic.png` and `dream.png`. Review them for presentation and private information before publication. Do not substitute promotional renders or include save data, audio or other runtime files. Captures belong only to the published site branch, not source `main`.
+`--screenshots` must point to a local folder containing `dream.png`, both `barn-overview-u7.png` / `barn-overview-uo7.png` and `barn-detail-u7.png` / `barn-detail-uo7.png`, plus their `barn-captures.json` receipt. Review them for presentation and private information before publication. The exporter checks both comparison pairs against their capture hashes. Do not substitute promotional renders or include save data, audio or other runtime files. Captures belong only to the published site branch, not source `main`.
+
+Capture each barn pair from the same private checkpoint with `game/qualification/capture_barn_comparison.py --source-run <saved-scene> --run-prefix <unused-prefix> --output <capture-folder> --town <approved-town-overlay>`. The source save must have the Avatar named Vedit. The script copies it into two new runs and refuses existing destinations. Original U7 images come from the portable original renderer and original game artwork; UO7 images come from the actual ClassicUO window. It encodes original PPM frames losslessly as PNG without cropping or retouching. Camera perspectives differ; the viewer does not warp the scenes to suggest pixel alignment. Keep the existing approved dream capture in this folder too.
 
 `game/atlas/homepage.py` copies those captures unchanged and extracts the Inn dining room comparison and three equipment previews byte-for-byte from the reviewed HTML. It does not redraw or regenerate any art. `site/sources.json` records logical sources and SHA-256 hashes without private machine paths. The main `publication.json` also covers these files. Re-export after changing the template or inputs so those receipts stay accurate.
 
-Check the homepage on desktop and a narrow viewport, including the Inn switch, enlarged screenshots, section links and installation links. Galleries retain their shared Home/Weapons navigation and existing loading states; shields remain an equipment filter rather than a separate tab.
+Check the homepage on desktop and a narrow viewport, including both barn pairs, the centered reveal slider, its endpoints and keyboard controls, loading/error states, Escape dismissal, the Inn switch and the separate dream enlargement. The barn viewer resets to 50/50 when selecting a pair or reopening it. Galleries retain their shared Home/Weapons navigation and existing loading states; shields remain an equipment filter rather than a separate tab.
 
 ## Publish an update
 
