@@ -1,8 +1,8 @@
 // Versioned, resumable downloads from the endpoint configured by the deployment.
 const digest=async blob=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',await blob.arrayBuffer()))].map(x=>x.toString(16).padStart(2,'0')).join('');
-export async function downloadUO(storage,progress){
+export async function downloadUO(storage,progress,existing=[]){
     const base=new URL(document.querySelector('meta[name="uo-api-base"]')?.content||'./api/uo/',document.baseURI);
-    const response=await fetch(new URL('manifest',base),{cache:'no-store',credentials:'omit'});
+    const response=await fetch(new URL('current-manifest',base),{cache:'no-store',credentials:'omit'});
     if(!response.ok)throw Error('Automatic UO download is unavailable. Please retry.');
     const plan=await response.json();
     if(!/^[a-f0-9]{20}$/.test(plan.version)||!Array.isArray(plan.files)||!plan.parts)throw Error('Invalid UO download plan.');
@@ -36,7 +36,13 @@ export async function downloadUO(storage,progress){
     }
     try{
         const files=[];
+        const cached=new Map(existing);
         for(const file of plan.files){
+            const previous=cached.get(file.name);
+            if(previous?.size===file.size&&await digest(previous)===file.sha256){
+                files.push([file.name,previous]);
+                complete+=file.parts.reduce((sum,id)=>sum+plan.parts[id].size,0);report();continue;
+            }
             let cursor=0;
             await Promise.all(Array.from({length:Math.min(4,file.parts.length)},async()=>{
                 for(;;){const id=file.parts[cursor++];if(id===undefined)return;await part(id)}

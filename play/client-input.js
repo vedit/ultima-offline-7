@@ -7,7 +7,7 @@ export function installInput(canvas, m) {
     for(let i=1;i<=12;i++) keys['F'+i]=0x40000039+i;
     const held = new Map();
     const buffer = m._malloc(128);
-    let last=[0,0];
+    let last=[0,0],buttons=0;
     let motion, motionFrame;
     const xy=e=>{const r=canvas.getBoundingClientRect();return [Math.round((e.clientX-r.left)*canvas.width/r.width),Math.round((e.clientY-r.top)*canvas.height/r.height)]};
     const stop=e=>{e.preventDefault();e.stopImmediatePropagation()};
@@ -35,17 +35,17 @@ export function installInput(canvas, m) {
     // A high-polling-rate mouse can outpace the managed event consumer.
     // Preserve its latest position once per display frame; never coalesce clicks.
     canvas.addEventListener('pointermove',e=>{motion={p:xy(e),buttons:(e.buttons&1)|((e.buttons&2)<<1)|((e.buttons&4)>>1)};if(!motionFrame)motionFrame=requestAnimationFrame(flushMotion);stop(e)},true);
-    canvas.addEventListener('pointerdown',e=>{flushMotion();canvas.focus();canvas.setPointerCapture(e.pointerId);last=xy(e);m._wasm_push_mouse_button(1,e.button+1,...last);stop(e)},true);
-    canvas.addEventListener('pointerup',e=>{flushMotion();last=xy(e);m._wasm_push_mouse_button(0,e.button+1,...last);stop(e)},true);
+    canvas.addEventListener('pointerdown',e=>{buttons=e.buttons;flushMotion();canvas.focus();canvas.setPointerCapture(e.pointerId);last=xy(e);m._wasm_push_mouse_button(1,e.button+1,...last);stop(e)},true);
+    canvas.addEventListener('pointerup',e=>{buttons=e.buttons;flushMotion();last=xy(e);m._wasm_push_mouse_button(0,e.button+1,...last);stop(e)},true);
     canvas.addEventListener('contextmenu',stop,true);
     canvas.addEventListener('wheel',e=>{flushMotion();m._wasm_push_mouse_wheel(-Math.sign(e.deltaX),-Math.sign(e.deltaY),...xy(e));stop(e)},{capture:true,passive:false});
     canvas.addEventListener('pointerenter',()=>m._wasm_push_mouse_in_window(1),true);
     canvas.addEventListener('pointerleave',()=>m._wasm_push_mouse_in_window(0),true);
-    function release(){flushMotion();for(const [k,s]of held.values())m._wasm_push_key(0,k,s,0,0);held.clear();for(let b=1;b<=3;b++)m._wasm_push_mouse_button(0,b,...last)}
+    function release(){buttons=0;flushMotion();for(const [k,s]of held.values())m._wasm_push_key(0,k,s,0,0);held.clear();for(let b=1;b<=3;b++)m._wasm_push_mouse_button(0,b,...last)}
     window.addEventListener('blur',()=>{release();m._wasm_push_window_focus(0)},true);
     function resume(){m._wasm_push_window_focus(1);canvas.focus()}
     window.addEventListener('focus',resume,true);
     document.addEventListener('visibilitychange',()=>{if(document.hidden)release();else resume()});
     canvas.addEventListener('pointercancel',release,true);
-    return {save(){m._wasm_push_key(1,keys.F5,62,0,0);m._wasm_push_key(0,keys.F5,62,0,0)}};
+    return {active:()=>buttons!==0||held.size>0,save(){m._wasm_push_key(1,keys.F5,62,0,0);m._wasm_push_key(0,keys.F5,62,0,0)}};
 }

@@ -117,7 +117,7 @@ export async function compactUO(input,progress=()=>{}){
     validate(input);const spec=await manifest(),files=new Map(input);
     if(files.has(marker)){
         const info=JSON.parse(await files.get(marker).text());
-        if(info.version!==spec.version||info.artworkSha256!==spec.artworkSha256)throw Error('This UO demo pack belongs to a different build. Download current data or select the original UO folder again.');
+        if(info.version!==spec.version||info.artworkSha256!==spec.artworkSha256){const error=Error('Updating the cached game data…');error.code='UO_UPDATE_REQUIRED';throw error}
         return input;
     }
     const before=dataSize(input);

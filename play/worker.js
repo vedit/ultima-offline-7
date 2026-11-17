@@ -41,7 +41,10 @@ onmessage = async ({data}) => {
         fs.mkdir("GAMEDAT");
         for (const [name, bytes] of data.install) fs.writeFile(name, new Uint8Array(bytes));
         unpackSave(fs, new Uint8Array(seed));
-        fs.writeFile('GAME00.U7', new Uint8Array(seed));
+        for(const [slot,bytes] of data.saves||[])if(bytes&&slot>=0&&slot<10)fs.writeFile('GAME'+String(slot).padStart(2,'0')+'.U7',new Uint8Array(bytes));
+        const slot=data.activeSlot>=0&&data.activeSlot<10?data.activeSlot:0;
+        fs.writeFile('GAME'+String(slot).padStart(2,'0')+'.U7', new Uint8Array(seed));
+        fs.writeFile('active-slot.txt',String(slot));
         if(data.music){
             // Run the original Roland sequencer for cue timing; the page plays
             // the user's Exult recordings. Only the in-memory copy is changed.
@@ -51,6 +54,7 @@ onmessage = async ({data}) => {
         module.callMain([]);
         throw new Error("The Black Gate engine exited.");
     } catch (e) {
+        console.error('Black Gate startup failed', e.stack || e);
         postMessage({error:e.message || String(e)});
     }
 };

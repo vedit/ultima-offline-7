@@ -1,0 +1,12 @@
+{
+  "builtAt": "2026-11-17T21:28:12.106103+00:00",
+  "game": "Current desktop Trinsic sources and installed artwork",
+  "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
+  "includesLocalDesktopChanges": true,
+  "nativeOverlaySha256": "06d52f0eae55d3174c7e403b3b9ac859ee77562a570c5095e1f1e8af4591a64e",
+  "browserFoundation": "9b9957ad65ddd1778ae1ac7d0f00c1b9254ce9f2",
+  "artworkSha256": "0f40297d598fdee32b620adabf36f5428a5d8480cecb02cb3b28f75fa4c79458",
+  "engineSha256": "b75d5ce42d5e2b2b18c250f0a471f2c2356082ce1a6dabf0bb4ab6a5da59a9a7",
+  "stagedClientSourceSha256": "f9638c2a0c91814b1da4b3bf217920ee33d09c16991a46bc6cec5076ee2fd4d0",
+  "snapshotNote": "Desktop sources captured for this browser rebuild, including local changes; browser adapters retained. Later desktop edits are separate."
+}

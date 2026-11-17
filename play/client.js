@@ -1,16 +1,26 @@
-import {importInstall} from './install.js?v=view-4062b624f294';
-import {installInput} from './client-input.js?v=view-4062b624f294';
-import {compactUO,megabytes} from './uo-data.js?v=view-4062b624f294';
-import {downloadUO} from './uo-download.js?v=view-4062b624f294';
-import {steamPath,SaveFolder} from './folders.js?v=view-4062b624f294';
-import {selectMusic,ExultMusic} from './exult-music.js?v=view-4062b624f294';
-import {LoadingScreen} from './loading.js?v=view-4062b624f294';
+import {importInstall} from './install.js?v=1ca94f96305d153b';
+import {installInput} from './client-input.js?v=1ca94f96305d153b';
+import {compactUO,megabytes} from './uo-data.js?v=1ca94f96305d153b';
+import {downloadUO} from './uo-download.js?v=1ca94f96305d153b';
+import {steamPath,SaveFolder} from './folders.js?v=1ca94f96305d153b';
+import {selectMusic,ExultMusic} from './exult-music.js?v=1ca94f96305d153b';
+import {LoadingScreen} from './loading.js?v=1ca94f96305d153b';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
 const canvas=document.querySelector('#canvas');
 const play=document.querySelector('#play');
 const loading=new LoadingScreen();
+const toolbar=document.querySelector('#toolbar'),showToolbar=document.querySelector('#show-toolbar');
+let toolbarHidden=false;
+try{toolbarHidden=localStorage.getItem('trinsic-hide-toolbar')==='1'}catch{}
+function setToolbarHidden(hidden){
+    toolbarHidden=hidden;toolbar.hidden=hidden;showToolbar.hidden=!hidden;
+    try{localStorage.setItem('trinsic-hide-toolbar',hidden?'1':'0')}catch{}
+    canvas.focus();
+}
+document.querySelector('#hide-toolbar').onclick=()=>setToolbarHidden(true);
+showToolbar.onclick=()=>setToolbarHidden(false);
 function loadingStep(message,percent,detail){status.textContent=message;loading.update(percent,message,detail)}
 const buildVersion=new URL(import.meta.url).searchParams.get('v')||'dev';
 const music=new ExultMusic();
@@ -34,7 +44,7 @@ if(!crossOriginIsolated){
     await new Promise(()=>{});
 }
 const installKey='blackgate-local-install-v1', uoKey='classicuo-local-install-v1', saveKey='trinsic-investigation-v1';
-let install,uo,engine,input,runtime,ready=false,visibleSince=performance.now(),stalledStatus;
+let install,uo,previousUO,engine,input,runtime,ready=false,visibleSince=performance.now(),stalledStatus;
 document.addEventListener('visibilitychange',()=>{visibleSince=performance.now()});
 setInterval(()=>{
     if(!ready||document.hidden||globalThis.trinsicFailure)return;
@@ -52,7 +62,7 @@ globalThis.__uo_signal=name=>{
     }
     console.log('ClassicUO: '+name);
     if(!ready && name==='draw-heartbeat'){
-        ready=true;loading.finish();document.querySelector('#folders').hidden=false;status.textContent='Trinsic is ready';requestCheckpoint();
+        ready=true;loading.finish();document.querySelector('#folders').hidden=false;document.querySelector('#hide-toolbar').hidden=false;setToolbarHidden(toolbarHidden);status.textContent='Trinsic is ready';requestCheckpoint();
     }
 };
 const db=await new Promise((resolve,reject)=>{
@@ -69,9 +79,10 @@ function removeSlots(keys){return new Promise((resolve,reject)=>{
     const tx=db.transaction('slots','readwrite');for(const key of keys)tx.objectStore('slots').delete(key);
     tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
-function browserSave(bytes,time=Date.now()){return new Promise((resolve,reject)=>{
+function browserSave(bytes,time=Date.now(),saveSlot){return new Promise((resolve,reject)=>{
     const tx=db.transaction('slots','readwrite'),store=tx.objectStore('slots');
     store.put(bytes,saveKey);store.put(time,'trinsic-save-time-v1');
+    if(Number.isInteger(saveSlot)&&saveSlot>=0&&saveSlot<10){store.put(bytes,'trinsic-slot-'+saveSlot+'-v1');store.put(saveSlot,'trinsic-active-slot-v1')}
     tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
 function fail(error){globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error);if(!ready&&!loading.root.hidden)loading.error(globalThis.trinsicFailure)}
@@ -119,7 +130,7 @@ const steam=steamPath(navigator.userAgentData?.platform||navigator.platform);
 document.querySelector('#steam-hint').hidden=!steam;
 document.querySelector('#steam-path').textContent=steam;
 document.querySelector('#copy-steam').onclick=async()=>{try{await navigator.clipboard.writeText(steam);document.querySelector('#copy-steam').textContent='Copied'}catch{status.textContent='Select and copy the Steam path shown below.'}};
-async function leaveFor(url){await requestCheckpoint();location.assign(url)}
+async function leaveFor(url){await requestCheckpoint(true);await persistence;location.assign(url)}
 document.querySelector('#folders').onclick=()=>{const url=new URL(location.href);url.searchParams.set('setup','1');leaveFor(url).catch(fail)};
 document.querySelector('header h1 a').onclick=event=>{if(ready&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey){event.preventDefault();leaveFor(event.currentTarget.href).catch(fail)}};
 document.addEventListener('pointerdown',()=>music.unlock(),true);
@@ -127,6 +138,8 @@ window.addEventListener('keydown',()=>music.unlock(),true);
 
 let waiting,mailbox,queue=Promise.resolve(),engineFailure;
 let checkpointDirty=true,lastCheckpointAt=0,lastCheckpointAttempt=0,lastProfileSync=0,checkpointRequest;
+let lastActionAt=0,mutationVersion=0,persistence=Promise.resolve(),persisting=0;
+const autosaveIdleMs=1500;
 function publishFrame(frame){
     const player=frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0');
     if(player){const fields=player.split(' ');document.querySelector('#coords').textContent=fields[4]+', '+fields[5]}
@@ -138,14 +151,23 @@ async function checkpoint(){
     if(frame.split(' ')[5]!=='ok')document.querySelector('#save-state').textContent='Autosave pending';
     return frame;
 }
-function requestCheckpoint(){
+function requestCheckpoint(force=false){
     if(!ready||engineFailure||globalThis.trinsicFailure)return Promise.resolve();
-    if(!checkpointRequest)checkpointRequest=globalThis.trinsicExchange('0 0 CHECKPOINT').catch(fail).finally(()=>{checkpointRequest=null});
+    if(force&&checkpointRequest)return checkpointRequest.then(()=>requestCheckpoint(true));
+    if(!checkpointRequest){
+        // Recheck when this reaches the engine queue: movement may have resumed.
+        const next=queue.then(()=>force||checkpointDirty&&!input?.active()&&Date.now()-lastActionAt>=autosaveIdleMs?checkpoint():undefined);
+        queue=next.catch(()=>{});
+        checkpointRequest=next.catch(saveFailed).finally(()=>{checkpointRequest=null});
+    }
     return checkpointRequest;
 }
-setInterval(()=>{if(ready&&!document.hidden&&Date.now()-lastCheckpointAt>=10000)requestCheckpoint()},1000);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)requestCheckpoint()});
-window.addEventListener('pagehide',()=>{requestCheckpoint()});
+function saveFailed(error){checkpointDirty=true;document.querySelector('#save-state').textContent='Autosave failed; will retry';console.warn(error)}
+// No timer-driven checkpoints during active walking. One snapshot after a pause,
+// then asynchronous browser/folder persistence, coalesces any number of steps.
+setInterval(()=>{if(ready&&!document.hidden&&!persisting&&!input?.active()&&checkpointDirty&&Date.now()-lastActionAt>=autosaveIdleMs&&Date.now()-lastCheckpointAttempt>=3000)requestCheckpoint()},250);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)requestCheckpoint(true)});
+window.addEventListener('pagehide',()=>{requestCheckpoint(true)});
 function armDeadline(){
     if(!waiting)return;
     clearTimeout(waiting.timer);
@@ -162,23 +184,21 @@ function exchange(command){
         if(engineFailure)return reject(engineFailure);
         const bytes=new TextEncoder().encode(command);
         if(bytes.length>mailbox.byteLength-16)return reject(Error('Command too large'));
-        waiting={resolve,reject,automatic:command.split(' ')[2]==='CHECKPOINT',sentAt:performance.now()};armDeadline();
+        waiting={resolve,reject,automatic:command.split(' ')[2]==='CHECKPOINT',version:mutationVersion,sentAt:performance.now()};armDeadline();
         globalThis.trinsicTransportState={command,sentAt:performance.now(),pending:true};
         new Uint8Array(mailbox.buffer,16,bytes.length).set(bytes);
         Atomics.store(mailbox,1,bytes.length);Atomics.store(mailbox,0,4);Atomics.notify(mailbox,0);
     });
 }
 globalThis.trinsicExchange=command=>{
+    const op=command.trim().split(' ')[2];
+    if(!['SYNC','CHECKPOINT'].includes(op))lastActionAt=Date.now();
     const next=queue.then(async()=>{
-        const op=command.trim().split(' ')[2];
         if(op==='CHECKPOINT')return checkpoint();
         const frame=await exchange(command),outcome=frame.split(' ')[5];
         const changed=ready&&!['SYNC','SAVE','LOOK'].includes(op)&&(['ok','using','merged'].includes(outcome)||outcome.startsWith('split-'));
-        if(changed)checkpointDirty=true;
-        const header=frame.split('\n',1)[0].split(' '),unblocked=checkpointDirty&&header[8]==='0'&&header[9]==='0';
-        if(ready&&op!=='SAVE'&&(checkpointDirty||Date.now()-lastCheckpointAt>=10000)&&(changed||unblocked||Date.now()-lastCheckpointAttempt>=1000))await checkpoint();
-        // A changed tile is exposed only after its checkpoint is committed.
-        // Closing/refreshing need not finish an asynchronous unload handler.
+        if(changed){checkpointDirty=true;mutationVersion++;lastActionAt=Date.now();document.querySelector('#save-state').textContent='Unsaved changes'}
+        // Deliver movement immediately; it never waits for checkpoint or disk I/O.
         publishFrame(frame);return frame;
     });queue=next.catch(()=>{});return next;
 };
@@ -197,17 +217,22 @@ async function receive({data}){
     if(globalThis.trinsicTransportState){globalThis.trinsicTransportState.pending=false;globalThis.trinsicTransportState.receivedAt=performance.now()}
     try{
         if(data.save){
-            await browserSave(data.save);
+            persisting++;
+            const saved=persistence.catch(()=>{}).then(async()=>{
+            await browserSave(data.save,Date.now(),data.saveSlot);
             if(runtime&&(!request.automatic||Date.now()-lastProfileSync>=10000)){
                 await new Promise((resolve,reject)=>runtime.FS.syncfs(false,e=>e?reject(e):resolve()));lastProfileSync=Date.now();
             }
             const external=await saveFolder.write(data.save);
-            lastCheckpointAt=Date.now();checkpointDirty=false;
-            document.querySelector('#save-state').textContent=request.automatic?'Autosaved':'Saved';
+            lastCheckpointAt=Date.now();checkpointDirty=mutationVersion!==request.version;
+            document.querySelector('#save-state').textContent=checkpointDirty?'Unsaved changes':request.automatic?'Autosaved':'Saved';
             document.querySelector('#save-state').title=(external?'Folder + browser backup':'In this browser')+' · '+new Date(lastCheckpointAt).toLocaleTimeString();
             const row=data.frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0')?.split(' ');
             globalThis.trinsicLastSave={automatic:request.automatic,time:lastCheckpointAt,coords:row?row[4]+', '+row[5]:'',durationMs:performance.now()-request.sentAt};
             if(!request.automatic)status.textContent=external?'Saved in folder and browser':'Saved in this browser';
+            }).finally(()=>{persisting--});
+            persistence=saved;
+            if(request.automatic)saved.catch(saveFailed);else await saved;
         }
         request.resolve(data.frame);
     }catch(error){request.reject(error);fail(error)}
@@ -235,7 +260,7 @@ function handOffCanvas(){
 }
 function write(path,bytes){runtime.FS.mkdirTree(path.slice(0,path.lastIndexOf('/'))||'/');runtime.FS.writeFile(path,bytes)}
 async function mountArtwork(){
-    const response=await fetch('client-art.tar.gz');if(!response.ok)throw Error('Artwork download failed');
+    const response=await fetch('client-art.tar.gz?v='+buildVersion);if(!response.ok)throw Error('Artwork download failed');
     const bytes=new Uint8Array(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
     const decode=new TextDecoder();
     for(let offset=0;offset+512<=bytes.length;){
@@ -260,7 +285,7 @@ async function launch(){
             const downloaded=await downloadUO({read:key=>slot(key),write:(key,value)=>slot(key,value)},(done,total)=>{
                 loadingStep('Downloading UO demo data…',5+45*done/total,megabytes(done)+' / '+megabytes(total)+' prepared');
                 details.textContent=megabytes(done)+' / '+megabytes(total)+' prepared · Downloads resume if interrupted';
-            });
+            },previousUO);
             uo=await compactUO(downloaded.files);
             await slot(uoKey,uo);await slot('uo-auto-active',false);await removeSlots(downloaded.keys);
             updateSetup();play.disabled=true;
@@ -279,11 +304,12 @@ async function launch(){
         catch(error){saveFolder.available=false;saveFolder.update('Folder unavailable; using browser save');console.warn(error.message)}
         mailbox=new Int32Array(new SharedArrayBuffer(65536));
         engine=new Worker('worker.js?v='+buildVersion);engine.onmessage=receive;engine.onerror=e=>fail(Error(e.message));
-        engine.postMessage({mailbox:mailbox.buffer,install,save:saved,music:music.tracks.size>0});
+        const saves=await Promise.all(Array.from({length:10},async(_,n)=>[n,await slot('trinsic-slot-'+n+'-v1')]));
+        engine.postMessage({mailbox:mailbox.buffer,install,save:saved,saves,activeSlot:await slot('trinsic-active-slot-v1'),music:music.tracks.size>0});
         await globalThis.trinsicExchange('0 0 SYNC');
         document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;canvas.hidden=false;
         loadingStep('Loading ClassicUO…',55);handOffCanvas();
-        const {dotnet}=await import('./_framework/dotnet.js?v=view-4062b624f294');
+        const {dotnet}=await import('./_framework/dotnet.js?v='+buildVersion);
         const host=await dotnet.withModuleConfig({canvas,onDownloadResourceProgress:(done,total)=>loadingStep('Loading ClassicUO…',55+20*done/Math.max(1,total,done),done+' / '+total+' resources · estimated startup progress'),preRun:[module=>{runtime=module;module.canvas=canvas}]}).
             withEnvironmentVariable('FNA_PLATFORM_BACKEND','SDL2').
             withEnvironmentVariable('FNA3D_FORCE_DRIVER','OpenGL').
@@ -315,6 +341,7 @@ try{
     document.querySelector('#music-volume').value=Math.round(music.volume*100);
     await saveFolder.set(handle);
     if(seen&&install&&!new URL(location.href).searchParams.has('setup')){loading.start();loadingStep('Reading your saved installation…',1)}
-    if(uo)uo=await compactUO(uo,message=>{status.textContent=message});updateSetup();
-    if(seen&&install&&(uo||await slot('uo-auto-active'))&&!new URL(location.href).searchParams.has('setup'))await launch();
+    if(uo){try{uo=await compactUO(uo,message=>{status.textContent=message})}catch(error){if(error.code!=='UO_UPDATE_REQUIRED')throw error;previousUO=uo;uo=null}}
+    updateSetup();
+    if(seen&&install&&(uo||previousUO||await slot('uo-auto-active'))&&!new URL(location.href).searchParams.has('setup'))await launch();
 }catch(error){updateSetup();fail(error)}

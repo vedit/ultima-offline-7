@@ -15,8 +15,9 @@ Optionally select an Exult installation with the Roland MT-32 OGG recordings
 in data/music. These files stay local and are remembered in browser storage.
 The original game controls track changes. Audio starts after a user interaction.
 
-Progress autosaves after movement and completed actions, and periodically while
-idle. F5 still saves manually. Optionally choose a save folder; saves
+Progress autosaves after a 1.5-second pause following movement or completed actions.
+Held movement input suppresses checkpoints, and storage writes run asynchronously.
+Pause until Autosaved before closing or refreshing; unload saving is best-effort. F5 still saves manually. Optionally choose a save folder; saves
 use ultima-offline-trinsic.u7 and also keep a browser backup. Returning to a
 folder with an existing save resumes it. If folder permission is unavailable,
 the browser backup is used; use Folders to reconnect. Folders opens setup again.
@@ -36,6 +37,9 @@ The service worker enables cross-origin isolation required by WebAssembly
 threads because GitHub Pages does not configure our custom isolation headers.
 The first navigation may reload once. The launch screen shows an animated
 loader, estimated overall percentage, and the current startup stage.
+Hide bar removes the header; the floating Show bar button restores it. The
+preference survives refresh. Build provenance is in build-info.json. The current
+desktop Trinsic code and approved artwork include the bloody footprint trail.
 Full upstream notices are in licenses.txt.
 
 Browser storage and folder permissions are per origin. Saves stored only at the previous vedit.github.io origin do not automatically move to ultimaoffline7.com; use the configured external save folder or an exported save.

@@ -3635,7 +3635,7 @@ Module["FS"] = FS;
 // End JS library exports
 // end include: postlibrary.js
 var ASM_CONSTS = {
-  38579: () => Module.externalMusic ? 1 : 0
+  43901: () => Module.externalMusic ? 1 : 0
 };
 
 function web_read_command(buffer, capacity) {
@@ -3664,7 +3664,8 @@ function web_music_song(buffer) {
 
 function web_send_frame(text, playing) {
   const frame = UTF8ToString(text);
-  const save = Module.saving && frame.split(" ", 6)[5] === "ok" ? FS.readFile("GAME00.U7") : null;
+  const slot = Number(frame.split("\n").find(row => row.startsWith("SV "))?.split(" ")[1] || 0);
+  const save = Module.saving && frame.split(" ", 6)[5] === "ok" ? FS.readFile("GAME" + String(slot).padStart(2, "0") + ".U7") : null;
   const music = {
     track: Module.musicTrack ?? -1,
     cue: Module.musicCue || 0,
@@ -3673,6 +3674,7 @@ function web_send_frame(text, playing) {
   postMessage({
     frame,
     save,
+    saveSlot: slot,
     music
   }, save ? [ save.buffer ] : []);
 }
@@ -3682,11 +3684,11 @@ function worker_sleep(ms) {
 }
 
 // Imports from the Wasm binary.
-var _main, _fflush, ___funcs_on_exit, memory, __indirect_function_table, wasmMemory;
+var _fflush, _main, ___funcs_on_exit, memory, __indirect_function_table, wasmMemory;
 
 function assignWasmExports(wasmExports) {
-  _main = Module["_main"] = wasmExports["E"];
-  _fflush = wasmExports["F"];
+  _fflush = wasmExports["E"];
+  _main = Module["_main"] = wasmExports["F"];
   ___funcs_on_exit = wasmExports["G"];
   memory = wasmMemory = wasmExports["C"];
   __indirect_function_table = wasmExports["__indirect_function_table"];
