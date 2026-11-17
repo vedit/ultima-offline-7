@@ -2,6 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="uo7-analytics" content="https://telemetry.ultimaoffline7.com/collect">
 <meta name="uo-api-base" content="https://ultima-offline-trinsic.firatarig.chatgpt.site/api/uo/">
 <title>Ultima Offline · Trinsic</title>
 <style>
@@ -33,6 +34,10 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 </div>
 <div class="field"><div id="steam-hint" class="hint" hidden><p>Steam’s usual location:<br><code id="steam-path"></code></p><button id="copy-steam" class="quiet" disabled>Copy Steam path</button></div></div>
 </details>
+<div class="field" id="usage-settings">
+<label style="font-size:14px;font-weight:400"><input type="checkbox" id="usage-reporting" checked> Share anonymous playtime and progress</label>
+<p class="hint">Helps improve the playtest. Reports loading results, time played and investigation milestones using a new ID each launch. No character names, game files or saves are sent. <a href="./analytics/privacy.html" target="_blank" rel="noopener" style="color:#d9bd7c">Details</a>. Changes apply to your next launch.</p>
+</div>
 <button id="play" disabled>Play now</button><p id="details">Your game files stay on this computer.</p>
 </section>
 <main id="stage" hidden><canvas id="canvas" width="1200" height="900" tabindex="0" hidden></canvas></main>
@@ -40,5 +45,5 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 <div class="loading-card"><div class="loading-ring" aria-hidden="true"></div><h2>Opening Trinsic</h2><p id="loading-step" role="status">Preparing the game…</p><div id="loading-percent" aria-hidden="true">0%</div><progress id="loading-progress" max="100" value="0" aria-label="Estimated startup progress"></progress><p id="loading-detail">Estimated startup progress</p><div id="loading-actions" class="row" hidden><button id="loading-retry">Retry</button><button id="loading-folders" class="quiet">Folder settings</button></div></div>
 </section>
 <script src="coi-serviceworker.js?v=1ca94f96305d153b"></script>
-<script type="module" src="client.js?v=1ca94f96305d153b"></script>
+<script type="module" src="client.js?v=1ca94f96305d153b&amp;usage=1"></script>
 </html>

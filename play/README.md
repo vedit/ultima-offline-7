@@ -42,4 +42,11 @@ preference survives refresh. Build provenance is in build-info.json. The current
 desktop Trinsic code and approved artwork include the bloody footprint trail.
 Full upstream notices are in licenses.txt.
 
+Anonymous playtest reporting measures rendered playtime, loading results and
+native investigation milestones. Use Folders to turn off "Share anonymous
+playtime and progress". DNT/GPC also disable it. Names, saves, files and game
+text are never included. The collector is telemetry.ultimaoffline7.com;
+reporting is optional and never blocks game execution or saving. See
+analytics/privacy.html for timing definitions, retention and limitations.
+
 Browser storage and folder permissions are per origin. Saves stored only at the previous vedit.github.io origin do not automatically move to ultimaoffline7.com; use the configured external save folder or an exported save.

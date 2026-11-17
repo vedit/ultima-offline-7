@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Playtest reporting · Ultima Offline 7</title>
+<style>body{max-width:680px;margin:60px auto;padding:0 24px;background:#151b18;color:#e8e4d7;font:17px/1.7 system-ui}h1{font:36px Georgia}a{color:#d9bd7c}</style>
+<h1>Playtest reporting</h1>
+<p>The browser playtest can send anonymous usage measurements to the project's Cloudflare service. Turn off <b>Share anonymous playtime and progress</b> in <a href="../?setup=1">Folder settings</a> to stop reporting. Browser Do Not Track and Global Privacy Control also disable reporting.</p>
+<p>Each launch uses a new random session ID, kept only in memory. Reports contain the build version, launch time rounded to seconds, loading success or a fixed failure category, elapsed and active time, and whether Trinsic, investigation evidence, the completed report and the east gate crossing have been observed. Loaded saves can already contain investigation progress.</p>
+<p>Active time starts with the first rendered game frame. Hidden or unfocused windows, explicit pause signals and stopped rendering do not count; reading dialogue and ordinary inventory use do. An unattended visible game can count as playtime. These are session measurements, not unique-player counts.</p>
+<p>Small cumulative reports are sent every 30 seconds and when the page is hidden or closed. Network failures, browser blocking, abrupt exits and sampling can leave measurements incomplete. Reporting never blocks gameplay or saving.</p>
+<p>No character names, chat or dialogue text, saves, inventory, coordinates, game files, paths, email addresses, cookies or persistent player IDs are included. We do not store IP addresses or browser fingerprints in the dataset. Cloudflare necessarily handles connection information and uses the address to limit abusive requests. Worker application logging is disabled.</p>
+<p>Cloudflare Analytics Engine retains these measurements for up to three months. Only the project operator has access to the dataset. Your reporting preference is saved locally in this browser. This reporting currently covers the browser build, not desktop/offline play.</p>
+<p><a href="../?setup=1">Return to settings</a> · <a href="https://ultimaoffline7.com/">Project homepage</a></p>
+</html>

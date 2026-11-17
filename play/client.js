@@ -21,8 +21,22 @@ function setToolbarHidden(hidden){
 }
 document.querySelector('#hide-toolbar').onclick=()=>setToolbarHidden(true);
 showToolbar.onclick=()=>setToolbarHidden(false);
-function loadingStep(message,percent,detail){status.textContent=message;loading.update(percent,message,detail)}
+function loadingStep(message,percent,detail){telemetry.event('stage',percent<5?'startup':percent<50?'download':percent<55?'save':percent<92?'client':percent<97?'artwork':'render');status.textContent=message;loading.update(percent,message,detail)}
 const buildVersion=new URL(import.meta.url).searchParams.get('v')||'dev';
+// UO7 analytics integration v1 (optional; failures cannot stop the game).
+const telemetry = (()=>{
+    let sink, pending=[];
+    import('./analytics/browser.js?v=1').then(({connect})=>{
+        sink=connect(buildVersion);
+        for(const args of pending)sink.event(...args);
+        pending=[];
+    }).catch(()=>{pending=[];sink={event(){}}});
+    return {event(type,value){try{
+        const args=[type,value,performance.now()];
+        if(sink)sink.event(...args);else if(pending.length<64)pending.push(args);
+    }catch{}}};
+})();
+
 const music=new ExultMusic();
 const saveFolder=new SaveFolder(message=>{document.querySelector('#save-selection').textContent=message});
 globalThis.trinsicMusic=music;
@@ -39,7 +53,7 @@ new ResizeObserver(([entry])=>{
 if(!crossOriginIsolated){
     document.querySelector('#setup').hidden=true;
     loading.start();loadingStep('Preparing the browser…',0);
-    setTimeout(()=>{status.textContent='Browser setup did not finish. Open this link directly in Chrome or Edge with site storage enabled.';loading.error(status.textContent)},15000);
+    setTimeout(()=>{telemetry.event('begin');telemetry.event('fail');status.textContent='Browser setup did not finish. Open this link directly in Chrome or Edge with site storage enabled.';loading.error(status.textContent)},15000);
     // coi-serviceworker reloads this first navigation with isolation enabled.
     await new Promise(()=>{});
 }
@@ -56,6 +70,8 @@ setInterval(()=>{
     }
 },1000);
 globalThis.__uo_signal=name=>{
+    if(name==='draw-heartbeat')telemetry.event('draw');
+    if(name==='paused'||name==='resumed')telemetry.event('paused',name==='paused');
     if(name==='draw-heartbeat'){
         globalThis.trinsicLastDraw=performance.now();
         if(stalledStatus!==undefined&&!globalThis.trinsicFailure){status.textContent=stalledStatus;stalledStatus=undefined}
@@ -85,7 +101,7 @@ function browserSave(bytes,time=Date.now(),saveSlot){return new Promise((resolve
     if(Number.isInteger(saveSlot)&&saveSlot>=0&&saveSlot<10){store.put(bytes,'trinsic-slot-'+saveSlot+'-v1');store.put(saveSlot,'trinsic-active-slot-v1')}
     tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
-function fail(error){globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error);if(!ready&&!loading.root.hidden)loading.error(globalThis.trinsicFailure)}
+function fail(error){telemetry.event('fail');globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error);if(!ready&&!loading.root.hidden)loading.error(globalThis.trinsicFailure)}
 function updateSetup(){
     for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=selecting||launching;
     play.disabled=!install||selecting||launching;
@@ -140,7 +156,7 @@ let waiting,mailbox,queue=Promise.resolve(),engineFailure;
 let checkpointDirty=true,lastCheckpointAt=0,lastCheckpointAttempt=0,lastProfileSync=0,checkpointRequest;
 let lastActionAt=0,mutationVersion=0,persistence=Promise.resolve(),persisting=0;
 const autosaveIdleMs=1500;
-function publishFrame(frame){
+function publishFrame(frame){telemetry.event('frame',frame);
     const player=frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0');
     if(player){const fields=player.split(' ');document.querySelector('#coords').textContent=fields[4]+', '+fields[5]}
     globalThis.trinsicLastFrame=frame;
@@ -272,6 +288,7 @@ async function mountArtwork(){
     }
 }
 async function launch(){
+    telemetry.event('begin');
     delete globalThis.trinsicFailure;launching=true;play.disabled=true;loading.start();loadingStep('Opening Black Gate…',2);
     document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;
     for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=true;
@@ -302,6 +319,7 @@ async function launch(){
             if(saveFolder.available)await slot('save-folder-load-v1',false);
         }
         catch(error){saveFolder.available=false;saveFolder.update('Folder unavailable; using browser save');console.warn(error.message)}
+        telemetry.event('stage','native');
         mailbox=new Int32Array(new SharedArrayBuffer(65536));
         engine=new Worker('worker.js?v='+buildVersion);engine.onmessage=receive;engine.onerror=e=>fail(Error(e.message));
         const saves=await Promise.all(Array.from({length:10},async(_,n)=>[n,await slot('trinsic-slot-'+n+'-v1')]));
