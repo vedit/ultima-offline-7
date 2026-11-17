@@ -41,9 +41,16 @@ onmessage = async ({data}) => {
         fs.mkdir("GAMEDAT");
         for (const [name, bytes] of data.install) fs.writeFile(name, new Uint8Array(bytes));
         unpackSave(fs, new Uint8Array(seed));
+        if (!data.save) {
+            // Same native INITGAME/character-creation entry as desktop --from-opening.
+            const args=new Uint8Array(16);
+            args[0]=data.experience.newGame.female?1:0;
+            args.set(new TextEncoder().encode(data.experience.newGame.name).subarray(0,14),1);
+            fs.writeFile('gameargs.dat',args);
+        }
         for(const [slot,bytes] of data.saves||[])if(bytes&&slot>=0&&slot<10)fs.writeFile('GAME'+String(slot).padStart(2,'0')+'.U7',new Uint8Array(bytes));
         const slot=data.activeSlot>=0&&data.activeSlot<10?data.activeSlot:0;
-        fs.writeFile('GAME'+String(slot).padStart(2,'0')+'.U7', new Uint8Array(seed));
+        if(data.save)fs.writeFile('GAME'+String(slot).padStart(2,'0')+'.U7', new Uint8Array(seed));
         fs.writeFile('active-slot.txt',String(slot));
         if(data.music){
             // Run the original Roland sequencer for cue timing; the page plays
@@ -55,6 +62,6 @@ onmessage = async ({data}) => {
         throw new Error("The Black Gate engine exited.");
     } catch (e) {
         console.error('Black Gate startup failed', e.stack || e);
-        postMessage({error:e.message || String(e)});
+        postMessage({error:e.message || String(e),stack:e.stack});
     }
 };

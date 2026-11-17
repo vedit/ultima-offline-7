@@ -39,11 +39,13 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 <p class="hint">Helps improve the playtest. Reports loading results, time played and investigation milestones using a new ID each launch. No character names, game files or saves are sent. <a href="./analytics/privacy.html" target="_blank" rel="noopener" style="color:#d9bd7c">Details</a>. Changes apply to your next launch.</p>
 </div>
 <button id="play" disabled>Play now</button><p id="details">Your game files stay on this computer.</p>
+<p><button id="new-game" class="quiet" disabled>New journey</button> <span class="hint">Keeps your existing saves in their slots.</span></p>
+<p class="hint"><a id="build-info" href="build-info.json" target="_blank">Build details</a></p>
 </section>
 <main id="stage" hidden><canvas id="canvas" width="1200" height="900" tabindex="0" hidden></canvas></main>
 <section id="loading" hidden aria-label="Loading Trinsic">
 <div class="loading-card"><div class="loading-ring" aria-hidden="true"></div><h2>Opening Trinsic</h2><p id="loading-step" role="status">Preparing the game…</p><div id="loading-percent" aria-hidden="true">0%</div><progress id="loading-progress" max="100" value="0" aria-label="Estimated startup progress"></progress><p id="loading-detail">Estimated startup progress</p><div id="loading-actions" class="row" hidden><button id="loading-retry">Retry</button><button id="loading-folders" class="quiet">Folder settings</button></div></div>
 </section>
-<script src="coi-serviceworker.js?v=1ca94f96305d153b"></script>
-<script type="module" src="client.js?v=1ca94f96305d153b&amp;usage=1"></script>
+<script src="coi-serviceworker.js?v=388d66f7626ed72e"></script>
+<script type="module" src="client.js?v=388d66f7626ed72e"></script>
 </html>

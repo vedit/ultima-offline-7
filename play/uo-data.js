@@ -1,7 +1,7 @@
 // Lossless, browser-local subset of the pinned Trinsic demo's UO dependencies.
 // Only code and numeric dependency IDs are hosted. Retail bytes never leave here.
 const marker='trinsic-demo.json';
-const allowed=/^(artlegacymul\.uop|art(idx)?\.mul|gumpartlegacymul\.uop|gump(art|idx)\.mul|mainmisc\.uop|soundlegacymul\.uop|sound(idx)?\.mul|anim\.(mul|idx)|animdata\.mul|fonts\.mul|unifont\d*\.mul|hues\.mul|cliloc\.enu|light(idx)?\.mul|skills\.(mul|idx)|multi\.(mul|idx)|multicollection\.uop|multimap\.rle|texmaps\.mul|texidx\.mul|speech\.mul|tileart\.uop|string_dictionary\.uop|[^/]+\.def|mobtypes\.txt|prof\.txt|citytext\.enu|intloc\d+\.enu|trinsic-demo\.json)$/;
+const allowed=/^(artlegacymul\.uop|art(idx)?\.mul|gumpartlegacymul\.uop|gump(art|idx)\.mul|mainmisc\.uop|soundlegacymul\.uop|sound(idx)?\.mul|anim[2-5]?\.(mul|idx)|animdata\.mul|fonts\.mul|unifont\d*\.mul|hues\.mul|cliloc\.enu|light(idx)?\.mul|skills\.(mul|idx)|multi\.(mul|idx)|multicollection\.uop|multimap\.rle|texmaps\.mul|texidx\.mul|speech\.mul|tileart\.uop|string_dictionary\.uop|[^/]+\.def|mobtypes\.txt|prof\.txt|citytext\.enu|intloc\d+\.enu|trinsic-demo\.json)$/;
 const encode=new TextEncoder(),decode=new TextDecoder();
 let manifestPromise;
 function manifest(){return manifestPromise??=fetch('uo-demo.json').then(r=>{if(!r.ok)throw Error('Could not load the demo data list.');return r.json()})}
@@ -102,14 +102,26 @@ async function animationRecords(files,initial){
     for(const line of (await files.get('mobtypes.txt')?.text()||'').split('\n')){
         const m=line.match(/^\s*(\d+)\s+(\w+)\s+([\da-fA-F]+)/);if(m)types.set(+m[1],[m[2].toLowerCase(),parseInt(m[3],16)]);
     }
-    const records=[];
-    for(const body of bodies){
-        const [type,flags]=types.get(body)||[body<200?'monster':body<400?'animal':'human',0];
+    const records=new Map();
+    function add(body,file=0,source=body){
+        const name='anim'+(file?file+1:'');
+        if(!files.has(name+'.mul')||!files.has(name+'.idx'))return;
+        if(!records.has(name))records.set(name,[]);
+        const fallback=file===1?(body<200?'monster':'animal'):file===2?(body<300?'animal':body<400?'monster':'human'):(body<200?'monster':body<400?'animal':'human');
+        const [type,flags]=types.get(source)||[fallback,0];
         let group=type==='monster'?'high':type==='animal'?'low':'people';
         if(type==='monster'||type==='animal'&&(flags&0x20))group=(flags&0x400)?'people':(flags&0x40)?'low':'high';
         const count=type==='sea_monster'?65:group==='high'?110:group==='low'?65:175;
         const first=type==='sea_monster'||group==='high'?body*110:group==='low'?(body-200)*65+22000:(body-400)*175+35000;
-        for(let i=0;i<count;i++)records.push(first+i);
+        for(let i=0;i<count;i++)records.get(name).push(first+i);
+    }
+    for(const body of bodies)add(body);
+    // Same body-conversion archives as desktop. Do not silently fall back to
+    // older animation art merely because the compact pack omitted an archive.
+    for(const line of (await files.get('bodyconv.def')?.text()||'').split('\n')){
+        const values=line.split('#')[0].trim().split(/\s+/).map(Number);
+        if(!bodies.has(values[0]))continue;
+        for(let file=1;file<values.length&&file<=4;file++)if(values[file]>=0)add(values[file],file,values[0]);
     }
     return records;
 }
@@ -117,7 +129,7 @@ export async function compactUO(input,progress=()=>{}){
     validate(input);const spec=await manifest(),files=new Map(input);
     if(files.has(marker)){
         const info=JSON.parse(await files.get(marker).text());
-        if(info.version!==spec.version||info.artworkSha256!==spec.artworkSha256){const error=Error('Updating the cached game data…');error.code='UO_UPDATE_REQUIRED';throw error}
+        if(info.version!==spec.version||info.dependencySha256!==spec.dependencySha256){const error=Error('Updating the cached game data…');error.code='UO_UPDATE_REQUIRED';throw error}
         return input;
     }
     const before=dataSize(input);
@@ -132,10 +144,12 @@ export async function compactUO(input,progress=()=>{}){
         }
     }
     progress('Keeping demo animations…');
-    for(const [mul,idx,ids] of [['anim.mul','anim.idx',await animationRecords(files,spec.animations)],['texmaps.mul','texidx.mul',spec.textures]]){
+    const animation=await animationRecords(files,spec.animations);
+    for(const name of ['anim2','anim3','anim4','anim5'])if(!animation.get(name)?.length){files.delete(name+'.mul');files.delete(name+'.idx')}
+    for(const [mul,idx,ids] of [...['anim','anim2','anim3','anim4','anim5'].filter(name=>files.has(name+'.mul')).map(name=>[name+'.mul',name+'.idx',animation.get(name)||[]]),['texmaps.mul','texidx.mul',spec.textures]]){
         const pair=await subsetMUL(files.get(mul),files.get(idx),ids);files.set(mul,pair[0]);files.set(idx,pair[1]);
     }
-    files.set(marker,new Blob([JSON.stringify({version:spec.version,artworkSha256:spec.artworkSha256,originalBytes:before})]));
+    files.set(marker,new Blob([JSON.stringify({version:spec.version,artworkSha256:spec.artworkSha256,dependencySha256:spec.dependencySha256,originalBytes:before})]));
     return [...files];
 }
 

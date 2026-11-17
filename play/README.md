@@ -8,7 +8,7 @@ GitHub Pages serves the client and our artwork. Automatic UO data downloads use
 the existing HTTPS asset service at
 https://ultima-offline-trinsic.firatarig.chatgpt.site/api/uo/manifest.
 That service must remain online; GitHub Pages cannot run its server code.
-The initial UO download is approximately 143 MB, retained in browser storage.
+The UO demo subset is retained in browser storage; later launches reuse it.
 Ultima VII files remain local. No Python, UO installation or shard account is needed.
 
 Optionally select an Exult installation with the Roland MT-32 OGG recordings
@@ -30,7 +30,7 @@ saves, choose a folder in Documents if the browser rejects a protected path.
 
 Saves are local to this browser and origin unless a save folder is selected.
 Existing saves on the chatgpt.site address do not automatically appear on
-ultimaoffline7.com. Refreshing resumes the saved tile. Clearing site storage deletes
+github.io. Refreshing resumes the saved tile. Clearing site storage deletes
 browser data and saves; files in a chosen save folder remain.
 
 The service worker enables cross-origin isolation required by WebAssembly
@@ -40,6 +40,10 @@ loader, estimated overall percentage, and the current startup stage.
 Hide bar removes the header; the floating Show bar button restores it. The
 preference survives refresh. Build provenance is in build-info.json. The current
 desktop Trinsic code and approved artwork include the bloody footprint trail.
+New journey starts the shared character creation and voiced dream intro while
+preserving existing saves in their numbered slots. Play now resumes saved progress.
+The party control and creature animations follow the desktop's shared mappings.
+parity-receipt.json records the exact tested source bundle and release checks.
 Full upstream notices are in licenses.txt.
 
 Anonymous playtest reporting measures rendered playtime, loading results and
@@ -49,4 +53,5 @@ text are never included. The collector is telemetry.ultimaoffline7.com;
 reporting is optional and never blocks game execution or saving. See
 analytics/privacy.html for timing definitions, retention and limitations.
 
-Browser storage and folder permissions are per origin. Saves stored only at the previous vedit.github.io origin do not automatically move to ultimaoffline7.com; use the configured external save folder or an exported save.
+Browser storage and permissions belong to each origin. A domain change does not
+automatically move browser-only saves; an external save folder remains portable.

@@ -1,10 +1,12 @@
-import {importInstall} from './install.js?v=1ca94f96305d153b';
-import {installInput} from './client-input.js?v=1ca94f96305d153b';
-import {compactUO,megabytes} from './uo-data.js?v=1ca94f96305d153b';
-import {downloadUO} from './uo-download.js?v=1ca94f96305d153b';
-import {steamPath,SaveFolder} from './folders.js?v=1ca94f96305d153b';
-import {selectMusic,ExultMusic} from './exult-music.js?v=1ca94f96305d153b';
-import {LoadingScreen} from './loading.js?v=1ca94f96305d153b';
+import {importInstall} from './install.js?v=388d66f7626ed72e';
+import {installInput} from './client-input.js?v=388d66f7626ed72e';
+import {compactUO,megabytes} from './uo-data.js?v=388d66f7626ed72e';
+import {downloadUO} from './uo-download.js?v=388d66f7626ed72e';
+import {steamPath,SaveFolder} from './folders.js?v=388d66f7626ed72e';
+import {selectMusic,ExultMusic} from './exult-music.js?v=388d66f7626ed72e';
+import {LoadingScreen} from './loading.js?v=388d66f7626ed72e';
+import {prepareIntro} from './intro.js?v=388d66f7626ed72e';
+import {installAudio} from './audio.js?v=388d66f7626ed72e';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
@@ -59,6 +61,7 @@ if(!crossOriginIsolated){
 }
 const installKey='blackgate-local-install-v1', uoKey='classicuo-local-install-v1', saveKey='trinsic-investigation-v1';
 let install,uo,previousUO,engine,input,runtime,ready=false,visibleSince=performance.now(),stalledStatus;
+const audio=installAudio(()=>runtime);
 document.addEventListener('visibilitychange',()=>{visibleSince=performance.now()});
 setInterval(()=>{
     if(!ready||document.hidden||globalThis.trinsicFailure)return;
@@ -105,6 +108,7 @@ function fail(error){telemetry.event('fail');globalThis.trinsicFailure=error.mes
 function updateSetup(){
     for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=selecting||launching;
     play.disabled=!install||selecting||launching;
+    document.querySelector('#new-game').disabled=play.disabled;
     document.querySelector('#game-selection').textContent=install?'Ultima VII ready':'No folder selected';
     document.querySelector('#music-selection').textContent=music.tracks.size?music.tracks.size+' MT-32 tracks ready':'No music selected';
     document.querySelector('#clear-music').hidden=!music.tracks.size;
@@ -287,7 +291,7 @@ async function mountArtwork(){
         offset+=512+Math.ceil(size/512)*512;
     }
 }
-async function launch(){
+async function launch(newGame=false){
     telemetry.event('begin');
     delete globalThis.trinsicFailure;launching=true;play.disabled=true;loading.start();loadingStep('Opening Black Gate…',2);
     document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;
@@ -307,6 +311,7 @@ async function launch(){
             await slot(uoKey,uo);await slot('uo-auto-active',false);await removeSlots(downloaded.keys);
             updateSetup();play.disabled=true;
         }else await slot(uoKey,uo);
+        const experience=await fetch('experience.json?v='+buildVersion).then(r=>{if(!r.ok)throw Error('Game startup definition is missing');return r.json()});
         loadingStep('Opening your saved world…',50);
         let saved=await slot(saveKey);
         try{
@@ -320,19 +325,29 @@ async function launch(){
         }
         catch(error){saveFolder.available=false;saveFolder.update('Folder unavailable; using browser save');console.warn(error.message)}
         telemetry.event('stage','native');
+        const saves=await Promise.all(Array.from({length:10},async(_,n)=>[n,await slot('trinsic-slot-'+n+'-v1')]));
+        let activeSlot=await slot('trinsic-active-slot-v1')||0;
+        if(newGame&&saved){
+            if(!saves[activeSlot][1]){saves[activeSlot][1]=saved;await slot('trinsic-slot-'+activeSlot+'-v1',saved)}
+            const free=saves.find(([,bytes])=>!bytes);
+            if(!free)throw Error('All ten save slots are occupied. Load a game and manage its slots before starting another journey.');
+            activeSlot=free[0];saved=null;
+        }
         mailbox=new Int32Array(new SharedArrayBuffer(65536));
         engine=new Worker('worker.js?v='+buildVersion);engine.onmessage=receive;engine.onerror=e=>fail(Error(e.message));
-        const saves=await Promise.all(Array.from({length:10},async(_,n)=>[n,await slot('trinsic-slot-'+n+'-v1')]));
-        engine.postMessage({mailbox:mailbox.buffer,install,save:saved,saves,activeSlot:await slot('trinsic-active-slot-v1'),music:music.tracks.size>0});
+        engine.postMessage({mailbox:mailbox.buffer,install,save:saved,saves,activeSlot,experience,music:music.tracks.size>0});
         await globalThis.trinsicExchange('0 0 SYNC');
         document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;canvas.hidden=false;
         loadingStep('Loading ClassicUO…',55);handOffCanvas();
         const {dotnet}=await import('./_framework/dotnet.js?v='+buildVersion);
-        const host=await dotnet.withModuleConfig({canvas,onDownloadResourceProgress:(done,total)=>loadingStep('Loading ClassicUO…',55+20*done/Math.max(1,total,done),done+' / '+total+' resources · estimated startup progress'),preRun:[module=>{runtime=module;module.canvas=canvas}]}).
+        const hostBuilder=dotnet.withModuleConfig({canvas,onDownloadResourceProgress:(done,total)=>loadingStep('Loading ClassicUO…',55+20*done/Math.max(1,total,done),done+' / '+total+' resources · estimated startup progress'),preRun:[module=>{runtime=module;module.canvas=canvas}]}).
             withEnvironmentVariable('FNA_PLATFORM_BACKEND','SDL2').
             withEnvironmentVariable('FNA3D_FORCE_DRIVER','OpenGL').
             withEnvironmentVariable('TRINSIC_PIPE','browser').
-            withEnvironmentVariable('TRINSIC_TOWN','/town').create();
+            withEnvironmentVariable('TRINSIC_TOWN','/town').
+            withEnvironmentVariable('TRINSIC_INTRO_ASSETS','/intro');
+        if(!saved)hostBuilder.withEnvironmentVariable('TRINSIC_READY','1');
+        const host=await hostBuilder.create();
         loadingStep('Preparing the client…',75);
         globalThis.trinsicRuntime=runtime;
         runtime.FS.mkdirTree('/Data');runtime.FS.mount(runtime.FS.filesystems.IDBFS,{},'/Data');
@@ -343,12 +358,17 @@ async function launch(){
             write('/uo/'+name,new Uint8Array(await file.arrayBuffer()));
         }
         loadingStep('Loading Trinsic artwork…',92);await mountArtwork();loadingStep('Preparing Trinsic…',97);
+        if(!saved){loadingStep('Preparing the opening…',98);await prepareIntro(install,experience.intro,write)}
         runtime.FS.symlink('/town/tiledata.mul','/uo/tiledata.mul');
         input=installInput(canvas,runtime);canvas.focus();
         loadingStep(saved?'Resuming your save…':'Entering Trinsic…',99);
         host.runMain().then(code=>fail(Error('ClassicUO exited ('+code+'). See the browser console for details.'))).catch(fail);
     }catch(error){launching=false;updateSetup();fail(error)}
 }
+document.querySelector('#new-game').onclick=()=>launch(true);
+fetch('build-info.json?v='+buildVersion).then(r=>r.json()).then(info=>{
+    document.querySelector('#build-info').textContent='Build '+(info.buildId||info.sourceCommit?.slice(0,7)||buildVersion);
+}).catch(console.warn);
 play.onclick=async()=>{music.unlock();try{await saveFolder.reconnect()}catch(error){console.warn(error.message)}await launch()};
 try{
     let tracks,volume,handle,seen;
