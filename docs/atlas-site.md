@@ -63,4 +63,13 @@ GitHub Pages must have `ultimaoffline7.com` set as its custom domain before addi
 
 The browser demo's storage and folder permissions belong to each origin. Existing browser-local saves at `vedit.github.io` are not automatically transferred to `ultimaoffline7.com`; retain an exported save or the configured external save folder before switching origins.
 
+## Browser playtest analytics
+
+After preparing a browser export, run `python game/analytics/install.py <pages-worktree>/play`
+to retain the optional playtime reporting and launcher privacy toggle. This is a
+separate Cloudflare Worker at `telemetry.ultimaoffline7.com`; the site and game
+stay on GitHub Pages. Preserve that Worker custom-domain record when changing
+site DNS. See [collection, deployment, tests and private reporting](../game/analytics/README.md).
+Do not add analytics credentials, raw query exports or player data to the public site.
+
 The original U7/UO artwork remains credited to its rights holders. This atlas is a project review presentation, not a game-data download or a new license for those assets.
