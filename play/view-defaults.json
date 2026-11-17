@@ -1,0 +1,18 @@
+{
+  "version": "view-4062b624f294",
+  "worldZoom": 0.6,
+  "worldMagnification": 166.66666666666669,
+  "logicalCanvas": [
+    1200,
+    900
+  ],
+  "worldViewport": [
+    908,
+    640
+  ],
+  "maxZoomOut": 0.6,
+  "minZoom": 0.5,
+  "flatGroundAreaRelativeToU7": 0.8644760330578511,
+  "artwork": "unchanged",
+  "desktopParity": true
+}

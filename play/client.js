@@ -1,10 +1,10 @@
-import {importInstall} from './install.js?v=35454c1ba1ff6689';
-import {installInput} from './client-input.js?v=35454c1ba1ff6689';
-import {compactUO,megabytes} from './uo-data.js?v=35454c1ba1ff6689';
-import {downloadUO} from './uo-download.js?v=35454c1ba1ff6689';
-import {steamPath,SaveFolder} from './folders.js?v=35454c1ba1ff6689';
-import {selectMusic,ExultMusic} from './exult-music.js?v=35454c1ba1ff6689';
-import {LoadingScreen} from './loading.js?v=35454c1ba1ff6689';
+import {importInstall} from './install.js?v=view-4062b624f294';
+import {installInput} from './client-input.js?v=view-4062b624f294';
+import {compactUO,megabytes} from './uo-data.js?v=view-4062b624f294';
+import {downloadUO} from './uo-download.js?v=view-4062b624f294';
+import {steamPath,SaveFolder} from './folders.js?v=view-4062b624f294';
+import {selectMusic,ExultMusic} from './exult-music.js?v=view-4062b624f294';
+import {LoadingScreen} from './loading.js?v=view-4062b624f294';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
@@ -283,7 +283,7 @@ async function launch(){
         await globalThis.trinsicExchange('0 0 SYNC');
         document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;canvas.hidden=false;
         loadingStep('Loading ClassicUO…',55);handOffCanvas();
-        const {dotnet}=await import('./_framework/dotnet.js');
+        const {dotnet}=await import('./_framework/dotnet.js?v=view-4062b624f294');
         const host=await dotnet.withModuleConfig({canvas,onDownloadResourceProgress:(done,total)=>loadingStep('Loading ClassicUO…',55+20*done/Math.max(1,total,done),done+' / '+total+' resources · estimated startup progress'),preRun:[module=>{runtime=module;module.canvas=canvas}]}).
             withEnvironmentVariable('FNA_PLATFORM_BACKEND','SDL2').
             withEnvironmentVariable('FNA3D_FORCE_DRIVER','OpenGL').
