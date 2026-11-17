@@ -13,23 +13,23 @@
 <p>Bring your Ultima VII folder. The UO data downloads automatically and stays in this browser.</p>
 <div class="field">
 <label for="choose-game">Ultima VII · Black Gate + Forge of Virtue</label>
-<div class="row"><button id="choose-game">Choose game folder</button><input id="folder" type="file" webkitdirectory multiple hidden><span id="game-selection" class="selection">No folder selected</span></div>
-<div id="steam-hint" class="hint" hidden><p>Steam’s usual location:<br><code id="steam-path"></code></p><button id="copy-steam" class="quiet">Copy Steam path</button></div>
+<div class="row"><button id="choose-game" disabled>Choose game folder</button><input id="folder" type="file" webkitdirectory multiple hidden><span id="game-selection" class="selection">No folder selected</span></div>
+<div id="steam-hint" class="hint" hidden><p>Steam’s usual location:<br><code id="steam-path"></code></p><button id="copy-steam" class="quiet" disabled>Copy Steam path</button></div>
 </div>
 <div class="field">
 <label for="choose-music">Exult music <span class="optional">Optional</span></label>
-<div class="row"><button id="choose-music" class="quiet">Choose Exult folder</button><input id="music-folder" type="file" webkitdirectory multiple hidden><span id="music-selection" class="selection">No music selected</span><button id="clear-music" class="quiet" hidden>Remove</button></div>
+<div class="row"><button id="choose-music" class="quiet" disabled>Choose Exult folder</button><input id="music-folder" type="file" webkitdirectory multiple hidden><span id="music-selection" class="selection">No music selected</span><button id="clear-music" class="quiet" hidden>Remove</button></div>
 <p class="hint">Uses the Roland MT-32 recordings in Exult’s <code>data/music</code> folder. Files stay on your computer.</p>
 <div id="music-volume-row" class="row" hidden><label for="music-volume">Volume</label><input id="music-volume" type="range" min="0" max="100" value="60"></div>
 </div>
 <div class="field">
 <label for="choose-save">Save location <span class="optional">Optional</span></label>
-<div class="row"><button id="choose-save" class="quiet" hidden>Choose save folder</button><span id="save-selection" class="selection">In this browser</span><button id="clear-save" class="quiet" hidden>Use browser only</button></div>
+<div class="row"><button id="choose-save" class="quiet" hidden disabled>Choose save folder</button><span id="save-selection" class="selection">In this browser</span><button id="clear-save" class="quiet" hidden>Use browser only</button></div>
 <p class="hint">Press F5 to save. A browser backup is kept even when you choose a save folder.</p>
 </div>
 <button id="play" disabled>Play now</button><p id="details">Your game files stay on this computer.</p>
 </section>
 <main id="stage" hidden><canvas id="canvas" width="1200" height="900" tabindex="0" hidden></canvas></main>
 <script src="coi-serviceworker.js"></script>
-<script type="module" src="client.js?v=b829f1599850f804"></script>
+<script type="module" src="client.js?v=c4b81dce030980b3"></script>
 </html>
