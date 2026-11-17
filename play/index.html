@@ -5,22 +5,31 @@
 <meta name="uo-api-base" content="https://ultima-offline-trinsic.firatarig.chatgpt.site/api/uo/">
 <title>Ultima Offline · Trinsic</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#151b18;color:#e8e4d7;font:16px system-ui}header{padding:14px 22px;display:flex;gap:24px;align-items:center;border-bottom:1px solid #394439}h1{font:24px Georgia;margin:0}#status{flex:1;color:#c6cbbb}button,input::file-selector-button{background:#c8ae71;color:#181d17;border:0;padding:9px 14px;border-radius:4px;font:inherit;cursor:pointer}button:disabled{opacity:.4;cursor:wait}#setup{max-width:650px;margin:8vh auto;padding:30px;background:#202a23;border:1px solid #465343;border-radius:8px}label{display:block;margin:24px 0}label span{display:block;margin-bottom:10px}p{line-height:1.6;color:#bfc8bb}canvas{display:block;width:100%;height:calc(100vh - 105px);outline:0;image-rendering:pixelated}canvas[hidden]{display:none}footer{padding:8px 22px;color:#a6b09f;font-size:13px}#coords{font-variant-numeric:tabular-nums}
-body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}header{flex-shrink:0}#stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#101511}#stage[hidden]{display:none}canvas{flex:none;width:auto;height:auto;cursor:none;touch-action:none}footer{flex-shrink:0}
-#setup{min-height:0;overflow:auto;margin:4vh auto}#export-uo{font-size:13px}
+*{box-sizing:border-box}body{margin:0;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#151b18;color:#e8e4d7;font:16px system-ui}header{padding:16px 24px;display:flex;gap:24px;align-items:center;border-bottom:1px solid #394439;flex-shrink:0}h1{font:25px Georgia;margin:0}#status{flex:1;color:#c6cbbb;font-size:14px}h2{font:32px Georgia;margin:0 0 16px}p{line-height:1.6;color:#bfc8bb;margin:12px 0}button,input::file-selector-button{background:#c8ae71;color:#181d17;border:0;padding:10px 16px;border-radius:4px;font:inherit;cursor:pointer}button:disabled{opacity:.4;cursor:wait}button:focus-visible,a:focus-visible{outline:2px solid #e9d5a3;outline-offset:4px}.quiet{background:transparent;color:#d9bd7c;border:1px solid #56604f;font-size:13px;padding:7px 11px}.field{border-top:1px solid #394439;padding:20px 0}.field label{display:block;font-weight:600;margin-bottom:12px}.optional{font-weight:400;color:#a9b49f;font-size:13px;margin-left:7px}.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.hint{font-size:13px;color:#a9b49f;overflow-wrap:anywhere}.selection{font-size:14px;color:#c6cbbb;overflow-wrap:anywhere}#setup{width:min(600px,calc(100% - 32px));margin:clamp(16px,4vh,44px) auto;padding:28px 32px;background:#202a23;border:1px solid #465343;border-radius:8px;min-height:0;overflow:auto}#details{font-size:13px;margin-bottom:0}#play{width:100%;margin-top:4px}#stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#101511}canvas{display:block;flex:none;outline:0;image-rendering:pixelated;cursor:none;touch-action:none}#coords{font-variant-numeric:tabular-nums;font-size:13px}code{font-size:12px}input[type=file]{max-width:100%;font-size:13px}input[type=range]{accent-color:#c8ae71;width:140px}[hidden]{display:none!important}@media(max-width:650px){header{padding:12px 16px;gap:12px;flex-wrap:wrap}h1{font-size:23px}#status{min-width:130px}#setup{padding:24px}#coords{display:none}}
 </style>
-<header><h1>Ultima Offline</h1><span id="status">Choose your Ultima VII folder</span><span id="coords"></span><button id="export-uo" disabled>Export UO demo pack</button><button id="save" disabled>Save</button></header>
-<section id="setup"><h2>Open Trinsic</h2><p>Select your Ultima VII folder and enter Trinsic. The UO data this demo uses downloads automatically and is kept in this browser. Your Ultima VII files stay on this computer.</p>
-<label><span>Ultima VII · Black Gate + Forge of Virtue</span><input id="folder" type="file" webkitdirectory multiple></label>
-<details><summary>Use local UO data instead</summary>
-<label><span>Ultima Online · Classic client data</span><input id="uo-folder" type="file" webkitdirectory multiple></label>
-<p>The browser keeps a smaller set for this demo. Original files stay unchanged. You can export a compact pack for later use.</p>
-<p>Need the original files? Use the <a href="https://uo.com/client-download/" target="_blank" rel="noopener" style="color:#d9bd7c">official UO Classic client download</a>.</p>
-<label><span>Or select an existing UO demo pack</span><input id="uo-pack" type="file" accept=".gz"></label>
-</details>
-<button id="play" disabled>Play now</button><p id="details">GOG and Steam installation folders are detected automatically. Saves are stored in this browser.</p></section>
+<header><h1>Ultima Offline</h1><span id="status">Choose your Ultima VII folder</span><span id="coords"></span><button id="folders" class="quiet" hidden>Folders</button></header>
+<section id="setup">
+<h2>Open Trinsic</h2>
+<p>Bring your Ultima VII folder. The UO data downloads automatically and stays in this browser.</p>
+<div class="field">
+<label for="choose-game">Ultima VII · Black Gate + Forge of Virtue</label>
+<div class="row"><button id="choose-game">Choose game folder</button><input id="folder" type="file" webkitdirectory multiple hidden><span id="game-selection" class="selection">No folder selected</span></div>
+<div id="steam-hint" class="hint" hidden><p>Steam’s usual location:<br><code id="steam-path"></code></p><button id="copy-steam" class="quiet">Copy Steam path</button></div>
+</div>
+<div class="field">
+<label for="choose-music">Exult music <span class="optional">Optional</span></label>
+<div class="row"><button id="choose-music" class="quiet">Choose Exult folder</button><input id="music-folder" type="file" webkitdirectory multiple hidden><span id="music-selection" class="selection">No music selected</span><button id="clear-music" class="quiet" hidden>Remove</button></div>
+<p class="hint">Uses the Roland MT-32 recordings in Exult’s <code>data/music</code> folder. Files stay on your computer.</p>
+<div id="music-volume-row" class="row" hidden><label for="music-volume">Volume</label><input id="music-volume" type="range" min="0" max="100" value="60"></div>
+</div>
+<div class="field">
+<label for="choose-save">Save location <span class="optional">Optional</span></label>
+<div class="row"><button id="choose-save" class="quiet" hidden>Choose save folder</button><span id="save-selection" class="selection">In this browser</span><button id="clear-save" class="quiet" hidden>Use browser only</button></div>
+<p class="hint">Press F5 to save. A browser backup is kept even when you choose a save folder.</p>
+</div>
+<button id="play" disabled>Play now</button><p id="details">Your game files stay on this computer.</p>
+</section>
 <main id="stage" hidden><canvas id="canvas" width="1200" height="900" tabindex="0" hidden></canvas></main>
-<footer>Arrow keys: walk · Double click: use or talk · Drag: move items · F5: save · F9: load</footer>
 <script src="coi-serviceworker.js"></script>
-<script type="module" src="client.js"></script>
+<script type="module" src="client.js?v=b829f1599850f804"></script>
 </html>

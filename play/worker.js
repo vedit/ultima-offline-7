@@ -1,5 +1,6 @@
 "use strict";
-importScripts("trinsic.js");
+const buildVersion=new URL(self.location.href).searchParams.get('v')||'dev';
+importScripts('trinsic.js?v='+buildVersion);
 
 async function download(url) {
     const res = await fetch(url);
@@ -30,7 +31,8 @@ function unpackSave(fs, bytes) {
 onmessage = async ({data}) => {
     try {
         const [module, seed] = await Promise.all([
-            createBlackGate({mailbox: new Int32Array(data.mailbox), noInitialRun:true,
+            createBlackGate({mailbox: new Int32Array(data.mailbox), noInitialRun:true, externalMusic:!!data.music,
+                locateFile: name=>new URL(name+'?v='+buildVersion,self.location.href).href,
                 onAbort: message => postMessage({error:String(message)})}),
             data.save || download("investigation.u7").then(r => r.arrayBuffer())
         ]);
@@ -40,6 +42,12 @@ onmessage = async ({data}) => {
         for (const [name, bytes] of data.install) fs.writeFile(name, new Uint8Array(bytes));
         unpackSave(fs, new Uint8Array(seed));
         fs.writeFile('GAME00.U7', new Uint8Array(seed));
+        if(data.music){
+            // Run the original Roland sequencer for cue timing; the page plays
+            // the user's Exult recordings. Only the in-memory copy is changed.
+            fs.writeFile('U7.CFG','r 330\r\n\r\n');
+            fs.writeFile('GAMEDAT/OPTIONS.CFG','MUSIC=ON\r\nSPEECH=OFF\r\nSFX=OFF\r\n');
+        }
         module.callMain([]);
         throw new Error("The Black Gate engine exited.");
     } catch (e) {

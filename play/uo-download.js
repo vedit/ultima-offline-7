@@ -3,7 +3,7 @@ const digest=async blob=>[...new Uint8Array(await crypto.subtle.digest('SHA-256'
 export async function downloadUO(storage,progress){
     const base=new URL(document.querySelector('meta[name="uo-api-base"]')?.content||'./api/uo/',document.baseURI);
     const response=await fetch(new URL('manifest',base),{cache:'no-store',credentials:'omit'});
-    if(!response.ok)throw Error('Automatic UO download is unavailable. Retry or choose a local UO folder.');
+    if(!response.ok)throw Error('Automatic UO download is unavailable. Please retry.');
     const plan=await response.json();
     if(!/^[a-f0-9]{20}$/.test(plan.version)||!Array.isArray(plan.files)||!plan.parts)throw Error('Invalid UO download plan.');
     const ids=Object.keys(plan.parts),keys=ids.map(id=>'uo-auto:'+plan.version+':'+id),loaded=new Map();
@@ -46,5 +46,5 @@ export async function downloadUO(storage,progress){
             files.push([file.name,blob]);
         }
         return {files,keys};
-    }catch(error){cancel.abort();throw Error(error.message+' Download progress is saved; press Play now to retry, or select local UO data.')}
+    }catch(error){cancel.abort();throw Error(error.message+' Download progress is saved; press Play now to retry.')}
 }

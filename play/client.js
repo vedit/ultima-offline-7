@@ -1,14 +1,19 @@
-import {importInstall} from './install.js';
-import {installInput} from './client-input.js';
-import {selectUO,compactUO,importUO,exportUO,dataSize,megabytes} from './uo-data.js';
-import {downloadUO} from './uo-download.js';
+import {importInstall} from './install.js?v=b829f1599850f804';
+import {installInput} from './client-input.js?v=b829f1599850f804';
+import {compactUO,megabytes} from './uo-data.js?v=b829f1599850f804';
+import {downloadUO} from './uo-download.js?v=b829f1599850f804';
+import {steamPath,gameRoot,folderFiles,SaveFolder} from './folders.js?v=b829f1599850f804';
+import {selectMusic,ExultMusic} from './exult-music.js?v=b829f1599850f804';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
 const canvas=document.querySelector('#canvas');
 const play=document.querySelector('#play');
-const saveButton=document.querySelector('#save');
-const exportButton=document.querySelector('#export-uo');
+const buildVersion=new URL(import.meta.url).searchParams.get('v')||'dev';
+const music=new ExultMusic();
+const saveFolder=new SaveFolder(message=>{document.querySelector('#save-selection').textContent=message});
+globalThis.trinsicMusic=music;
+let gameHandle,musicHandle,selecting=false,launching=false;
 // The SDL desktop window-resize path is not used by this fixed-resolution
 // client. ResizeObserver below scales presentation without resizing WebGL.
 window.addEventListener('resize',event=>event.stopImmediatePropagation(),true);
@@ -44,7 +49,7 @@ globalThis.__uo_signal=name=>{
     }
     console.log('ClassicUO: '+name);
     if(!ready && (name==='draw-heartbeat' || name==='gamescene-active')){
-        ready=true;saveButton.disabled=false;status.textContent='Trinsic is ready';
+        ready=true;document.querySelector('#folders').hidden=false;status.textContent='Trinsic is ready';
     }
 };
 const db=await new Promise((resolve,reject)=>{
@@ -61,31 +66,66 @@ function removeSlots(keys){return new Promise((resolve,reject)=>{
     const tx=db.transaction('slots','readwrite');for(const key of keys)tx.objectStore('slots').delete(key);
     tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
-function fail(error){globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error);saveButton.disabled=true}
-let selectingUO=false;
-function updateSetup(){play.disabled=!install||selectingUO;exportButton.disabled=!uo||selectingUO;details.textContent=[install?'Ultima VII ready':'Select Ultima VII',uo?'UO demo data: '+megabytes(dataSize(uo)):'UO demo data downloads automatically on first play'].join(' · ')}
-document.querySelector('#folder').onchange=async e=>{try{install=await importInstall([...e.target.files]);updateSetup()}catch(error){fail(error)}};
-document.querySelector('#uo-folder').onchange=async e=>{try{
+function browserSave(bytes,time=Date.now()){return new Promise((resolve,reject)=>{
+    const tx=db.transaction('slots','readwrite'),store=tx.objectStore('slots');
+    store.put(bytes,saveKey);store.put(time,'trinsic-save-time-v1');
+    tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
+})}
+function fail(error){globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error)}
+function updateSetup(){
+    for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=selecting||launching;
+    play.disabled=!install||selecting||launching;
+    document.querySelector('#game-selection').textContent=install?(gameHandle?.name||'Ultima VII ready'):'No folder selected';
+    document.querySelector('#music-selection').textContent=music.tracks.size?music.tracks.size+' MT-32 tracks ready':'No music selected';
+    document.querySelector('#clear-music').hidden=!music.tracks.size;
+    document.querySelector('#music-volume-row').hidden=!music.tracks.size;
+    document.querySelector('#clear-save').hidden=!saveFolder.handle;
+    details.textContent=uo?'UO demo data is ready':'UO demo data downloads automatically on first play.';
+}
+async function choosing(action){
+    if(selecting||launching)return;
+    selecting=true;updateSetup();
+    try{await action();delete globalThis.trinsicFailure;status.textContent=install?'Ready to enter Trinsic':'Choose your Ultima VII folder'}
+    catch(error){if(error.name!=='AbortError')fail(error)}
+    finally{selecting=false;updateSetup()}
+}
+document.querySelector('#choose-game').onclick=()=>choosing(async()=>{
+    if(!window.showDirectoryPicker){document.querySelector('#folder').click();return}
+    const handle=await showDirectoryPicker({id:'ultima-offline-game',mode:'read',startIn:gameHandle||'documents'});
+    const root=await gameRoot(handle), imported=await importInstall(await folderFiles(root));
+    await slot(installKey,imported);install=imported;gameHandle=root;await slot('game-folder-handle-v1',root);
+});
+document.querySelector('#folder').onchange=e=>choosing(async()=>{
     if(!e.target.files.length)return;
-    selectingUO=true;uo=null;updateSetup();
-    uo=await selectUO([...e.target.files],message=>{status.textContent=message});
-    status.textContent='Smaller UO demo data is ready';updateSetup();
-}catch(error){uo=null;fail(error)}finally{selectingUO=false;updateSetup()}};
-document.querySelector('#uo-pack').onchange=async e=>{try{
-    if(!e.target.files.length)return;
-    selectingUO=true;uo=null;updateSetup();status.textContent='Opening UO demo pack…';
-    uo=await importUO(e.target.files[0]);status.textContent='UO demo pack is ready';updateSetup();
-}catch(error){uo=null;fail(error)}finally{selectingUO=false;updateSetup()}};
-exportButton.onclick=async()=>{
-    exportButton.disabled=true;const label=exportButton.textContent;exportButton.textContent='Packing…';
-    try{
-        const blob=await exportUO(uo),url=URL.createObjectURL(blob),link=document.createElement('a');
-        link.href=url;link.download='trinsic-uo-demo.gz';link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
-        exportButton.title=megabytes(blob.size)+' compressed; for use with this demo build';
-        if(!ready)details.textContent='Demo pack: '+megabytes(blob.size)+' compressed. Your original files are unchanged.';
-    }catch(error){console.error(error);exportButton.title='Could not export: '+error.message}
-    finally{exportButton.disabled=false;exportButton.textContent=label}
-};
+    const imported=await importInstall([...e.target.files]);await slot(installKey,imported);install=imported;
+    gameHandle=null;await slot('game-folder-handle-v1',null);
+});
+async function importMusic(files,handle=null){
+    const tracks=await selectMusic(files);await slot('exult-music-v1',tracks);music.set(tracks);
+    musicHandle=handle;await slot('music-folder-handle-v1',handle);
+}
+document.querySelector('#choose-music').onclick=()=>choosing(async()=>{
+    if(!window.showDirectoryPicker){document.querySelector('#music-folder').click();return}
+    const handle=await showDirectoryPicker({id:'ultima-offline-music',mode:'read',startIn:musicHandle||'music'});
+    await importMusic(await folderFiles(handle,{music:true}),handle);
+});
+document.querySelector('#music-folder').onchange=e=>choosing(async()=>{if(e.target.files.length)await importMusic([...e.target.files])});
+document.querySelector('#clear-music').onclick=()=>choosing(async()=>{await slot('exult-music-v1',[]);await slot('music-folder-handle-v1',null);music.set([]);musicHandle=null});
+document.querySelector('#music-volume').oninput=e=>{music.setVolume(e.target.value/100);slot('exult-music-volume-v1',music.volume).catch(console.warn)};
+document.querySelector('#choose-save').hidden=!window.showDirectoryPicker;
+document.querySelector('#choose-save').onclick=()=>choosing(async()=>{
+    const handle=await showDirectoryPicker({id:'ultima-offline-save',mode:'readwrite',startIn:saveFolder.handle||'documents'});
+    const candidate=new SaveFolder();await candidate.set(handle);await candidate.read();
+    await slot('save-folder-handle-v1',handle);await slot('save-folder-load-v1',true);await saveFolder.set(handle);
+});
+document.querySelector('#clear-save').onclick=()=>choosing(async()=>{await slot('save-folder-handle-v1',null);await slot('save-folder-load-v1',false);await saveFolder.set(null)});
+const steam=steamPath(navigator.userAgentData?.platform||navigator.platform);
+document.querySelector('#steam-hint').hidden=!steam;
+document.querySelector('#steam-path').textContent=steam;
+document.querySelector('#copy-steam').onclick=async()=>{try{await navigator.clipboard.writeText(steam);document.querySelector('#copy-steam').textContent='Copied'}catch{status.textContent='Select and copy the Steam path shown below.'}};
+document.querySelector('#folders').onclick=()=>{const url=new URL(location.href);url.searchParams.set('setup','1');location.assign(url)};
+document.addEventListener('pointerdown',()=>music.unlock(),true);
+window.addEventListener('keydown',()=>music.unlock(),true);
 
 let waiting,mailbox,queue=Promise.resolve(),engineFailure;
 function armDeadline(){
@@ -122,14 +162,16 @@ async function receive({data}){
         if(waiting){const request=waiting;waiting=null;clearTimeout(request.timer);request.reject(error)}
         fail(error);return;
     }
+    if(data.music)music.apply(data.music);
     const request=waiting;if(!request)return;
     waiting=null;clearTimeout(request.timer);
     if(globalThis.trinsicTransportState){globalThis.trinsicTransportState.pending=false;globalThis.trinsicTransportState.receivedAt=performance.now()}
     try{
         if(data.save){
-            await slot(saveKey,data.save);
+            await browserSave(data.save);
             if(runtime)await new Promise((resolve,reject)=>runtime.FS.syncfs(false,e=>e?reject(e):resolve()));
-            status.textContent='Saved in this browser';
+            const external=await saveFolder.write(data.save);
+            status.textContent=external?'Saved in folder and browser':'Saved in this browser';
         }
         const player=data.frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0');
         if(player){const fields=player.split(' ');document.querySelector('#coords').textContent=fields[4]+', '+fields[5];}
@@ -172,11 +214,13 @@ async function mountArtwork(){
     }
 }
 async function launch(){
-    delete globalThis.trinsicFailure;play.disabled=true;status.textContent='Opening Black Gate…';
-    for(const element of document.querySelectorAll('#setup input'))element.disabled=true;
+    delete globalThis.trinsicFailure;launching=true;play.disabled=true;status.textContent='Opening Black Gate…';
+    for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=true;
     try{
         if(!crossOriginIsolated)throw Error('This site needs cross-origin isolation headers to run ClassicUO.');
         await slot(installKey,install);
+        await slot('launcher-v2-seen',true);
+        const address=new URL(location.href);address.searchParams.delete('setup');history.replaceState(null,'',address);
         if(!uo){
             await slot('uo-auto-active',true);
             const downloaded=await downloadUO({read:key=>slot(key),write:(key,value)=>slot(key,value)},(done,total)=>{
@@ -187,10 +231,20 @@ async function launch(){
             await slot(uoKey,uo);await slot('uo-auto-active',false);await removeSlots(downloaded.keys);
             updateSetup();play.disabled=true;
         }else await slot(uoKey,uo);
-        const saved=await slot(saveKey);
+        let saved=await slot(saveKey);
+        try{
+            const external=await saveFolder.read();
+            // A newly chosen folder explicitly selects its existing save. Later
+            // launches keep a newer browser backup made while permission was lost.
+            if(external&&(!saved||await slot('save-folder-load-v1')||saveFolder.modified>=(await slot('trinsic-save-time-v1')||0))){
+                saved=external;await browserSave(external,saveFolder.modified);
+            }
+            if(saveFolder.available)await slot('save-folder-load-v1',false);
+        }
+        catch(error){saveFolder.available=false;saveFolder.update('Folder unavailable; using browser save');console.warn(error.message)}
         mailbox=new Int32Array(new SharedArrayBuffer(65536));
-        engine=new Worker('worker.js');engine.onmessage=receive;engine.onerror=e=>fail(Error(e.message));
-        engine.postMessage({mailbox:mailbox.buffer,install,save:saved});
+        engine=new Worker('worker.js?v='+buildVersion);engine.onmessage=receive;engine.onerror=e=>fail(Error(e.message));
+        engine.postMessage({mailbox:mailbox.buffer,install,save:saved,music:music.tracks.size>0});
         await globalThis.trinsicExchange('0 0 SYNC');
         document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;canvas.hidden=false;
         status.textContent='Loading ClassicUO…';handOffCanvas();
@@ -213,8 +267,17 @@ async function launch(){
         input=installInput(canvas,runtime);canvas.focus();
         status.textContent=saved?'Resuming your save…':'Entering Trinsic…';
         host.runMain().then(code=>fail(Error('ClassicUO exited ('+code+'). See the browser console for details.'))).catch(fail);
-    }catch(error){fail(error);play.disabled=false;for(const element of document.querySelectorAll('#setup input'))element.disabled=false}
+    }catch(error){launching=false;updateSetup();fail(error)}
 }
-play.onclick=launch;saveButton.onclick=()=>{if(ready){input.save();canvas.focus()}};
-try{[install,uo]=await Promise.all([slot(installKey),slot(uoKey)]);if(uo)uo=await compactUO(uo,message=>{status.textContent=message});updateSetup();if(install&&(uo||await slot('uo-auto-active')))await launch()}catch(error){uo=null;updateSetup();fail(error)}
-
+play.onclick=async()=>{music.unlock();try{await saveFolder.reconnect()}catch(error){console.warn(error.message)}await launch()};
+try{
+    let tracks,volume,handle,seen;
+    [install,uo,gameHandle,musicHandle,tracks,volume,handle,seen]=await Promise.all([
+        slot(installKey),slot(uoKey),slot('game-folder-handle-v1'),slot('music-folder-handle-v1'),
+        slot('exult-music-v1'),slot('exult-music-volume-v1'),slot('save-folder-handle-v1'),slot('launcher-v2-seen')]);
+    music.set(tracks);if(typeof volume==='number')music.setVolume(volume);
+    document.querySelector('#music-volume').value=Math.round(music.volume*100);
+    await saveFolder.set(handle);
+    if(uo)uo=await compactUO(uo,message=>{status.textContent=message});updateSetup();
+    if(seen&&install&&(uo||await slot('uo-auto-active'))&&!new URL(location.href).searchParams.has('setup'))await launch();
+}catch(error){updateSetup();fail(error)}

@@ -172,7 +172,7 @@ function initRuntime() {
   if (!Module["noFSInit"] && !FS.initialized) FS.init();
   TTY.init();
   // End ATINITS hooks
-  wasmExports["A"]();
+  wasmExports["D"]();
   // Begin ATPOSTCTORS hooks
   FS.ignorePermissions = false;
 }
@@ -3324,6 +3324,33 @@ function _clock_time_get(clk_id, ignored_precision, ptime) {
   return 0;
 }
 
+var readEmAsmArgsArray = [];
+
+var readEmAsmArgs = (sigPtr, buf) => {
+  readEmAsmArgsArray.length = 0;
+  var ch;
+  // Most arguments are i32s, so shift the buffer pointer so it is a plain
+  // index into HEAP32.
+  while (ch = HEAPU8[sigPtr++]) {
+    // Floats are always passed as doubles, so all types except for 'i'
+    // are 8 bytes and require alignment.
+    var wide = (ch != 105);
+    wide &= (ch != 112);
+    buf += wide && (buf % 8) ? 4 : 0;
+    readEmAsmArgsArray.push(// Special case for pointers under wasm64 or CAN_ADDRESS_2GB mode.
+    ch == 112 ? HEAPU32[((buf) >> 2)] : ch == 106 ? HEAP64[((buf) >> 3)] : ch == 105 ? HEAP32[((buf) >> 2)] : HEAPF64[((buf) >> 3)]);
+    buf += wide ? 8 : 4;
+  }
+  return readEmAsmArgsArray;
+};
+
+var runEmAsmFunction = (code, sigPtr, argbuf) => {
+  var args = readEmAsmArgs(sigPtr, argbuf);
+  return ASM_CONSTS[code](...args);
+};
+
+var _emscripten_asm_const_int = (code, sigPtr, argbuf) => runEmAsmFunction(code, sigPtr, argbuf);
+
 var getHeapMax = () => // Stay one Wasm page short of 4GB: while e.g. Chrome is able to allocate
 // full 4GB Wasm memories, the size will wrap back to 0 bytes in Wasm side
 // for any code that deals with heap sizes, which would require special
@@ -3607,6 +3634,10 @@ Module["FS"] = FS;
 // Begin JS library exports
 // End JS library exports
 // end include: postlibrary.js
+var ASM_CONSTS = {
+  38513: () => Module.externalMusic ? 1 : 0
+};
+
 function web_read_command(buffer, capacity) {
   const q = Module.mailbox;
   Atomics.wait(q, 0, 0, 1);
@@ -3621,12 +3652,27 @@ function web_read_command(buffer, capacity) {
   return 1;
 }
 
-function web_reply(text) {
+function web_music_record(track, buffer) {
+  (Module.musicRecords ||= new Map).set(buffer, track);
+}
+
+function web_music_song(buffer) {
+  Module.musicTrack = Module.musicRecords?.get(buffer) ?? -1;
+  Module.musicCue = (Module.musicCue || 0) + 1;
+}
+
+function web_send_frame(text, playing) {
   const frame = UTF8ToString(text);
   const save = Module.saving && frame.split(" ", 6)[5] === "ok" ? FS.readFile("GAME00.U7") : null;
+  const music = {
+    track: Module.musicTrack ?? -1,
+    cue: Module.musicCue || 0,
+    playing: !!playing
+  };
   postMessage({
     frame,
-    save
+    save,
+    music
   }, save ? [ save.buffer ] : []);
 }
 
@@ -3638,39 +3684,42 @@ function worker_sleep(ms) {
 var _main, _fflush, ___funcs_on_exit, memory, __indirect_function_table, wasmMemory;
 
 function assignWasmExports(wasmExports) {
-  _main = Module["_main"] = wasmExports["B"];
-  _fflush = wasmExports["C"];
-  ___funcs_on_exit = wasmExports["D"];
-  memory = wasmMemory = wasmExports["z"];
+  _main = Module["_main"] = wasmExports["E"];
+  _fflush = wasmExports["F"];
+  ___funcs_on_exit = wasmExports["G"];
+  memory = wasmMemory = wasmExports["C"];
   __indirect_function_table = wasmExports["__indirect_function_table"];
 }
 
 var wasmImports = {
-  /** @export */ f: ___cxa_throw,
-  /** @export */ j: ___syscall_fcntl64,
-  /** @export */ y: ___syscall_getdents64,
-  /** @export */ x: ___syscall_ioctl,
-  /** @export */ w: ___syscall_mkdirat,
-  /** @export */ e: ___syscall_openat,
-  /** @export */ v: ___syscall_renameat,
-  /** @export */ i: ___syscall_rmdir,
-  /** @export */ u: ___syscall_stat64,
-  /** @export */ t: ___syscall_statfs64,
-  /** @export */ h: ___syscall_unlinkat,
-  /** @export */ n: __abort_js,
-  /** @export */ s: _clock_time_get,
+  /** @export */ e: ___cxa_throw,
+  /** @export */ i: ___syscall_fcntl64,
+  /** @export */ B: ___syscall_getdents64,
+  /** @export */ A: ___syscall_ioctl,
+  /** @export */ z: ___syscall_mkdirat,
+  /** @export */ d: ___syscall_openat,
+  /** @export */ y: ___syscall_renameat,
+  /** @export */ h: ___syscall_rmdir,
+  /** @export */ x: ___syscall_stat64,
+  /** @export */ w: ___syscall_statfs64,
+  /** @export */ g: ___syscall_unlinkat,
+  /** @export */ q: __abort_js,
+  /** @export */ v: _clock_time_get,
+  /** @export */ p: _emscripten_asm_const_int,
   /** @export */ a: _emscripten_get_now,
-  /** @export */ m: _emscripten_resize_heap,
-  /** @export */ r: _environ_get,
-  /** @export */ q: _environ_sizes_get,
-  /** @export */ l: _exit,
-  /** @export */ d: _fd_close,
-  /** @export */ p: _fd_read,
-  /** @export */ o: _fd_seek,
-  /** @export */ g: _fd_write,
+  /** @export */ o: _emscripten_resize_heap,
+  /** @export */ u: _environ_get,
+  /** @export */ t: _environ_sizes_get,
+  /** @export */ n: _exit,
+  /** @export */ c: _fd_close,
+  /** @export */ s: _fd_read,
+  /** @export */ r: _fd_seek,
+  /** @export */ f: _fd_write,
+  /** @export */ m: web_music_record,
+  /** @export */ l: web_music_song,
   /** @export */ k: web_read_command,
-  /** @export */ b: web_reply,
-  /** @export */ c: worker_sleep
+  /** @export */ j: web_send_frame,
+  /** @export */ b: worker_sleep
 };
 
 // include: postamble.js
