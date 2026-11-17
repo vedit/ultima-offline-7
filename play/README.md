@@ -20,9 +20,11 @@ use ultima-offline-trinsic.u7 and also keep a browser backup. Returning to a
 folder with an existing save resumes it. If folder permission is unavailable,
 the browser backup is used; use Folders to reconnect. Folders opens setup again.
 
-The game picker remembers a previously selected folder. Browsers cannot
-preselect an arbitrary Steam path on the first visit, so Windows/macOS users
-receive a usual Steam-path hint and can select the game or Steam common folder.
+Game and music imports use the standard directory file input so protected
+Steam/Exult locations do not require File System Access permissions. Imported
+files are cached locally for refresh/resume. Optional music, save folders and
+Steam path help are collapsed under optional settings. For writable folder
+saves, choose a folder in Documents if the browser rejects a protected path.
 
 Saves are local to this browser and origin unless a save folder is selected.
 Existing saves on the chatgpt.site address do not automatically appear on

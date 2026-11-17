@@ -1,9 +1,9 @@
-import {importInstall} from './install.js?v=bbf5365a18091daf';
-import {installInput} from './client-input.js?v=bbf5365a18091daf';
-import {compactUO,megabytes} from './uo-data.js?v=bbf5365a18091daf';
-import {downloadUO} from './uo-download.js?v=bbf5365a18091daf';
-import {steamPath,gameRoot,folderFiles,SaveFolder} from './folders.js?v=bbf5365a18091daf';
-import {selectMusic,ExultMusic} from './exult-music.js?v=bbf5365a18091daf';
+import {importInstall} from './install.js?v=061b846d29b3f66c';
+import {installInput} from './client-input.js?v=061b846d29b3f66c';
+import {compactUO,megabytes} from './uo-data.js?v=061b846d29b3f66c';
+import {downloadUO} from './uo-download.js?v=061b846d29b3f66c';
+import {steamPath,SaveFolder} from './folders.js?v=061b846d29b3f66c';
+import {selectMusic,ExultMusic} from './exult-music.js?v=061b846d29b3f66c';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
@@ -13,7 +13,7 @@ const buildVersion=new URL(import.meta.url).searchParams.get('v')||'dev';
 const music=new ExultMusic();
 const saveFolder=new SaveFolder(message=>{document.querySelector('#save-selection').textContent=message});
 globalThis.trinsicMusic=music;
-let gameHandle,musicHandle,selecting=false,launching=false;
+let selecting=false,launching=false;
 // The SDL desktop window-resize path is not used by this fixed-resolution
 // client. ResizeObserver below scales presentation without resizing WebGL.
 window.addEventListener('resize',event=>event.stopImmediatePropagation(),true);
@@ -75,7 +75,7 @@ function fail(error){globalThis.trinsicFailure=error.message||String(error);stat
 function updateSetup(){
     for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=selecting||launching;
     play.disabled=!install||selecting||launching;
-    document.querySelector('#game-selection').textContent=install?(gameHandle?.name||'Ultima VII ready'):'No folder selected';
+    document.querySelector('#game-selection').textContent=install?'Ultima VII ready':'No folder selected';
     document.querySelector('#music-selection').textContent=music.tracks.size?music.tracks.size+' MT-32 tracks ready':'No music selected';
     document.querySelector('#clear-music').hidden=!music.tracks.size;
     document.querySelector('#music-volume-row').hidden=!music.tracks.size;
@@ -89,28 +89,21 @@ async function choosing(action){
     catch(error){if(error.name!=='AbortError')fail(error)}
     finally{selecting=false;updateSetup()}
 }
-document.querySelector('#choose-game').onclick=()=>choosing(async()=>{
-    if(!window.showDirectoryPicker){document.querySelector('#folder').click();return}
-    const handle=await showDirectoryPicker({id:'ultima-offline-game',mode:'read',startIn:gameHandle||'documents'});
-    const root=await gameRoot(handle), imported=await importInstall(await folderFiles(root));
-    await slot(installKey,imported);install=imported;gameHandle=root;await slot('game-folder-handle-v1',root);
-});
+// Imports use the read-only file input picker. The File System Access picker
+// rejects protected Steam/Exult locations even when only read access is requested.
+document.querySelector('#choose-game').onclick=()=>document.querySelector('#folder').click();
 document.querySelector('#folder').onchange=e=>choosing(async()=>{
     if(!e.target.files.length)return;
     const imported=await importInstall([...e.target.files]);await slot(installKey,imported);install=imported;
-    gameHandle=null;await slot('game-folder-handle-v1',null);
+    await slot('game-folder-handle-v1',null);
 });
-async function importMusic(files,handle=null){
+async function importMusic(files){
     const tracks=await selectMusic(files);await slot('exult-music-v1',tracks);music.set(tracks);
-    musicHandle=handle;await slot('music-folder-handle-v1',handle);
+    await slot('music-folder-handle-v1',null);
 }
-document.querySelector('#choose-music').onclick=()=>choosing(async()=>{
-    if(!window.showDirectoryPicker){document.querySelector('#music-folder').click();return}
-    const handle=await showDirectoryPicker({id:'ultima-offline-music',mode:'read',startIn:musicHandle||'music'});
-    await importMusic(await folderFiles(handle,{music:true}),handle);
-});
+document.querySelector('#choose-music').onclick=()=>document.querySelector('#music-folder').click();
 document.querySelector('#music-folder').onchange=e=>choosing(async()=>{if(e.target.files.length)await importMusic([...e.target.files])});
-document.querySelector('#clear-music').onclick=()=>choosing(async()=>{await slot('exult-music-v1',[]);await slot('music-folder-handle-v1',null);music.set([]);musicHandle=null});
+document.querySelector('#clear-music').onclick=()=>choosing(async()=>{await slot('exult-music-v1',[]);await slot('music-folder-handle-v1',null);music.set([])});
 document.querySelector('#music-volume').oninput=e=>{music.setVolume(e.target.value/100);slot('exult-music-volume-v1',music.volume).catch(console.warn)};
 document.querySelector('#choose-save').hidden=!window.showDirectoryPicker;
 document.querySelector('#choose-save').onclick=()=>choosing(async()=>{
@@ -272,8 +265,8 @@ async function launch(){
 play.onclick=async()=>{music.unlock();try{await saveFolder.reconnect()}catch(error){console.warn(error.message)}await launch()};
 try{
     let tracks,volume,handle,seen;
-    [install,uo,gameHandle,musicHandle,tracks,volume,handle,seen]=await Promise.all([
-        slot(installKey),slot(uoKey),slot('game-folder-handle-v1'),slot('music-folder-handle-v1'),
+    [install,uo,tracks,volume,handle,seen]=await Promise.all([
+        slot(installKey),slot(uoKey),
         slot('exult-music-v1'),slot('exult-music-volume-v1'),slot('save-folder-handle-v1'),slot('launcher-v2-seen')]);
     music.set(tracks);if(typeof volume==='number')music.setVolume(volume);
     document.querySelector('#music-volume').value=Math.round(music.volume*100);
