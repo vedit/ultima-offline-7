@@ -1,6 +1,6 @@
 # Project homepage and public Trinsic atlas
 
-The project homepage is hosted at **https://vedit.github.io/ultima-offline-7/**.
+The project's custom domain is **https://ultimaoffline7.com/**. GitHub Pages remains the host; the previous address is `https://vedit.github.io/ultima-offline-7/`.
 
 GitHub Pages serves the root of the independent `gh-pages` branch. The game source stays on `main`. Pages deploys automatically when the site branch changes; `.nojekyll` tells GitHub to serve the already-built static site.
 
@@ -29,7 +29,7 @@ Before uploading, verify all pages, images and local links, search/filter behavi
 
 ## Homepage inputs and maintenance
 
-Edit `game/site/index.html`, `home.css` and `home.js` for the landing page. It is static, has no external font or JavaScript dependencies, and works at the repository subpath used by Pages. Keep the copy honest about the unfinished full campaign.
+Edit `game/site/index.html`, `home.css` and `home.js` for the landing page. It is static, has no external font or JavaScript dependencies, and uses relative asset links that work at both the custom-domain root and a repository subpath. Keep the copy honest about the unfinished full campaign.
 
 `--screenshots` must point to a local folder containing `barn-overview-u7.png` / `barn-overview-uo7.png`, `fellowship-interior-u7.png` / `fellowship-interior-uo7.png`, and `guardian-dream-u7.png` / `guardian-dream-uo7.png`, plus their `scene-captures.json` receipt. Review them for presentation and private information before publication. The exporter checks all three comparison pairs against their capture hashes. Do not substitute promotional renders or include save data, audio or other runtime files. Captures belong only to the published site branch, not source `main`.
 
@@ -44,5 +44,23 @@ Check the homepage on desktop and a narrow viewport, including the barn and Fell
 Use an isolated checkout of `origin/gh-pages`. Review its current commit, then replace its site files with the verified export, keeping its Git metadata. Inspect the staged diff and commit normally. Push only `HEAD:gh-pages`; do not force-push, mirror refs or change the source branch. Do not publish directly from an active art-development folder.
 
 Pages settings should remain **Deploy from a branch → gh-pages → /(root)**. Follow the Pages deployment result and verify the live URL before reporting success. See [GitHub's publishing-source documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+
+## Custom domain and DNS
+
+The root `CNAME` on `gh-pages` must contain only `ultimaoffline7.com`. The atlas exporter copies the tracked `game/site/CNAME` into every export so future publications retain the domain. When publishing a partial update, preserve the existing browser build under `play/` and other independently updated site files.
+
+The domain uses Cloudflare DNS. Configure these records with **DNS only** (proxy off) and TTL **Auto**:
+
+| Type | Name | Target |
+| --- | --- | --- |
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+| CNAME | www | vedit.github.io |
+
+GitHub Pages must have `ultimaoffline7.com` set as its custom domain before adding these DNS records. Preserve unrelated mail or verification records. Once GitHub's DNS check succeeds and its certificate is issued, enable **Enforce HTTPS** and verify the homepage, `/homes.html`, `/play/`, and the `www` redirect. The `www` CNAME targets the account hostname, without the repository path. See [GitHub's custom-domain instructions](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site).
+
+The browser demo's storage and folder permissions belong to each origin. Existing browser-local saves at `vedit.github.io` are not automatically transferred to `ultimaoffline7.com`; retain an exported save or the configured external save folder before switching origins.
 
 The original U7/UO artwork remains credited to its rights holders. This atlas is a project review presentation, not a game-data download or a new license for those assets.

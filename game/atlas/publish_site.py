@@ -182,6 +182,8 @@ def export(atlas, output, reviews=None, guard_ground=None, screenshots=None):
         exported.update(install_homepage(output, screenshots))
         landing = 'index.html'
     (output / '.nojekyll').write_text('')
+    shutil.copyfile(Path(__file__).resolve().parents[1] / 'site' / 'CNAME', output / 'CNAME')
+    exported.add('CNAME')
     metadata = dict(published_at=datetime.now(timezone.utc).isoformat(),
                     source_updated_at=datetime.fromtimestamp((atlas / 'index.html').stat().st_mtime, timezone.utc).isoformat(),
                     rows=len(catalog), pages=sorted(p for p in exported if p.endswith('.html')), files=len(exported),
