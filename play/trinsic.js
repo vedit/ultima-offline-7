@@ -172,7 +172,7 @@ function initRuntime() {
   if (!Module["noFSInit"] && !FS.initialized) FS.init();
   TTY.init();
   // End ATINITS hooks
-  wasmExports["D"]();
+  wasmExports["E"]();
   // Begin ATPOSTCTORS hooks
   FS.ignorePermissions = false;
 }
@@ -3635,7 +3635,7 @@ Module["FS"] = FS;
 // End JS library exports
 // end include: postlibrary.js
 var ASM_CONSTS = {
-  43901: () => Module.externalMusic ? 1 : 0
+  48206: () => Atomics.load(Module.audioState, 0)
 };
 
 function web_read_command(buffer, capacity) {
@@ -3683,40 +3683,56 @@ function worker_sleep(ms) {
   Atomics.wait(Module.mailbox, 3, 0, ms);
 }
 
+function browser_audio_output(samples, frames) {
+  if (Atomics.load(Module.audioState, 1) >= 8) return;
+  Atomics.add(Module.audioState, 1, 1);
+  const pcm = HEAP16.slice(samples >> 1, (samples >> 1) + frames * 2);
+  postMessage({
+    audio: pcm
+  }, [ pcm.buffer ]);
+}
+
 // Imports from the Wasm binary.
-var _fflush, _main, ___funcs_on_exit, memory, __indirect_function_table, wasmMemory;
+var _free, _malloc, _plat_pcm_stop, _plat_pcm_start, _plat_pcm_queue, _plat_pcm_pending, _fflush, _main, ___funcs_on_exit, memory, __indirect_function_table, wasmMemory;
 
 function assignWasmExports(wasmExports) {
-  _fflush = wasmExports["E"];
-  _main = Module["_main"] = wasmExports["F"];
-  ___funcs_on_exit = wasmExports["G"];
-  memory = wasmMemory = wasmExports["C"];
+  _free = Module["_free"] = wasmExports["F"];
+  _malloc = Module["_malloc"] = wasmExports["G"];
+  _plat_pcm_stop = Module["_plat_pcm_stop"] = wasmExports["H"];
+  _plat_pcm_start = Module["_plat_pcm_start"] = wasmExports["I"];
+  _plat_pcm_queue = Module["_plat_pcm_queue"] = wasmExports["J"];
+  _plat_pcm_pending = Module["_plat_pcm_pending"] = wasmExports["K"];
+  _fflush = wasmExports["L"];
+  _main = Module["_main"] = wasmExports["M"];
+  ___funcs_on_exit = wasmExports["N"];
+  memory = wasmMemory = wasmExports["D"];
   __indirect_function_table = wasmExports["__indirect_function_table"];
 }
 
 var wasmImports = {
   /** @export */ e: ___cxa_throw,
   /** @export */ i: ___syscall_fcntl64,
-  /** @export */ B: ___syscall_getdents64,
-  /** @export */ A: ___syscall_ioctl,
-  /** @export */ z: ___syscall_mkdirat,
+  /** @export */ C: ___syscall_getdents64,
+  /** @export */ B: ___syscall_ioctl,
+  /** @export */ A: ___syscall_mkdirat,
   /** @export */ d: ___syscall_openat,
-  /** @export */ y: ___syscall_renameat,
+  /** @export */ z: ___syscall_renameat,
   /** @export */ h: ___syscall_rmdir,
-  /** @export */ x: ___syscall_stat64,
-  /** @export */ w: ___syscall_statfs64,
+  /** @export */ y: ___syscall_stat64,
+  /** @export */ x: ___syscall_statfs64,
   /** @export */ g: ___syscall_unlinkat,
-  /** @export */ q: __abort_js,
-  /** @export */ v: _clock_time_get,
+  /** @export */ r: __abort_js,
+  /** @export */ q: browser_audio_output,
+  /** @export */ w: _clock_time_get,
   /** @export */ p: _emscripten_asm_const_int,
   /** @export */ a: _emscripten_get_now,
   /** @export */ o: _emscripten_resize_heap,
-  /** @export */ u: _environ_get,
-  /** @export */ t: _environ_sizes_get,
+  /** @export */ v: _environ_get,
+  /** @export */ u: _environ_sizes_get,
   /** @export */ n: _exit,
   /** @export */ c: _fd_close,
-  /** @export */ s: _fd_read,
-  /** @export */ r: _fd_seek,
+  /** @export */ t: _fd_read,
+  /** @export */ s: _fd_seek,
   /** @export */ f: _fd_write,
   /** @export */ m: web_music_record,
   /** @export */ l: web_music_song,

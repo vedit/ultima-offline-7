@@ -1,22 +1,23 @@
 {
-  "bundleSha256": "6d524f1e7e27ae0b0fdbf24efc35cce439fd45a0102ad67de512b1c1c00a1fad",
+  "bundleSha256": "843df383ef95eb7717c92a1446954a12e64dac79f01e11e22f2da89360f9265e",
   "build": {
-    "builtAt": "2026-11-17T22:44:28.024072+00:00",
+    "builtAt": "2026-11-17T23:36:15.796102+00:00",
     "game": "Current desktop Trinsic sources and installed artwork",
     "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
     "includesLocalDesktopChanges": true,
     "desktopSourceSha256": "a8b0ba6403035487c89308d5a12b9b35e7a9c6f7b3ce4d867b36e04565c50fd2",
     "stagedClientSourceSha256": "5c1d29e80c2d419ff0566af8fad13752f68de25ac200989b0e5b64ce10ea0e33",
     "nativeOverlaySha256": "06d52f0eae55d3174c7e403b3b9ac859ee77562a570c5095e1f1e8af4591a64e",
-    "stagedNativeSourceSha256": "2aa9133cfac743a3cc0d075f2a6d09c3012f1704b59a60d1f85995f4855e5f9a",
-    "platformSha256": "cf513b9514ca440fc12cfb86376c6e3bf6d6d9f914b4c0090253a669a123860c",
-    "engineSha256": "ba5b42910dfd043ee2a3dfc2d8cf97945686d1797d22a4a91d65f91e304b3b45",
+    "stagedNativeSourceSha256": "b5a939d799f20e70f9535b993d59a9ff6d77287a5035d210351e828122eeed49",
+    "platformSha256": "65dfef14955c239480120e114e663ffccf45b9a437acda8bc95ac82b370e3082",
+    "engineSha256": "4d65ca9db6e7b7911e06639cc9cca9a4fcc4bf5c41cf740c0146c7758e8327c9",
     "browserFoundation": "9b9957ad65ddd1778ae1ac7d0f00c1b9254ce9f2",
     "artworkSha256": "823ba6c249f035edd9ae8d0bbf18fac01338e9950cfe78e61b883424fe232de6",
-    "experienceSha256": "39ee859f756b6b416a22a90e4122b92a31a048173bdde1d5d40038c5a92b5c82",
-    "buildId": "c8ded674e8d8"
+    "experienceSha256": "9d44d49a4e9501730d6b9850951f59cdd5a95658a90d40e7e651458288528fb9",
+    "buildId": "34c1494cd0f4"
   },
   "checks": {
+    "nativeAudio": true,
     "characterCreation": true,
     "intro": true,
     "creatureAnimations": true,
@@ -27,5 +28,5 @@
   },
   "saveTile": "1084, 2184",
   "evidence": "game/web/bin/parity-evidence",
-  "verifiedAt": "2026-11-17T23:03:56.462Z"
+  "verifiedAt": "2026-11-17T23:39:16.873Z"
 }

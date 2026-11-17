@@ -1,12 +1,12 @@
-import {importInstall} from './install.js?v=388d66f7626ed72e';
-import {installInput} from './client-input.js?v=388d66f7626ed72e';
-import {compactUO,megabytes} from './uo-data.js?v=388d66f7626ed72e';
-import {downloadUO} from './uo-download.js?v=388d66f7626ed72e';
-import {steamPath,SaveFolder} from './folders.js?v=388d66f7626ed72e';
-import {selectMusic,ExultMusic} from './exult-music.js?v=388d66f7626ed72e';
-import {LoadingScreen} from './loading.js?v=388d66f7626ed72e';
-import {prepareIntro} from './intro.js?v=388d66f7626ed72e';
-import {installAudio} from './audio.js?v=388d66f7626ed72e';
+import {importInstall} from './install.js?v=31394f69d710a9a9';
+import {installInput} from './client-input.js?v=31394f69d710a9a9';
+import {compactUO,megabytes} from './uo-data.js?v=31394f69d710a9a9';
+import {downloadUO} from './uo-download.js?v=31394f69d710a9a9';
+import {steamPath,SaveFolder} from './folders.js?v=31394f69d710a9a9';
+import {selectMusic,ExultMusic} from './exult-music.js?v=31394f69d710a9a9';
+import {LoadingScreen} from './loading.js?v=31394f69d710a9a9';
+import {prepareIntro} from './intro.js?v=31394f69d710a9a9';
+import {installAudio} from './audio.js?v=31394f69d710a9a9';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
@@ -62,6 +62,7 @@ if(!crossOriginIsolated){
 const installKey='blackgate-local-install-v1', uoKey='classicuo-local-install-v1', saveKey='trinsic-investigation-v1';
 let install,uo,previousUO,engine,input,runtime,ready=false,visibleSince=performance.now(),stalledStatus;
 const audio=installAudio(()=>runtime);
+const audioState=new Int32Array(new SharedArrayBuffer(8));
 document.addEventListener('visibilitychange',()=>{visibleSince=performance.now()});
 setInterval(()=>{
     if(!ready||document.hidden||globalThis.trinsicFailure)return;
@@ -223,6 +224,7 @@ globalThis.trinsicExchange=command=>{
     });queue=next.catch(()=>{});return next;
 };
 async function receive({data}){
+    if(data.audio){Atomics.sub(audioState,1,1);audio.stream(data.audio);Atomics.store(audioState,0,music.current?1:0);return;}
     // NPC updates run between commands too. An error without a waiting request
     // must still stop the transport and reach the player.
     if(data.error){
@@ -231,7 +233,11 @@ async function receive({data}){
         if(waiting){const request=waiting;waiting=null;clearTimeout(request.timer);request.reject(error)}
         fail(error);return;
     }
-    if(data.music)music.apply(data.music);
+    if(data.music){
+        const au=data.frame?.split('\n').find(l=>l.startsWith('AU '))?.split(' ');
+        if(au){music.setVolume(Number(au[7])/100);data.music.playing=data.music.playing&&au[4]==='1';}
+        music.apply(data.music);
+    }
     const request=waiting;if(!request)return;
     waiting=null;clearTimeout(request.timer);
     if(globalThis.trinsicTransportState){globalThis.trinsicTransportState.pending=false;globalThis.trinsicTransportState.receivedAt=performance.now()}
@@ -335,7 +341,8 @@ async function launch(newGame=false){
         }
         mailbox=new Int32Array(new SharedArrayBuffer(65536));
         engine=new Worker('worker.js?v='+buildVersion);engine.onmessage=receive;engine.onerror=e=>fail(Error(e.message));
-        engine.postMessage({mailbox:mailbox.buffer,install,save:saved,saves,activeSlot,experience,music:music.tracks.size>0});
+        audioState.fill(0);
+        engine.postMessage({mailbox:mailbox.buffer,audioState:audioState.buffer,install,save:saved,saves,activeSlot,experience,music:music.tracks.size>0});
         await globalThis.trinsicExchange('0 0 SYNC');
         document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;canvas.hidden=false;
         loadingStep('Loading ClassicUO…',55);handOffCanvas();

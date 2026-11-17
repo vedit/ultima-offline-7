@@ -31,7 +31,7 @@ function unpackSave(fs, bytes) {
 onmessage = async ({data}) => {
     try {
         const [module, seed] = await Promise.all([
-            createBlackGate({mailbox: new Int32Array(data.mailbox), noInitialRun:true, externalMusic:!!data.music,
+            createBlackGate({mailbox: new Int32Array(data.mailbox), audioState:new Int32Array(data.audioState), noInitialRun:true, externalMusic:!!data.music,
                 locateFile: name=>new URL(name+'?v='+buildVersion,self.location.href).href,
                 onAbort: message => postMessage({error:String(message)})}),
             data.save || download("investigation.u7").then(r => r.arrayBuffer())
@@ -56,7 +56,6 @@ onmessage = async ({data}) => {
             // Run the original Roland sequencer for cue timing; the page plays
             // the user's Exult recordings. Only the in-memory copy is changed.
             fs.writeFile('U7.CFG','r 330\r\n\r\n');
-            fs.writeFile('GAMEDAT/OPTIONS.CFG','MUSIC=ON\r\nSPEECH=OFF\r\nSFX=OFF\r\n');
         }
         module.callMain([]);
         throw new Error("The Black Gate engine exited.");

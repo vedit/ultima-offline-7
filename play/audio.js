@@ -25,5 +25,19 @@ export function installAudio(runtime){
         if(op===2&&s.state===2)start(s);
         return s.state;
     };
-    return {unlock};
+    let nextTime=0;const pending=new Set();
+    function flush(){for(const source of pending){source.stop();source.disconnect()}pending.clear();nextTime=0;}
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
+    function stream(pcm){
+        // Never retain stale audio during autoplay suspension or a hidden tab.
+        if(!context||context.state!=='running'||document.hidden)return;
+        const now=context.currentTime;
+        if(nextTime>now+.15)flush();
+        const buffer=context.createBuffer(2,pcm.length/2,48000);
+        for(let c=0;c<2;c++){const out=buffer.getChannelData(c);for(let i=0;i<out.length;i++)out[i]=pcm[i*2+c]/32768;}
+        const source=context.createBufferSource();source.buffer=buffer;source.connect(context.destination);
+        source.onended=()=>{pending.delete(source);source.disconnect()};pending.add(source);
+        nextTime=Math.max(nextTime,now+.04);source.start(nextTime);nextTime+=buffer.duration;
+    }
+    return {unlock,stream};
 }

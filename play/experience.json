@@ -1,12 +1,53 @@
 {
   "version": 1,
-  "newGame": {"name": "Avatar", "female": false, "characterCreation": true, "dream": true},
-  "intro": {
-    "width": 104, "height": 148,
-    "blueWidth": 320, "blueHeight": 200, "blueColumns": 13, "blueFrames": 78,
-    "textTimes": [0.25, 1.7, 5.25, 8.2, 10.55, 12.9, 16, 19.95, 22.7, 27.2, 32.4, 36.4, 39.65, 42.4, 44],
-    "localFiles": ["ENDSHAPE.FLX", "INTROPAL.DAT", "MAINSHP.FLX", "INTROSND.DAT"],
-    "authoredFiles": ["guardian.png"]
+  "newGame": {
+    "name": "Avatar",
+    "female": false,
+    "characterCreation": true,
+    "dream": true
   },
-  "releaseChecks": ["characterCreation", "intro", "partyButton", "creatureAnimations", "horse", "saveResume", "movementAutosave"]
+  "intro": {
+    "width": 104,
+    "height": 148,
+    "blueWidth": 320,
+    "blueHeight": 200,
+    "blueColumns": 13,
+    "blueFrames": 78,
+    "textTimes": [
+      0.25,
+      1.7,
+      5.25,
+      8.2,
+      10.55,
+      12.9,
+      16,
+      19.95,
+      22.7,
+      27.2,
+      32.4,
+      36.4,
+      39.65,
+      42.4,
+      44
+    ],
+    "localFiles": [
+      "ENDSHAPE.FLX",
+      "INTROPAL.DAT",
+      "MAINSHP.FLX",
+      "INTROSND.DAT"
+    ],
+    "authoredFiles": [
+      "guardian.png"
+    ]
+  },
+  "releaseChecks": [
+    "characterCreation",
+    "intro",
+    "partyButton",
+    "creatureAnimations",
+    "horse",
+    "saveResume",
+    "movementAutosave",
+    "nativeAudio"
+  ]
 }
