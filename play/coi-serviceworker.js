@@ -125,17 +125,28 @@ if (typeof window === 'undefined') {
             (registration) => {
                 !coi.quiet && console.log("COOP/COEP Service Worker registered", registration.scope);
 
-                registration.addEventListener("updatefound", () => {
-                    !coi.quiet && console.log("Reloading page to make use of updated COOP/COEP Service Worker.");
-                    window.sessionStorage.setItem("coiReloadedBySelf", "updatefound");
-                    coi.doReload();
-                });
+                // updatefound only means installation started. Reloading then
+                // can produce another uncontrolled document and suppress the
+                // next registration attempt. Wait until activation finishes.
+                let reloadScheduled = false;
+                const reloadWhenActive = worker => {
+                    if (!worker) return;
+                    const check = () => {
+                        if (worker.state !== "activated" || reloadScheduled) return;
+                        reloadScheduled = true;
+                        !coi.quiet && console.log("Reloading page with the active COOP/COEP Service Worker.");
+                        window.sessionStorage.setItem("coiReloadedBySelf", "activated");
+                        coi.doReload();
+                    };
+                    worker.addEventListener("statechange", check);
+                    check();
+                };
+                registration.addEventListener("updatefound", () => reloadWhenActive(registration.installing));
+                reloadWhenActive(registration.installing || registration.waiting);
 
                 // If the registration is active, but it's not controlling the page
                 if (registration.active && !n.serviceWorker.controller) {
-                    !coi.quiet && console.log("Reloading page to make use of COOP/COEP Service Worker.");
-                    window.sessionStorage.setItem("coiReloadedBySelf", "notcontrolling");
-                    coi.doReload();
+                    reloadWhenActive(registration.active);
                 }
             },
             (err) => {

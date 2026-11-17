@@ -1,9 +1,9 @@
-import {importInstall} from './install.js?v=c4b81dce030980b3';
-import {installInput} from './client-input.js?v=c4b81dce030980b3';
-import {compactUO,megabytes} from './uo-data.js?v=c4b81dce030980b3';
-import {downloadUO} from './uo-download.js?v=c4b81dce030980b3';
-import {steamPath,gameRoot,folderFiles,SaveFolder} from './folders.js?v=c4b81dce030980b3';
-import {selectMusic,ExultMusic} from './exult-music.js?v=c4b81dce030980b3';
+import {importInstall} from './install.js?v=bbf5365a18091daf';
+import {installInput} from './client-input.js?v=bbf5365a18091daf';
+import {compactUO,megabytes} from './uo-data.js?v=bbf5365a18091daf';
+import {downloadUO} from './uo-download.js?v=bbf5365a18091daf';
+import {steamPath,gameRoot,folderFiles,SaveFolder} from './folders.js?v=bbf5365a18091daf';
+import {selectMusic,ExultMusic} from './exult-music.js?v=bbf5365a18091daf';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
