@@ -9,9 +9,11 @@ source=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('install_analytics',source/'install.py')
 module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
 pages=Path(sys.argv[1]).resolve()
+baseline=sys.argv[2] if len(sys.argv)>2 else 'origin/gh-pages'
 def tracked(name):
-    return subprocess.check_output(['git','show','HEAD:play/'+name],cwd=pages).decode('utf-8')
+    return subprocess.check_output(['git','show',baseline+':play/'+name],cwd=pages).decode('utf-8')
 js,html=tracked('client.js'),tracked('index.html')
+assert '// UO7 analytics integration v1' not in js, 'Pass a pre-integration client revision as the third argument'
 a,b=module.transform(js,html)
 assert module.transform(a,b)==(a,b), 'Installer must be idempotent'
 assert a.count("telemetry.event('begin')")==2

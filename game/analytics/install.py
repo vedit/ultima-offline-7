@@ -4,6 +4,7 @@ Run after prepare_pages.py / prepare_auto_host.py. It edits only client.js,
 index.html and analytics/, and fails before writing if the integration changed.
 """
 import argparse
+import re
 from pathlib import Path
 import shutil
 
@@ -49,6 +50,8 @@ def transform(js, html):
     if html.count('<meta name="uo-api-base"')!=1 or html.count('<button id="play"')!=1:
         raise ValueError('Launcher integration anchors changed')
     html=html.replace('<meta name="uo-api-base"',f'<meta name="uo7-analytics" content="{ENDPOINT}">\n<meta name="uo-api-base"')
+    # Refresh the launcher without changing its native/artwork build version.
+    html=re.sub(r'src="(client\.js[^\"]*)"',lambda m:'src="'+m[1]+('&amp;' if '?' in m[1] else '?')+'usage=1"',html)
     html=html.replace('<button id="play"', '''<div class="field" id="usage-settings">
 <label style="font-size:14px;font-weight:400"><input type="checkbox" id="usage-reporting" checked> Share anonymous playtime and progress</label>
 <p class="hint">Helps improve the playtest. Reports loading results, time played and investigation milestones using a new ID each launch. No character names, game files or saves are sent. <a href="./analytics/privacy.html" target="_blank" rel="noopener" style="color:#d9bd7c">Details</a>. Changes apply to your next launch.</p>

@@ -91,6 +91,13 @@ truncated 10,001-row result; narrow the period instead. Sample weights are appli
 and sampled reports marked estimates; medians are calculated over those weights.
 Engine retention is three months. Small/empty datasets are expected initially.
 
+For an explicitly approved temporary staging endpoint, `tests/live.mjs` sends
+two synthetic sessions as six deliveries (including repeats and an older
+snapshot). Query the separate smoke dataset and verify two sessions, one
+successful launch, one loading failure and exactly 8,000 active milliseconds.
+Remove the smoke Worker after verification. Synthetic data must never be sent
+to the production dataset.
+
 Browser controls expose opt-out, honor DNT/GPC, and keep the preference local.
 Application request logging is disabled. Cloudflare still processes network
 metadata. See the shipped privacy page for the exact user-facing description.

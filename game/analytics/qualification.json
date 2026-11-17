@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-18",
+  "baselinePages": "5d047e1",
+  "node": "22.15.0",
+  "tests": 7,
+  "integration": "anchors, idempotence, drift refusal, module copy",
+  "live": {
+    "collector": "https://telemetry.ultimaoffline7.com",
+    "health": 200,
+    "invalidBody": 400,
+    "foreignOrigin": 403,
+    "preflight": 204,
+    "productionQuery": "passed",
+    "smoke": {
+      "sent": 6,
+      "sessions": 2,
+      "successful": 1,
+      "loadingFailures": 1,
+      "activeMs": 8000,
+      "duplicates": "collapsed",
+      "outOfOrder": "latest sequence retained",
+      "sampled": false
+    }
+  },
+  "limits": [
+    "Browser UI automation unavailable; no visual browser capture",
+    "Browser only; desktop play is not measured",
+    "Opt-out, network loss and abrupt closure can undercount",
+    "Unattended visible and focused gameplay counts"
+  ]
+}
