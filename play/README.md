@@ -15,7 +15,8 @@ Optionally select an Exult installation with the Roland MT-32 OGG recordings
 in data/music. These files stay local and are remembered in browser storage.
 The original game controls track changes. Audio starts after a user interaction.
 
-Press F5 to save. Optionally choose a save folder in supported browsers; saves
+Progress autosaves after movement and completed actions, and periodically while
+idle. F5 still saves manually. Optionally choose a save folder; saves
 use ultima-offline-trinsic.u7 and also keep a browser backup. Returning to a
 folder with an existing save resumes it. If folder permission is unavailable,
 the browser backup is used; use Folders to reconnect. Folders opens setup again.
@@ -33,4 +34,6 @@ browser data and saves; files in a chosen save folder remain.
 
 The service worker enables cross-origin isolation required by WebAssembly
 threads because GitHub Pages does not configure our custom isolation headers.
-The first navigation may reload once. Full upstream notices are in licenses.txt.
+The first navigation may reload once. The launch screen shows an animated
+loader, estimated overall percentage, and the current startup stage.
+Full upstream notices are in licenses.txt.

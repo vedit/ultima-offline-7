@@ -3635,7 +3635,7 @@ Module["FS"] = FS;
 // End JS library exports
 // end include: postlibrary.js
 var ASM_CONSTS = {
-  38513: () => Module.externalMusic ? 1 : 0
+  38579: () => Module.externalMusic ? 1 : 0
 };
 
 function web_read_command(buffer, capacity) {
@@ -3647,7 +3647,8 @@ function web_read_command(buffer, capacity) {
   const dir = Atomics.load(q, 2);
   const command = op === 4 ? (new TextDecoder).decode(new Uint8Array(q.buffer, 16, sequence).slice()) : op === 1 ? "0 0 SYNC" : sequence + " 1 " + (op === 2 ? "STEP " + dir : "SAVE");
   Atomics.store(q, 0, 0);
-  Module.saving = op === 3 || command.trim().split(" ")[2] === "SAVE";
+  const action = command.trim().split(" ")[2];
+  Module.saving = op === 3 || action === "SAVE" || action === "CHECKPOINT";
   stringToUTF8(command, buffer, capacity);
   return 1;
 }

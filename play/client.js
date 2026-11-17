@@ -1,14 +1,17 @@
-import {importInstall} from './install.js?v=061b846d29b3f66c';
-import {installInput} from './client-input.js?v=061b846d29b3f66c';
-import {compactUO,megabytes} from './uo-data.js?v=061b846d29b3f66c';
-import {downloadUO} from './uo-download.js?v=061b846d29b3f66c';
-import {steamPath,SaveFolder} from './folders.js?v=061b846d29b3f66c';
-import {selectMusic,ExultMusic} from './exult-music.js?v=061b846d29b3f66c';
+import {importInstall} from './install.js?v=35454c1ba1ff6689';
+import {installInput} from './client-input.js?v=35454c1ba1ff6689';
+import {compactUO,megabytes} from './uo-data.js?v=35454c1ba1ff6689';
+import {downloadUO} from './uo-download.js?v=35454c1ba1ff6689';
+import {steamPath,SaveFolder} from './folders.js?v=35454c1ba1ff6689';
+import {selectMusic,ExultMusic} from './exult-music.js?v=35454c1ba1ff6689';
+import {LoadingScreen} from './loading.js?v=35454c1ba1ff6689';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
 const canvas=document.querySelector('#canvas');
 const play=document.querySelector('#play');
+const loading=new LoadingScreen();
+function loadingStep(message,percent,detail){status.textContent=message;loading.update(percent,message,detail)}
 const buildVersion=new URL(import.meta.url).searchParams.get('v')||'dev';
 const music=new ExultMusic();
 const saveFolder=new SaveFolder(message=>{document.querySelector('#save-selection').textContent=message});
@@ -25,8 +28,8 @@ new ResizeObserver(([entry])=>{
 }).observe(document.querySelector('#stage'));
 if(!crossOriginIsolated){
     document.querySelector('#setup').hidden=true;
-    status.textContent='Preparing the browser…';
-    setTimeout(()=>{status.textContent='Browser setup did not finish. Open this link directly in Chrome or Edge with site storage enabled.'},15000);
+    loading.start();loadingStep('Preparing the browser…',0);
+    setTimeout(()=>{status.textContent='Browser setup did not finish. Open this link directly in Chrome or Edge with site storage enabled.';loading.error(status.textContent)},15000);
     // coi-serviceworker reloads this first navigation with isolation enabled.
     await new Promise(()=>{});
 }
@@ -48,8 +51,8 @@ globalThis.__uo_signal=name=>{
         if(stalledStatus!==undefined&&!globalThis.trinsicFailure){status.textContent=stalledStatus;stalledStatus=undefined}
     }
     console.log('ClassicUO: '+name);
-    if(!ready && (name==='draw-heartbeat' || name==='gamescene-active')){
-        ready=true;document.querySelector('#folders').hidden=false;status.textContent='Trinsic is ready';
+    if(!ready && name==='draw-heartbeat'){
+        ready=true;loading.finish();document.querySelector('#folders').hidden=false;status.textContent='Trinsic is ready';requestCheckpoint();
     }
 };
 const db=await new Promise((resolve,reject)=>{
@@ -71,7 +74,7 @@ function browserSave(bytes,time=Date.now()){return new Promise((resolve,reject)=
     store.put(bytes,saveKey);store.put(time,'trinsic-save-time-v1');
     tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
-function fail(error){globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error)}
+function fail(error){globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error);if(!ready&&!loading.root.hidden)loading.error(globalThis.trinsicFailure)}
 function updateSetup(){
     for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=selecting||launching;
     play.disabled=!install||selecting||launching;
@@ -116,11 +119,33 @@ const steam=steamPath(navigator.userAgentData?.platform||navigator.platform);
 document.querySelector('#steam-hint').hidden=!steam;
 document.querySelector('#steam-path').textContent=steam;
 document.querySelector('#copy-steam').onclick=async()=>{try{await navigator.clipboard.writeText(steam);document.querySelector('#copy-steam').textContent='Copied'}catch{status.textContent='Select and copy the Steam path shown below.'}};
-document.querySelector('#folders').onclick=()=>{const url=new URL(location.href);url.searchParams.set('setup','1');location.assign(url)};
+async function leaveFor(url){await requestCheckpoint();location.assign(url)}
+document.querySelector('#folders').onclick=()=>{const url=new URL(location.href);url.searchParams.set('setup','1');leaveFor(url).catch(fail)};
+document.querySelector('header h1 a').onclick=event=>{if(ready&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey){event.preventDefault();leaveFor(event.currentTarget.href).catch(fail)}};
 document.addEventListener('pointerdown',()=>music.unlock(),true);
 window.addEventListener('keydown',()=>music.unlock(),true);
 
 let waiting,mailbox,queue=Promise.resolve(),engineFailure;
+let checkpointDirty=true,lastCheckpointAt=0,lastCheckpointAttempt=0,lastProfileSync=0,checkpointRequest;
+function publishFrame(frame){
+    const player=frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0');
+    if(player){const fields=player.split(' ');document.querySelector('#coords').textContent=fields[4]+', '+fields[5]}
+    globalThis.trinsicLastFrame=frame;
+}
+async function checkpoint(){
+    lastCheckpointAttempt=Date.now();document.querySelector('#save-state').textContent='Saving…';
+    const frame=await exchange('0 0 CHECKPOINT');
+    if(frame.split(' ')[5]!=='ok')document.querySelector('#save-state').textContent='Autosave pending';
+    return frame;
+}
+function requestCheckpoint(){
+    if(!ready||engineFailure||globalThis.trinsicFailure)return Promise.resolve();
+    if(!checkpointRequest)checkpointRequest=globalThis.trinsicExchange('0 0 CHECKPOINT').catch(fail).finally(()=>{checkpointRequest=null});
+    return checkpointRequest;
+}
+setInterval(()=>{if(ready&&!document.hidden&&Date.now()-lastCheckpointAt>=10000)requestCheckpoint()},1000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)requestCheckpoint()});
+window.addEventListener('pagehide',()=>{requestCheckpoint()});
 function armDeadline(){
     if(!waiting)return;
     clearTimeout(waiting.timer);
@@ -137,14 +162,25 @@ function exchange(command){
         if(engineFailure)return reject(engineFailure);
         const bytes=new TextEncoder().encode(command);
         if(bytes.length>mailbox.byteLength-16)return reject(Error('Command too large'));
-        waiting={resolve,reject};armDeadline();
+        waiting={resolve,reject,automatic:command.split(' ')[2]==='CHECKPOINT',sentAt:performance.now()};armDeadline();
         globalThis.trinsicTransportState={command,sentAt:performance.now(),pending:true};
         new Uint8Array(mailbox.buffer,16,bytes.length).set(bytes);
         Atomics.store(mailbox,1,bytes.length);Atomics.store(mailbox,0,4);Atomics.notify(mailbox,0);
     });
 }
 globalThis.trinsicExchange=command=>{
-    const next=queue.then(()=>exchange(command));queue=next.catch(()=>{});return next;
+    const next=queue.then(async()=>{
+        const op=command.trim().split(' ')[2];
+        if(op==='CHECKPOINT')return checkpoint();
+        const frame=await exchange(command),outcome=frame.split(' ')[5];
+        const changed=ready&&!['SYNC','SAVE','LOOK'].includes(op)&&(['ok','using','merged'].includes(outcome)||outcome.startsWith('split-'));
+        if(changed)checkpointDirty=true;
+        const header=frame.split('\n',1)[0].split(' '),unblocked=checkpointDirty&&header[8]==='0'&&header[9]==='0';
+        if(ready&&op!=='SAVE'&&(checkpointDirty||Date.now()-lastCheckpointAt>=10000)&&(changed||unblocked||Date.now()-lastCheckpointAttempt>=1000))await checkpoint();
+        // A changed tile is exposed only after its checkpoint is committed.
+        // Closing/refreshing need not finish an asynchronous unload handler.
+        publishFrame(frame);return frame;
+    });queue=next.catch(()=>{});return next;
 };
 async function receive({data}){
     // NPC updates run between commands too. An error without a waiting request
@@ -162,13 +198,17 @@ async function receive({data}){
     try{
         if(data.save){
             await browserSave(data.save);
-            if(runtime)await new Promise((resolve,reject)=>runtime.FS.syncfs(false,e=>e?reject(e):resolve()));
+            if(runtime&&(!request.automatic||Date.now()-lastProfileSync>=10000)){
+                await new Promise((resolve,reject)=>runtime.FS.syncfs(false,e=>e?reject(e):resolve()));lastProfileSync=Date.now();
+            }
             const external=await saveFolder.write(data.save);
-            status.textContent=external?'Saved in folder and browser':'Saved in this browser';
+            lastCheckpointAt=Date.now();checkpointDirty=false;
+            document.querySelector('#save-state').textContent=request.automatic?'Autosaved':'Saved';
+            document.querySelector('#save-state').title=(external?'Folder + browser backup':'In this browser')+' · '+new Date(lastCheckpointAt).toLocaleTimeString();
+            const row=data.frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0')?.split(' ');
+            globalThis.trinsicLastSave={automatic:request.automatic,time:lastCheckpointAt,coords:row?row[4]+', '+row[5]:'',durationMs:performance.now()-request.sentAt};
+            if(!request.automatic)status.textContent=external?'Saved in folder and browser':'Saved in this browser';
         }
-        const player=data.frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0');
-        if(player){const fields=player.split(' ');document.querySelector('#coords').textContent=fields[4]+', '+fields[5];}
-        globalThis.trinsicLastFrame=data.frame;
         request.resolve(data.frame);
     }catch(error){request.reject(error);fail(error)}
 }
@@ -207,7 +247,8 @@ async function mountArtwork(){
     }
 }
 async function launch(){
-    delete globalThis.trinsicFailure;launching=true;play.disabled=true;status.textContent='Opening Black Gate…';
+    delete globalThis.trinsicFailure;launching=true;play.disabled=true;loading.start();loadingStep('Opening Black Gate…',2);
+    document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;
     for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=true;
     try{
         if(!crossOriginIsolated)throw Error('This site needs cross-origin isolation headers to run ClassicUO.');
@@ -217,13 +258,14 @@ async function launch(){
         if(!uo){
             await slot('uo-auto-active',true);
             const downloaded=await downloadUO({read:key=>slot(key),write:(key,value)=>slot(key,value)},(done,total)=>{
-                status.textContent='Downloading UO demo data… '+Math.floor(done/total*100)+'%';
+                loadingStep('Downloading UO demo data…',5+45*done/total,megabytes(done)+' / '+megabytes(total)+' prepared');
                 details.textContent=megabytes(done)+' / '+megabytes(total)+' prepared · Downloads resume if interrupted';
             });
             uo=await compactUO(downloaded.files);
             await slot(uoKey,uo);await slot('uo-auto-active',false);await removeSlots(downloaded.keys);
             updateSetup();play.disabled=true;
         }else await slot(uoKey,uo);
+        loadingStep('Opening your saved world…',50);
         let saved=await slot(saveKey);
         try{
             const external=await saveFolder.read();
@@ -240,25 +282,26 @@ async function launch(){
         engine.postMessage({mailbox:mailbox.buffer,install,save:saved,music:music.tracks.size>0});
         await globalThis.trinsicExchange('0 0 SYNC');
         document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;canvas.hidden=false;
-        status.textContent='Loading ClassicUO…';handOffCanvas();
+        loadingStep('Loading ClassicUO…',55);handOffCanvas();
         const {dotnet}=await import('./_framework/dotnet.js');
-        const host=await dotnet.withModuleConfig({canvas,preRun:[module=>{runtime=module;module.canvas=canvas}]}).
+        const host=await dotnet.withModuleConfig({canvas,onDownloadResourceProgress:(done,total)=>loadingStep('Loading ClassicUO…',55+20*done/Math.max(1,total,done),done+' / '+total+' resources · estimated startup progress'),preRun:[module=>{runtime=module;module.canvas=canvas}]}).
             withEnvironmentVariable('FNA_PLATFORM_BACKEND','SDL2').
             withEnvironmentVariable('FNA3D_FORCE_DRIVER','OpenGL').
             withEnvironmentVariable('TRINSIC_PIPE','browser').
             withEnvironmentVariable('TRINSIC_TOWN','/town').create();
+        loadingStep('Preparing the client…',75);
         globalThis.trinsicRuntime=runtime;
         runtime.FS.mkdirTree('/Data');runtime.FS.mount(runtime.FS.filesystems.IDBFS,{},'/Data');
         await new Promise((resolve,reject)=>runtime.FS.syncfs(true,e=>e?reject(e):resolve()));
         write('/settings.json',JSON.stringify({clientversion:'7.0.118.46',ultimaonlinedirectory:'/uo',profilespath:'/Data/Profiles',plugins:[],use_verdata:false,is_win_maximized:false,screen_scale:1,maps_layouts:'7168,4096;7168,4096;2304,1600;2560,2048;1448,1448;1280,4096',window_size:{X:1200,Y:900}}));
         for(let i=0;i<uo.length;i++){
-            const [name,file]=uo[i];status.textContent=`Reading local UO data ${i+1}/${uo.length}`;
+            const [name,file]=uo[i];loadingStep('Preparing game data…',75+15*(i+1)/uo.length,`${i+1} / ${uo.length} files`);
             write('/uo/'+name,new Uint8Array(await file.arrayBuffer()));
         }
-        status.textContent='Loading Trinsic artwork…';await mountArtwork();
+        loadingStep('Loading Trinsic artwork…',92);await mountArtwork();loadingStep('Preparing Trinsic…',97);
         runtime.FS.symlink('/town/tiledata.mul','/uo/tiledata.mul');
         input=installInput(canvas,runtime);canvas.focus();
-        status.textContent=saved?'Resuming your save…':'Entering Trinsic…';
+        loadingStep(saved?'Resuming your save…':'Entering Trinsic…',99);
         host.runMain().then(code=>fail(Error('ClassicUO exited ('+code+'). See the browser console for details.'))).catch(fail);
     }catch(error){launching=false;updateSetup();fail(error)}
 }
@@ -271,6 +314,7 @@ try{
     music.set(tracks);if(typeof volume==='number')music.setVolume(volume);
     document.querySelector('#music-volume').value=Math.round(music.volume*100);
     await saveFolder.set(handle);
+    if(seen&&install&&!new URL(location.href).searchParams.has('setup')){loading.start();loadingStep('Reading your saved installation…',1)}
     if(uo)uo=await compactUO(uo,message=>{status.textContent=message});updateSetup();
     if(seen&&install&&(uo||await slot('uo-auto-active'))&&!new URL(location.href).searchParams.has('setup'))await launch();
 }catch(error){updateSetup();fail(error)}
