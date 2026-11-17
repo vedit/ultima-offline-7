@@ -3719,7 +3719,7 @@
     "gargoyles.html": "13eb9f7d7d0344d6e6a5d16c4dfc5831ded6880fdeb6fac45de7b00ffdd74bd2",
     "homes.html": "62560a9c0062ca1b99ae9025a5a20e588311dfb589ffb428535214ecdd58ec0c",
     "inamo.png": "b03aca223b2c382e217dd67f0bb9a61af33313719baecc58e8894acda21335ea",
-    "index.html": "3bb5910937d81ec8ed0c9d3bb107d9cf136c29711361cd6477a176aad6745521",
+    "index.html": "4f64b0cac887f06daa004d604a52b85d84064f42a3b619075d1e1671f7fa4644",
     "inn.html": "0fddc9c7e9b2a0278f94213da3f0f9f8ef6a19ce2a7462621993ac390ba3e8ce",
     "interiors-data.js": "502188153e4cdd1c47ef2e108afd102d69f73b1101e289629a8891a5641ad4ae",
     "interiors.html": "e4f0c532cec8d40872a8994d50c5523425eb56612a915c792c793902e894549f",
@@ -3745,11 +3745,13 @@
     "site/magic-shield.png": "b6c7c0a455c493110cd681a3748e0001f1158dad5cffa6cc6a416c6bd7460dfa",
     "site/scene-captures.json": "d27e16860b59fbacd55e69c6528629f25507c0a5257ac644481cc0e4486cc955",
     "site/serpentine-sword.png": "400bb2e4a8e2c4ff1c9135b199520e66f735a17546dcf6d3ea02029dcbab8fd0",
-    "site/sources.json": "9d03b8327c96b9dd20d503033fd998a723aad9d339e515f4f30b5bf7a9a0ccc1",
+    "site/sources.json": "46807c55e94653dd43570c297755dbce6110614e182d1faa89ecdeb558fc2720",
     "sources.json": "a3bbaf01bb9e33d35159b0dd09c8a65491328f7dddf003054dd508f06ba58ccc",
     "stock-sources.json": "caaaa66fe5aef7618e6a5f19aaae033a03c1bbc9f2ee29417e7dd2be87a4da2d",
     "stock-study.html": "e5d22fac9a6db82798551482a6a9e41a852415b965f320246e30b938e4ebebe5",
     "technical-data.js": "23bce2fc11be9f2bbeef0986bbe72bb19aea0797b246fbb50f8b60dc64fbc7de",
-    "technical.js": "de4910c7f49607fc9e08505ea3625225846bb958e7d90cb6934953fcbb4e8d47"
-  }
+    "technical.js": "de4910c7f49607fc9e08505ea3625225846bb958e7d90cb6934953fcbb4e8d47",
+    "CNAME": "23842200eb11996dae5eecb8f9ed667b7a781f2d3d257f86e9ee6da075a37f89"
+  },
+  "custom_domain": "ultimaoffline7.com"
 }

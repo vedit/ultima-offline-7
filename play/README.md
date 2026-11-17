@@ -1,6 +1,6 @@
 # Play Trinsic in the browser
 
-Open https://vedit.github.io/ultima-offline-7/play/ in Chrome or Edge, select your
+Open https://ultimaoffline7.com/play/ in Chrome or Edge, select your
 Ultima VII Black Gate + Forge of Virtue folder, and choose **Play now**.
 The existing ClassicUO and Black Gate WebAssembly build runs locally.
 
@@ -29,7 +29,7 @@ saves, choose a folder in Documents if the browser rejects a protected path.
 
 Saves are local to this browser and origin unless a save folder is selected.
 Existing saves on the chatgpt.site address do not automatically appear on
-github.io. Refreshing resumes the saved tile. Clearing site storage deletes
+ultimaoffline7.com. Refreshing resumes the saved tile. Clearing site storage deletes
 browser data and saves; files in a chosen save folder remain.
 
 The service worker enables cross-origin isolation required by WebAssembly
@@ -37,3 +37,5 @@ threads because GitHub Pages does not configure our custom isolation headers.
 The first navigation may reload once. The launch screen shows an animated
 loader, estimated overall percentage, and the current startup stage.
 Full upstream notices are in licenses.txt.
+
+Browser storage and folder permissions are per origin. Saves stored only at the previous vedit.github.io origin do not automatically move to ultimaoffline7.com; use the configured external save folder or an exported save.
