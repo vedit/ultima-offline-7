@@ -13,7 +13,6 @@ baseline=sys.argv[2] if len(sys.argv)>2 else 'origin/gh-pages'
 def tracked(name):
     return subprocess.check_output(['git','show',baseline+':play/'+name],cwd=pages).decode('utf-8')
 js,html=tracked('client.js'),tracked('index.html')
-assert '// UO7 analytics integration v1' not in js, 'Pass a pre-integration client revision as the third argument'
 a,b=module.transform(js,html)
 assert module.transform(a,b)==(a,b), 'Installer must be idempotent'
 assert a.count("telemetry.event('begin')")==2
@@ -26,9 +25,9 @@ assert target.is_relative_to(Path(tempfile.gettempdir()).resolve())
 try:
     (target/'client.js').write_text(js,encoding='utf-8');(target/'index.html').write_text(html,encoding='utf-8')
     module.install(target)
-    assert all((target/'analytics'/p).is_file() for p in ('core.js','browser.js','privacy.html'))
+    assert all((target/'analytics'/p).is_file() for p in ('core.js','browser.js','schema.js','session-v2.js','privacy.html'))
 finally:
-    for name in ('core.js','browser.js','privacy.html'):
+    for name in ('core.js','browser.js','schema.js','session-v2.js','privacy.html'):
         (target/'analytics'/name).unlink(missing_ok=True)
     (target/'analytics').rmdir()
     (target/'client.js').unlink();(target/'index.html').unlink();target.rmdir()

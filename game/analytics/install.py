@@ -1,6 +1,6 @@
 """Apply the optional telemetry module to a prepared browser client, idempotently.
 
-Run after prepare_pages.py / prepare_auto_host.py. It edits only client.js,
+Run before parity verification and publication. It edits only client.js,
 index.html and analytics/, and fails before writing if the integration changed.
 """
 import argparse
@@ -10,10 +10,10 @@ import shutil
 
 HERE = Path(__file__).resolve().parent
 ENDPOINT = 'https://telemetry.ultimaoffline7.com/collect'
-BOOT = '''// UO7 analytics integration v1 (optional; failures cannot stop the game).
+BOOT = '''// UO7 analytics integration v2 (optional; failures cannot stop the game).
 const telemetry = (()=>{
     let sink, pending=[];
-    import('./analytics/browser.js?v=1').then(({connect})=>{
+    import('./analytics/browser.js?v=2').then(({connect})=>{
         sink=connect(buildVersion);
         for(const args of pending)sink.event(...args);
         pending=[];
@@ -26,10 +26,18 @@ const telemetry = (()=>{
 '''
 
 def transform(js, html):
+    if '// UO7 analytics integration v2' in js:
+        if 'id="usage-reset"' not in html or 'name="uo7-analytics"' not in html:
+            raise ValueError('Partial version 2 integration')
+        return js, html
     if '// UO7 analytics integration v1' in js:
         if 'id="usage-reporting"' not in html or 'name="uo7-analytics"' not in html:
             raise ValueError('Partial analytics integration: review both client.js and index.html')
-        return js, html
+        if js.count("function fail(error){telemetry.event('fail');")!=1:
+            raise ValueError('Legacy analytics failure hook changed')
+        js,count=re.subn(r'// UO7 analytics integration v1.*?\r?\n\}\)\(\);\r?\n',lambda m:BOOT,js,count=1,flags=re.S)
+        if count!=1: raise ValueError('Old analytics bootstrap changed')
+        return expand(js,html)
     def replace(old, new):
         nonlocal js
         if js.count(old) != 1:
@@ -57,19 +65,48 @@ def transform(js, html):
 <p class="hint">Helps improve the playtest. Reports loading results, time played and investigation milestones using a new ID each launch. No character names, game files or saves are sent. <a href="./analytics/privacy.html" target="_blank" rel="noopener" style="color:#d9bd7c">Details</a>. Changes apply to your next launch.</p>
 </div>
 <button id="play"''')
-    return js, html
+    return expand(js,html)
 
-def install(target):
+
+def expand(js,html):
+    replacements={
+        "const frame=await exchange(command),outcome=frame.split(' ')[5];":
+          "const frame=await exchange(command),outcome=frame.split(' ')[5];telemetry.event('action',{op,result:outcome});",
+        'function saveFailed(error){':"function saveFailed(error){telemetry.event('save-fail');",
+        'const external=await saveFolder.write(data.save);':
+          "const external=await saveFolder.write(data.save);telemetry.event('saved',{kind:request.loading?'load':request.automatic?'auto':'manual',ms:performance.now()-request.sentAt});",
+        "engine=new Worker('worker.js?v='+buildVersion);":
+          "telemetry.event('context',{mode:saved?'resume':'new',storage:saveFolder.available?'folder':'browser',music:music.tracks.size>0&&music.enabled?'exult':'native'});\n        engine=new Worker('worker.js?v='+buildVersion);",
+    }
+    for old,new in replacements.items():
+        if js.count(old)!=1: raise ValueError('Expanded analytics anchor changed: '+old[:70])
+        js=js.replace(old,new)
+    settings='''<div class="field" id="usage-settings">
+<label style="font-size:14px;font-weight:400"><input type="checkbox" id="usage-reporting"> Share gameplay analytics</label>
+<p class="hint">Optional: remember a random browser ID to count returning players, and share playtime, progress, save activity and performance. No names, saves or game files. <a href="./analytics/privacy.html" target="_blank" rel="noopener" style="color:#d9bd7c">Details</a>. Enabling applies next launch; disabling stops reporting now.</p>
+<button type="button" id="usage-reset">Reset analytics ID</button>
+<p class="hint" id="usage-notice" role="status"></p>
+</div>'''
+    html,count=re.subn(r'<div class="field" id="usage-settings">.*?</div>',lambda m:settings,html,count=1,flags=re.S)
+    if count!=1: raise ValueError('Analytics settings panel changed')
+    html=re.sub(r'usage=1\b','usage=2',html)
+    if 'usage=2' not in html:
+        html=re.sub(r'src="(client\.js[^\"]*)"',lambda m:'src="'+m[1]+('&amp;' if '?' in m[1] else '?')+'usage=2"',html)
+    return js,html
+
+def install(target,launcher='index.html'):
     target=Path(target).resolve()
-    js,html=transform((target/'client.js').read_text(encoding='utf-8'),(target/'index.html').read_text(encoding='utf-8'))
+    js,html=transform((target/'client.js').read_text(encoding='utf-8'),(target/launcher).read_text(encoding='utf-8'))
     (target/'analytics').mkdir(exist_ok=True)
-    for name in ('core.js','browser.js','privacy.html'):
+    for name in ('core.js','browser.js','schema.js','session-v2.js','privacy.html'):
         shutil.copyfile(HERE/name,target/'analytics'/name)
     (target/'client.js').write_text(js,encoding='utf-8')
-    (target/'index.html').write_text(html,encoding='utf-8')
+    (target/launcher).write_text(html,encoding='utf-8')
     print(f'Installed optional playtime analytics: {target}')
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('prepared_client',type=Path)
-    install(parser.parse_args().prepared_client)
+    parser.add_argument('--launcher',default='index.html',choices=['index.html','client.html'])
+    args=parser.parse_args()
+    install(args.prepared_client,args.launcher)

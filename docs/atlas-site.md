@@ -114,8 +114,10 @@ Cloudflare proxy and are separate from browser-based Web Analytics. See
 
 ## Browser playtest analytics
 
-After preparing a browser export, run `python game/analytics/install.py <pages-worktree>/play`
-to retain the optional playtime reporting and launcher privacy toggle. This is a
+Before qualifying a browser export, run `python game/analytics/install.py <prepared-client>`
+to retain the optional playtime reporting and launcher privacy controls, then
+run the exact-bundle parity replay and release gate. Do not modify `play/` after
+qualification or reuse an earlier acceptance receipt. This is a
 separate Cloudflare Worker at `telemetry.ultimaoffline7.com`; the site and game
 stay on GitHub Pages. Preserve that Worker custom-domain record when changing
 site DNS. See [collection, deployment, tests and private reporting](../game/analytics/README.md).

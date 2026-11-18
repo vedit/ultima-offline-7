@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-18",
+  "scope": "Opt-in browser-profile identity and expanded browser game session analytics",
+  "sourceStatus": "Implemented in isolated source worktree; browser publication pending exact-bundle game acceptance",
+  "production": {
+    "collector": "https://telemetry.ultimaoffline7.com/collect",
+    "health": "uo7-analytics-v2",
+    "dataset": "uo7_dataset",
+    "acceptsVersions": [
+      1,
+      2
+    ],
+    "workersDev": false,
+    "previewUrls": false,
+    "applicationLogging": false
+  },
+  "smoke": {
+    "endpoint": "uo7-playtime-smoke.artifactsystems.workers.dev",
+    "dataset": "uo7_playtime_smoke_v2",
+    "workerRemoved": true,
+    "deliveries": 7,
+    "sessions": 4,
+    "uniqueBrowsers": 2,
+    "returningBrowsers": 1,
+    "activeMs": 10500,
+    "autoSaves": 1,
+    "loadingFailures": 1,
+    "sampled": false
+  },
+  "tests": {
+    "nodeTests": 13,
+    "nodePassed": 13,
+    "installer": "pass: v1 upgrade, anchors, idempotence, drift refusal and module copying",
+    "browserUI": "Default unchecked, opt-in persisted after reload, reset feedback, opt-out click checked locally; no in-game parity claim"
+  },
+  "publication": {
+    "published": false,
+    "gateError": "Release blocked: bundle changed after parity checks; rerun verification.",
+    "unchangedPagesCommit": "02e76fe25b844e12936c4f0b795401d11f58c2db",
+    "reason": "Independent browser/game work is rebuilding and investigating a continuous fresh-run crash. Analytics does not replace that build or bypass acceptance."
+  },
+  "liveReport": {
+    "legacySessions": 8,
+    "expandedSessions": 0,
+    "uniqueProfiles": "Not available until the browser integration ships and players opt in",
+    "retrospectiveIdentity": false
+  },
+  "uploadedModuleUtf8Sha256": {
+    "worker.js": "e1e382cad1b339708aadcfe0da415527e98f6e651544bd3dd3dfded87ba867bf",
+    "core.js": "69ac7a3ad467997e0d04b22d9d418e30efa2146c07698b51c5309e33e256cfd0",
+    "schema.js": "cd62f771a342a5943eed62d8ff21d7047463dbde1033acd4e6fd1839ee907d3d"
+  }
+}
