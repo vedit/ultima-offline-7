@@ -1,8 +1,8 @@
 {
-  "bundleSha256": "43f74759884af0ec18aecc7010c64c0dcad336dd5480186b378fcec24288ed41",
+  "bundleSha256": "eced93f5e17b5aaad942c38ba6951e905234edc36321c5b4f1f55e1e2e5f585c",
   "qualificationSha256": "f94f65d3ebd647cb74453f9b0c3f7d334ae6ecc6a61fe075f72b2bf4d4d030ce",
   "build": {
-    "builtAt": "2026-11-18T15:48:25.477721+00:00",
+    "builtAt": "2026-11-18T16:17:14.380159+00:00",
     "game": "Current desktop Trinsic sources and installed artwork",
     "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
     "includesLocalDesktopChanges": true,
@@ -19,8 +19,9 @@
     "seedSaveSha256": "8d772efc424a6d2d74c5da7d4ed2f37fc5be98b9a0849a80925b1b76eb1372dd",
     "browserFoundation": "9b9957ad65ddd1778ae1ac7d0f00c1b9254ce9f2",
     "artworkSha256": "823ba6c249f035edd9ae8d0bbf18fac01338e9950cfe78e61b883424fe232de6",
+    "launcherSourceSha256": "b8374c1758e356d8f6a560a8cc93c1958c8d548ee50a8e0a36d299562bde99d0",
     "experienceSha256": "389ad4c2798bae7a3ca44f4563974f01d7ee6ed50343a3c13e586ab375c84efe",
-    "buildId": "6ef20d735a6c"
+    "buildId": "be67d034442b"
   },
   "checks": {
     "nativeAudio": true,
@@ -41,9 +42,9 @@
     "numberedSaveResume": true,
     "speechKeywordLoad": true
   },
-  "saveTile": "1077, 2178",
+  "saveTile": "1076, 2176",
   "evidence": "game/web/bin/parity-evidence",
-  "verifiedAt": "2026-11-18T15:53:39.558Z",
+  "verifiedAt": "2026-11-18T16:30:04.069Z",
   "events": [
     {
       "case": "speech-south-audio",
@@ -54,18 +55,18 @@
       "saveSha256": "6a26d22de51053937b503bb37f0a8e05c5e77fae3ca00dc75b9d37ebb1c4f528",
       "commandsSha256": "f25b8894a699c71c8f148abe406db1363f361e915101014b6cf82a1bed3054fd",
       "desktopPcmSha256": "3cbcdb17d277df1fa12fbe07f26a9a58877b39c3e376c96fd908c371663544a7",
-      "renderedPcmSha256": "7b1dd2ce38645a835a7fbb38bf4ca8c45217957b945ee8920a15e9cc509079d8",
+      "renderedPcmSha256": "884306abc18a1f2df983dfa6a97ecffc147e2160905623be7107be514193054a",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
       "framesDuringStall": 14464,
-      "rmsDuringStall": 6439.13,
+      "rmsDuringStall": 6189.85,
       "identicalStereoFrames": 162186,
       "seconds": 3.378875,
       "desktopSoundBlasterToMixerMs": 15.3,
       "browserSoundBlasterToMixerMs": 15.3,
-      "browserSoundBlasterToOutputMs": 78,
-      "browserQueueMs": 62.7
+      "browserSoundBlasterToOutputMs": 82,
+      "browserQueueMs": 66.7
     },
     {
       "case": "music-pub",
@@ -76,22 +77,22 @@
       "saveSha256": "570ca6d9bce1b5443234cd2ace08e866355eaae38763f176d57733f93470f4bb",
       "commandsSha256": "8c2ade3cb3959513d154f557329fe9ec321a111fddda785fe0529b961b5a8568",
       "desktopPcmSha256": "5cccf23bdea9633776ba1c24ec66f464422424d562855276209ee0ed24c9b9a5",
-      "renderedPcmSha256": "ca4ed1716240c8fed3a47d205579cdb4550c79682acd367b3d626c77f01ff860",
+      "renderedPcmSha256": "0ada35863673d96084f29053ea55d0ad521888b913778708dcbc06ffd52b218a",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
       "framesDuringStall": 14336,
-      "rmsDuringStall": 196.78,
+      "rmsDuringStall": 199.82,
       "channels": [
         {
-          "spectralCosine": 0.99763,
-          "browserOffsetMs": 80,
+          "spectralCosine": 0.99605,
+          "browserOffsetMs": 90,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         },
         {
-          "spectralCosine": 0.99764,
-          "browserOffsetMs": 80,
+          "spectralCosine": 0.99603,
+          "browserOffsetMs": 90,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         }

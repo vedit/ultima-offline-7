@@ -1,12 +1,12 @@
-import {importInstall} from './install.js?v=f0f9499d14bffd4d';
-import {installInput} from './client-input.js?v=f0f9499d14bffd4d';
-import {compactUO,megabytes} from './uo-data.js?v=f0f9499d14bffd4d';
-import {downloadUO} from './uo-download.js?v=f0f9499d14bffd4d';
-import {steamPath,SaveFolder} from './folders.js?v=f0f9499d14bffd4d';
-import {selectMusic,ExultMusic} from './exult-music.js?v=f0f9499d14bffd4d';
-import {LoadingScreen} from './loading.js?v=f0f9499d14bffd4d';
-import {prepareIntro} from './intro.js?v=f0f9499d14bffd4d';
-import {installAudio} from './audio.js?v=f0f9499d14bffd4d';
+import {importInstall} from './install.js?v=f15aa9e147871ab9';
+import {installInput} from './client-input.js?v=f15aa9e147871ab9';
+import {compactUO,megabytes} from './uo-data.js?v=f15aa9e147871ab9';
+import {downloadUO} from './uo-download.js?v=f15aa9e147871ab9';
+import {steamPath,SaveFolder} from './folders.js?v=f15aa9e147871ab9';
+import {selectMusic,ExultMusic} from './exult-music.js?v=f15aa9e147871ab9';
+import {LoadingScreen} from './loading.js?v=f15aa9e147871ab9';
+import {prepareIntro} from './intro.js?v=f15aa9e147871ab9';
+import {installAudio} from './audio.js?v=f15aa9e147871ab9';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
@@ -25,10 +25,10 @@ document.querySelector('#hide-toolbar').onclick=()=>setToolbarHidden(true);
 showToolbar.onclick=()=>setToolbarHidden(false);
 function loadingStep(message,percent,detail){telemetry.event('stage',percent<5?'startup':percent<50?'download':percent<55?'save':percent<92?'client':percent<97?'artwork':'render');status.textContent=message;loading.update(percent,message,detail)}
 const buildVersion=new URL(import.meta.url).searchParams.get('v')||'dev';
-// UO7 analytics integration v1 (optional; failures cannot stop the game).
+// UO7 analytics integration v2 (optional; failures cannot stop the game).
 const telemetry = (()=>{
     let sink, pending=[];
-    import('./analytics/browser.js?v=1').then(({connect})=>{
+    import('./analytics/browser.js?v='+buildVersion).then(({connect})=>{
         sink=connect(buildVersion);
         for(const args of pending)sink.event(...args);
         pending=[];
@@ -201,7 +201,7 @@ function requestCheckpoint(force=false){
     }
     return checkpointRequest;
 }
-function saveFailed(error){checkpointDirty=true;document.querySelector('#save-state').textContent='Autosave failed; will retry';console.warn(error)}
+function saveFailed(error){telemetry.event('save-fail');checkpointDirty=true;document.querySelector('#save-state').textContent='Autosave failed; will retry';console.warn(error)}
 // No timer-driven checkpoints during active walking. One snapshot after a pause,
 // then asynchronous browser/folder persistence, coalesces any number of steps.
 setInterval(()=>{if(ready&&!document.hidden&&!persisting&&!input?.active()&&checkpointDirty&&Date.now()-lastActionAt>=autosaveIdleMs&&Date.now()-lastCheckpointAttempt>=3000)requestCheckpoint()},250);
@@ -235,7 +235,7 @@ globalThis.trinsicExchange=command=>{
     if(!['SYNC','CHECKPOINT'].includes(op))lastActionAt=Date.now();
     const next=queue.then(async()=>{
         if(op==='CHECKPOINT')return checkpoint();
-        const frame=await exchange(command),outcome=frame.split(' ')[5];
+        const frame=await exchange(command),outcome=frame.split(' ')[5];telemetry.event('action',{op,result:outcome});
         const changed=ready&&!['SYNC','SAVE','DBGSAVE','LOAD','LOOK'].includes(op)&&(['ok','using','merged'].includes(outcome)||outcome.startsWith('split-'));
         if(changed){checkpointDirty=true;mutationVersion++;lastActionAt=Date.now();document.querySelector('#save-state').textContent='Unsaved changes'}
         // Deliver movement immediately; it never waits for checkpoint or disk I/O.
@@ -262,7 +262,7 @@ async function receive({data}){
             if(runtime&&(!request.automatic||Date.now()-lastProfileSync>=10000)){
                 await new Promise((resolve,reject)=>runtime.FS.syncfs(false,e=>e?reject(e):resolve()));lastProfileSync=Date.now();
             }
-            const external=await saveFolder.write(data.save);
+            const external=await saveFolder.write(data.save);telemetry.event('saved',{kind:request.loading?'load':request.automatic?'auto':'manual',ms:performance.now()-request.sentAt});
             lastCheckpointAt=Date.now();checkpointDirty=mutationVersion!==request.version;
             document.querySelector('#save-state').textContent=checkpointDirty?'Unsaved changes':request.automatic?'Autosaved':request.loading?'Loaded':'Saved';
             document.querySelector('#save-state').title=(external?'Folder + browser backup':'In this browser')+' · '+new Date(lastCheckpointAt).toLocaleTimeString();
@@ -356,6 +356,7 @@ async function launch(newGame=false){
             activeSlot=free[0];saved=null;
         }
         mailbox=new Int32Array(new SharedArrayBuffer(65536));
+        telemetry.event('context',{mode:saved?'resume':'new',storage:saveFolder.available?'folder':'browser',music:music.tracks.size>0&&music.enabled?'exult':'native'});
         engine=new Worker('worker.js?v='+buildVersion);engine.onmessage=receive;engine.onerror=e=>fail(Error(e.message));
         engine.postMessage({mailbox:mailbox.buffer,audioRing:audio.buffer,install,save:saved,saves,activeSlot,experience});
         await globalThis.trinsicExchange('0 0 SYNC');
