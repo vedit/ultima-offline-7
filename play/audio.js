@@ -1,12 +1,31 @@
 // Browser implementation of the pinned client's SDL audio contract.
-export function installAudio(runtime){
-    let context,next=1;const sounds=new Map();
-    const unlock=()=>{context??=new AudioContext();context.resume().catch(console.warn);return context};
+import {NativeAudioRing} from './audio-ring.js?v=181fb36bf42d7fe5';
+export function installAudio(runtime,onError){
+    const buffer=NativeAudioRing.allocate(),ring=new NativeAudioRing(buffer);
+    let context,node,gameReady=false,next=1;const sounds=new Map();
+    function update(){ring.enable(gameReady&&Boolean(node)&&context.state==='running'&&!document.hidden)}
+    function unlock(){
+        if(!context){
+            context=new AudioContext({sampleRate:48000});
+            context.addEventListener('statechange',update);
+            const url=new URL('./audio-worklet.js',import.meta.url);
+            url.search=new URL(import.meta.url).search;
+            context.audioWorklet.addModule(url).then(()=>{
+                node=new AudioWorkletNode(context,'trinsic-native-output',{
+                    numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[2],processorOptions:{buffer}
+                });
+                node.onprocessorerror=()=>{ring.enable(false);onError(Error('Native audio output stopped. Refresh to reconnect audio.'))};
+                node.connect(context.destination);update();
+            }).catch(onError);
+        }
+        if(context.state!=='running')context.resume().catch(console.warn);
+        return context;
+    }
     addEventListener('pointerdown',unlock,{capture:true});addEventListener('keydown',unlock,{capture:true});
     function start(sound){
         const source=context.createBufferSource();source.buffer=sound.buffer;source.loop=sound.loop;source.connect(sound.gain);
         sound.source=source;sound.started=context.currentTime;sound.state=1;
-        source.onended=()=>{if(sound.source===source&&sound.state===1){sound.state=0;source.disconnect();sounds.delete(sound.id)}};
+        source.onended=()=>{if(sound.source===source&&sound.state===1){sound.state=0;source.disconnect();sound.gain.disconnect();sounds.delete(sound.id)}};
         source.start(0,sound.offset);
     }
     globalThis.__wasm_play_pcm=(ptr,length,volume,rate,channels,loop)=>{
@@ -25,19 +44,6 @@ export function installAudio(runtime){
         if(op===2&&s.state===2)start(s);
         return s.state;
     };
-    let nextTime=0;const pending=new Set();
-    function flush(){for(const source of pending){source.stop();source.disconnect()}pending.clear();nextTime=0;}
-    document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
-    function stream(pcm){
-        // Never retain stale audio during autoplay suspension or a hidden tab.
-        if(!context||context.state!=='running'||document.hidden)return;
-        const now=context.currentTime;
-        if(nextTime>now+.15)flush();
-        const buffer=context.createBuffer(2,pcm.length/2,48000);
-        for(let c=0;c<2;c++){const out=buffer.getChannelData(c);for(let i=0;i<out.length;i++)out[i]=pcm[i*2+c]/32768;}
-        const source=context.createBufferSource();source.buffer=buffer;source.connect(context.destination);
-        source.onended=()=>{pending.delete(source);source.disconnect()};pending.add(source);
-        nextTime=Math.max(nextTime,now+.04);source.start(nextTime);nextTime+=buffer.duration;
-    }
-    return {unlock,stream};
+    document.addEventListener('visibilitychange',update);
+    return {buffer,unlock,startNative(){gameReady=true;update()}};
 }

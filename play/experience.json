@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "developerWand": true,
   "newGame": {
     "name": "Avatar",
     "female": false,
@@ -43,11 +44,20 @@
   "releaseChecks": [
     "characterCreation",
     "intro",
+    "worldViewport",
+    "speechKeywordLoad",
     "partyButton",
+    "developerWand",
     "creatureAnimations",
     "horse",
     "saveResume",
+    "numberedSaveResume",
     "movementAutosave",
-    "nativeAudio"
+    "rightMouseWalk",
+    "nativeAudio",
+    "openingCommission",
+    "guardianSpeech",
+    "pubMusic",
+    "exultMusicFallback"
   ]
 }

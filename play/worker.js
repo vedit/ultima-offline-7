@@ -30,8 +30,10 @@ function unpackSave(fs, bytes) {
 
 onmessage = async ({data}) => {
     try {
+        const {NativeAudioRing}=await import('./audio-ring.js?v='+buildVersion);
         const [module, seed] = await Promise.all([
-            createBlackGate({mailbox: new Int32Array(data.mailbox), audioState:new Int32Array(data.audioState), noInitialRun:true, externalMusic:!!data.music,
+            createBlackGate({mailbox: new Int32Array(data.mailbox), nativeAudio:new NativeAudioRing(data.audioRing),
+                developerWand:data.experience.developerWand===true, noInitialRun:true,
                 locateFile: name=>new URL(name+'?v='+buildVersion,self.location.href).href,
                 onAbort: message => postMessage({error:String(message)})}),
             data.save || download("investigation.u7").then(r => r.arrayBuffer())
@@ -52,11 +54,6 @@ onmessage = async ({data}) => {
         const slot=data.activeSlot>=0&&data.activeSlot<10?data.activeSlot:0;
         if(data.save)fs.writeFile('GAME'+String(slot).padStart(2,'0')+'.U7', new Uint8Array(seed));
         fs.writeFile('active-slot.txt',String(slot));
-        if(data.music){
-            // Run the original Roland sequencer for cue timing; the page plays
-            // the user's Exult recordings. Only the in-memory copy is changed.
-            fs.writeFile('U7.CFG','r 330\r\n\r\n');
-        }
         module.callMain([]);
         throw new Error("The Black Gate engine exited.");
     } catch (e) {

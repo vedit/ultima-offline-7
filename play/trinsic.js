@@ -3635,7 +3635,7 @@ Module["FS"] = FS;
 // End JS library exports
 // end include: postlibrary.js
 var ASM_CONSTS = {
-  48206: () => Atomics.load(Module.audioState, 0)
+  47948: () => Module.developerWand ? 1 : 0
 };
 
 function web_read_command(buffer, capacity) {
@@ -3648,34 +3648,19 @@ function web_read_command(buffer, capacity) {
   const command = op === 4 ? (new TextDecoder).decode(new Uint8Array(q.buffer, 16, sequence).slice()) : op === 1 ? "0 0 SYNC" : sequence + " 1 " + (op === 2 ? "STEP " + dir : "SAVE");
   Atomics.store(q, 0, 0);
   const action = command.trim().split(" ")[2];
-  Module.saving = op === 3 || action === "SAVE" || action === "CHECKPOINT";
+  Module.saving = op === 3 || [ "SAVE", "CHECKPOINT", "DBGSAVE", "LOAD" ].includes(action);
   stringToUTF8(command, buffer, capacity);
   return 1;
 }
 
-function web_music_record(track, buffer) {
-  (Module.musicRecords ||= new Map).set(buffer, track);
-}
-
-function web_music_song(buffer) {
-  Module.musicTrack = Module.musicRecords?.get(buffer) ?? -1;
-  Module.musicCue = (Module.musicCue || 0) + 1;
-}
-
-function web_send_frame(text, playing) {
+function web_send_frame(text) {
   const frame = UTF8ToString(text);
   const slot = Number(frame.split("\n").find(row => row.startsWith("SV "))?.split(" ")[1] || 0);
   const save = Module.saving && frame.split(" ", 6)[5] === "ok" ? FS.readFile("GAME" + String(slot).padStart(2, "0") + ".U7") : null;
-  const music = {
-    track: Module.musicTrack ?? -1,
-    cue: Module.musicCue || 0,
-    playing: !!playing
-  };
   postMessage({
     frame,
     save,
-    saveSlot: slot,
-    music
+    saveSlot: slot
   }, save ? [ save.buffer ] : []);
 }
 
@@ -3683,13 +3668,16 @@ function worker_sleep(ms) {
   Atomics.wait(Module.mailbox, 3, 0, ms);
 }
 
+function browser_speech_started(rate) {
+  if (Module.nativeAudio.speechStarted) Module.nativeAudio.speechStarted(rate);
+}
+
 function browser_audio_output(samples, frames) {
-  if (Atomics.load(Module.audioState, 1) >= 8) return;
-  Atomics.add(Module.audioState, 1, 1);
-  const pcm = HEAP16.slice(samples >> 1, (samples >> 1) + frames * 2);
-  postMessage({
-    audio: pcm
-  }, [ pcm.buffer ]);
+  Module.nativeAudio.write(HEAP16.subarray(samples >> 1, (samples >> 1) + frames * 2));
+}
+
+function browser_audio_due(elapsed) {
+  return Module.nativeAudio.blocksDue(elapsed);
 }
 
 // Imports from the Wasm binary.
@@ -3710,35 +3698,35 @@ function assignWasmExports(wasmExports) {
 }
 
 var wasmImports = {
-  /** @export */ e: ___cxa_throw,
-  /** @export */ i: ___syscall_fcntl64,
+  /** @export */ f: ___cxa_throw,
+  /** @export */ j: ___syscall_fcntl64,
   /** @export */ C: ___syscall_getdents64,
   /** @export */ B: ___syscall_ioctl,
   /** @export */ A: ___syscall_mkdirat,
-  /** @export */ d: ___syscall_openat,
+  /** @export */ e: ___syscall_openat,
   /** @export */ z: ___syscall_renameat,
-  /** @export */ h: ___syscall_rmdir,
+  /** @export */ i: ___syscall_rmdir,
   /** @export */ y: ___syscall_stat64,
   /** @export */ x: ___syscall_statfs64,
-  /** @export */ g: ___syscall_unlinkat,
+  /** @export */ h: ___syscall_unlinkat,
   /** @export */ r: __abort_js,
-  /** @export */ q: browser_audio_output,
+  /** @export */ q: browser_audio_due,
+  /** @export */ p: browser_audio_output,
+  /** @export */ o: browser_speech_started,
   /** @export */ w: _clock_time_get,
-  /** @export */ p: _emscripten_asm_const_int,
+  /** @export */ n: _emscripten_asm_const_int,
   /** @export */ a: _emscripten_get_now,
-  /** @export */ o: _emscripten_resize_heap,
+  /** @export */ m: _emscripten_resize_heap,
   /** @export */ v: _environ_get,
   /** @export */ u: _environ_sizes_get,
-  /** @export */ n: _exit,
-  /** @export */ c: _fd_close,
+  /** @export */ l: _exit,
+  /** @export */ d: _fd_close,
   /** @export */ t: _fd_read,
   /** @export */ s: _fd_seek,
-  /** @export */ f: _fd_write,
-  /** @export */ m: web_music_record,
-  /** @export */ l: web_music_song,
+  /** @export */ g: _fd_write,
   /** @export */ k: web_read_command,
-  /** @export */ j: web_send_frame,
-  /** @export */ b: worker_sleep
+  /** @export */ b: web_send_frame,
+  /** @export */ c: worker_sleep
 };
 
 // include: postamble.js
