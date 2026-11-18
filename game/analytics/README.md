@@ -94,7 +94,9 @@ It imports the same `query`, `summarize` and `htmlReport` functions as the local
 CLI from `report-data.js`; the CLI's original exports remain compatible.
 The report never includes browser IDs, session IDs, API credentials or raw rows.
 
-The intended URL is `https://analytics.ultimaoffline7.com`. Provisioning requires
+The private report is deployed at `https://analytics.ultimaoffline7.com`.
+Sign in using the owner's approved email and the code sent by Cloudflare Access.
+Provisioning requires
 an explicitly approved, owner-only Cloudflare Access application and a dedicated
 Account Analytics Read token restricted to the project's Cloudflare account.
 That token permission is account-wide, not dataset-specific; the Worker accepts
@@ -112,6 +114,18 @@ the expected application audience and the exact owner email before querying.
 Missing configuration, missing/forged identity, wrong owner and wrong audience
 fail closed. All responses use private/no-store and no-index headers. Query
 failure and truncation return an error, never fabricated zeroes.
+`keep_vars: true` preserves the deployed owner/account/audience bindings during
+future Wrangler deployments; secrets are managed separately. The initial
+read-only token expires on November 18, 2027 at 23:59:59 UTC. Rotate it in
+Cloudflare before expiry without putting its value in source or browser files.
+
+On November 18, 2026 the approved Access application, account-scoped read token,
+Worker secret and custom domain were provisioned. Readback confirmed exactly
+one owner allow rule and no workers.dev/preview endpoints. Anonymous HTML/JSON
+requests and a JSON request with forged identity headers were denied without
+report data. The owner sign-in and live Refresh check require completing the
+Cloudflare email-code challenge; do not count this unauthenticated check as an
+authenticated end-to-end report test.
 
 Cloudflare's native connector provides authenticated SQL reads for agent work;
 its native dashboard supplies website traffic charts. The private Worker adds
