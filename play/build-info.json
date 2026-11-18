@@ -1,11 +1,11 @@
 {
-  "builtAt": "2026-11-18T11:55:41.341559+00:00",
+  "builtAt": "2026-11-18T15:48:25.477721+00:00",
   "game": "Current desktop Trinsic sources and installed artwork",
   "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
   "includesLocalDesktopChanges": true,
-  "clientAdaptersSha256": "3c69d51415bfd5697a2e365fe894e0667f31f3a7cf10242e0eb94695ac55e480",
-  "desktopSourceSha256": "b750aa8bddf7311d17c37bbed27ccb1fe83eb1e051d93f3d1a62228fbe4c826d",
-  "stagedClientSourceSha256": "2f39585cf6496d5042058309b7bd7e51a49819a5619cd426cf570afae1a8374c",
+  "clientAdaptersSha256": "8491a03011c71572e71e3bc0f36f82d8551f126a787faad3cfb86b46dfeb50ff",
+  "desktopSourceSha256": "cc727bd4ef4d59420a348a15b3a68dac5df7fb7997825a83a8cf7b74db82faa5",
+  "stagedClientSourceSha256": "14249282296308a9e637b952e2d325b5ee5f14fd435b2390543395c409df870a",
   "engineAdaptersSha256": "98a7c9a5c2e9e046bcea8758198d9f028fc7fe4dec24af4c46da6f70f50f6db6",
   "nativeOverlaySha256": "cb09c07142c6846039b5523903e5caec1d9515af9f461f88de07f8d002114201",
   "stagedNativeSourceSha256": "d3e525cfd0c12453c175147942ff25c7a45f522e5b27b2cfc84eef03460a0a07",
@@ -17,5 +17,5 @@
   "browserFoundation": "9b9957ad65ddd1778ae1ac7d0f00c1b9254ce9f2",
   "artworkSha256": "823ba6c249f035edd9ae8d0bbf18fac01338e9950cfe78e61b883424fe232de6",
   "experienceSha256": "389ad4c2798bae7a3ca44f4563974f01d7ee6ed50343a3c13e586ab375c84efe",
-  "buildId": "214b8e00aae1"
+  "buildId": "6ef20d735a6c"
 }

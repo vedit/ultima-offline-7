@@ -1,5 +1,5 @@
 // Browser implementation of the pinned client's SDL audio contract.
-import {NativeAudioRing} from './audio-ring.js?v=181fb36bf42d7fe5';
+import {NativeAudioRing} from './audio-ring.js?v=f0f9499d14bffd4d';
 export function installAudio(runtime,onError){
     const buffer=NativeAudioRing.allocate(),ring=new NativeAudioRing(buffer);
     let context,node,gameReady=false,next=1;const sounds=new Map();

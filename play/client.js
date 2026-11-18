@@ -1,12 +1,12 @@
-import {importInstall} from './install.js?v=181fb36bf42d7fe5';
-import {installInput} from './client-input.js?v=181fb36bf42d7fe5';
-import {compactUO,megabytes} from './uo-data.js?v=181fb36bf42d7fe5';
-import {downloadUO} from './uo-download.js?v=181fb36bf42d7fe5';
-import {steamPath,SaveFolder} from './folders.js?v=181fb36bf42d7fe5';
-import {selectMusic,ExultMusic} from './exult-music.js?v=181fb36bf42d7fe5';
-import {LoadingScreen} from './loading.js?v=181fb36bf42d7fe5';
-import {prepareIntro} from './intro.js?v=181fb36bf42d7fe5';
-import {installAudio} from './audio.js?v=181fb36bf42d7fe5';
+import {importInstall} from './install.js?v=f0f9499d14bffd4d';
+import {installInput} from './client-input.js?v=f0f9499d14bffd4d';
+import {compactUO,megabytes} from './uo-data.js?v=f0f9499d14bffd4d';
+import {downloadUO} from './uo-download.js?v=f0f9499d14bffd4d';
+import {steamPath,SaveFolder} from './folders.js?v=f0f9499d14bffd4d';
+import {selectMusic,ExultMusic} from './exult-music.js?v=f0f9499d14bffd4d';
+import {LoadingScreen} from './loading.js?v=f0f9499d14bffd4d';
+import {prepareIntro} from './intro.js?v=f0f9499d14bffd4d';
+import {installAudio} from './audio.js?v=f0f9499d14bffd4d';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');

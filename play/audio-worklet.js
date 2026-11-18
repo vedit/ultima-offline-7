@@ -1,4 +1,4 @@
-import {NativeAudioRing} from './audio-ring.js?v=181fb36bf42d7fe5';
+import {NativeAudioRing} from './audio-ring.js?v=f0f9499d14bffd4d';
 
 class NativeAudioOutput extends AudioWorkletProcessor {
     constructor(options){
