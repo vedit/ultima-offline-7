@@ -1,0 +1,13 @@
+{
+  "name": "uo7-analytics-dashboard",
+  "main": "dashboard-worker.js",
+  "compatibility_date": "2026-11-18",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {"enabled": false},
+  "routes": [{"pattern": "analytics.ultimaoffline7.com", "custom_domain": true}],
+  "ratelimits": [{"name":"REPORT_LIMIT","namespace_id":"7002","simple":{"limit":30,"period":60}}]
+  // Set ACCOUNT_ID, ACCESS_AUD and ACCESS_EMAIL in the deployed environment.
+  // Store ANALYTICS_READ_TOKEN as a Worker secret, never in this file.
+  // Create the owner-only Access application BEFORE attaching the domain.
+}

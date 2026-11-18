@@ -86,6 +86,59 @@ data. This is a playtest indicator, not billing, anti-cheat, or an exact census.
 
 ## Read a report
 
+### Private browser UI
+
+`dashboard-worker.js` serves the existing report with 1-, 7- and 30-day windows,
+Refresh, an aggregate JSON export, and links to Cloudflare traffic/Web Analytics.
+It imports the same `query`, `summarize` and `htmlReport` functions as the local
+CLI from `report-data.js`; the CLI's original exports remain compatible.
+The report never includes browser IDs, session IDs, API credentials or raw rows.
+
+The intended URL is `https://analytics.ultimaoffline7.com`. Provisioning requires
+an explicitly approved, owner-only Cloudflare Access application and a dedicated
+Account Analytics Read token restricted to the project's Cloudflare account.
+That token permission is account-wide, not dataset-specific; the Worker accepts
+only the fixed query against `uo7_dataset`. Store it as `ANALYTICS_READ_TOKEN` in
+Worker secrets. Set `ACCOUNT_ID`, `ACCESS_AUD` and `ACCESS_EMAIL` as deployment
+bindings. Never commit their private values or the token.
+
+Deploy with `wrangler.dashboard.jsonc`, or upload `dashboard-worker.js`,
+`report-data.js` and `schema.js` as modules through the Cloudflare connector.
+Set the `REPORT_LIMIT` rate-limit binding to namespace 7002, 30 requests/minute.
+Create the Access application **before** attaching the custom domain. Keep
+workers.dev and preview URLs disabled, and do not attach Static Assets or route
+through a Service Binding. The Worker requires Cloudflare's native `ctx.access`,
+the expected application audience and the exact owner email before querying.
+Missing configuration, missing/forged identity, wrong owner and wrong audience
+fail closed. All responses use private/no-store and no-index headers. Query
+failure and truncation return an error, never fabricated zeroes.
+
+Cloudflare's native connector provides authenticated SQL reads for agent work;
+its native dashboard supplies website traffic charts. The private Worker adds
+the lasting project-specific contract: bounded reporting windows, one row per
+session, correct cumulative-counter aggregation, and owner-only delivery without
+browser-held API credentials. It does not add an agent orchestration service.
+
+The saved traffic dashboard is
+`https://dash.cloudflare.com/9ba409024b123e5c7470039a1785b53b/dashboards/c506ce00-b211-4dec-8981-2cb21ebc6c32`.
+Use the **Traffic dashboard** link in the report: it carries an explicit host
+filter for the apex and www. Cloudflare's temporary chart scope resets on reload;
+opening the bare dashboard URL can show account-wide traffic.
+
+The proxy was enabled on November 18 for the existing four GitHub Pages apex A
+records and the www CNAME. Their targets and other zone settings were preserved.
+HTTPS homepage/game launcher availability and the www redirect were checked
+through Cloudflare. This does not substitute for the game's exact-bundle parity
+qualification; publishing the browser game remains a separate release task.
+
+Validation: `node --test game/analytics/tests/*.test.mjs` includes authentication,
+fixed SQL/period validation, aggregate-only export, provider failure, truncation,
+rate limits, and compatibility with legacy reports. A live deployment also needs
+anonymous-denial and authenticated owner Refresh checks. Local mocks are not
+proof of deployed Access behavior.
+
+### Measurements
+
 The report now includes observed unique/active/returning browser profiles,
 daily active profiles grouped by session start date (UTC), new/resumed journeys,
 browser/OS families, viewport buckets, save destination and music selection.
