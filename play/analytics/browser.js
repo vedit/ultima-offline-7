@@ -1,5 +1,5 @@
-import {PlayerSession} from './session-v2.js?v=cc751b07e7183057';
-import {UUID} from './schema.js?v=cc751b07e7183057';
+import {PlayerSession} from './session-v2.js?v=d8bce7ddfbb3a8c6';
+import {UUID} from './schema.js?v=d8bce7ddfbb3a8c6';
 
 export const PREFERENCE='uo7-usage-reporting-v2',IDENTITY='uo7-player-v2';
 export const CRASH_PREFERENCE='uo7-crash-details-v1';

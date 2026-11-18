@@ -11,6 +11,7 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 </style>
 <header id="toolbar"><h1><a href="https://ultimaoffline7.com/" aria-label="Ultima Offline homepage">Ultima Offline</a></h1><span id="status">Choose your Ultima VII folder</span><span id="save-state" aria-live="polite"></span><span id="coords"></span><button id="download-crash" class="quiet" hidden>Download crash report</button><button id="folders" class="quiet" hidden>Folders</button><button id="hide-toolbar" class="quiet" aria-label="Hide top bar" hidden>Hide bar</button></header>
 <button id="show-toolbar" class="quiet" aria-label="Show top bar" hidden>Show bar</button>
+<p id="replay-label" role="status" hidden style="padding:0 24px;margin:6px 0">Crash replay · refreshing restores the original save</p>
 <section id="setup">
 <h2>Open Trinsic</h2>
 <p>Select your Ultima VII folder and enter Trinsic. UO data downloads automatically. Your game files stay on this computer.</p>
@@ -26,7 +27,7 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 <div class="row"><button id="choose-music" class="quiet" disabled>Choose Exult folder</button><input id="music-folder" type="file" webkitdirectory multiple hidden><span id="music-selection" class="selection">No music selected</span><button id="clear-music" class="quiet" hidden>Remove</button></div>
 <p class="hint">Uses the Roland MT-32 recordings in Exult’s <code>data/music</code> folder. Files stay on your computer.</p>
 </div>
-<div class="field">
+<div class="field" id="save-settings">
 <label for="choose-save">Save location <span class="optional">Optional</span></label>
 <div class="row"><button id="choose-save" class="quiet" hidden disabled>Choose save folder</button><span id="save-selection" class="selection">In this browser</span><button id="clear-save" class="quiet" hidden>Use browser only</button></div>
 <p class="hint">Progress saves automatically after movement and completed actions. For folder saves, choose a folder in Documents. A browser backup is always kept.</p>
@@ -42,13 +43,13 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 <p class="hint" id="usage-notice" role="status"></p>
 </div>
 <button id="play" disabled>Play now</button><p id="details">Your game files stay on this computer.</p>
-<p><button id="new-game" class="quiet" disabled>New journey</button> <span class="hint">Keeps your existing saves in their slots.</span></p>
+<p id="new-game-row"><button id="new-game" class="quiet" disabled>New journey</button> <span class="hint">Keeps your existing saves in their slots.</span></p>
 <p class="hint"><a id="build-info" href="build-info.json" target="_blank">Build details</a></p>
 </section>
 <main id="stage" hidden><canvas id="canvas" width="1200" height="900" tabindex="0" hidden></canvas></main>
 <section id="loading" hidden aria-label="Loading Trinsic">
 <div class="loading-card"><div class="loading-ring" aria-hidden="true"></div><h2>Opening Trinsic</h2><p id="loading-step" role="status">Preparing the game…</p><div id="loading-percent" aria-hidden="true">0%</div><progress id="loading-progress" max="100" value="0" aria-label="Estimated startup progress"></progress><p id="loading-detail">Estimated startup progress</p><div id="loading-actions" class="row" hidden><button id="loading-retry">Retry</button><button id="loading-folders" class="quiet">Folder settings</button></div></div>
 </section>
-<script src="coi-serviceworker.js?v=cc751b07e7183057"></script>
-<script type="module" src="client.js?v=cc751b07e7183057&amp;usage=2"></script>
+<script src="coi-serviceworker.js?v=d8bce7ddfbb3a8c6"></script>
+<script type="module" src="client.js?v=d8bce7ddfbb3a8c6&amp;usage=2"></script>
 </html>

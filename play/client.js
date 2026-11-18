@@ -1,13 +1,16 @@
-import {importInstall} from './install.js?v=cc751b07e7183057';
-import {installInput} from './client-input.js?v=cc751b07e7183057';
-import {compactUO,megabytes} from './uo-data.js?v=cc751b07e7183057';
-import {downloadUO} from './uo-download.js?v=cc751b07e7183057';
-import {steamPath,SaveFolder} from './folders.js?v=cc751b07e7183057';
-import {selectMusic,ExultMusic} from './exult-music.js?v=cc751b07e7183057';
-import {LoadingScreen} from './loading.js?v=cc751b07e7183057';
-import {prepareIntro} from './intro.js?v=cc751b07e7183057';
-import {installAudio} from './audio.js?v=cc751b07e7183057';
+import {importInstall} from './install.js?v=d8bce7ddfbb3a8c6';
+import {installInput} from './client-input.js?v=d8bce7ddfbb3a8c6';
+import {compactUO,megabytes} from './uo-data.js?v=d8bce7ddfbb3a8c6';
+import {downloadUO} from './uo-download.js?v=d8bce7ddfbb3a8c6';
+import {steamPath,SaveFolder} from './folders.js?v=d8bce7ddfbb3a8c6';
+import {selectMusic,ExultMusic} from './exult-music.js?v=d8bce7ddfbb3a8c6';
+import {LoadingScreen} from './loading.js?v=d8bce7ddfbb3a8c6';
+import {prepareIntro} from './intro.js?v=d8bce7ddfbb3a8c6';
+import {installAudio} from './audio.js?v=d8bce7ddfbb3a8c6';
+import {readReplay} from './replay-store.js?v=d8bce7ddfbb3a8c6';
 
+const replayId=new URL(location.href).searchParams.get('replay');
+const isReplay=replayId!==null;
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
 const canvas=document.querySelector('#canvas');
@@ -27,8 +30,14 @@ document.querySelector('#hide-toolbar').onclick=()=>setToolbarHidden(true);
 showToolbar.onclick=()=>setToolbarHidden(false);
 function loadingStep(message,percent,detail){telemetry.event('stage',percent<5?'startup':percent<50?'download':percent<55?'save':percent<92?'client':percent<97?'artwork':'render');status.textContent=message;loading.update(percent,message,detail)}
 const buildVersion=new URL(import.meta.url).searchParams.get('v')||'dev';
+if(isReplay){
+    document.title='Trinsic · Crash replay';
+    document.querySelector('#replay-label').hidden=false;
+    document.querySelector('#setup h2').textContent='Open crash replay';
+    for(const id of ['#save-settings','#usage-settings','#new-game-row'])document.querySelector(id).hidden=true;
+}
 // UO7 analytics integration v2 (optional; failures cannot stop the game).
-const telemetry = (()=>{
+const telemetry = isReplay ? {event(){}} : (()=>{
     let sink, pending=[];
     import('./analytics/browser.js?v='+buildVersion).then(({connect})=>{
         sink=connect(buildVersion);
@@ -107,10 +116,12 @@ function removeSlots(keys){return new Promise((resolve,reject)=>{
     const tx=db.transaction('slots','readwrite');for(const key of keys)tx.objectStore('slots').delete(key);
     tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
-function browserSave(bytes,time=Date.now(),saveSlot,tile=null){return new Promise((resolve,reject)=>{
-    const tx=db.transaction('slots','readwrite'),store=tx.objectStore('slots');
+function browserSave(bytes,time=Date.now(),saveSlot,tile=null){
     const numbered=Number.isInteger(saveSlot)&&saveSlot>=0&&saveSlot<10;
     const details={slot:numbered?saveSlot:null,tile,savedAtMs:time};
+    if(isReplay){lastSave={bytes,details};return Promise.resolve()}
+    return new Promise((resolve,reject)=>{
+    const tx=db.transaction('slots','readwrite'),store=tx.objectStore('slots');
     store.put(bytes,saveKey);store.put(time,'trinsic-save-time-v1');
     store.put(details,'trinsic-save-details-v1');
     if(numbered){store.put(bytes,'trinsic-slot-'+saveSlot+'-v1');store.put(saveSlot,'trinsic-active-slot-v1')}
@@ -213,6 +224,7 @@ globalThis.__trinsic_recording=(operation,value,pointer)=>{
 };
 document.querySelector('#choose-save').hidden=!window.showDirectoryPicker;
 document.querySelector('#choose-save').onclick=()=>choosing(async()=>{
+    if(isReplay)return;
     const handle=await showDirectoryPicker({id:'ultima-offline-save',mode:'readwrite',startIn:saveFolder.handle||'documents'});
     const candidate=new SaveFolder();await candidate.set(handle);await candidate.read();
     await slot('save-folder-handle-v1',handle);await slot('save-folder-load-v1',true);await saveFolder.set(handle);
@@ -313,15 +325,15 @@ async function receive({data}){
             const saved=persistence.catch(()=>{}).then(async()=>{
             const tile=playerTile(data.frame);
             await browserSave(data.save,Date.now(),data.saveSlot,tile);
-            if(runtime&&(!request.automatic||Date.now()-lastProfileSync>=10000)){
+            if(!isReplay&&runtime&&(!request.automatic||Date.now()-lastProfileSync>=10000)){
                 await new Promise((resolve,reject)=>runtime.FS.syncfs(false,e=>e?reject(e):resolve()));lastProfileSync=Date.now();
             }
             const external=await saveFolder.write(data.save);telemetry.event('saved',{kind:request.loading?'load':request.automatic?'auto':'manual',ms:performance.now()-request.sentAt});
             lastCheckpointAt=Date.now();checkpointDirty=mutationVersion!==request.version;
-            document.querySelector('#save-state').textContent=checkpointDirty?'Unsaved changes':request.automatic?'Autosaved':request.loading?'Loaded':'Saved';
-            document.querySelector('#save-state').title=(external?'Folder + browser backup':'In this browser')+' · '+new Date(lastCheckpointAt).toLocaleTimeString();
+            document.querySelector('#save-state').textContent=checkpointDirty?'Unsaved changes':isReplay?'Replay checkpoint':request.automatic?'Autosaved':request.loading?'Loaded':'Saved';
+            document.querySelector('#save-state').title=(isReplay?'For this replay':external?'Folder + browser backup':'In this browser')+' · '+new Date(lastCheckpointAt).toLocaleTimeString();
             globalThis.trinsicLastSave={automatic:request.automatic,time:lastCheckpointAt,coords:tile?tile.x+', '+tile.y:'',durationMs:performance.now()-request.sentAt};
-            if(!request.automatic)status.textContent=request.loading?'Loaded saved game':external?'Saved in folder and browser':'Saved in this browser';
+            if(!request.automatic)status.textContent=request.loading?'Loaded saved game':isReplay?'Saved for this replay':external?'Saved in folder and browser':'Saved in this browser';
             }).finally(()=>{persisting--});
             persistence=saved;
             if(request.automatic)saved.catch(saveFailed);else await saved;
@@ -372,6 +384,13 @@ async function launch(newGame=false){
         if(!element.closest('#usage-settings'))element.disabled=true;
     }
     try{
+        const replay=isReplay?await readReplay(replayId):null;
+        if(isReplay&&!replay)throw Error('This crash replay is missing or expired. Open the report from the analytics dashboard again.');
+        if(replay&&replay.build!==buildVersion){
+            const label=document.querySelector('#replay-label');
+            label.textContent='Crash replay · different build from the report';
+            label.title='Reported launch: '+replay.build+' · This launch: '+buildVersion;
+        }
         if(!crossOriginIsolated)throw Error('This site needs cross-origin isolation headers to run ClassicUO.');
         await slot(installKey,install);
         await slot('launcher-v2-seen',true);
@@ -388,10 +407,10 @@ async function launch(newGame=false){
         }else await slot(uoKey,uo);
         const experience=await fetch('experience.json?v='+buildVersion).then(r=>{if(!r.ok)throw Error('Game startup definition is missing');return r.json()});
         loadingStep('Opening your saved world…',50);
-        lastSave=await readBrowserSave();
+        lastSave=replay?{bytes:replay.bytes,details:{slot:null,tile:null,savedAtMs:null}}:await readBrowserSave();
         let saved=lastSave?.bytes;
         try{
-            const external=await saveFolder.read();
+            const external=isReplay?null:await saveFolder.read();
             // A newly chosen folder explicitly selects its existing save. Later
             // launches keep a newer browser backup made while permission was lost.
             if(external&&(!saved||await slot('save-folder-load-v1')||saveFolder.modified>=(lastSave?.details.savedAtMs||0))){
@@ -401,8 +420,8 @@ async function launch(newGame=false){
         }
         catch(error){saveFolder.available=false;saveFolder.update('Folder unavailable; using browser save');console.warn(error.message)}
         telemetry.event('stage','native');
-        const saves=await Promise.all(Array.from({length:10},async(_,n)=>[n,await slot('trinsic-slot-'+n+'-v1')]));
-        let activeSlot=await slot('trinsic-active-slot-v1')||0;
+        const saves=isReplay?[[0,replay.bytes]]:await Promise.all(Array.from({length:10},async(_,n)=>[n,await slot('trinsic-slot-'+n+'-v1')]));
+        let activeSlot=isReplay?0:await slot('trinsic-active-slot-v1')||0;
         if(newGame&&saved){
             const latest=new Uint8Array(saved);
             const same=bytes=>bytes&&bytes.byteLength===latest.byteLength&&new Uint8Array(bytes).every((value,i)=>value===latest[i]);
@@ -430,8 +449,11 @@ async function launch(newGame=false){
         const host=await hostBuilder.create();
         loadingStep('Preparing the client…',75);
         globalThis.trinsicRuntime=runtime;
-        runtime.FS.mkdirTree('/Data');runtime.FS.mount(runtime.FS.filesystems.IDBFS,{},'/Data');
-        await new Promise((resolve,reject)=>runtime.FS.syncfs(true,e=>e?reject(e):resolve()));
+        runtime.FS.mkdirTree('/Data');
+        if(!isReplay){
+            runtime.FS.mount(runtime.FS.filesystems.IDBFS,{},'/Data');
+            await new Promise((resolve,reject)=>runtime.FS.syncfs(true,e=>e?reject(e):resolve()));
+        }
         write('/settings.json',JSON.stringify({clientversion:'7.0.118.46',ultimaonlinedirectory:'/uo',profilespath:'/Data/Profiles',plugins:[],use_verdata:false,is_win_maximized:false,screen_scale:1,maps_layouts:'7168,4096;7168,4096;2304,1600;2560,2048;1448,1448;1280,4096',window_size:{X:1200,Y:900}}));
         for(let i=0;i<uo.length;i++){
             const [name,file]=uo[i];loadingStep('Preparing game data…',75+15*(i+1)/uo.length,`${i+1} / ${uo.length} files`);
@@ -456,9 +478,10 @@ try{
         slot(installKey),slot(uoKey),
         slot('exult-music-v1'),slot('exult-music-disabled-v1'),slot('save-folder-handle-v1'),slot('launcher-v2-seen')]);
     music.enabled=!musicDisabled;music.set(tracks);
-    await saveFolder.set(handle);
-    if(seen&&install&&!new URL(location.href).searchParams.has('setup')){loading.start();loadingStep('Reading your saved installation…',1)}
+    await saveFolder.set(isReplay?null:handle);
+    const useSetup=new URL(location.href).searchParams.has('setup');
+    if((seen||isReplay)&&install&&!useSetup){loading.start();loadingStep('Reading your saved installation…',1)}
     if(uo){try{uo=await compactUO(uo,message=>{status.textContent=message})}catch(error){if(error.code!=='UO_UPDATE_REQUIRED')throw error;previousUO=uo;uo=null}}
     updateSetup();
-    if(seen&&install&&(uo||previousUO||await slot('uo-auto-active'))&&!new URL(location.href).searchParams.has('setup'))await launch();
+    if(install&&!useSetup&&(isReplay||seen&&(uo||previousUO||await slot('uo-auto-active'))))await launch();
 }catch(error){updateSetup();fail(error)}
