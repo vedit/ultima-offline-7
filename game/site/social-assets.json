@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "kind": "AI-assisted promotional composites; not unedited gameplay captures",
+  "reference": "Previously published Fellowship interior ClassicUO capture",
+  "generator": "Built-in image_gen",
+  "encoding": "JPEG export only; generated composition and pixel dimensions unchanged",
+  "assets": [
+    {
+      "bytes": 288338,
+      "sha256": "a336e59ee7745fe57df43158b3ad8d8e8f64d50b9fe4da88f9f78aa4f79a74e7",
+      "name": "ultima-offline-7-portrait-v1.jpg",
+      "width": 1092,
+      "height": 1440
+    },
+    {
+      "bytes": 281768,
+      "sha256": "5f1f36de82a6715abd741acdcdf0ac30e94fc601ed37e49a78abeebcd0aba550",
+      "name": "ultima-offline-7-share-v1.jpg",
+      "width": 1738,
+      "height": 905
+    }
+  ]
+}

@@ -97,7 +97,7 @@ def remove_shield_tab(html):
     return re.sub(r'<a\b[^>]*href="shields\.html"[^>]*>.*?</a>', '', html, flags=re.S)
 
 
-def export(atlas, output, reviews=None, guard_ground=None, screenshots=None):
+def export(atlas, output, reviews=None, guard_ground=None, screenshots=None, social_assets=None):
     atlas, output = atlas.resolve(), output.resolve()
     if atlas == output or atlas.is_relative_to(output) or output.is_relative_to(atlas):
         raise ValueError('Export must be separate from the source atlas')
@@ -179,7 +179,7 @@ def export(atlas, output, reviews=None, guard_ground=None, screenshots=None):
     shutil.copyfile(output / landing, output / 'index.html')
     if screenshots is not None:
         from homepage import install_homepage
-        exported.update(install_homepage(output, screenshots))
+        exported.update(install_homepage(output, screenshots, social_assets))
         landing = 'index.html'
     (output / '.nojekyll').write_text('')
     shutil.copyfile(Path(__file__).resolve().parents[1] / 'site' / 'CNAME', output / 'CNAME')
@@ -204,5 +204,6 @@ if __name__ == '__main__':
     parser.add_argument('--reviews', type=Path, required=True, help='Atlas chat review root; reconcile later equipment reviews')
     parser.add_argument('--guard-ground', type=Path, required=True, help='Final approved 637-0.png through 637-4.png directory')
     parser.add_argument('--screenshots', type=Path, required=True, help='barn-overview, fellowship-interior and guardian-dream u7/uo7 PNG pairs, plus scene-captures.json for the homepage')
+    parser.add_argument('--social-assets', type=Path, help='Reviewed JPEGs from the existing Pages site/social directory; defaults to screenshots/social')
     args = parser.parse_args()
-    export(args.atlas, args.out, args.reviews, args.guard_ground, args.screenshots)
+    export(args.atlas, args.out, args.reviews, args.guard_ground, args.screenshots, args.social_assets)

@@ -7,10 +7,12 @@ from pathlib import Path
 from review_snapshot import js_data
 
 
-def install_homepage(output, screenshots):
+def install_homepage(output, screenshots, social_assets=None):
     output, screenshots = Path(output), Path(screenshots)
     source = Path(__file__).resolve().parents[1] / 'site'
-    files, provenance = set(), {}
+    from social_preview import install_social
+    files = install_social(output, social_assets or screenshots / 'social')
+    provenance = {}
 
     def write(name, content, origin):
         target = output / name
@@ -49,6 +51,6 @@ def install_homepage(output, screenshots):
     for name in ('home.css', 'home.js'):
         write('site/' + name, (source / name).read_text(encoding='utf8').encode('utf8'), 'game/site/' + name)
     write('index.html', (source / 'index.html').read_text(encoding='utf8').encode('utf8'), 'game/site/index.html')
-    receipt = {'description':'Actual development screenshots and unchanged review images; no gameplay data', 'assets':provenance}
+    receipt = {'description':'Actual development screenshots and unchanged review images; promotional composites are documented separately in site/social/sources.json; no gameplay data', 'assets':provenance}
     write('site/sources.json', (json.dumps(receipt, indent=2)+'\n').encode(), 'homepage export receipt')
     return files

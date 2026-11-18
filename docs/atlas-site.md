@@ -13,7 +13,7 @@ The Atlas chat uses the same game repository, not a second source repository. It
 Use the existing generated atlas directory you intend to publish. A newly generated baseline atlas and a newer local art review can differ; inspect the source date and pages first. Do not regenerate or overwrite parallel artwork as part of publishing.
 
 ```powershell
-py -3.13 -B game/atlas/publish_site.py --atlas 'D:\path\to\reviewed-atlas' --reviews 'D:\path\to\Atlas-review-root' --guard-ground 'D:\path\to\public-interiors-revision5\guard-ground' --screenshots 'D:\path\to\selected-client-captures' --out 'D:\empty\atlas-site'
+py -3.13 -B game/atlas/publish_site.py --atlas 'D:\path\to\reviewed-atlas' --reviews 'D:\path\to\Atlas-review-root' --guard-ground 'D:\path\to\public-interiors-revision5\guard-ground' --screenshots 'D:\path\to\selected-client-captures' --social-assets 'D:\path\to\current-pages\site\social' --out 'D:\empty\atlas-site'
 py -3.13 -B -m unittest discover -s tests -p test_atlas_site.py -q
 ```
 
@@ -40,6 +40,33 @@ Capture each scene pair from the same private checkpoint with `game/qualificatio
 Check the homepage on desktop and a narrow viewport, including the barn and Fellowship pairs, the centered reveal slider, its endpoints and keyboard controls, loading/error states, Escape dismissal, the Fellowship switch and the Guardian dream slider and its adaptation caption. The comparison viewer resets to 50/50 when selecting a pair or reopening it. Galleries retain their shared Home/Weapons navigation and existing loading states; shields remain an equipment filter rather than a separate tab.
 
 ## Publish an update
+
+### Social sharing artwork
+
+The homepage uses static Open Graph and X/Twitter large-image tags. Crawlers do
+not need JavaScript. The image URL is versioned so future revisions can use a
+new filename without depending on old image caches. The image's absolute HTTPS
+URL, JPEG MIME type, measured dimensions and descriptive alt text are explicit.
+
+`share.html` provides the project link and landscape/portrait downloads for
+messaging apps and social posts. These AI-assisted promotional composites are
+separate from the unedited gameplay comparison captures; they must not replace
+those captures or be described as screenshots. Their JPEGs live only on
+`gh-pages` under `site/social/`. The source manifest is
+`game/site/social-assets.json`; the export verifies each SHA-256 before copying.
+
+Pass the previous publication's `site/social` folder as `--social-assets` when
+exporting the full homepage, or place that folder under the selected screenshot
+directory. Missing or altered assets stop the export. Source images and the
+generation prompts are recorded in `game/site/social-prompts.md`.
+
+For a metadata-only release, change only the homepage head, sharing page and
+social assets in an isolated checkout of current `gh-pages`. Preserve the
+entire `play/` tree and its exact bundle: this is not a browser game rebuild.
+Verify the image byte sizes, MIME types, dimensions, metadata and public HTTPS
+responses with crawler user agents. A 200 response verifies availability, not a
+guarantee that each social app has refreshed its cached card. Actual platform
+previews may crop differently or require the user to share the link again.
 
 Use an isolated checkout of `origin/gh-pages`. Review its current commit, then replace its site files with the verified export, keeping its Git metadata. Inspect the staged diff and commit normally. Push only `HEAD:gh-pages`; do not force-push, mirror refs or change the source branch. Do not publish directly from an active art-development folder.
 
