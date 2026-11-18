@@ -53,8 +53,12 @@ test('report queries collapse retries per session and flag sampled data',()=>{
  assert.match(query(7),/GROUP BY index1/);assert.match(query(7),/max\(double4\)/);assert.throws(()=>query(90));
  const row={started:1,wallMs:120000,activeMs:60000,loadMs:1000,ready:1,trinsic:1,evidence:0,reported:0,gate:0,state:'ended',stage:'render',weight:1};
  const s=summarize([row,{...row,ready:0,activeMs:0,state:'failed',stage:'native',weight:2}]);
- assert.equal(s.successfulLaunches,1);assert.equal(s.loadingFailures,2);assert.equal(s.meanActiveMinutes,1);assert.equal(s.estimated,true);
+ assert.equal(s.launches,2);assert.equal(s.successfulLaunches,1);assert.equal(s.loadingFailures,1);assert.equal(s.loadingFailuresByStage.native,1);assert.equal(s.meanActiveMinutes,1);assert.equal(s.sampled,true);
  assert(!htmlReport(s).includes('12345678'));assert.throws(()=>summarize(Array(10001).fill(row)));
  assert.equal(summarize([]).meanActiveMinutes,0);
-  assert.equal(summarize([row,{...row,activeMs:120000}]).medianActiveMinutes,1.5);
+ const sampled=summarize([row,{...row,activeMs:120000,weight:100}]);
+ assert.equal(sampled.launches,2);assert.equal(sampled.successfulLaunches,2);
+ assert.equal(sampled.activeHours,3/60);assert.equal(sampled.meanActiveMinutes,1.5);
+ assert.equal(sampled.medianActiveMinutes,1.5);assert.equal(sampled.reachedTrinsic,2);
+ assert.match(htmlReport(sampled),/Observed sessions only/);
 });

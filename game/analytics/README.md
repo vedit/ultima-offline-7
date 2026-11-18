@@ -87,8 +87,11 @@ node game/analytics/report.mjs --input query-result.json playtest-report.html
 The HTML contains aggregates only and needs no network connection. No raw session
 IDs are selected or included. Results cover sessions started in the last N days,
 including still-open sessions, not just completed sessions. The report refuses a
-truncated 10,001-row result; narrow the period instead. Sample weights are applied
-and sampled reports marked estimates; medians are calculated over those weights.
+truncated 10,001-row result; narrow the period instead. Each returned session is
+counted once. The sampling interval describes heartbeat events, so it must not
+multiply grouped session counts, cumulative maxima or session medians. Reports
+flag sampling: missing snapshots can understate duration, progress and session
+coverage. These are observed sessions, not an extrapolated population estimate.
 Engine retention is three months. Small/empty datasets are expected initially.
 
 For an explicitly approved temporary staging endpoint, `tests/live.mjs` sends
