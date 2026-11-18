@@ -18,7 +18,7 @@ test('dashboard refuses missing/forged Access and wrong audience/owner before qu
 test('dashboard uses fixed bounded SQL and exports only aggregates with private headers',async()=>{
  const worker=createDashboard(async(url,init)=>{
    assert.equal(url,`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/analytics_engine/sql`);
-   assert.equal(init.headers.Authorization,'Bearer test-secret');assert.equal(init.redirect,'error');
+   assert.equal(init.headers.Authorization,'Bearer test-secret');assert.equal(init.redirect,'manual');
    assert.match(init.body,/GROUP BY index1 LIMIT 10001/);assert.match(init.body,/FROM uo7_dataset/);
    return Response.json({data:[row,row]});
  });
@@ -42,4 +42,13 @@ test('live report preserves legacy unknown identity and provides controls withou
  const html=liveReport(summarize([row]),7,'2026-11-18T00:00:00.000Z');
  assert.match(html,/Not collected yet/);assert.match(html,/name="days"/);assert.match(html,/<option value="7" selected>/);assert.match(html,/Refresh/);assert.match(html,/Download aggregate JSON/);assert.match(html,/Traffic dashboard/);
  assert.doesNotMatch(html,/<script|test-secret|owner@example/);
+});
+test('redirects and runtime failures fail closed without credentials or upstream locations',async()=>{
+ let calls=0;const redirect=createDashboard(async()=>{calls++;return new Response(null,{status:307,headers:{Location:'https://unexpected.example/private-path'}});});
+ const r=await redirect.fetch(request(),env,ctx);
+ assert.equal(r.status,503);assert.equal(calls,1);
+ const body=await r.text();assert.match(body,/upstream HTTP 307/);assert.doesNotMatch(body,/unexpected|private-path|test-secret/);
+ const timeout=createDashboard(async()=>{throw new DOMException('sensitive upstream message','TimeoutError');});
+ const failed=await timeout.fetch(request(),env,ctx);assert.equal(failed.status,503);
+ const message=await failed.text();assert.match(message,/request timeout/);assert.doesNotMatch(message,/sensitive/);
 });

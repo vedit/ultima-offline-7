@@ -106,6 +106,8 @@ bindings. Never commit their private values or the token.
 
 Deploy with `wrangler.dashboard.jsonc`, or upload `dashboard-worker.js`,
 `report-data.js` and `schema.js` as modules through the Cloudflare connector.
+Read module files explicitly as UTF-8 when preparing connector uploads; Windows
+default text decoding can corrupt the report's punctuation.
 Set the `REPORT_LIMIT` rate-limit binding to namespace 7002, 30 requests/minute.
 Create the Access application **before** attaching the custom domain. Keep
 workers.dev and preview URLs disabled, and do not attach Static Assets or route
@@ -123,9 +125,20 @@ On November 18, 2026 the approved Access application, account-scoped read token,
 Worker secret and custom domain were provisioned. Readback confirmed exactly
 one owner allow rule and no workers.dev/preview endpoints. Anonymous HTML/JSON
 requests and a JSON request with forged identity headers were denied without
-report data. The owner sign-in and live Refresh check require completing the
-Cloudflare email-code challenge; do not count this unauthenticated check as an
-authenticated end-to-end report test.
+report data. After the owner completed the email-code challenge, the live
+report initially failed because Workers rejects `fetch` with `redirect: "error"`.
+The corrected request uses `redirect: "manual"` and rejects non-success responses
+without following redirects or forwarding credentials. Failures report only a
+safe processing stage and upstream HTTP status, never raw error or response text.
+
+The corrected deployment was verified in the signed-in browser on November 18:
+the 7-day and refreshed 1-day pages showed ten launch attempts, nine rendered
+sessions and one unfinished load. The latter was generated at
+20:40:48.777 UTC. Legacy identity fields correctly showed "Not collected yet".
+All 18 analytics tests passed, including redirect rejection and private,
+aggregate-only JSON output. A live JSON download and final 30-day visual check
+remain unverified because browser automation disconnected during those checks;
+local export tests are not a substitute for those live checks.
 
 Cloudflare's native connector provides authenticated SQL reads for agent work;
 its native dashboard supplies website traffic charts. The private Worker adds

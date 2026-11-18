@@ -38,19 +38,26 @@ export function createDashboard(fetcher=fetch) {
     if(![1,7,30].includes(days)||[...url.searchParams.keys()].some(k=>k!=='days'))return response('Choose a 1, 7 or 30 day reporting window.',400);
     if(!env.ANALYTICS_READ_TOKEN || !/^[a-f0-9]{32}$/.test(env.ACCOUNT_ID||''))return response('Reporting is not configured.',503);
     if(env.REPORT_LIMIT && !(await env.REPORT_LIMIT.limit({key:'dashboard'})).success)return response('Please wait a minute before refreshing again.',429);
+    let reportStage='query request', upstreamStatus=0;
     try {
       const result=await fetcher(`https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/analytics_engine/sql`,{
-        method:'POST',redirect:'error',headers:{'Authorization':`Bearer ${env.ANALYTICS_READ_TOKEN}`,'Content-Type':'text/plain'},
+        // Workers supports manual handling here; never forward the token on a redirect.
+        method:'POST',redirect:'manual',headers:{'Authorization':`Bearer ${env.ANALYTICS_READ_TOKEN}`,'Content-Type':'text/plain'},
         body:query(days),signal:AbortSignal.timeout(15000),
       });
+      upstreamStatus=result.status;
       if(!result.ok)throw Error('Query unavailable');
+      reportStage='query response';
       const payload=await result.json();
+      reportStage='report calculation';
       const summary=summarize(payload.data), generatedAt=new Date().toISOString();
+      reportStage='report rendering';
       if(url.pathname==='/summary.json')return response(JSON.stringify({generatedAt,days,summary},null,2),200,'application/json; charset=utf-8');
       return response(liveReport(summary,days,generatedAt),200,'text/html; charset=utf-8');
-    } catch {
+    } catch(error) {
       // Do not turn a failed/truncated query into zeroes or reveal raw responses.
-      return response('Report unavailable. Refresh to retry, or use a shorter period. No zero values have been substituted.',503);
+      const reason=error?.name==='TimeoutError'?'request timeout':'request failure';
+      return response(`Report unavailable (${reportStage}; ${reason}${upstreamStatus?`; upstream HTTP ${upstreamStatus}`:''}). Refresh to retry, or use a shorter period. No zero values have been substituted.`,503);
     }
   }};
 }
