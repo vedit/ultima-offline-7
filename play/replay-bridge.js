@@ -1,4 +1,4 @@
-import {storeReplay} from './replay-store.js?v=d8bce7ddfbb3a8c6';
+import {storeReplay} from './replay-store.js?v=4f88c1296377174f';
 
 const origin = 'https://analytics.ultimaoffline7.com';
 const opener = window.opener;

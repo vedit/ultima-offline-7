@@ -1,13 +1,13 @@
-import {importInstall} from './install.js?v=d8bce7ddfbb3a8c6';
-import {installInput} from './client-input.js?v=d8bce7ddfbb3a8c6';
-import {compactUO,megabytes} from './uo-data.js?v=d8bce7ddfbb3a8c6';
-import {downloadUO} from './uo-download.js?v=d8bce7ddfbb3a8c6';
-import {steamPath,SaveFolder} from './folders.js?v=d8bce7ddfbb3a8c6';
-import {selectMusic,ExultMusic} from './exult-music.js?v=d8bce7ddfbb3a8c6';
-import {LoadingScreen} from './loading.js?v=d8bce7ddfbb3a8c6';
-import {prepareIntro} from './intro.js?v=d8bce7ddfbb3a8c6';
-import {installAudio} from './audio.js?v=d8bce7ddfbb3a8c6';
-import {readReplay} from './replay-store.js?v=d8bce7ddfbb3a8c6';
+import {importInstall} from './install.js?v=4f88c1296377174f';
+import {installInput} from './client-input.js?v=4f88c1296377174f';
+import {compactUO,megabytes} from './uo-data.js?v=4f88c1296377174f';
+import {downloadUO} from './uo-download.js?v=4f88c1296377174f';
+import {steamPath,SaveFolder} from './folders.js?v=4f88c1296377174f';
+import {selectMusic,ExultMusic} from './exult-music.js?v=4f88c1296377174f';
+import {LoadingScreen} from './loading.js?v=4f88c1296377174f';
+import {prepareIntro} from './intro.js?v=4f88c1296377174f';
+import {installAudio} from './audio.js?v=4f88c1296377174f';
+import {readReplay} from './replay-store.js?v=4f88c1296377174f';
 
 const replayId=new URL(location.href).searchParams.get('replay');
 const isReplay=replayId!==null;
@@ -148,7 +148,7 @@ function fail(error){
     if(!crashReport){
         const context={tile:lastTile,save:lastSave?.details??null};
         crashReport={context,bytes:lastSave?.bytes,failedAtMs:Date.now()};
-        telemetry.event('fail',context);
+        telemetry.event('fail',{...context,bytes:crashReport.bytes});
         downloadCrash.hidden=false;toolbar.hidden=false;showToolbar.hidden=true;
     }
     globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error);

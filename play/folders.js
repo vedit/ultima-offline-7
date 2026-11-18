@@ -1,3 +1,6 @@
+import {validSave} from './analytics/crash-save.js?v=4f88c1296377174f';
+export {validSave};
+
 // A browser can remember a granted directory, but cannot open an arbitrary OS path.
 export function steamPath(platform){
     if(/win/i.test(platform))return 'C:\\Program Files (x86)\\Steam\\steamapps\\common';
@@ -29,20 +32,6 @@ export async function folderFiles(root,{music=false}={}){
         }
     }
     await walk(root,root.name,0);return result;
-}
-export function validSave(bytes){
-    if(!(bytes instanceof ArrayBuffer)||bytes.byteLength<128||bytes.byteLength>64*1024*1024)return false;
-    const view=new DataView(bytes);if(view.getUint32(80,true)!==0xffff1a00)return false;
-    const count=view.getUint32(84,true),end=128+count*8;if(count<1||end>bytes.byteLength)return false;
-    const names=new Set(),decode=new TextDecoder();
-    for(let i=128;i<end;i+=8){
-        const offset=view.getUint32(i,true),length=view.getUint32(i+4,true);if(!length)continue;
-        if(offset<end||length<13||offset+length>bytes.byteLength)return false;
-        const name=decode.decode(new Uint8Array(bytes,offset,13)).split('\0')[0];
-        if(!/^[A-Z0-9_]{1,8}(\.[A-Z0-9_]{1,3})?$/.test(name)||names.has(name))return false;
-        names.add(name);
-    }
-    return names.has('U7IBUF.DAT')&&names.has('U7NBUF.DAT');
 }
 export class SaveFolder{
     constructor(onChange=()=>{}){this.onChange=onChange;this.handle=null;this.available=false;this.message='In this browser'}

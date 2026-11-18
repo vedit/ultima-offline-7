@@ -36,10 +36,12 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 </details>
 <div class="field" id="usage-settings">
 <label style="font-size:14px;font-weight:400"><input type="checkbox" id="usage-reporting" disabled> Share gameplay analytics</label>
-<p class="hint">Optional: remember a random browser ID to count returning players, and share playtime, progress, save activity and performance. No names, saves or game files. <a href="./analytics/privacy.html" target="_blank" rel="noopener" style="color:#d9bd7c">Details</a>. Enabling applies next launch; disabling stops reporting now.</p>
+<p class="hint">Share playtime, progress, save activity and performance using a random browser ID. <a href="./analytics/privacy.html" target="_blank" rel="noopener" style="color:#d9bd7c">Details</a>. Enabling applies next launch; disabling stops reporting now.</p>
 <button type="button" id="usage-reset" disabled>Reset analytics ID</button>
 <label><input type="checkbox" id="crash-reporting" disabled> Include crash location and last save details</label>
 <p class="hint">Shares the last observed tile and the save’s slot, tile, and time after a detected failure. The save file is available in the local crash download.</p>
+<label><input type="checkbox" id="crash-save-reporting" disabled> Send my last save if the game crashes</label>
+<p class="hint">The save can include your character name and progress. The project owner can open it for seven days from the private crash dashboard. This setting is off by default.</p>
 <p class="hint" id="usage-notice" role="status"></p>
 </div>
 <button id="play" disabled>Play now</button><p id="details">Your game files stay on this computer.</p>
@@ -50,6 +52,6 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 <section id="loading" hidden aria-label="Loading Trinsic">
 <div class="loading-card"><div class="loading-ring" aria-hidden="true"></div><h2>Opening Trinsic</h2><p id="loading-step" role="status">Preparing the game…</p><div id="loading-percent" aria-hidden="true">0%</div><progress id="loading-progress" max="100" value="0" aria-label="Estimated startup progress"></progress><p id="loading-detail">Estimated startup progress</p><div id="loading-actions" class="row" hidden><button id="loading-retry">Retry</button><button id="loading-folders" class="quiet">Folder settings</button></div></div>
 </section>
-<script src="coi-serviceworker.js?v=d8bce7ddfbb3a8c6"></script>
-<script type="module" src="client.js?v=d8bce7ddfbb3a8c6&amp;usage=2"></script>
+<script src="coi-serviceworker.js?v=4f88c1296377174f"></script>
+<script type="module" src="client.js?v=4f88c1296377174f&amp;usage=2"></script>
 </html>
