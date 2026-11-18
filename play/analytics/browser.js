@@ -1,7 +1,8 @@
-import {PlayerSession} from './session-v2.js?v=f15aa9e147871ab9';
-import {UUID} from './schema.js?v=f15aa9e147871ab9';
+import {PlayerSession} from './session-v2.js?v=cc751b07e7183057';
+import {UUID} from './schema.js?v=cc751b07e7183057';
 
 export const PREFERENCE='uo7-usage-reporting-v2',IDENTITY='uo7-player-v2';
+export const CRASH_PREFERENCE='uo7-crash-details-v1';
 export function browserContext(nav=navigator,width=window.innerWidth){
   const ua=nav.userAgent||'';
   return {browser:/Edg\//.test(ua)?'edge':/Firefox\//.test(ua)?'firefox':/Chrome\//.test(ua)?'chrome':/Safari\//.test(ua)?'safari':'other',
@@ -16,6 +17,8 @@ export function connect(build) {
   const remove=k=>{try{localStorage.removeItem(k);return localStorage.getItem(k)===null;}catch{return false;}};
   let enabled=!privacy()&&get(PREFERENCE)==='on',session,identity,lastSent=-Infinity,observer;
   const check=document.querySelector('#usage-reporting'),reset=document.querySelector('#usage-reset');
+  const crashCheck=document.querySelector('#crash-reporting');
+  let shareCrash=false;
   const notice=document.querySelector('#usage-notice');
   const tell=message=>{if(notice)notice.textContent=message;};
   const listeners=[];
@@ -24,19 +27,34 @@ export function connect(build) {
   function sync(){
     enabled=!privacy()&&get(PREFERENCE)==='on';
     if(check){check.checked=enabled;check.disabled=privacy();}
+    syncCrash();
     if(!enabled){stop();remove(IDENTITY);}
+  }
+  function syncCrash(){
+    shareCrash=enabled&&get(CRASH_PREFERENCE)==='on';
+    if(!shareCrash&&session)delete session.data.crash;
+    if(crashCheck){crashCheck.checked=shareCrash;crashCheck.disabled=!enabled;}
   }
   if(check)on(check,'change',()=>{
     enabled=!privacy()&&check.checked;
     const persisted=set(PREFERENCE,enabled?'on':'off');stop();
     tell(persisted?'':`Reporting is ${enabled?'enabled':'off'} for this page. Browser storage is unavailable; this preference could not be saved.`);
     check.checked=enabled;check.disabled=privacy();
-    if(!enabled)remove(IDENTITY);
+    if(!enabled){remove(IDENTITY);remove(CRASH_PREFERENCE);}
+    syncCrash();
+  });
+  if(crashCheck)on(crashCheck,'change',()=>{
+    const checked=enabled&&!privacy()&&crashCheck.checked;
+    // If storage denies an opt-out, honor it immediately for this session.
+    const persisted=set(CRASH_PREFERENCE,checked?'on':'off');
+    shareCrash=checked&&persisted;crashCheck.checked=shareCrash;
+    if(!shareCrash&&session)delete session.data.crash;
   });
   if(reset)on(reset,'click',()=>{stop();tell(remove(IDENTITY)?'ID reset — applies next launch.':'Reporting stopped for this page, but browser storage prevented removing the saved ID.');});
   sync();
   if(reset)reset.disabled=false;
   on(window,'storage',e=>{
+    if(e.key===CRASH_PREFERENCE)syncCrash();
     if(e.key===PREFERENCE||e.key===IDENTITY||e.key===null){
       let next;try{next=JSON.parse(e.newValue);}catch{}
       const changed=e.key===IDENTITY&&identity&&identity.id!==next?.id;
@@ -55,7 +73,9 @@ export function connect(build) {
     if(privacy()){sync();return;}
     if(!enabled||!session||!endpoint||(!force&&now-lastSent<30000))return;
     lastSent=now;
-    const body=JSON.stringify(session.snapshot(now));
+    const snapshot=session.snapshot(now);
+    if(!shareCrash||get(CRASH_PREFERENCE)!=='on')delete snapshot.crash;
+    const body=JSON.stringify(snapshot);
     fetch(endpoint,{method:'POST',body,headers:{'Content-Type':'text/plain'},mode:'cors',
       credentials:'omit',referrerPolicy:'no-referrer',keepalive:true,signal:AbortSignal.timeout(10000)}).catch(()=>{});
   }
@@ -74,7 +94,7 @@ export function connect(build) {
     }
     if(!session)return;
     const wasReady=session.data.ready;
-    session.event(type,value,now);
+    session.event(type,type==='fail'&&(!shareCrash||get(CRASH_PREFERENCE)!=='on')?null:value,now);
     if(!wasReady&&session.data.ready&&identity.id){identity.played=true;set(IDENTITY,JSON.stringify(identity));}
     if(type==='fail'||(!wasReady&&session.data.ready))send(true);
   }

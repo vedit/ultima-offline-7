@@ -1,5 +1,5 @@
-import {Session,MAX_MS,STAGES} from './core.js?v=f15aa9e147871ab9';
-import {CONTEXT,MILESTONES,emptyMetrics,defaultContext,actionGroup} from './schema.js?v=f15aa9e147871ab9';
+import {Session,MAX_MS,STAGES} from './core.js?v=cc751b07e7183057';
+import {CONTEXT,MILESTONES,emptyMetrics,defaultContext,actionGroup} from './schema.js?v=cc751b07e7183057';
 
 export class PlayerSession extends Session {
   constructor(options) {
@@ -41,7 +41,13 @@ export class PlayerSession extends Session {
         this.lastVisibleDraw=now;
       }
     }
-    if(type==='fail')this.add('errors');
+    if(type==='fail'){
+      this.add('errors');
+      if(value&&(value.tile||value.save)&&!d.crash){
+        const tile=t=>t&&{x:t.x,y:t.y,z:t.z};
+        d.crash={tile:tile(value.tile),save:value.save&&{slot:value.save.slot,tile:tile(value.save.tile),savedAtMs:value.save.savedAtMs}};
+      }
+    }
     if(type==='save-fail')this.add('saveFailures');
     if(type==='context')for(const [key,choices]of Object.entries(CONTEXT))if(choices.includes(value?.[key]))d.context[key]=value[key];
     if(type==='longtask'&&Number.isFinite(value)&&value>=0){this.add('longTasks');this.add('longTaskMs',Math.min(value,MAX_MS));}

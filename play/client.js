@@ -1,12 +1,12 @@
-import {importInstall} from './install.js?v=f15aa9e147871ab9';
-import {installInput} from './client-input.js?v=f15aa9e147871ab9';
-import {compactUO,megabytes} from './uo-data.js?v=f15aa9e147871ab9';
-import {downloadUO} from './uo-download.js?v=f15aa9e147871ab9';
-import {steamPath,SaveFolder} from './folders.js?v=f15aa9e147871ab9';
-import {selectMusic,ExultMusic} from './exult-music.js?v=f15aa9e147871ab9';
-import {LoadingScreen} from './loading.js?v=f15aa9e147871ab9';
-import {prepareIntro} from './intro.js?v=f15aa9e147871ab9';
-import {installAudio} from './audio.js?v=f15aa9e147871ab9';
+import {importInstall} from './install.js?v=cc751b07e7183057';
+import {installInput} from './client-input.js?v=cc751b07e7183057';
+import {compactUO,megabytes} from './uo-data.js?v=cc751b07e7183057';
+import {downloadUO} from './uo-download.js?v=cc751b07e7183057';
+import {steamPath,SaveFolder} from './folders.js?v=cc751b07e7183057';
+import {selectMusic,ExultMusic} from './exult-music.js?v=cc751b07e7183057';
+import {LoadingScreen} from './loading.js?v=cc751b07e7183057';
+import {prepareIntro} from './intro.js?v=cc751b07e7183057';
+import {installAudio} from './audio.js?v=cc751b07e7183057';
 
 const status=document.querySelector('#status');
 const details=document.querySelector('#details');
@@ -14,6 +14,8 @@ const canvas=document.querySelector('#canvas');
 const play=document.querySelector('#play');
 const loading=new LoadingScreen();
 const toolbar=document.querySelector('#toolbar'),showToolbar=document.querySelector('#show-toolbar');
+const downloadCrash=document.querySelector('#download-crash');
+let lastTile=null,lastSave=null,crashReport=null;
 let toolbarHidden=false;
 try{toolbarHidden=localStorage.getItem('trinsic-hide-toolbar')==='1'}catch{}
 function setToolbarHidden(hidden){
@@ -105,15 +107,66 @@ function removeSlots(keys){return new Promise((resolve,reject)=>{
     const tx=db.transaction('slots','readwrite');for(const key of keys)tx.objectStore('slots').delete(key);
     tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
-function browserSave(bytes,time=Date.now(),saveSlot){return new Promise((resolve,reject)=>{
+function browserSave(bytes,time=Date.now(),saveSlot,tile=null){return new Promise((resolve,reject)=>{
     const tx=db.transaction('slots','readwrite'),store=tx.objectStore('slots');
+    const numbered=Number.isInteger(saveSlot)&&saveSlot>=0&&saveSlot<10;
+    const details={slot:numbered?saveSlot:null,tile,savedAtMs:time};
     store.put(bytes,saveKey);store.put(time,'trinsic-save-time-v1');
-    if(Number.isInteger(saveSlot)&&saveSlot>=0&&saveSlot<10){store.put(bytes,'trinsic-slot-'+saveSlot+'-v1');store.put(saveSlot,'trinsic-active-slot-v1')}
-    tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
+    store.put(details,'trinsic-save-details-v1');
+    if(numbered){store.put(bytes,'trinsic-slot-'+saveSlot+'-v1');store.put(saveSlot,'trinsic-active-slot-v1')}
+    tx.oncomplete=()=>{lastSave={bytes,details};resolve()};tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
-function fail(error){telemetry.event('fail');globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error);if(!ready&&!loading.root.hidden)loading.error(globalThis.trinsicFailure)}
+function readBrowserSave(){return new Promise((resolve,reject)=>{
+    const tx=db.transaction('slots','readonly'),store=tx.objectStore('slots');
+    const bytes=store.get(saveKey),time=store.get('trinsic-save-time-v1'),details=store.get('trinsic-save-details-v1');
+    tx.oncomplete=()=>resolve(bytes.result?{bytes:bytes.result,details:details.result&&details.result.savedAtMs===time.result
+        ?details.result:{slot:null,tile:null,savedAtMs:time.result||null}}:null);
+    tx.onabort=tx.onerror=()=>reject(tx.error);
+})}
+function playerTile(frame){
+    for(const line of frame.split('\n')){
+        if(!line.startsWith('E '))continue;
+        const fields=line.split(' ');
+        if(fields[8]!=='0')continue;
+        const [x,y,z]=fields.slice(4,7).map(Number);
+        return [x,y,z].every(Number.isInteger)?{x,y,z}:null;
+    }
+    return null;
+}
+function fail(error){
+    if(!crashReport){
+        const context={tile:lastTile,save:lastSave?.details??null};
+        crashReport={context,bytes:lastSave?.bytes,failedAtMs:Date.now()};
+        telemetry.event('fail',context);
+        downloadCrash.hidden=false;toolbar.hidden=false;showToolbar.hidden=true;
+    }
+    globalThis.trinsicFailure=error.message||String(error);status.textContent=globalThis.trinsicFailure;console.error(error);
+    if(!ready&&!loading.root.hidden)loading.error(globalThis.trinsicFailure);
+}
+downloadCrash.onclick=async()=>{
+    const report=crashReport;if(!report)return;
+    downloadCrash.disabled=true;
+    try{
+        const save=report.context.save&&{...report.context.save};
+        if(save&&report.bytes){
+            const file=new FileReader();
+            save.base64=await new Promise((resolve,reject)=>{
+                file.onload=()=>resolve(file.result.slice(file.result.indexOf(',')+1));
+                file.onerror=()=>reject(file.error);
+                file.readAsDataURL(new Blob([report.bytes],{type:'application/octet-stream'}));
+            });
+        }
+        const contents={version:1,build:buildVersion,failedAtMs:report.failedAtMs,tile:report.context.tile,save};
+        const url=URL.createObjectURL(new Blob([JSON.stringify(contents,null,2)],{type:'application/json'}));
+        const link=document.createElement('a');link.href=url;link.download='trinsic-crash-report.json';link.click();
+        setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }catch(error){console.warn(error);status.textContent='Could not create the crash download. Try again.'}
+    finally{downloadCrash.disabled=false}
+};
 function updateSetup(){
-    for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=selecting||launching;
+    for(const element of document.querySelectorAll('#setup input, #setup button')){
+        if(!element.closest('#usage-settings'))element.disabled=selecting||launching;
+    }
     play.disabled=!install||selecting||launching;
     document.querySelector('#new-game').disabled=play.disabled;
     document.querySelector('#game-selection').textContent=install?'Ultima VII ready':'No folder selected';
@@ -180,8 +233,8 @@ let checkpointDirty=true,lastCheckpointAt=0,lastCheckpointAttempt=0,lastProfileS
 let lastActionAt=0,mutationVersion=0,persistence=Promise.resolve(),persisting=0;
 const autosaveIdleMs=1500;
 function publishFrame(frame){telemetry.event('frame',frame);
-    const player=frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0');
-    if(player){const fields=player.split(' ');document.querySelector('#coords').textContent=fields[4]+', '+fields[5]}
+    const tile=playerTile(frame);
+    if(tile){lastTile=tile;document.querySelector('#coords').textContent=tile.x+', '+tile.y}
     globalThis.trinsicLastFrame=frame;
 }
 async function checkpoint(){
@@ -258,7 +311,8 @@ async function receive({data}){
         if(data.save){
             persisting++;
             const saved=persistence.catch(()=>{}).then(async()=>{
-            await browserSave(data.save,Date.now(),data.saveSlot);
+            const tile=playerTile(data.frame);
+            await browserSave(data.save,Date.now(),data.saveSlot,tile);
             if(runtime&&(!request.automatic||Date.now()-lastProfileSync>=10000)){
                 await new Promise((resolve,reject)=>runtime.FS.syncfs(false,e=>e?reject(e):resolve()));lastProfileSync=Date.now();
             }
@@ -266,8 +320,7 @@ async function receive({data}){
             lastCheckpointAt=Date.now();checkpointDirty=mutationVersion!==request.version;
             document.querySelector('#save-state').textContent=checkpointDirty?'Unsaved changes':request.automatic?'Autosaved':request.loading?'Loaded':'Saved';
             document.querySelector('#save-state').title=(external?'Folder + browser backup':'In this browser')+' · '+new Date(lastCheckpointAt).toLocaleTimeString();
-            const row=data.frame.split('\n').find(line=>line.startsWith('E ')&&line.split(' ')[8]==='0')?.split(' ');
-            globalThis.trinsicLastSave={automatic:request.automatic,time:lastCheckpointAt,coords:row?row[4]+', '+row[5]:'',durationMs:performance.now()-request.sentAt};
+            globalThis.trinsicLastSave={automatic:request.automatic,time:lastCheckpointAt,coords:tile?tile.x+', '+tile.y:'',durationMs:performance.now()-request.sentAt};
             if(!request.automatic)status.textContent=request.loading?'Loaded saved game':external?'Saved in folder and browser':'Saved in this browser';
             }).finally(()=>{persisting--});
             persistence=saved;
@@ -312,9 +365,12 @@ async function mountArtwork(){
 }
 async function launch(newGame=false){
     telemetry.event('begin');
+    lastTile=null;crashReport=null;downloadCrash.hidden=true;
     delete globalThis.trinsicFailure;launching=true;play.disabled=true;loading.start();loadingStep('Opening Black Gate…',2);
     document.querySelector('#setup').hidden=true;document.querySelector('#stage').hidden=false;
-    for(const element of document.querySelectorAll('#setup input, #setup button'))element.disabled=true;
+    for(const element of document.querySelectorAll('#setup input, #setup button')){
+        if(!element.closest('#usage-settings'))element.disabled=true;
+    }
     try{
         if(!crossOriginIsolated)throw Error('This site needs cross-origin isolation headers to run ClassicUO.');
         await slot(installKey,install);
@@ -332,12 +388,13 @@ async function launch(newGame=false){
         }else await slot(uoKey,uo);
         const experience=await fetch('experience.json?v='+buildVersion).then(r=>{if(!r.ok)throw Error('Game startup definition is missing');return r.json()});
         loadingStep('Opening your saved world…',50);
-        let saved=await slot(saveKey);
+        lastSave=await readBrowserSave();
+        let saved=lastSave?.bytes;
         try{
             const external=await saveFolder.read();
             // A newly chosen folder explicitly selects its existing save. Later
             // launches keep a newer browser backup made while permission was lost.
-            if(external&&(!saved||await slot('save-folder-load-v1')||saveFolder.modified>=(await slot('trinsic-save-time-v1')||0))){
+            if(external&&(!saved||await slot('save-folder-load-v1')||saveFolder.modified>=(lastSave?.details.savedAtMs||0))){
                 saved=external;await browserSave(external,saveFolder.modified);
             }
             if(saveFolder.available)await slot('save-folder-load-v1',false);
