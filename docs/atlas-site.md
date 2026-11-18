@@ -90,6 +90,28 @@ GitHub Pages must have `ultimaoffline7.com` set as its custom domain before addi
 
 The browser demo's storage and folder permissions belong to each origin. Existing browser-local saves at `vedit.github.io` are not automatically transferred to `ultimaoffline7.com`; retain an exported save or the configured external save folder before switching origins.
 
+## Website visits
+
+Cloudflare Web Analytics uses **manual JS snippet installation** for
+`ultimaoffline7.com`. DNS-only hosting does not support automatic injection.
+The exporter adds `game/site/web-analytics.html` to the homepage, sharing page
+and atlas galleries; redirect aliases are excluded to count their destinations
+once. The token in that snippet is a public site identifier, not an API secret.
+Keep automatic injection off even if proxying is enabled later.
+
+For a website-only update, run `python game/atlas/web_analytics.py <pages-worktree>`.
+It is idempotent and touches only top-level HTML, preserving the exact `play/`
+bundle. Publish the isolated diff through the normal Pages workflow. Verify that
+the live HTML includes exactly one beacon and that a browser loads it. Web
+Analytics can take a few minutes to show new traffic, and content blockers can
+prevent reporting. Historical unmeasured visits cannot be recovered.
+
+View site visits in the account's
+[Web Analytics dashboard](https://dash.cloudflare.com/9ba409024b123e5c7470039a1785b53b/web-analytics/overview?siteTag=0183f0fc3d944f16a66cf2783129d26b).
+This works with DNS-only records. Zone HTTP traffic/security charts require the
+Cloudflare proxy and are separate from browser-based Web Analytics. See
+[Cloudflare's manual setup](https://developers.cloudflare.com/web-analytics/get-started/#sites-not-proxied-through-cloudflare).
+
 ## Browser playtest analytics
 
 After preparing a browser export, run `python game/analytics/install.py <pages-worktree>/play`
