@@ -3635,7 +3635,7 @@ Module["FS"] = FS;
 // End JS library exports
 // end include: postlibrary.js
 var ASM_CONSTS = {
-  47948: () => Module.developerWand ? 1 : 0
+  48187: () => Module.developerWand ? 1 : 0
 };
 
 function web_read_command(buffer, capacity) {
@@ -3648,6 +3648,7 @@ function web_read_command(buffer, capacity) {
   const command = op === 4 ? (new TextDecoder).decode(new Uint8Array(q.buffer, 16, sequence).slice()) : op === 1 ? "0 0 SYNC" : sequence + " 1 " + (op === 2 ? "STEP " + dir : "SAVE");
   Atomics.store(q, 0, 0);
   const action = command.trim().split(" ")[2];
+  Module.checkpoint = action === "CHECKPOINT";
   Module.saving = op === 3 || [ "SAVE", "CHECKPOINT", "DBGSAVE", "LOAD" ].includes(action);
   stringToUTF8(command, buffer, capacity);
   return 1;
@@ -3656,7 +3657,7 @@ function web_read_command(buffer, capacity) {
 function web_send_frame(text) {
   const frame = UTF8ToString(text);
   const slot = Number(frame.split("\n").find(row => row.startsWith("SV "))?.split(" ")[1] || 0);
-  const save = Module.saving && frame.split(" ", 6)[5] === "ok" ? FS.readFile("GAME" + String(slot).padStart(2, "0") + ".U7") : null;
+  const save = Module.saving && frame.split(" ", 6)[5] === "ok" ? FS.readFile(Module.checkpoint ? "GAME10.U7" : "GAME" + String(slot).padStart(2, "0") + ".U7") : null;
   postMessage({
     frame,
     save,

@@ -1,4 +1,4 @@
-import {validSave} from './folders.js?v=4f88c1296377174f';
+import {validSave} from './folders.js?v=530fd6d7ed136e47';
 
 const lifetimeMs = 24 * 60 * 60 * 1000;
 const tokenPattern = /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;

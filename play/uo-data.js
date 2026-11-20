@@ -19,12 +19,12 @@ function validate(files){
         if(!(names.has('mainmisc.uop')&&names.has(uop))&&!(names.has(mul)&&names.has(idx)))throw Error('Missing UO data: '+uop+' or '+mul+' / '+idx);
     }
 }
-export async function selectUO(files,progress){
+export async function selectUO(files,progress,spec){
     const candidates=files.filter(f=>f.name.toLowerCase()==='hues.mul');
     if(candidates.length!==1)throw Error('Choose one UO Classic client folder containing hues.mul.');
     const parent=f=>f.webkitRelativePath.split('/').slice(0,-1).join('/');
     const root=parent(candidates[0]);
-    return compactUO(files.filter(f=>parent(f)===root&&allowed.test(f.name.toLowerCase())).map(f=>[f.name.toLowerCase(),f]),progress);
+    return compactUO(files.filter(f=>parent(f)===root&&allowed.test(f.name.toLowerCase())).map(f=>[f.name.toLowerCase(),f]),progress,spec);
 }
 
 // The same lookup3 filename hash used by ClassicUO's UOP reader.
@@ -125,8 +125,8 @@ async function animationRecords(files,initial){
     }
     return records;
 }
-export async function compactUO(input,progress=()=>{}){
-    validate(input);const spec=await manifest(),files=new Map(input);
+export async function compactUO(input,progress=()=>{},spec){
+    validate(input);spec??=await manifest();const files=new Map(input);
     if(files.has(marker)){
         const info=JSON.parse(await files.get(marker).text());
         if(info.version!==spec.version||info.dependencySha256!==spec.dependencySha256){const error=Error('Updating the cached game data…');error.code='UO_UPDATE_REQUIRED';throw error}

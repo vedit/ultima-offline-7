@@ -1,6 +1,6 @@
-import {PlayerSession} from './session-v2.js?v=4f88c1296377174f';
-import {UUID} from './schema.js?v=4f88c1296377174f';
-import {CRASH_SAVE_MAX_BYTES} from './crash-save.js?v=4f88c1296377174f';
+import {PlayerSession} from './session-v2.js?v=530fd6d7ed136e47';
+import {UUID} from './schema.js?v=530fd6d7ed136e47';
+import {CRASH_SAVE_MAX_BYTES} from './crash-save.js?v=530fd6d7ed136e47';
 
 export const PREFERENCE='uo7-usage-reporting-v2',IDENTITY='uo7-player-v2';
 export const CRASH_PREFERENCE='uo7-crash-details-v1';

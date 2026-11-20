@@ -52,7 +52,6 @@ onmessage = async ({data}) => {
         }
         for(const [slot,bytes] of data.saves||[])if(bytes&&slot>=0&&slot<10)fs.writeFile('GAME'+String(slot).padStart(2,'0')+'.U7',new Uint8Array(bytes));
         const slot=data.activeSlot>=0&&data.activeSlot<10?data.activeSlot:0;
-        if(data.save)fs.writeFile('GAME'+String(slot).padStart(2,'0')+'.U7', new Uint8Array(seed));
         fs.writeFile('active-slot.txt',String(slot));
         module.callMain([]);
         throw new Error("The Black Gate engine exited.");

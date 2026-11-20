@@ -1,13 +1,13 @@
-import {importInstall} from './install.js?v=4f88c1296377174f';
-import {installInput} from './client-input.js?v=4f88c1296377174f';
-import {compactUO,megabytes} from './uo-data.js?v=4f88c1296377174f';
-import {downloadUO} from './uo-download.js?v=4f88c1296377174f';
-import {steamPath,SaveFolder} from './folders.js?v=4f88c1296377174f';
-import {selectMusic,ExultMusic} from './exult-music.js?v=4f88c1296377174f';
-import {LoadingScreen} from './loading.js?v=4f88c1296377174f';
-import {prepareIntro} from './intro.js?v=4f88c1296377174f';
-import {installAudio} from './audio.js?v=4f88c1296377174f';
-import {readReplay} from './replay-store.js?v=4f88c1296377174f';
+import {importInstall} from './install.js?v=530fd6d7ed136e47';
+import {installInput} from './client-input.js?v=530fd6d7ed136e47';
+import {compactUO,megabytes} from './uo-data.js?v=530fd6d7ed136e47';
+import {downloadUO} from './uo-download.js?v=530fd6d7ed136e47';
+import {steamPath,SaveFolder} from './folders.js?v=530fd6d7ed136e47';
+import {selectMusic,ExultMusic} from './exult-music.js?v=530fd6d7ed136e47';
+import {LoadingScreen} from './loading.js?v=530fd6d7ed136e47';
+import {prepareIntro} from './intro.js?v=530fd6d7ed136e47';
+import {installAudio} from './audio.js?v=530fd6d7ed136e47';
+import {readReplay} from './replay-store.js?v=530fd6d7ed136e47';
 
 const replayId=new URL(location.href).searchParams.get('replay');
 const isReplay=replayId!==null;
@@ -116,7 +116,7 @@ function removeSlots(keys){return new Promise((resolve,reject)=>{
     const tx=db.transaction('slots','readwrite');for(const key of keys)tx.objectStore('slots').delete(key);
     tx.oncomplete=resolve;tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
-function browserSave(bytes,time=Date.now(),saveSlot,tile=null){
+function browserSave(bytes,time=Date.now(),saveSlot,tile=null,manual=true){
     const numbered=Number.isInteger(saveSlot)&&saveSlot>=0&&saveSlot<10;
     const details={slot:numbered?saveSlot:null,tile,savedAtMs:time};
     if(isReplay){lastSave={bytes,details};return Promise.resolve()}
@@ -124,7 +124,10 @@ function browserSave(bytes,time=Date.now(),saveSlot,tile=null){
     const tx=db.transaction('slots','readwrite'),store=tx.objectStore('slots');
     store.put(bytes,saveKey);store.put(time,'trinsic-save-time-v1');
     store.put(details,'trinsic-save-details-v1');
-    if(numbered){store.put(bytes,'trinsic-slot-'+saveSlot+'-v1');store.put(saveSlot,'trinsic-active-slot-v1')}
+    if(numbered){
+        if(manual)store.put(bytes,'trinsic-slot-'+saveSlot+'-v1');
+        store.put(saveSlot,'trinsic-active-slot-v1');
+    }
     tx.oncomplete=()=>{lastSave={bytes,details};resolve()};tx.onabort=tx.onerror=()=>reject(tx.error);
 })}
 function readBrowserSave(){return new Promise((resolve,reject)=>{
@@ -324,7 +327,7 @@ async function receive({data}){
             persisting++;
             const saved=persistence.catch(()=>{}).then(async()=>{
             const tile=playerTile(data.frame);
-            await browserSave(data.save,Date.now(),data.saveSlot,tile);
+            await browserSave(data.save,Date.now(),data.saveSlot,tile,!request.automatic);
             if(!isReplay&&runtime&&(!request.automatic||Date.now()-lastProfileSync>=10000)){
                 await new Promise((resolve,reject)=>runtime.FS.syncfs(false,e=>e?reject(e):resolve()));lastProfileSync=Date.now();
             }
@@ -376,6 +379,14 @@ async function mountArtwork(){
     }
 }
 async function launch(newGame=false){
+    if(isReplay)return startGame(newGame);
+    await navigator.locks.request('trinsic-player-session',{ifAvailable:true},async lock=>{
+        if(!lock){status.textContent='The game is open in another tab. Close it to play here.';loading.finish();return}
+        await startGame(newGame);
+        if(engine)await new Promise(()=>{}); // Document lifetime owns the game.
+    });
+}
+async function startGame(newGame){
     telemetry.event('begin');
     lastTile=null;crashReport=null;downloadCrash.hidden=true;
     delete globalThis.trinsicFailure;launching=true;play.disabled=true;loading.start();loadingStep('Opening Black Gate…',2);
@@ -422,6 +433,12 @@ async function launch(newGame=false){
         telemetry.event('stage','native');
         const saves=isReplay?[[0,replay.bytes]]:await Promise.all(Array.from({length:10},async(_,n)=>[n,await slot('trinsic-slot-'+n+'-v1')]));
         let activeSlot=isReplay?0:await slot('trinsic-active-slot-v1')||0;
+        // Migrate single-save profiles once. A modern resume archive stays separate from F5.
+        if(saved && !isReplay && !(await slot('separate-resume-v1')) && saves.every(([,bytes])=>!bytes)){
+            saves[activeSlot][1]=saved;
+            await slot('trinsic-slot-'+activeSlot+'-v1',saved);
+        }
+        if(!isReplay)await slot('separate-resume-v1',true);
         if(newGame&&saved){
             const latest=new Uint8Array(saved);
             const same=bytes=>bytes&&bytes.byteLength===latest.byteLength&&new Uint8Array(bytes).every((value,i)=>value===latest[i]);

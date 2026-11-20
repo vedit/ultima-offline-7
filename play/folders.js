@@ -1,4 +1,4 @@
-import {validSave} from './analytics/crash-save.js?v=4f88c1296377174f';
+import {validSave} from './analytics/crash-save.js?v=530fd6d7ed136e47';
 export {validSave};
 
 // A browser can remember a granted directory, but cannot open an arbitrary OS path.
