@@ -1,13 +1,27 @@
 <!doctype html>
 <html lang="en">
 <meta charset="utf-8">
+<base href="releases/0817e12bccb7ea7aa00d72f96f699481f1192cd6f4c007c15bab05efe08ec549/">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="uo7-analytics" content="https://telemetry.ultimaoffline7.com/collect">
+<meta name="uo-plan" content="uo-download-plan.json">
 <meta name="uo-api-base" content="https://ultima-offline-trinsic.firatarig.chatgpt.site/api/uo/">
 <title>Ultima Offline · Trinsic</title>
 <style>
 *{box-sizing:border-box}body{margin:0;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#151b18;color:#e8e4d7;font:16px system-ui}header{padding:16px 24px;display:flex;gap:24px;align-items:center;border-bottom:1px solid #394439;flex-shrink:0}h1{font:25px Georgia;margin:0}h1 a{color:inherit;text-decoration:none}h1 a:hover{text-decoration:underline}summary{cursor:pointer;color:#c6cbbb;padding:10px 0}summary:focus-visible{outline:2px solid #e9d5a3;outline-offset:3px}#options{margin:0 0 16px}#options[open]>summary{margin-bottom:6px}#status{flex:1;color:#c6cbbb;font-size:14px}h2{font:32px Georgia;margin:0 0 16px}p{line-height:1.6;color:#bfc8bb;margin:12px 0}button,input::file-selector-button{background:#c8ae71;color:#181d17;border:0;padding:10px 16px;border-radius:4px;font:inherit;cursor:pointer}button:disabled{opacity:.4;cursor:wait}button:focus-visible,a:focus-visible{outline:2px solid #e9d5a3;outline-offset:4px}.quiet{background:transparent;color:#d9bd7c;border:1px solid #56604f;font-size:13px;padding:7px 11px}.field{border-top:1px solid #394439;padding:20px 0}.field label{display:block;font-weight:600;margin-bottom:12px}.optional{font-weight:400;color:#a9b49f;font-size:13px;margin-left:7px}.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.hint{font-size:13px;color:#a9b49f;overflow-wrap:anywhere}.selection{font-size:14px;color:#c6cbbb;overflow-wrap:anywhere}#setup{width:min(600px,calc(100% - 32px));margin:clamp(16px,4vh,44px) auto;padding:28px 32px;background:#202a23;border:1px solid #465343;border-radius:8px;min-height:0;overflow:auto}#details{font-size:13px;margin-bottom:0}#play{width:100%;margin-top:4px}#stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#101511}canvas{display:block;flex:none;outline:0;image-rendering:pixelated;cursor:none;touch-action:none}#coords{font-variant-numeric:tabular-nums;font-size:13px}code{font-size:12px}input[type=file]{max-width:100%;font-size:13px}input[type=range]{accent-color:#c8ae71;width:140px}[hidden]{display:none!important}@media(max-width:650px){header{padding:12px 16px;gap:12px;flex-wrap:wrap}h1{font-size:23px}#status{min-width:130px}#setup{padding:24px}#coords{display:none}}
 header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8px;z-index:7;background:#202a23;box-shadow:0 2px 8px #0008}#save-state{font-size:12px;color:#a9b49f;white-space:nowrap}#loading{position:fixed;inset:0;z-index:5;display:grid;place-items:center;padding:90px 24px 24px;background:#101511}.loading-card{width:min(420px,100%);text-align:center}.loading-ring{width:92px;height:92px;margin:0 auto 24px;border:3px solid #354035;border-top-color:#d9bd7c;border-radius:50%;animation:loading-turn 1.2s linear infinite}#loading h2{font-size:32px}#loading-percent{font:36px Georgia;color:#d9bd7c;margin:16px 0}#loading-progress{appearance:none;width:100%;height:6px;border:0;border-radius:4px;background:#354035}#loading-progress::-webkit-progress-bar{background:#354035;border-radius:4px}#loading-progress::-webkit-progress-value{background:#c8ae71;border-radius:4px}#loading-progress::-moz-progress-bar{background:#c8ae71}#loading-step{min-height:24px}#loading-detail{font-size:13px;color:#a9b49f}#loading-actions{justify-content:center;margin-top:24px}.failed .loading-ring,.failed #loading-percent,.failed #loading-progress{display:none}@keyframes loading-turn{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.loading-ring{animation:none}}
+@media(max-width:400px){#setup{margin:8px auto;padding:16px}}
+</style>
+<style id="reporting-style">
+#usage-settings{position:relative;padding:12px 0}
+#usage-settings>label{display:flex;align-items:center;gap:8px;min-height:32px;margin:0 80px 0 0;font-size:14px;font-weight:400;cursor:pointer}
+#usage-settings input{accent-color:#c8ae71}
+#usage-settings>label input{flex:none;margin:0}
+#reporting-options>summary{position:absolute;right:0;top:12px;padding:6px 2px;font-size:14px}
+#reporting-options label{margin:14px 0 2px;font-size:14px}
+#reporting-options label+p{margin:0 0 10px}
+#reporting-options a{color:#d9bd7c}
+#usage-notice:empty{display:none}
 </style>
 <header id="toolbar"><h1><a href="https://ultimaoffline7.com/" aria-label="Ultima Offline homepage">Ultima Offline</a></h1><span id="status">Choose your Ultima VII folder</span><span id="save-state" aria-live="polite"></span><span id="coords"></span><button id="download-crash" class="quiet" hidden>Download crash report</button><button id="folders" class="quiet" hidden>Folders</button><button id="hide-toolbar" class="quiet" aria-label="Hide top bar" hidden>Hide bar</button></header>
 <button id="show-toolbar" class="quiet" aria-label="Show top bar" hidden>Show bar</button>
@@ -34,16 +48,19 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 </div>
 <div class="field"><div id="steam-hint" class="hint" hidden><p>Steam’s usual location:<br><code id="steam-path"></code></p><button id="copy-steam" class="quiet" disabled>Copy Steam path</button></div></div>
 </details>
-<div class="field" id="usage-settings">
-<label style="font-size:14px;font-weight:400"><input type="checkbox" id="usage-reporting" disabled> Share gameplay analytics</label>
-<p class="hint">Share playtime, progress, save activity and performance using a random browser ID. <a href="./analytics/privacy.html" target="_blank" rel="noopener" style="color:#d9bd7c">Details</a>. Enabling applies next launch; disabling stops reporting now.</p>
-<button type="button" id="usage-reset" disabled>Reset analytics ID</button>
-<label><input type="checkbox" id="crash-reporting" disabled> Include crash location and last save details</label>
-<p class="hint">Shares the last observed tile and the save’s slot, tile, and time after a detected failure. The save file is available in the local crash download.</p>
-<label><input type="checkbox" id="crash-save-reporting" disabled> Send my last save if the game crashes</label>
-<p class="hint">The save can include your character name and progress. The project owner can open it for seven days from the private crash dashboard. This setting is off by default.</p>
+<section class="field" id="usage-settings" aria-label="Reporting preferences">
+<label><input type="checkbox" id="usage-reporting" disabled> Share gameplay analytics</label>
+<details id="reporting-options">
+<summary aria-label="Reporting options">Options</summary>
+<p class="hint">Share playtime, progress, save activity and performance with a random browser ID. Turning this on takes effect next launch. Turning it off stops reporting immediately. <a href="./analytics/privacy.html" target="_blank" rel="noopener">Privacy details</a></p>
+<label><input type="checkbox" id="crash-reporting" aria-describedby="crash-details-hint" disabled> Include crash location and last save details</label>
+<p class="hint" id="crash-details-hint">Share your last observed tile and your save’s slot, tile and time after a crash.</p>
+<label><input type="checkbox" id="crash-save-reporting" aria-describedby="crash-save-hint" disabled> Send my last save if the game crashes</label>
+<p class="hint" id="crash-save-hint">Off by default. The save can include your character name and progress. The project owner can open it for seven days in the private crash dashboard.</p>
+<button type="button" class="quiet" id="usage-reset" disabled>Reset analytics ID</button>
+</details>
 <p class="hint" id="usage-notice" role="status"></p>
-</div>
+</section>
 <button id="play" disabled>Play now</button><p id="details">Your game files stay on this computer.</p>
 <p id="new-game-row"><button id="new-game" class="quiet" disabled>New journey</button> <span class="hint">Keeps your existing saves in their slots.</span></p>
 <p class="hint"><a id="build-info" href="build-info.json" target="_blank">Build details</a></p>
@@ -52,6 +69,6 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 <section id="loading" hidden aria-label="Loading Trinsic">
 <div class="loading-card"><div class="loading-ring" aria-hidden="true"></div><h2>Opening Trinsic</h2><p id="loading-step" role="status">Preparing the game…</p><div id="loading-percent" aria-hidden="true">0%</div><progress id="loading-progress" max="100" value="0" aria-label="Estimated startup progress"></progress><p id="loading-detail">Estimated startup progress</p><div id="loading-actions" class="row" hidden><button id="loading-retry">Retry</button><button id="loading-folders" class="quiet">Folder settings</button></div></div>
 </section>
-<script src="coi-serviceworker.js?v=530fd6d7ed136e47"></script>
-<script type="module" src="client.js?v=530fd6d7ed136e47&amp;usage=2"></script>
+<script src="../../coi-ee2d19e5c95845a508df60d77ae31f66fbfaab9d5e36440b220e2db8c90b4ecc.js"></script>
+<script type="module" src="client.js?v=712fee8ef5a9ee43&amp;usage=2"></script>
 </html>
