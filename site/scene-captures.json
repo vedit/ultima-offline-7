@@ -8,10 +8,10 @@
         0
       ],
       "avatar": "Vedit",
-      "uo7_zoom": "0.7",
+      "uo7_zoom": "0.6",
       "shared_checkpoint_sha256": "3203038dacd853876e9837cd25fb133f74b7f55b11cae09b5761121f8bfe3cdf",
       "original_renderer": "Portable original Ultima VII renderer with original game assets",
-      "current_renderer": "ClassicUO with approved Christopher artwork and Party button",
+      "current_renderer": "ClassicUO with Vedit's paperdoll and compact character status",
       "files": {
         "barn-overview-u7.png": {
           "sha256": "b1f30c226eb273638b25568fdd0b8f7a3b4d8e2dba40c541b4ab3048387e974a",
@@ -21,13 +21,14 @@
           ]
         },
         "barn-overview-uo7.png": {
-          "sha256": "39087f18cad88850f2bb56a6c798afa11afa7f4bf7ff466a8046052fca8d60a8",
+          "sha256": "48625b7b6dfef4fe2d562b33741426a0d491332c51f385ce6a0ff92436572980",
           "size": [
-            1440,
+            1200,
             900
           ]
         }
-      }
+      },
+      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3"
     },
     {
       "id": "fellowship-interior",
@@ -37,10 +38,10 @@
         0
       ],
       "avatar": "Vedit",
-      "uo7_zoom": "0.7",
+      "uo7_zoom": "0.6",
       "shared_checkpoint_sha256": "492e78cbc5ee9974f78d3fcb25c2770f2879dd3fe13200badcc2b10e1199e628",
       "original_renderer": "Portable original Ultima VII renderer with original game assets",
-      "current_renderer": "ClassicUO with approved scene artwork and Party button",
+      "current_renderer": "ClassicUO with Vedit's paperdoll and expanded character status",
       "files": {
         "fellowship-interior-u7.png": {
           "sha256": "30b5fce19d1c97f868cc4d7841447a26be6bfc93e65d70b6f0ce2ffab9ef00a6",
@@ -50,19 +51,20 @@
           ]
         },
         "fellowship-interior-uo7.png": {
-          "sha256": "574815d90e9a5b1c32d9d8676562feb9cabf5f20e3e6345548f84f07da870e3a",
+          "sha256": "40a2e8e145071ca6080f73c81bf3f2a077ceb16e6cfb15f07dccd2961767bd3a",
           "size": [
-            1440,
+            1200,
             900
           ]
         }
-      }
+      },
+      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3"
     },
     {
       "id": "guardian-dream",
       "comparison_kind": "original cutscene versus playable dream adaptation",
       "original_renderer": "Original Ultima VII DOS intro, captured by the existing js-dos video interface",
-      "current_renderer": "ClassicUO in-engine Guardian dream; existing approved homepage capture",
+      "current_renderer": "ClassicUO in-engine Guardian dream during the opening speech",
       "original_capture_elapsed_ms": 56501,
       "original_program_sha256": "6c7ec86d720f49ba5e47b15e5c26292c950ab002365a6bd43ca967c2309a2587",
       "dosbox_wasm_sha256": "b33afba80de1a420c123086e5952d135de041f9e85d4444170e29d9249ec049c",
@@ -75,13 +77,15 @@
           ]
         },
         "guardian-dream-uo7.png": {
-          "sha256": "4627c5db5ac43789183957aa8f2ac51e1534cf08cae960c588e86aafb6146d08",
+          "sha256": "fea12e975465cf95c64710c40be2b11382048af2f6f2e2f3f0a04439c35a144b",
           "size": [
-            1440,
+            1200,
             900
           ]
         }
-      }
+      },
+      "uo7_zoom": "1",
+      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3"
     }
   ]
 }

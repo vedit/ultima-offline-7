@@ -7,7 +7,7 @@
     },
     "site/barn-overview-uo7.png": {
       "source": "supplied-client-capture/barn-overview-uo7.png",
-      "sha256": "39087f18cad88850f2bb56a6c798afa11afa7f4bf7ff466a8046052fca8d60a8"
+      "sha256": "48625b7b6dfef4fe2d562b33741426a0d491332c51f385ce6a0ff92436572980"
     },
     "site/fellowship-interior-u7.png": {
       "source": "supplied-client-capture/fellowship-interior-u7.png",
@@ -15,7 +15,7 @@
     },
     "site/fellowship-interior-uo7.png": {
       "source": "supplied-client-capture/fellowship-interior-uo7.png",
-      "sha256": "574815d90e9a5b1c32d9d8676562feb9cabf5f20e3e6345548f84f07da870e3a"
+      "sha256": "40a2e8e145071ca6080f73c81bf3f2a077ceb16e6cfb15f07dccd2961767bd3a"
     },
     "site/guardian-dream-u7.png": {
       "source": "supplied-client-capture/guardian-dream-u7.png",
@@ -23,11 +23,11 @@
     },
     "site/guardian-dream-uo7.png": {
       "source": "supplied-client-capture/guardian-dream-uo7.png",
-      "sha256": "4627c5db5ac43789183957aa8f2ac51e1534cf08cae960c588e86aafb6146d08"
+      "sha256": "fea12e975465cf95c64710c40be2b11382048af2f6f2e2f3f0a04439c35a144b"
     },
     "site/scene-captures.json": {
       "source": "paired renderer capture receipt",
-      "sha256": "d27e16860b59fbacd55e69c6528629f25507c0a5257ac644481cc0e4486cc955"
+      "sha256": "fc6eb55f6063ff9f57badaa7d5452e08598bb83f640c8e1c262333547b51a836"
     },
     "site/glass-sword.png": {
       "source": "armory.html / 604 / ground",
@@ -43,15 +43,15 @@
     },
     "site/home.css": {
       "source": "game/site/home.css",
-      "sha256": "c00431a66eafe3b44aa5ff33df25cfa39ee1a7851e9f45204500941f0725d67c"
+      "sha256": "72d42638525f9489c0547a1519d7e80592b0b9f1c89fa22f002fe2bf97470c45"
     },
     "site/home.js": {
       "source": "game/site/home.js",
-      "sha256": "be2535014bc25c75d15b37ee09d8e06a6d6fb3c3eeec75a720109629b06f01be"
+      "sha256": "fdf6e82be0a7e37e741a4804a98dd4ca88ed7d77d8713f26d9e50738d1fd9ccc"
     },
     "index.html": {
       "source": "game/site/index.html",
-      "sha256": "4f64b0cac887f06daa004d604a52b85d84064f42a3b619075d1e1671f7fa4644"
+      "sha256": "e91966ce4cf55269fdd9badfae8561d10c2a70214d21aed2dbe1eb4f9d0216c4"
     }
   }
 }
