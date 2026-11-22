@@ -1,16 +1,16 @@
 {
   "journey": {
     "desktop": {
-      "run": "parity-investigation-19c686e4-7524-4782-85b3-c12d5e9d3255",
+      "run": "parity-investigation-0dff8df1-a354-415b-b162-43b3eb0d6eee",
       "status": "passed",
-      "seconds": 597.09,
+      "seconds": 617.07,
       "original_opening": true,
       "from_creation": true,
       "debug": false,
       "audit": false,
       "host_sha256": "2350ba6f6c14c03232ee4838c4aea04fad142fa2be8c562863bfc8f189c57912",
       "client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
-      "batches": 3193,
+      "batches": 3222,
       "milestones": [
         [
           "opening choice",
@@ -99,8 +99,8 @@
         [
           "answer",
           [
-            1063,
-            2214,
+            1075,
+            2206,
             0
           ],
           {
@@ -119,8 +119,8 @@
         [
           "answer",
           [
-            1063,
-            2214,
+            1075,
+            2206,
             0
           ],
           {
@@ -139,8 +139,8 @@
         [
           "answer",
           [
-            1063,
-            2214,
+            1075,
+            2206,
             0
           ],
           {
@@ -159,8 +159,8 @@
         [
           "key reported",
           [
-            1063,
-            2214,
+            1075,
+            2206,
             0
           ],
           {
@@ -214,8 +214,8 @@
         [
           "answer",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -234,8 +234,8 @@
         [
           "answer",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -254,8 +254,8 @@
         [
           "answer",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -274,8 +274,8 @@
         [
           "answer",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -294,8 +294,8 @@
         [
           "answer",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -314,8 +314,8 @@
         [
           "answer",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -334,8 +334,8 @@
         [
           "answer",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -354,8 +354,8 @@
         [
           "answer",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -374,8 +374,8 @@
         [
           "Spark witness",
           [
-            985,
-            2128,
+            958,
+            2153,
             0
           ],
           {
@@ -510,8 +510,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -530,8 +530,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -550,8 +550,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -570,8 +570,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -590,8 +590,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -610,8 +610,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -630,8 +630,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -650,8 +650,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -670,8 +670,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -690,8 +690,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -710,8 +710,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -730,8 +730,8 @@
         [
           "geography",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -744,34 +744,14 @@
             "72": 1,
             "90": 1
           },
-          "\"What is the latitude of the northern-most point of the island Spektran?\"",
-          120
+          "\"What latitude runs through the center of Dagger Isle?\"",
+          0
         ],
         [
           "geography",
           [
-            985,
-            2205,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What longitude runs through the center of Skara Brae?\"",
-          60
-        ],
-        [
-          "geography",
-          [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -788,10 +768,30 @@
           60
         ],
         [
+          "geography",
+          [
+            986,
+            2203,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What is the latitude of the northern-most point of the island Spektran?\"",
+          120
+        ],
+        [
           "password earned",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -874,12 +874,18 @@
         "journey-06.png",
         "journey-07.png",
         "journey-08.png",
-        "journey-09.png"
+        "journey-09.png",
+        "journey-10.png",
+        "journey-11.png",
+        "journey-12.png",
+        "journey-13.png",
+        "journey-14.png",
+        "journey-15.png"
       ],
       "limits": "Uses frontend action/widget handlers; not OS pointer automation for every input."
     },
     "browser": {
-      "build": "4a69543af168",
+      "build": "df3bd5ae013b",
       "tile": [
         1107,
         2214,
@@ -974,8 +980,8 @@
         [
           "answer",
           [
-            1069,
-            2213,
+            1074,
+            2216,
             0
           ],
           {
@@ -994,8 +1000,8 @@
         [
           "answer",
           [
-            1069,
-            2213,
+            1074,
+            2216,
             0
           ],
           {
@@ -1014,8 +1020,8 @@
         [
           "answer",
           [
-            1069,
-            2213,
+            1074,
+            2216,
             0
           ],
           {
@@ -1034,8 +1040,8 @@
         [
           "key reported",
           [
-            1069,
-            2213,
+            1074,
+            2216,
             0
           ],
           {
@@ -1089,9 +1095,9 @@
         [
           "answer",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1109,9 +1115,9 @@
         [
           "answer",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1129,9 +1135,9 @@
         [
           "answer",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1149,9 +1155,9 @@
         [
           "answer",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1169,9 +1175,9 @@
         [
           "answer",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1189,9 +1195,9 @@
         [
           "answer",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1209,9 +1215,9 @@
         [
           "answer",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1229,9 +1235,9 @@
         [
           "answer",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1249,9 +1255,9 @@
         [
           "Spark witness",
           [
-            973,
-            2142,
-            0
+            972,
+            2133,
+            6
           ],
           {
             "60": 1,
@@ -1385,8 +1391,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1405,8 +1411,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1425,8 +1431,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1445,8 +1451,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1465,8 +1471,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1485,8 +1491,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1505,8 +1511,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1525,8 +1531,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1545,8 +1551,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1565,8 +1571,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1585,8 +1591,8 @@
         [
           "answer",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1605,8 +1611,8 @@
         [
           "geography",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1619,34 +1625,14 @@
             "72": 1,
             "90": 1
           },
-          "\"What latitude runs through the center of the Deep Forest?\"",
-          60
+          "\"What latitude runs through the center of Skara Brae?\"",
+          30
         ],
         [
           "geography",
           [
-            983,
-            2197,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What longitude runs through the center of the island Buccaneer's Den?\"",
-          60
-        ],
-        [
-          "geography",
-          [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1663,10 +1649,30 @@
           120
         ],
         [
+          "geography",
+          [
+            987,
+            2200,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What longitude runs through the center of Skara Brae?\"",
+          60
+        ],
+        [
           "password earned",
           [
-            983,
-            2197,
+            987,
+            2200,
             0
           ],
           {
@@ -1741,10 +1747,10 @@
       ]
     }
   },
-  "bundleSha256": "60f6331516b58b09d53514943814e1b19b47befe799c83cad2ee2858d08f32ba",
+  "bundleSha256": "46ef3e012f05cba6336e1372cbd6c4ad008ecf3db924f77c8ba21c0b29df44fa",
   "qualificationSha256": "319384fd4e259b3ac0bcef053dfac7ecb889ba7436af50a9558bf0a18a30e8d1",
   "build": {
-    "builtAt": "2026-11-22T09:27:44.385665+00:00",
+    "builtAt": "2026-11-22T10:35:35.021287+00:00",
     "game": "Current desktop Trinsic sources and installed artwork",
     "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
     "includesLocalDesktopChanges": true,
@@ -1762,9 +1768,9 @@
     "seedSaveSha256": "8d772efc424a6d2d74c5da7d4ed2f37fc5be98b9a0849a80925b1b76eb1372dd",
     "browserFoundation": "9b9957ad65ddd1778ae1ac7d0f00c1b9254ce9f2",
     "artworkSha256": "fce45287a0cc97eda528f582ef369acd8135840b516426a07ae4abe336e8358c",
-    "launcherSourceSha256": "f470af576a546bcd981a5c10cec4c936a43afdbe6d3693c1dbb84372d9c382c5",
+    "launcherSourceSha256": "bf3b4f80511f8a1afc778d9afb54f7ead74f47e3b76b0ad17128003b355146e3",
     "experienceSha256": "38831e9df00128fc5888b4070af176d4381bf4bbfe6fb9f5829c250271567f67",
-    "buildId": "4a69543af168"
+    "buildId": "df3bd5ae013b"
   },
   "checks": {
     "fullInvestigation": true,
@@ -1787,9 +1793,9 @@
     "mousewheelZoomPreference": true,
     "speechKeywordLoad": true
   },
-  "saveTile": "1077, 2178",
+  "saveTile": "1078, 2179",
   "evidence": "game/web/bin/parity-evidence",
-  "verifiedAt": "2026-11-22T09:42:37.464Z",
+  "verifiedAt": "2026-11-22T11:13:25.655Z",
   "events": [
     {
       "case": "speech-south-audio",
@@ -1800,18 +1806,18 @@
       "saveSha256": "eeb277c2dea61853f4123dda81ed0693bc360209ac0e70861bef1c3eb645a8d9",
       "commandsSha256": "704c38fb9fcd59ea9a7044cf877dc63059f9ab931670a8482756154f787f45e3",
       "desktopPcmSha256": "d9e063f57670bb823d8e0ef0401686b0881fce36f1f9669dee71c43fb2970d3f",
-      "renderedPcmSha256": "a6ed3dc206c72b7f076c5e449eeff48636938ec1318aa0a7503aafc01fe51a25",
+      "renderedPcmSha256": "19bf729d83e8b09012578fbb4fd33076d28d81d2ebed632ff956fd64121b0de4",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
-      "framesDuringStall": 14336,
-      "rmsDuringStall": 6456.03,
+      "framesDuringStall": 14464,
+      "rmsDuringStall": 6439.13,
       "identicalStereoFrames": 162186,
       "seconds": 3.378875,
       "desktopSoundBlasterToMixerMs": 15.3,
       "browserSoundBlasterToMixerMs": 15.3,
-      "browserSoundBlasterToOutputMs": 77.3,
-      "browserQueueMs": 62
+      "browserSoundBlasterToOutputMs": 88.6,
+      "browserQueueMs": 73.3
     },
     {
       "case": "music-pub",
@@ -1822,22 +1828,22 @@
       "saveSha256": "f882a451e8ee17baf6ab502c15e6ce1e62d31d6348f6be12879c3fa375746dcb",
       "commandsSha256": "e067086c6176b6a574b03a160a7ec87d52356746067e006020379a47802f9166",
       "desktopPcmSha256": "2a86118de32cd5927d3d587615a5607e5087da1799a86e39db4e441e35d99158",
-      "renderedPcmSha256": "85571a07763ab5b7bcae865b5e868c70c5112c01d053ae2b4f1e35e45bc43be4",
+      "renderedPcmSha256": "2b54d2ecff8a0a41b5204d2dcdb1086bd360930abc468217c5ae57c06b154e40",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
       "framesDuringStall": 14464,
-      "rmsDuringStall": 200.48,
+      "rmsDuringStall": 197.96,
       "channels": [
         {
-          "spectralCosine": 0.99972,
-          "browserOffsetMs": 60,
+          "spectralCosine": 0.99569,
+          "browserOffsetMs": 100,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         },
         {
-          "spectralCosine": 0.99975,
-          "browserOffsetMs": 60,
+          "spectralCosine": 0.99572,
+          "browserOffsetMs": 100,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         }

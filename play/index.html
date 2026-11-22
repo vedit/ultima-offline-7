@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<base href="releases/e99d79f9d75bfd77743e13ebea8a330569fe555ce7146314e7c6ffc544a7cc87/">
+<base href="releases/599cd69e83c2cb0f8e6452c3e788412dfe438d3b742c610cf17f4b03d8ef50e3/">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="uo7-analytics" content="https://telemetry.ultimaoffline7.com/collect">
 <meta name="uo-frame-art" content="frame-art.json">
@@ -19,7 +19,7 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 #usage-settings input{accent-color:#c8ae71}
 #usage-settings>label input{flex:none;margin:0}
 #reporting-options>summary{position:absolute;right:0;top:12px;padding:6px 2px;font-size:14px}
-#reporting-options label{margin:14px 0 2px;font-size:14px}
+#reporting-options label{margin:14px 0 2px;font-size:14px;cursor:pointer}
 #reporting-options label+p{margin:0 0 10px}
 #reporting-options a{color:#d9bd7c}
 #usage-notice:empty{display:none}
@@ -50,10 +50,11 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 <div class="field"><div id="steam-hint" class="hint" hidden><p>Steam’s usual location:<br><code id="steam-path"></code></p><button id="copy-steam" class="quiet" disabled>Copy Steam path</button></div></div>
 </details>
 <section class="field" id="usage-settings" aria-label="Reporting preferences">
-<label><input type="checkbox" id="usage-reporting" disabled> Share gameplay analytics</label>
+<label><input type="checkbox" id="usage-reporting" aria-describedby="usage-policy" disabled> Share gameplay analytics</label>
+<p class="hint" id="usage-policy" hidden>Your browser signals Do Not Track or Global Privacy Control. Reporting stays off while that signal is active. You can still save your choices here.</p>
 <details id="reporting-options">
 <summary aria-label="Reporting options">Options</summary>
-<p class="hint">Share playtime, progress, save activity and performance with a random browser ID. Turning this on takes effect next launch. Turning it off stops reporting immediately. <a href="./analytics/privacy.html" target="_blank" rel="noopener">Privacy details</a></p>
+<p class="hint">Share playtime, progress, save activity and performance with a random browser ID. Sharing starts on your next launch and stops as soon as you turn it off. Crash reports use the choices below only when gameplay analytics is on. <a href="./analytics/privacy.html" target="_blank" rel="noopener">Privacy details</a></p>
 <label><input type="checkbox" id="crash-reporting" aria-describedby="crash-details-hint" disabled> Include crash location and last save details</label>
 <p class="hint" id="crash-details-hint">Share your last observed tile and your save’s slot, tile and time after a crash.</p>
 <label><input type="checkbox" id="crash-save-reporting" aria-describedby="crash-save-hint" disabled> Send my last save if the game crashes</label>
@@ -71,5 +72,5 @@ header{position:relative;z-index:6}#show-toolbar{position:fixed;top:8px;right:8p
 <div class="loading-card"><div class="loading-ring" aria-hidden="true"></div><h2>Opening Trinsic</h2><p id="loading-step" role="status">Preparing the game…</p><div id="loading-percent" aria-hidden="true">0%</div><progress id="loading-progress" max="100" value="0" aria-label="Estimated startup progress"></progress><p id="loading-detail">Estimated startup progress</p><div id="loading-actions" class="row" hidden><button id="loading-retry">Retry</button><button id="loading-folders" class="quiet">Folder settings</button></div></div>
 </section>
 <script src="../../coi-ee2d19e5c95845a508df60d77ae31f66fbfaab9d5e36440b220e2db8c90b4ecc.js"></script>
-<script type="module" src="client.js?v=73c3b1d14644dd58&amp;usage=2"></script>
+<script type="module" src="client.js?v=85ffc3f2e02d0b40&amp;usage=2"></script>
 </html>
