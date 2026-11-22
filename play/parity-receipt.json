@@ -1,16 +1,16 @@
 {
   "journey": {
     "desktop": {
-      "run": "parity-investigation-ac728a89-1abc-401f-9ff9-f008c3d838b9",
+      "run": "parity-investigation-f8d7e5c5-49ca-44b8-8514-990d5e4f7a21",
       "status": "passed",
-      "seconds": 687.52,
+      "seconds": 814.16,
       "original_opening": true,
       "from_creation": true,
       "debug": false,
       "audit": false,
       "host_sha256": "2350ba6f6c14c03232ee4838c4aea04fad142fa2be8c562863bfc8f189c57912",
       "client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
-      "batches": 3697,
+      "batches": 3125,
       "milestones": [
         [
           "opening choice",
@@ -100,7 +100,7 @@
           "answer",
           [
             1069,
-            2197,
+            2206,
             0
           ],
           {
@@ -120,7 +120,7 @@
           "answer",
           [
             1069,
-            2197,
+            2206,
             0
           ],
           {
@@ -140,7 +140,7 @@
           "answer",
           [
             1069,
-            2197,
+            2206,
             0
           ],
           {
@@ -160,7 +160,7 @@
           "key reported",
           [
             1069,
-            2197,
+            2206,
             0
           ],
           {
@@ -214,9 +214,9 @@
         [
           "answer",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -234,9 +234,9 @@
         [
           "answer",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -254,9 +254,9 @@
         [
           "answer",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -274,9 +274,9 @@
         [
           "answer",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -294,9 +294,9 @@
         [
           "answer",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -314,9 +314,9 @@
         [
           "answer",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -334,9 +334,9 @@
         [
           "answer",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -354,9 +354,9 @@
         [
           "answer",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -374,9 +374,9 @@
         [
           "Spark witness",
           [
-            966,
-            2137,
-            6
+            974,
+            2131,
+            0
           ],
           {
             "60": 1,
@@ -510,8 +510,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -530,8 +530,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -550,8 +550,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -570,8 +570,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -590,8 +590,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -610,8 +610,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -630,8 +630,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -650,8 +650,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -670,8 +670,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -690,8 +690,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -710,8 +710,8 @@
         [
           "answer",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -730,28 +730,8 @@
         [
           "geography",
           [
-            983,
-            2203,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What latitude runs through the center of the Deep Forest?\"",
-          60
-        ],
-        [
-          "geography",
-          [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -770,8 +750,8 @@
         [
           "geography",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -784,14 +764,34 @@
             "72": 1,
             "90": 1
           },
-          "\"What longitude runs through the center of Skara Brae?\"",
+          "\"What latitude runs through the center of Buccaneer's Den?\"",
           60
+        ],
+        [
+          "geography",
+          [
+            985,
+            2205,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What latitude runs through the center of Skara Brae?\"",
+          30
         ],
         [
           "password earned",
           [
-            983,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -874,12 +874,15 @@
         "journey-06.png",
         "journey-07.png",
         "journey-08.png",
-        "journey-09.png"
+        "journey-09.png",
+        "journey-10.png",
+        "journey-11.png",
+        "journey-12.png"
       ],
       "limits": "Uses frontend action/widget handlers; not OS pointer automation for every input."
     },
     "browser": {
-      "build": "eab3539bbd70",
+      "build": "bc17a629212a",
       "tile": [
         1107,
         2214,
@@ -974,8 +977,8 @@
         [
           "answer",
           [
-            1076,
-            2215,
+            1056,
+            2219,
             0
           ],
           {
@@ -994,8 +997,8 @@
         [
           "answer",
           [
-            1076,
-            2215,
+            1056,
+            2219,
             0
           ],
           {
@@ -1014,8 +1017,8 @@
         [
           "answer",
           [
-            1076,
-            2215,
+            1056,
+            2219,
             0
           ],
           {
@@ -1034,8 +1037,8 @@
         [
           "key reported",
           [
-            1076,
-            2215,
+            1056,
+            2219,
             0
           ],
           {
@@ -1089,8 +1092,8 @@
         [
           "answer",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1109,8 +1112,8 @@
         [
           "answer",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1129,8 +1132,8 @@
         [
           "answer",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1149,8 +1152,8 @@
         [
           "answer",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1169,8 +1172,8 @@
         [
           "answer",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1189,8 +1192,8 @@
         [
           "answer",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1209,8 +1212,8 @@
         [
           "answer",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1229,8 +1232,8 @@
         [
           "answer",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1249,8 +1252,8 @@
         [
           "Spark witness",
           [
-            958,
-            2128,
+            972,
+            2122,
             0
           ],
           {
@@ -1619,27 +1622,7 @@
             "72": 1,
             "90": 1
           },
-          "\"What longitude runs through the center of Skara Brae?\"",
-          60
-        ],
-        [
-          "geography",
-          [
-            985,
-            2205,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What latitude runs through the center of Buccaneer's Den?\"",
+          "\"What latitude runs through the center of the Deep Forest?\"",
           60
         ],
         [
@@ -1663,6 +1646,26 @@
           120
         ],
         [
+          "geography",
+          [
+            985,
+            2205,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What longitude runs through the center of Skara Brae?\"",
+          60
+        ],
+        [
           "password earned",
           [
             985,
@@ -1684,7 +1687,7 @@
           "answer",
           [
             1092,
-            2217,
+            2215,
             0
           ],
           {
@@ -1704,7 +1707,7 @@
           "answer",
           [
             1092,
-            2217,
+            2215,
             0
           ],
           {
@@ -1741,10 +1744,10 @@
       ]
     }
   },
-  "bundleSha256": "c0ef0758e1bf337bf7158ebd6398c101aca1ee30195b5a8cf32bdbd1e71d0d8b",
+  "bundleSha256": "53a05e55c28988ec3407cbeeaf64e62df2e9fcb051cf3ab40e9943e16fdaaf12",
   "qualificationSha256": "319384fd4e259b3ac0bcef053dfac7ecb889ba7436af50a9558bf0a18a30e8d1",
   "build": {
-    "builtAt": "2026-11-22T14:31:06.947047+00:00",
+    "builtAt": "2026-11-22T15:51:04.819239+00:00",
     "game": "Current desktop Trinsic sources and installed artwork",
     "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
     "includesLocalDesktopChanges": true,
@@ -1756,16 +1759,16 @@
     "stagedNativeSourceSha256": "709d26e95382c267ef250a7411daf1615c52b34c3dddd348d45bd4375385e230",
     "platformSha256": "6475ca82de7c9465f4eb1d6568f0c511b1c9db1861b24eadd07c87ded54cb611",
     "engineSha256": "9880bd154dac22238c0d619a475d9513b2e030723de26fa97900632c87a46ec8",
-    "townSourceSha256": "035fb5054f6b314dc472b9abeac996e3ef4976bfc46ca372d9469fdf7e10d28e",
-    "townRecipeSha256": "eed47e77de31d00aff4cb685477a69179190994c7a6802f952bed13755cf43c5",
+    "townSourceSha256": "84defb599427ec54a16a7acac7156190cc1f39dd1326257f8c8719f0ca76a6ad",
+    "townRecipeSha256": "a1e5514af9ecde80da72199c266cff9668703ac067124a0f26800fbabd160fb3",
     "guardianSourceSha256": "ae6b396e0171d0fffa770f10c6c51e6c485bbe7911c1d2738a2f609fce3b89dc",
     "seedSaveSha256": "8d772efc424a6d2d74c5da7d4ed2f37fc5be98b9a0849a80925b1b76eb1372dd",
     "browserFoundation": "9b9957ad65ddd1778ae1ac7d0f00c1b9254ce9f2",
-    "artworkSha256": "b3977ee5c23408116df657241557f48f720fed374039c2b8336cd17a02eb2b7b",
-    "artIndexSha256": "ce9ab3b961cb1709ccd00d3e1bef29ac8065ad7e4a21e0a3883c0c4f972640c9",
-    "launcherSourceSha256": "ec9a88c1dbaf719fbf562a047b3d153fd8194460f0166e40d46900fb681fb8d6",
+    "artworkSha256": "1b3d6fa138c1c110090a8cfaeef69a9e2b1ee2d34237b08fbfd8ac6406184cf8",
+    "artIndexSha256": "955c7e42c0bc8acd204fd6298a9d9ac2775a5084b8e99d2c86ab778d991a1bb1",
+    "launcherSourceSha256": "43ad5e98b0d6cd18e3df9231f5310c0d6c0ed780911e4f409556ba7ca721c239",
     "experienceSha256": "38831e9df00128fc5888b4070af176d4381bf4bbfe6fb9f5829c250271567f67",
-    "buildId": "eab3539bbd70"
+    "buildId": "bc17a629212a"
   },
   "checks": {
     "fullInvestigation": true,
@@ -1788,9 +1791,9 @@
     "mousewheelZoomPreference": true,
     "speechKeywordLoad": true
   },
-  "saveTile": "1078, 2179",
+  "saveTile": "1077, 2177",
   "evidence": "game/web/bin/parity-evidence",
-  "verifiedAt": "2026-11-22T14:54:13.244Z",
+  "verifiedAt": "2026-11-22T16:09:21.140Z",
   "events": [
     {
       "case": "speech-south-audio",
@@ -1801,18 +1804,18 @@
       "saveSha256": "eeb277c2dea61853f4123dda81ed0693bc360209ac0e70861bef1c3eb645a8d9",
       "commandsSha256": "704c38fb9fcd59ea9a7044cf877dc63059f9ab931670a8482756154f787f45e3",
       "desktopPcmSha256": "d9e063f57670bb823d8e0ef0401686b0881fce36f1f9669dee71c43fb2970d3f",
-      "renderedPcmSha256": "a54d5a2a78946537611771d522ff1f415a7d3cb1260fe733ed287cafa2c97662",
+      "renderedPcmSha256": "0d35bb15a8f93b0e724a59b1659c4e1641f758b1d744839b4082c2202a48245e",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
-      "framesDuringStall": 14336,
-      "rmsDuringStall": 6257.87,
+      "framesDuringStall": 14464,
+      "rmsDuringStall": 6431.73,
       "identicalStereoFrames": 162186,
       "seconds": 3.378875,
       "desktopSoundBlasterToMixerMs": 15.3,
       "browserSoundBlasterToMixerMs": 15.3,
-      "browserSoundBlasterToOutputMs": 80.6,
-      "browserQueueMs": 65.3
+      "browserSoundBlasterToOutputMs": 90,
+      "browserQueueMs": 74.7
     },
     {
       "case": "music-pub",
@@ -1823,22 +1826,22 @@
       "saveSha256": "f882a451e8ee17baf6ab502c15e6ce1e62d31d6348f6be12879c3fa375746dcb",
       "commandsSha256": "e067086c6176b6a574b03a160a7ec87d52356746067e006020379a47802f9166",
       "desktopPcmSha256": "2a86118de32cd5927d3d587615a5607e5087da1799a86e39db4e441e35d99158",
-      "renderedPcmSha256": "163d7876b5afad61245e29a0efb963200db4b6854cdfd4ae0425cbde7ce26912",
+      "renderedPcmSha256": "0eb0532bcec7b37ee0497925f1cbaf35a1ec9188a22b051a435bb5430c88e74f",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
-      "framesDuringStall": 14336,
-      "rmsDuringStall": 200.61,
+      "framesDuringStall": 14464,
+      "rmsDuringStall": 199.43,
       "channels": [
         {
-          "spectralCosine": 0.99591,
-          "browserOffsetMs": 100,
+          "spectralCosine": 0.99992,
+          "browserOffsetMs": 20,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         },
         {
-          "spectralCosine": 0.99592,
-          "browserOffsetMs": 100,
+          "spectralCosine": 0.99995,
+          "browserOffsetMs": 20,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         }
