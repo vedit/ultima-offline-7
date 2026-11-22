@@ -21,14 +21,15 @@
           ]
         },
         "barn-overview-uo7.png": {
-          "sha256": "48625b7b6dfef4fe2d562b33741426a0d491332c51f385ce6a0ff92436572980",
+          "sha256": "95df352fe5eb3b7dd6dbe4883fc68a4dd8966ac25484935b7e1a053bfaf4d220",
           "size": [
             1200,
             900
           ]
         }
       },
-      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3"
+      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
+      "town_revision": "f355b82d35c9b778f1ed433fd276e06407b792e9ffc8fc56ea8ccc8935f5f0cb"
     },
     {
       "id": "fellowship-interior",
@@ -51,14 +52,15 @@
           ]
         },
         "fellowship-interior-uo7.png": {
-          "sha256": "40a2e8e145071ca6080f73c81bf3f2a077ceb16e6cfb15f07dccd2961767bd3a",
+          "sha256": "c4177596a3312215653a17d77723b4a8ce2cf08bccb7467ec8bf77f8365e7c0a",
           "size": [
             1200,
             900
           ]
         }
       },
-      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3"
+      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
+      "town_revision": "f355b82d35c9b778f1ed433fd276e06407b792e9ffc8fc56ea8ccc8935f5f0cb"
     },
     {
       "id": "guardian-dream",
@@ -77,7 +79,7 @@
           ]
         },
         "guardian-dream-uo7.png": {
-          "sha256": "fea12e975465cf95c64710c40be2b11382048af2f6f2e2f3f0a04439c35a144b",
+          "sha256": "df86ea4bbeffe618fa9ae5e16e27aaabb6d4d7da845d76a73cc1710730e79539",
           "size": [
             1200,
             900
@@ -85,7 +87,8 @@
         }
       },
       "uo7_zoom": "1",
-      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3"
+      "current_client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
+      "town_revision": "f355b82d35c9b778f1ed433fd276e06407b792e9ffc8fc56ea8ccc8935f5f0cb"
     }
   ]
 }
