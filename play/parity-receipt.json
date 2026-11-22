@@ -1,16 +1,16 @@
 {
   "journey": {
     "desktop": {
-      "run": "parity-investigation-f8d7e5c5-49ca-44b8-8514-990d5e4f7a21",
+      "run": "parity-investigation-20d74613-b73e-49dc-9183-39322c71e8a7",
       "status": "passed",
-      "seconds": 814.16,
+      "seconds": 765.63,
       "original_opening": true,
       "from_creation": true,
       "debug": false,
       "audit": false,
-      "host_sha256": "2350ba6f6c14c03232ee4838c4aea04fad142fa2be8c562863bfc8f189c57912",
-      "client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
-      "batches": 3125,
+      "host_sha256": "567a8da1832dc9b9424c198e27d7baa82404bf550c2d652c18ba8ca699dda426",
+      "client_sha256": "0db346b587bb10b095050fd6c5e129d1daee6fa301e9e9d9909bb4a150dfb0ba",
+      "batches": 3400,
       "milestones": [
         [
           "opening choice",
@@ -99,8 +99,8 @@
         [
           "answer",
           [
-            1069,
-            2206,
+            1067,
+            2208,
             0
           ],
           {
@@ -119,8 +119,8 @@
         [
           "answer",
           [
-            1069,
-            2206,
+            1067,
+            2208,
             0
           ],
           {
@@ -139,8 +139,8 @@
         [
           "answer",
           [
-            1069,
-            2206,
+            1067,
+            2208,
             0
           ],
           {
@@ -159,8 +159,8 @@
         [
           "key reported",
           [
-            1069,
-            2206,
+            1067,
+            2208,
             0
           ],
           {
@@ -215,7 +215,7 @@
           "answer",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -235,7 +235,7 @@
           "answer",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -255,7 +255,7 @@
           "answer",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -275,7 +275,7 @@
           "answer",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -295,7 +295,7 @@
           "answer",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -315,7 +315,7 @@
           "answer",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -335,7 +335,7 @@
           "answer",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -355,7 +355,7 @@
           "answer",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -375,7 +375,7 @@
           "Spark witness",
           [
             974,
-            2131,
+            2138,
             0
           ],
           {
@@ -510,8 +510,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -530,8 +530,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -550,8 +550,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -570,8 +570,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -590,8 +590,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -610,8 +610,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -630,8 +630,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -650,8 +650,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -670,8 +670,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -690,8 +690,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -710,8 +710,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -730,8 +730,8 @@
         [
           "geography",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -744,34 +744,14 @@
             "72": 1,
             "90": 1
           },
-          "\"What is the latitude of the northern-most point of the island Spektran?\"",
-          120
-        ],
-        [
-          "geography",
-          [
-            985,
-            2205,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What latitude runs through the center of Buccaneer's Den?\"",
+          "\"What latitude runs through the center of the Deep Forest?\"",
           60
         ],
         [
           "geography",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -784,14 +764,34 @@
             "72": 1,
             "90": 1
           },
-          "\"What latitude runs through the center of Skara Brae?\"",
-          30
+          "\"What latitude runs through the center of Dagger Isle?\"",
+          0
+        ],
+        [
+          "geography",
+          [
+            983,
+            2197,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What longitude runs through the center of Skara Brae?\"",
+          60
         ],
         [
           "password earned",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -809,7 +809,7 @@
           "answer",
           [
             1092,
-            2214,
+            2217,
             0
           ],
           {
@@ -829,7 +829,7 @@
           "answer",
           [
             1092,
-            2214,
+            2217,
             0
           ],
           {
@@ -874,15 +874,12 @@
         "journey-06.png",
         "journey-07.png",
         "journey-08.png",
-        "journey-09.png",
-        "journey-10.png",
-        "journey-11.png",
-        "journey-12.png"
+        "journey-09.png"
       ],
       "limits": "Uses frontend action/widget handlers; not OS pointer automation for every input."
     },
     "browser": {
-      "build": "bc17a629212a",
+      "build": "1ee71805f25f",
       "tile": [
         1107,
         2214,
@@ -977,8 +974,8 @@
         [
           "answer",
           [
-            1056,
-            2219,
+            1069,
+            2204,
             0
           ],
           {
@@ -997,8 +994,8 @@
         [
           "answer",
           [
-            1056,
-            2219,
+            1069,
+            2204,
             0
           ],
           {
@@ -1017,8 +1014,8 @@
         [
           "answer",
           [
-            1056,
-            2219,
+            1069,
+            2204,
             0
           ],
           {
@@ -1037,8 +1034,8 @@
         [
           "key reported",
           [
-            1056,
-            2219,
+            1069,
+            2204,
             0
           ],
           {
@@ -1092,8 +1089,8 @@
         [
           "answer",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1112,8 +1109,8 @@
         [
           "answer",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1132,8 +1129,8 @@
         [
           "answer",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1152,8 +1149,8 @@
         [
           "answer",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1172,8 +1169,8 @@
         [
           "answer",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1192,8 +1189,8 @@
         [
           "answer",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1212,8 +1209,8 @@
         [
           "answer",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1232,8 +1229,8 @@
         [
           "answer",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1252,8 +1249,8 @@
         [
           "Spark witness",
           [
-            972,
-            2122,
+            965,
+            2129,
             0
           ],
           {
@@ -1388,8 +1385,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1408,8 +1405,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1428,8 +1425,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1448,8 +1445,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1468,8 +1465,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1488,8 +1485,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1508,8 +1505,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1528,8 +1525,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1548,8 +1545,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1568,8 +1565,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1588,8 +1585,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1608,8 +1605,48 @@
         [
           "geography",
           [
-            985,
-            2205,
+            986,
+            2203,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What is the latitude of the northern-most point of the island Spektran?\"",
+          120
+        ],
+        [
+          "geography",
+          [
+            986,
+            2203,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What latitude runs through the center of Dagger Isle?\"",
+          0
+        ],
+        [
+          "geography",
+          [
+            986,
+            2203,
             0
           ],
           {
@@ -1626,50 +1663,10 @@
           60
         ],
         [
-          "geography",
-          [
-            985,
-            2205,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What longitude runs through the center of the island Terfin?\"",
-          120
-        ],
-        [
-          "geography",
-          [
-            985,
-            2205,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What longitude runs through the center of Skara Brae?\"",
-          60
-        ],
-        [
           "password earned",
           [
-            985,
-            2205,
+            986,
+            2203,
             0
           ],
           {
@@ -1687,7 +1684,7 @@
           "answer",
           [
             1092,
-            2215,
+            2214,
             0
           ],
           {
@@ -1707,7 +1704,7 @@
           "answer",
           [
             1092,
-            2215,
+            2214,
             0
           ],
           {
@@ -1744,21 +1741,21 @@
       ]
     }
   },
-  "bundleSha256": "53a05e55c28988ec3407cbeeaf64e62df2e9fcb051cf3ab40e9943e16fdaaf12",
-  "qualificationSha256": "319384fd4e259b3ac0bcef053dfac7ecb889ba7436af50a9558bf0a18a30e8d1",
+  "bundleSha256": "530eddb157a24ffdc28e464f2f35f6982368f897e2b819edd23cd99393082c44",
+  "qualificationSha256": "ff76ccad54e9f299132070d467a23d5499ac71bf3fa1be6f72e929e533412115",
   "build": {
-    "builtAt": "2026-11-22T15:51:04.819239+00:00",
+    "builtAt": "2026-11-22T18:18:00.536336+00:00",
     "game": "Current desktop Trinsic sources and installed artwork",
-    "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
+    "sourceCommit": "e8776ef5541b5fecd7f9f2d5ff42ecf35e928a53",
     "includesLocalDesktopChanges": true,
     "clientAdaptersSha256": "9fde3cda86c31ab6e7e6bc65bbb18c1b597b63a488255ae53d3263ddc9acc2be",
-    "desktopSourceSha256": "c61288e0c95cd8e31739068731a36a817b5176761c5bd5647582d2c86e38506c",
-    "stagedClientSourceSha256": "0c094ef1405efe6e4a21ad1e5e50ea471efba88e8b8c28acfe59a1fcca6725c5",
+    "desktopSourceSha256": "96761686edfbe375507e1871c8fa3c30bd0bba945d56fe25cc13a6e8abe06682",
+    "stagedClientSourceSha256": "0c9ea71663b6d7a41ee5c2b99c201b9ab47b84bbaa371d186d130f50ca7fd840",
     "engineAdaptersSha256": "9722f170619170dcc6c5018f1065ea33c155ad06c183bb4545963aa3114023d4",
-    "nativeOverlaySha256": "2502e5cdb96081a680c1fb6f49d55d73bb6d14aba54f546ef9bdad9cce594eda",
-    "stagedNativeSourceSha256": "709d26e95382c267ef250a7411daf1615c52b34c3dddd348d45bd4375385e230",
+    "nativeOverlaySha256": "4541636a965f3b502c301315cf536fc6de99041560dab0b4034494c41f63274a",
+    "stagedNativeSourceSha256": "b24d6aaafa9cff879331c93d6d8e15ffeb3526d1a2d31bda98d8e5b78eca5a8b",
     "platformSha256": "6475ca82de7c9465f4eb1d6568f0c511b1c9db1861b24eadd07c87ded54cb611",
-    "engineSha256": "9880bd154dac22238c0d619a475d9513b2e030723de26fa97900632c87a46ec8",
+    "engineSha256": "e82b4276801e712de6c91e080295b69bb63a2ef070976f7ce97167c24fbc9e07",
     "townSourceSha256": "84defb599427ec54a16a7acac7156190cc1f39dd1326257f8c8719f0ca76a6ad",
     "townRecipeSha256": "a1e5514af9ecde80da72199c266cff9668703ac067124a0f26800fbabd160fb3",
     "guardianSourceSha256": "ae6b396e0171d0fffa770f10c6c51e6c485bbe7911c1d2738a2f609fce3b89dc",
@@ -1766,9 +1763,9 @@
     "browserFoundation": "9b9957ad65ddd1778ae1ac7d0f00c1b9254ce9f2",
     "artworkSha256": "1b3d6fa138c1c110090a8cfaeef69a9e2b1ee2d34237b08fbfd8ac6406184cf8",
     "artIndexSha256": "955c7e42c0bc8acd204fd6298a9d9ac2775a5084b8e99d2c86ab778d991a1bb1",
-    "launcherSourceSha256": "43ad5e98b0d6cd18e3df9231f5310c0d6c0ed780911e4f409556ba7ca721c239",
+    "launcherSourceSha256": "9513a3612719665b692690b249c7260ee503452a28546bb0f0bf09fec4c46682",
     "experienceSha256": "38831e9df00128fc5888b4070af176d4381bf4bbfe6fb9f5829c250271567f67",
-    "buildId": "bc17a629212a"
+    "buildId": "1ee71805f25f"
   },
   "checks": {
     "fullInvestigation": true,
@@ -1791,57 +1788,57 @@
     "mousewheelZoomPreference": true,
     "speechKeywordLoad": true
   },
-  "saveTile": "1077, 2177",
+  "saveTile": "1078, 2179",
   "evidence": "game/web/bin/parity-evidence",
-  "verifiedAt": "2026-11-22T16:09:21.140Z",
+  "verifiedAt": "2026-11-22T18:36:48.010Z",
   "events": [
     {
       "case": "speech-south-audio",
-      "desktopRun": "world-art-current-voice",
-      "hostSha256": "2350ba6f6c14c03232ee4838c4aea04fad142fa2be8c562863bfc8f189c57912",
-      "desktopClientSha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
-      "desktopRuntimeSha256": "abaea300648fa2892ec2ed1fbb17864cef1e45c4d61ac6324581ffe3eb433338",
-      "saveSha256": "eeb277c2dea61853f4123dda81ed0693bc360209ac0e70861bef1c3eb645a8d9",
-      "commandsSha256": "704c38fb9fcd59ea9a7044cf877dc63059f9ab931670a8482756154f787f45e3",
-      "desktopPcmSha256": "d9e063f57670bb823d8e0ef0401686b0881fce36f1f9669dee71c43fb2970d3f",
-      "renderedPcmSha256": "0d35bb15a8f93b0e724a59b1659c4e1641f758b1d744839b4082c2202a48245e",
+      "desktopRun": "approved-launcher-speech-south-audio",
+      "hostSha256": "567a8da1832dc9b9424c198e27d7baa82404bf550c2d652c18ba8ca699dda426",
+      "desktopClientSha256": "0db346b587bb10b095050fd6c5e129d1daee6fa301e9e9d9909bb4a150dfb0ba",
+      "desktopRuntimeSha256": "a23700bcfa5ade24a323329d93d62f5a549f514346f6625110c68ef0c39a1909",
+      "saveSha256": "e1903335a45100a07a263d6709148b30d17f71b167ce8e246afd928f4ea87972",
+      "commandsSha256": "3c5ca5627a4ac990d59101ec3c6861d78c13c8bba6cfc2b02b9a2ad997db805f",
+      "desktopPcmSha256": "9506d5a47c875fcda17ef10c59bfba151fdae0848ec0a2ab364e8a445936a47e",
+      "renderedPcmSha256": "1d0bfb719545d8ae3b5e14a34cfba39307dc9d187ae6e8546add641390232694",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
       "framesDuringStall": 14464,
-      "rmsDuringStall": 6431.73,
+      "rmsDuringStall": 6258.28,
       "identicalStereoFrames": 162186,
       "seconds": 3.378875,
       "desktopSoundBlasterToMixerMs": 15.3,
       "browserSoundBlasterToMixerMs": 15.3,
-      "browserSoundBlasterToOutputMs": 90,
-      "browserQueueMs": 74.7
+      "browserSoundBlasterToOutputMs": 89.3,
+      "browserQueueMs": 74
     },
     {
       "case": "music-pub",
-      "desktopRun": "world-art-current-music",
-      "hostSha256": "2350ba6f6c14c03232ee4838c4aea04fad142fa2be8c562863bfc8f189c57912",
-      "desktopClientSha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
-      "desktopRuntimeSha256": "abaea300648fa2892ec2ed1fbb17864cef1e45c4d61ac6324581ffe3eb433338",
-      "saveSha256": "f882a451e8ee17baf6ab502c15e6ce1e62d31d6348f6be12879c3fa375746dcb",
-      "commandsSha256": "e067086c6176b6a574b03a160a7ec87d52356746067e006020379a47802f9166",
-      "desktopPcmSha256": "2a86118de32cd5927d3d587615a5607e5087da1799a86e39db4e441e35d99158",
-      "renderedPcmSha256": "0eb0532bcec7b37ee0497925f1cbaf35a1ec9188a22b051a435bb5430c88e74f",
+      "desktopRun": "approved-launcher-music-pub",
+      "hostSha256": "567a8da1832dc9b9424c198e27d7baa82404bf550c2d652c18ba8ca699dda426",
+      "desktopClientSha256": "0db346b587bb10b095050fd6c5e129d1daee6fa301e9e9d9909bb4a150dfb0ba",
+      "desktopRuntimeSha256": "a23700bcfa5ade24a323329d93d62f5a549f514346f6625110c68ef0c39a1909",
+      "saveSha256": "6685ef10bb9c2cc616516955539c49cfca3e9f9e9cda9bf73e101f5190d42f74",
+      "commandsSha256": "ceb84b48b25eeefd6a63e4f1085cb989bfddf375123c876a4c5152326b2c74f3",
+      "desktopPcmSha256": "afc8e65efc6c26af5d69190c0da986bfcc0da83f9c48b63d53413d4111f20b40",
+      "renderedPcmSha256": "7da7ad5371293bed708d7f9f163b6d7470b66e1137d69edb7c5136e956d1e9ef",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
       "framesDuringStall": 14464,
-      "rmsDuringStall": 199.43,
+      "rmsDuringStall": 200.26,
       "channels": [
         {
-          "spectralCosine": 0.99992,
-          "browserOffsetMs": 20,
+          "spectralCosine": 0.9982,
+          "browserOffsetMs": 90,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         },
         {
-          "spectralCosine": 0.99995,
-          "browserOffsetMs": 20,
+          "spectralCosine": 0.99823,
+          "browserOffsetMs": 90,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         }
