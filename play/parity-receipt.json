@@ -1,16 +1,16 @@
 {
   "journey": {
     "desktop": {
-      "run": "parity-investigation-44e2dbf4-9c73-4430-94e6-f524256df9b1",
+      "run": "parity-investigation-19c686e4-7524-4782-85b3-c12d5e9d3255",
       "status": "passed",
-      "seconds": 668.91,
+      "seconds": 597.09,
       "original_opening": true,
       "from_creation": true,
       "debug": false,
       "audit": false,
       "host_sha256": "2350ba6f6c14c03232ee4838c4aea04fad142fa2be8c562863bfc8f189c57912",
       "client_sha256": "36a809e8470c3218648f9aad12c46d2113a5a80bdf0607664243e0a47f10b9d3",
-      "batches": 3785,
+      "batches": 3193,
       "milestones": [
         [
           "opening choice",
@@ -99,8 +99,8 @@
         [
           "answer",
           [
-            1068,
-            2196,
+            1063,
+            2214,
             0
           ],
           {
@@ -119,8 +119,8 @@
         [
           "answer",
           [
-            1068,
-            2196,
+            1063,
+            2214,
             0
           ],
           {
@@ -139,8 +139,8 @@
         [
           "answer",
           [
-            1068,
-            2196,
+            1063,
+            2214,
             0
           ],
           {
@@ -159,8 +159,8 @@
         [
           "key reported",
           [
-            1068,
-            2196,
+            1063,
+            2214,
             0
           ],
           {
@@ -214,8 +214,8 @@
         [
           "answer",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -234,8 +234,8 @@
         [
           "answer",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -254,8 +254,8 @@
         [
           "answer",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -274,8 +274,8 @@
         [
           "answer",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -294,8 +294,8 @@
         [
           "answer",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -314,8 +314,8 @@
         [
           "answer",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -334,8 +334,8 @@
         [
           "answer",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -354,8 +354,8 @@
         [
           "answer",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -374,8 +374,8 @@
         [
           "Spark witness",
           [
-            972,
-            2138,
+            985,
+            2128,
             0
           ],
           {
@@ -510,8 +510,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -530,8 +530,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -550,8 +550,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -570,8 +570,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -590,8 +590,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -610,8 +610,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -630,8 +630,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -650,8 +650,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -670,8 +670,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -690,8 +690,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -710,8 +710,8 @@
         [
           "answer",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -730,8 +730,8 @@
         [
           "geography",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -744,34 +744,14 @@
             "72": 1,
             "90": 1
           },
-          "\"What longitude runs through the center of the island Terfin?\"",
+          "\"What is the latitude of the northern-most point of the island Spektran?\"",
           120
         ],
         [
           "geography",
           [
-            986,
-            2203,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What longitude runs through the center of the island Buccaneer's Den?\"",
-          60
-        ],
-        [
-          "geography",
-          [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -788,10 +768,30 @@
           60
         ],
         [
+          "geography",
+          [
+            985,
+            2205,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What latitude runs through the center of Buccaneer's Den?\"",
+          60
+        ],
+        [
           "password earned",
           [
-            986,
-            2203,
+            985,
+            2205,
             0
           ],
           {
@@ -809,7 +809,7 @@
           "answer",
           [
             1092,
-            2214,
+            2215,
             0
           ],
           {
@@ -829,7 +829,7 @@
           "answer",
           [
             1092,
-            2214,
+            2215,
             0
           ],
           {
@@ -873,12 +873,13 @@
         "journey-05.png",
         "journey-06.png",
         "journey-07.png",
-        "journey-08.png"
+        "journey-08.png",
+        "journey-09.png"
       ],
       "limits": "Uses frontend action/widget handlers; not OS pointer automation for every input."
     },
     "browser": {
-      "build": "0eefdfd7a9ce",
+      "build": "4a69543af168",
       "tile": [
         1107,
         2214,
@@ -974,7 +975,7 @@
           "answer",
           [
             1069,
-            2208,
+            2213,
             0
           ],
           {
@@ -994,7 +995,7 @@
           "answer",
           [
             1069,
-            2208,
+            2213,
             0
           ],
           {
@@ -1014,7 +1015,7 @@
           "answer",
           [
             1069,
-            2208,
+            2213,
             0
           ],
           {
@@ -1034,7 +1035,7 @@
           "key reported",
           [
             1069,
-            2208,
+            2213,
             0
           ],
           {
@@ -1088,8 +1089,8 @@
         [
           "answer",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1108,8 +1109,8 @@
         [
           "answer",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1128,8 +1129,8 @@
         [
           "answer",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1148,8 +1149,8 @@
         [
           "answer",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1168,8 +1169,8 @@
         [
           "answer",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1188,8 +1189,8 @@
         [
           "answer",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1208,8 +1209,8 @@
         [
           "answer",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1228,8 +1229,8 @@
         [
           "answer",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1248,8 +1249,8 @@
         [
           "Spark witness",
           [
-            971,
-            2139,
+            973,
+            2142,
             0
           ],
           {
@@ -1384,8 +1385,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1404,8 +1405,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1424,8 +1425,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1444,8 +1445,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1464,8 +1465,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1484,8 +1485,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1504,8 +1505,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1524,8 +1525,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1544,8 +1545,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1564,8 +1565,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1584,8 +1585,8 @@
         [
           "answer",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1604,8 +1605,8 @@
         [
           "geography",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1618,14 +1619,34 @@
             "72": 1,
             "90": 1
           },
-          "\"What latitude runs through the center of Buccaneer's Den?\"",
+          "\"What latitude runs through the center of the Deep Forest?\"",
           60
         ],
         [
           "geography",
           [
-            985,
-            2205,
+            983,
+            2197,
+            0
+          ],
+          {
+            "60": 1,
+            "61": 0,
+            "62": 1,
+            "64": 1,
+            "66": 1,
+            "67": 1,
+            "72": 1,
+            "90": 1
+          },
+          "\"What longitude runs through the center of the island Buccaneer's Den?\"",
+          60
+        ],
+        [
+          "geography",
+          [
+            983,
+            2197,
             0
           ],
           {
@@ -1642,30 +1663,10 @@
           120
         ],
         [
-          "geography",
-          [
-            985,
-            2205,
-            0
-          ],
-          {
-            "60": 1,
-            "61": 0,
-            "62": 1,
-            "64": 1,
-            "66": 1,
-            "67": 1,
-            "72": 1,
-            "90": 1
-          },
-          "\"What latitude runs through the center of Dagger Isle?\"",
-          0
-        ],
-        [
           "password earned",
           [
-            985,
-            2205,
+            983,
+            2197,
             0
           ],
           {
@@ -1683,7 +1684,7 @@
           "answer",
           [
             1092,
-            2214,
+            2217,
             0
           ],
           {
@@ -1703,7 +1704,7 @@
           "answer",
           [
             1092,
-            2214,
+            2217,
             0
           ],
           {
@@ -1740,21 +1741,21 @@
       ]
     }
   },
-  "bundleSha256": "0bce26c77603586638eac58d76c12fcb319b0cda5375bbde076a716cbce670b3",
+  "bundleSha256": "60f6331516b58b09d53514943814e1b19b47befe799c83cad2ee2858d08f32ba",
   "qualificationSha256": "319384fd4e259b3ac0bcef053dfac7ecb889ba7436af50a9558bf0a18a30e8d1",
   "build": {
-    "builtAt": "2026-11-22T04:09:04.280045+00:00",
+    "builtAt": "2026-11-22T09:27:44.385665+00:00",
     "game": "Current desktop Trinsic sources and installed artwork",
     "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
     "includesLocalDesktopChanges": true,
-    "clientAdaptersSha256": "51385b5d4694e83b37784f361ce5ad36bc9654528e34ea22027765f630815668",
+    "clientAdaptersSha256": "41ed185bdf84b966e50731941a668c41fdab75cb8bbe49159bb454800a33fe4b",
     "desktopSourceSha256": "c61288e0c95cd8e31739068731a36a817b5176761c5bd5647582d2c86e38506c",
-    "stagedClientSourceSha256": "9eff3708e3e4d50caab2a88068e206c509c191e016972732c650ed66b7ad3573",
-    "engineAdaptersSha256": "ea5632852c8d60f0ad909c1a43bf36620da839e6dc0c859d9d5f5b4453ef0379",
+    "stagedClientSourceSha256": "71c2800381b37fdedf68a0dacf038ee730a0a6477a35fef19aeb3f72469cc329",
+    "engineAdaptersSha256": "9722f170619170dcc6c5018f1065ea33c155ad06c183bb4545963aa3114023d4",
     "nativeOverlaySha256": "2502e5cdb96081a680c1fb6f49d55d73bb6d14aba54f546ef9bdad9cce594eda",
-    "stagedNativeSourceSha256": "74db0724386b87518fb4c9dc6695a5ad72a224954de50abf00640daad808c736",
+    "stagedNativeSourceSha256": "709d26e95382c267ef250a7411daf1615c52b34c3dddd348d45bd4375385e230",
     "platformSha256": "6475ca82de7c9465f4eb1d6568f0c511b1c9db1861b24eadd07c87ded54cb611",
-    "engineSha256": "f4e3380adb3e8b9e47e1e647a399e3ddf0e620e597f4fd8c0cb47ede98f39d1e",
+    "engineSha256": "9880bd154dac22238c0d619a475d9513b2e030723de26fa97900632c87a46ec8",
     "townSourceSha256": "c2539b14d4bf8a56cbbcf234f766b3a17fedffd45a885939d31fa74411ac6442",
     "townRecipeSha256": "a88fcce4d9c46ace8589e18f33db2648103c1600c1ef422474b63bc27065da5f",
     "guardianSourceSha256": "ae6b396e0171d0fffa770f10c6c51e6c485bbe7911c1d2738a2f609fce3b89dc",
@@ -1763,7 +1764,7 @@
     "artworkSha256": "fce45287a0cc97eda528f582ef369acd8135840b516426a07ae4abe336e8358c",
     "launcherSourceSha256": "f470af576a546bcd981a5c10cec4c936a43afdbe6d3693c1dbb84372d9c382c5",
     "experienceSha256": "38831e9df00128fc5888b4070af176d4381bf4bbfe6fb9f5829c250271567f67",
-    "buildId": "0eefdfd7a9ce"
+    "buildId": "4a69543af168"
   },
   "checks": {
     "fullInvestigation": true,
@@ -1786,9 +1787,9 @@
     "mousewheelZoomPreference": true,
     "speechKeywordLoad": true
   },
-  "saveTile": "1076, 2177",
+  "saveTile": "1077, 2178",
   "evidence": "game/web/bin/parity-evidence",
-  "verifiedAt": "2026-11-22T04:38:08.003Z",
+  "verifiedAt": "2026-11-22T09:42:37.464Z",
   "events": [
     {
       "case": "speech-south-audio",
@@ -1799,18 +1800,18 @@
       "saveSha256": "eeb277c2dea61853f4123dda81ed0693bc360209ac0e70861bef1c3eb645a8d9",
       "commandsSha256": "704c38fb9fcd59ea9a7044cf877dc63059f9ab931670a8482756154f787f45e3",
       "desktopPcmSha256": "d9e063f57670bb823d8e0ef0401686b0881fce36f1f9669dee71c43fb2970d3f",
-      "renderedPcmSha256": "85d34e7200087ed05e06a923f55aecd0c607dda8d6a92a1975347679483c7ad3",
+      "renderedPcmSha256": "a6ed3dc206c72b7f076c5e449eeff48636938ec1318aa0a7503aafc01fe51a25",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
       "framesDuringStall": 14336,
-      "rmsDuringStall": 6456.84,
+      "rmsDuringStall": 6456.03,
       "identicalStereoFrames": 162186,
       "seconds": 3.378875,
       "desktopSoundBlasterToMixerMs": 15.3,
       "browserSoundBlasterToMixerMs": 15.3,
-      "browserSoundBlasterToOutputMs": 89.3,
-      "browserQueueMs": 74
+      "browserSoundBlasterToOutputMs": 77.3,
+      "browserQueueMs": 62
     },
     {
       "case": "music-pub",
@@ -1821,22 +1822,22 @@
       "saveSha256": "f882a451e8ee17baf6ab502c15e6ce1e62d31d6348f6be12879c3fa375746dcb",
       "commandsSha256": "e067086c6176b6a574b03a160a7ec87d52356746067e006020379a47802f9166",
       "desktopPcmSha256": "2a86118de32cd5927d3d587615a5607e5087da1799a86e39db4e441e35d99158",
-      "renderedPcmSha256": "7bb17b7996041c8a7b72384a2d6b63cd80b2a367ed19c01e39e8312666160149",
+      "renderedPcmSha256": "85571a07763ab5b7bcae865b5e868c70c5112c01d053ae2b4f1e35e45bc43be4",
       "startupMissingFrames": 0,
       "replayMissingFrames": 0,
       "pageStallMs": 300,
-      "framesDuringStall": 14336,
-      "rmsDuringStall": 199.94,
+      "framesDuringStall": 14464,
+      "rmsDuringStall": 200.48,
       "channels": [
         {
-          "spectralCosine": 0.9976,
-          "browserOffsetMs": 30,
+          "spectralCosine": 0.99972,
+          "browserOffsetMs": 60,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         },
         {
-          "spectralCosine": 0.99765,
-          "browserOffsetMs": 30,
+          "spectralCosine": 0.99975,
+          "browserOffsetMs": 60,
           "steadySeconds": 9.2,
           "maxLocalDriftMs": 0
         }
