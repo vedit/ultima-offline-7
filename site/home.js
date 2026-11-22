@@ -17,8 +17,8 @@
         button.addEventListener('click', () => {
             const original = button.dataset.view === 'original';
             image.src = original ? 'site/fellowship-interior-u7.png' : 'site/fellowship-interior-uo7.png';
-            image.alt = original ? 'The Fellowship hall interior in original Ultima VII.' : 'Vedit in the Fellowship hall with the paperdoll and full character status sheet open.';
-            caption.textContent = original ? 'The original Ultima VII room. Different camera, familiar details.' : 'Vedit in the Fellowship hall with the character status sheet open.';
+            image.alt = original ? 'The Fellowship hall interior in original Ultima VII.' : 'Avatar in the Fellowship hall with the paperdoll and full character status sheet open.';
+            caption.textContent = original ? 'The original Ultima VII room. Different camera, familiar details.' : 'Avatar in the Fellowship hall with the character status sheet open.';
             for (const sibling of document.querySelectorAll('[data-view]')) sibling.setAttribute('aria-pressed', String(sibling === button));
         });
     }
@@ -33,7 +33,7 @@
     const error = document.getElementById('compare-error');
     const pairs = {
         'barn-overview': {title: 'The murder in Trinsic — Christopher and Inamo', description: 'The barn murder scene with both victims visible', currentAlt: "Christopher and Inamo in the Trinsic barn, with Vedit's paperdoll and compact health and mana bars."},
-        'fellowship-interior': {title: 'Inside the Fellowship — Trinsic', description: 'The Fellowship hall interior', currentAlt: 'Vedit in the Fellowship hall with the paperdoll and full character status sheet open.'},
+        'fellowship-interior': {title: 'Inside the Fellowship — Trinsic', description: 'The Fellowship hall interior', currentAlt: 'Avatar in the Fellowship hall with the paperdoll and full character status sheet open.'},
         'guardian-dream': {
             title: 'The Guardian — original opening and playable dream',
             originalAlt: 'The Guardian speaking against blue static in the original Ultima VII DOS opening cutscene.',
