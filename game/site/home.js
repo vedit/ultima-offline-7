@@ -17,8 +17,8 @@
         button.addEventListener('click', () => {
             const original = button.dataset.view === 'original';
             image.src = original ? 'site/fellowship-interior-u7.png' : 'site/fellowship-interior-uo7.png';
-            image.alt = original ? 'The Fellowship hall interior in original Ultima VII.' : 'The Fellowship hall interior recreated in ClassicUO.';
-            caption.textContent = original ? 'The original Ultima VII room. Different camera, familiar details.' : 'The Fellowship hall, captured in our development build.';
+            image.alt = original ? 'The Fellowship hall interior in original Ultima VII.' : 'Vedit in the Fellowship hall with the paperdoll and full character status sheet open.';
+            caption.textContent = original ? 'The original Ultima VII room. Different camera, familiar details.' : 'Vedit in the Fellowship hall with the character status sheet open.';
             for (const sibling of document.querySelectorAll('[data-view]')) sibling.setAttribute('aria-pressed', String(sibling === button));
         });
     }
@@ -32,8 +32,8 @@
     const loading = document.getElementById('compare-loading');
     const error = document.getElementById('compare-error');
     const pairs = {
-        'barn-overview': {title: 'The murder in Trinsic — Christopher and Inamo', description: 'The barn murder scene with both victims visible'},
-        'fellowship-interior': {title: 'Inside the Fellowship — Trinsic', description: 'The Fellowship hall interior'},
+        'barn-overview': {title: 'The murder in Trinsic — Christopher and Inamo', description: 'The barn murder scene with both victims visible', currentAlt: "Christopher and Inamo in the Trinsic barn, with Vedit's paperdoll and compact health and mana bars."},
+        'fellowship-interior': {title: 'Inside the Fellowship — Trinsic', description: 'The Fellowship hall interior', currentAlt: 'Vedit in the Fellowship hall with the paperdoll and full character status sheet open.'},
         'guardian-dream': {
             title: 'The Guardian — original opening and playable dream',
             originalAlt: 'The Guardian speaking against blue static in the original Ultima VII DOS opening cutscene.',
@@ -63,7 +63,7 @@
         originalImage.src = `site/${id}-u7.png`;
         originalImage.alt = pair.originalAlt || `${pair.description} in the original Ultima VII renderer.`;
         currentImage.src = `site/${id}-uo7.png`;
-        currentImage.alt = pair.currentAlt || `${pair.description} in Ultima Offline 7, with Vedit's paperdoll.`;
+        currentImage.alt = pair.currentAlt;
         document.getElementById('compare-help').textContent = pair.help || 'Drag the divider, or use the arrow keys. Same saved scene, different camera perspectives.';
         document.getElementById('compare-u7-link').href = originalImage.src;
         document.getElementById('compare-uo7-link').href = currentImage.src;
