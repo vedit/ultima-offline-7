@@ -1,5 +1,5 @@
 {
-  "builtAt": "2026-11-21T15:51:48.334893+00:00",
+  "builtAt": "2026-11-22T04:09:04.280045+00:00",
   "game": "Current desktop Trinsic sources and installed artwork",
   "sourceCommit": "5d1544dcde9964ed3bc17d8e842bd5f010bc507c",
   "includesLocalDesktopChanges": true,
@@ -17,7 +17,7 @@
   "seedSaveSha256": "8d772efc424a6d2d74c5da7d4ed2f37fc5be98b9a0849a80925b1b76eb1372dd",
   "browserFoundation": "9b9957ad65ddd1778ae1ac7d0f00c1b9254ce9f2",
   "artworkSha256": "fce45287a0cc97eda528f582ef369acd8135840b516426a07ae4abe336e8358c",
-  "launcherSourceSha256": "a8de88bb57726d6b39158c179450bffed577293202a91aae5a6af0c28c0196e8",
+  "launcherSourceSha256": "f470af576a546bcd981a5c10cec4c936a43afdbe6d3693c1dbb84372d9c382c5",
   "experienceSha256": "38831e9df00128fc5888b4070af176d4381bf4bbfe6fb9f5829c250271567f67",
-  "buildId": "bb4018f6ee1d"
+  "buildId": "0eefdfd7a9ce"
 }
